@@ -1,6 +1,4 @@
-#ifndef VECTOR_H
-#define VECTOR_H
-
+#pragma once
 #include "declarations.hpp"
 
 #include <type_traits>
@@ -52,5 +50,3 @@ namespace math {
         float m_x, m_y, m_z;
     };
 }
-
-#endif

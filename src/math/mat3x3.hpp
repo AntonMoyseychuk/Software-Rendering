@@ -1,6 +1,4 @@
-#ifndef MAT3X3_H
-#define MAT3X3_H
-
+#pragma once
 #include "declarations.hpp"
 #include "vector.hpp"
 
@@ -39,5 +37,3 @@ namespace math {
         Buffer m_matrix;
     };
 }
-
-#endif

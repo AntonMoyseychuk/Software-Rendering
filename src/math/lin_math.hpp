@@ -1,6 +1,4 @@
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
-
+#pragma once
 #include "declarations.hpp"
 
 namespace math {
@@ -20,5 +18,3 @@ namespace math {
     };
     
 }
-
-#endif

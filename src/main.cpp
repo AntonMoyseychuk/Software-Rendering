@@ -17,9 +17,9 @@ void OutputFrame(const std::vector<math::Vector3>& frameBuffer, const char* file
     fopen_s(&pFile, filename, "w");
     fprintf(pFile, "P3\n%d %d\n%d\n ", w, h, 255);
     for (auto i = 0; i < w * h; ++i) {
-        uint32_t r = static_cast<uint32_t>(255 * std::clamp(frameBuffer[i].X(), 0.0f, 1.0f));
-        uint32_t g = static_cast<uint32_t>(255 * std::clamp(frameBuffer[i].Y(), 0.0f, 1.0f));
-        uint32_t b = static_cast<uint32_t>(255 * std::clamp(frameBuffer[i].Z(), 0.0f, 1.0f));
+        uint8_t r = static_cast<uint8_t>(255 * std::clamp(frameBuffer[i].X(), 0.0f, 1.0f));
+        uint8_t g = static_cast<uint8_t>(255 * std::clamp(frameBuffer[i].Y(), 0.0f, 1.0f));
+        uint8_t b = static_cast<uint8_t>(255 * std::clamp(frameBuffer[i].Z(), 0.0f, 1.0f));
         fprintf(pFile, "%d %d %d ", r, g, b);
     }
     fclose(pFile);
@@ -66,12 +66,16 @@ int main(int argc, char* argv[]) {
             float gamma = LinMath::Dot(E2, sample);
 
             if (alpha >= 0.0f && beta >= 0.0f && gamma >= 0.0f) {
-                //#define BLENDING
+                #define BLENDING
                 #ifdef BLENDING
                     frameBuffer[x + y * w] = Vector3(c0 * alpha + c1 * beta + c2 * gamma);
                 #else
                     frameBuffer[x + y * w] = Vector3(1, 0, 1);
                 #endif
+            } else if (x >= 1 && x <= w - 2 && y >= 1 && y <= h - 2) {
+                frameBuffer[x + y * w] = Vector3(1);
+            } else {
+                 frameBuffer[x + y * w] = Vector3(0);
             }
         }
     }

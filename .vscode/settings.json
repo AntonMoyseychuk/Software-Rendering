@@ -7,6 +7,9 @@
         "atomic": "cpp",
         "cmath": "cpp",
         "cstdint": "cpp",
-        "cstddef": "cpp"
+        "cstddef": "cpp",
+        "algorithm": "cpp",
+        "iostream": "cpp",
+        "xiosbase": "cpp"
     }
 }
