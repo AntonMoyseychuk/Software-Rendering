@@ -13,8 +13,8 @@ namespace math {
 
         void SetIdentity() noexcept;
         float Determinant() const noexcept;
-        Mat3x3 Transpose() const noexcept;
-        Mat3x3 Invert() const;
+        // Mat3x3 Transpose() const noexcept;
+        // Mat3x3 Invert() const;
 
         Mat3x3 operator*(const Mat3x3 &m) const noexcept;
         Mat3x3 operator*(float value) const noexcept;

@@ -27,35 +27,35 @@ namespace math
                m_matrix.vectors[0][2] * (m_matrix.vectors[1].X() * m_matrix.vectors[2].Y() - m_matrix.vectors[1].Y() * m_matrix.vectors[2].X());
     }
 
-    Mat3x3 Mat3x3::Transpose() const noexcept {
-        auto temp = *this;
+    // Mat3x3 Mat3x3::Transpose() const noexcept {
+    //     auto temp = *this;
+    //
+    //     for (std::size_t i = 0; i < RAW_COUNT; ++i) {
+    //         for (std::size_t j = i; j < COLUMN_COUNT; ++j) {
+    //             if (i != j) std::swap(temp[i][j], temp[j][i]);
+    //         }
+    //     }
+    //
+    //     return temp;
+    // }
 
-        for (std::size_t i = 0; i < RAW_COUNT; ++i) {
-            for (std::size_t j = i; j < COLUMN_COUNT; ++j) {
-                if (i != j) std::swap(temp[i][j], temp[j][i]);
-            }
-        }
-
-        return temp;
-    }
-
-    Mat3x3 Mat3x3::Invert() const {
-        Mat3x3 temp;
-
-        auto determinant = this->Determinant();
-        if (abs(determinant) < 0.000001f) {
-            throw std::runtime_error("Inverse matrix can't be found: determinant is equal 0");
-        }
-
-        for (std::size_t i = 0; i < RAW_COUNT; ++i) {
-            for (std::size_t j = 0; j < COLUMN_COUNT; ++j) {
-                temp[i][j] = (m_matrix.solid_arrays[(j + 1) % 3][(i + 1) % 3] * m_matrix.solid_arrays[(j + 2) % 3][(i + 2) % 3] 
-                    - (m_matrix.solid_arrays[(j + 1) % 3][(i + 2) % 3] * m_matrix.solid_arrays[(j + 2) % 3][(i + 1) % 3])) / determinant;
-            }
-        }
-
-        return temp;
-    }
+    // Mat3x3 Mat3x3::Invert() const {
+    //     Mat3x3 temp;
+    //
+    //     auto determinant = this->Determinant();
+    //     if (abs(determinant) < 0.000001f) {
+    //         throw std::runtime_error("Inverse matrix can't be found: determinant is equal 0");
+    //     }
+    //
+    //     for (std::size_t i = 0; i < RAW_COUNT; ++i) {
+    //         for (std::size_t j = 0; j < COLUMN_COUNT; ++j) {
+    //             temp[i][j] = (m_matrix.solid_arrays[(j + 1) % 3][(i + 1) % 3] * m_matrix.solid_arrays[(j + 2) % 3][(i + 2) % 3] 
+    //                 - (m_matrix.solid_arrays[(j + 1) % 3][(i + 2) % 3] * m_matrix.solid_arrays[(j + 2) % 3][(i + 1) % 3])) / determinant;
+    //         }
+    //     }
+    //
+    //     return temp;
+    // }
 
     Mat3x3 Mat3x3::operator*(const Mat3x3 &m) const noexcept {
         Mat3x3 temp;
