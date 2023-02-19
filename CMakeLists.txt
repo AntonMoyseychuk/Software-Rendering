@@ -9,5 +9,7 @@ endif()
 message("[user info] CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
 message("[user info] CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
 
+set(DEPENDENCIES_DIRECTORY "${CMAKE_SOURCE_DIR}/dependencies")
+
 add_subdirectory(rasterizer)
 #add_subdirectory(raytracer)
