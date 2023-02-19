@@ -11,7 +11,7 @@
 static const std::uint16_t w = 720, h = 480;
 
 #define TO_RASTER(screen_w, screen_h, v) \
-    math::Vector3((screen_w) * (1.0f + v.X()) / 2, (screen_h) * (1.0f + v.Y()) / 2, v.Z())
+    math::Vector3((screen_w) * (1.0f + v.x) / 2, (screen_h) * (1.0f + v.y) / 2, v.z)
 
 
 void OutputFrame(const std::vector<math::Color>& frameBuffer, const char* filename) {
@@ -71,8 +71,8 @@ int main(int argc, char* argv[]) {
                 #else
                     frameBuffer[x + y * w] = Color(255, 0, 255);
                 #endif
-            } else if (x >= 1 && x <= w - 2 && y >= 1 && y <= h - 2) {
-                frameBuffer[x + y * w] = Color(0.3f * 255, 0.3f * 255, 0.3f * 255);
+            } else if (x > 0 && x < w - 1 && y > 0 && y < h - 1) {
+                frameBuffer[x + y * w] = Color(255);
             }
         }
     }

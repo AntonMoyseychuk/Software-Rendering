@@ -5,8 +5,7 @@
 
 
 namespace math {
-    class Vector3 {
-    public:
+    struct Vector3 {
         Vector3();
         Vector3(float x, float y, float z = 0.0f);
         Vector3(float value);
@@ -17,6 +16,7 @@ namespace math {
         Vector3 operator+(const Vector3& vec) const noexcept;
         Vector3& operator+=(const Vector3& vec) noexcept;
 
+        Vector3 operator-() const noexcept;
         Vector3 operator-(const Vector3& vec) const noexcept;
         Vector3& operator-=(const Vector3& vec) noexcept;
 
@@ -24,21 +24,9 @@ namespace math {
         Vector3 operator*(float value) const noexcept;
         Vector3& operator*=(float value) noexcept;
 
-        Vector3 operator-() const noexcept;
-
-        float& X() noexcept;
-        const float& X() const noexcept;
-
-        float& Y() noexcept;
-        const float& Y() const noexcept;
-
-        float& Z() noexcept;
-        const float& Z() const noexcept;
-
         float& operator[](std::size_t idx);
         const float& operator[](std::size_t idx) const;
 
-    public:
         static const Vector3 RIGHT;
         static const Vector3 DOWN;
         static const Vector3 LEFT;
@@ -46,7 +34,6 @@ namespace math {
         static const Vector3 FORWARD;
         static const Vector3 BACKWARD;
 
-    private:
-        float m_x, m_y, m_z;
+        float x, y, z;
     };
 }

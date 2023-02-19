@@ -1,14 +1,13 @@
-#ifndef DECLARATIONS_H
-#define DECLARATIONS_H
+#pragma once
 #include <cstdint>
 #include <cstddef>
 
 namespace math {
     class LinMath;
-    class Vector3;
-    class Mat3x3;
+    struct Vector3;
+    struct Mat3x3;
 
     struct Color;
-}
 
-#endif
+    constexpr double EPSILON = 1e-6;
+}
