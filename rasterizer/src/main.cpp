@@ -61,17 +61,17 @@ int main(int argc, char* argv[]) {
             float gamma = LinMath::Dot(E2, sample);
 
             if (alpha >= 0.0f && beta >= 0.0f && gamma >= 0.0f) {
-                #define BLENDING
+                //#define BLENDING
                 #ifdef BLENDING
-                    frameBuffer[x + y * w] = Color(Color::CYAN * alpha + Color::RED * beta + Color::MAGENTA * gamma);
+                    frameBuffer[x + y * w] = Color(Color::CYAN * alpha + Color::YELLOW * beta + Color::MAGENTA * gamma);
                 #else
-                    frameBuffer[x + y * w] = Color(255, 0, 255);
+                    frameBuffer[x + y * w] = Color::YELLOW;
                 #endif
             }
         }
     }
 
-    OutputFrame(frameBuffer, "D:\\Studies\\Graphics\\software_rendering\\out\\triangle.ppm");
+    OutputFrame(frameBuffer, "D:\\Studies\\Graphics\\software_rendering\\rasterizer\\out\\triangle.ppm");
 
     return 0;
 }
