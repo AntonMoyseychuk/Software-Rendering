@@ -13,6 +13,15 @@ namespace math {
         Color& operator+=(const Color& c) noexcept;
         Color operator+(const Color& c) const noexcept;
 
+        static const Color RED;
+        static const Color GREEN;
+        static const Color BLUE;
+        static const Color YELLOW;
+        static const Color MAGENTA;
+        static const Color CYAN;
+        static const Color WHITE;
+        static const Color BLACK;
+
         std::uint8_t r, g, b, a;
     };
 }

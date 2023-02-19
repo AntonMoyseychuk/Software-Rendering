@@ -11,23 +11,23 @@
 static const std::uint16_t w = 720, h = 480;
 
 #define TO_RASTER(screen_w, screen_h, v) \
-    math::Vector3((screen_w) * (1.0f + v.x) / 2, (screen_h) * (1.0f + v.y) / 2, v.z)
+    math::Vector3((screen_w) / 2 * (1.0f + v.x), (screen_h) / 2 * (1.0f - v.y), v.z)
 
 
 void OutputFrame(const std::vector<math::Color>& frameBuffer, const char* filename) {
     std::ofstream file(filename, std::ios_base::binary);
     file << "P3\n" << w << " " << h << "\n" << 255 << "\n ";
-    for (std::int64_t i = frameBuffer.size() - 1; i >= 0 ; --i) {
-        file << static_cast<std::int32_t>(frameBuffer[i].r) << " " 
-            << static_cast<std::int32_t>(frameBuffer[i].g) << " " 
-            << static_cast<std::int32_t>(frameBuffer[i].b) << " ";
+    for (std::size_t i = 0; i < frameBuffer.size() ; ++i) {
+        file << static_cast<std::uint32_t>(frameBuffer[i].r) << " " 
+            << static_cast<std::uint32_t>(frameBuffer[i].g) << " " 
+            << static_cast<std::uint32_t>(frameBuffer[i].b) << " ";
     }
 }
 
 
 int main(int argc, char* argv[]) {
     using namespace math;
-
+    
     Vector3 v0(-0.5, -0.5, 1.0);
     Vector3 v1( 0.0,  0.5, 1.0);
     Vector3 v2( 0.5, -0.5, 1.0);
@@ -35,10 +35,6 @@ int main(int argc, char* argv[]) {
     v0 = TO_RASTER(w, h, v0);
     v1 = TO_RASTER(w, h, v1);
     v2 = TO_RASTER(w, h, v2);
-
-    Color color0(255, 0, 255);
-    Color color1(255, 255, 0);
-    Color color2(0, 255, 255);
 
     auto M = LinMath::Transpose(Mat3x3(v0, v1, v2));
 
@@ -67,12 +63,10 @@ int main(int argc, char* argv[]) {
             if (alpha >= 0.0f && beta >= 0.0f && gamma >= 0.0f) {
                 #define BLENDING
                 #ifdef BLENDING
-                    frameBuffer[x + y * w] = Color(color0 * alpha + color1 * beta + color2 * gamma);
+                    frameBuffer[x + y * w] = Color(Color::CYAN * alpha + Color::RED * beta + Color::MAGENTA * gamma);
                 #else
                     frameBuffer[x + y * w] = Color(255, 0, 255);
                 #endif
-            } else if (x > 0 && x < w - 1 && y > 0 && y < h - 1) {
-                frameBuffer[x + y * w] = Color(255);
             }
         }
     }
