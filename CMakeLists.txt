@@ -6,6 +6,9 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
 endif()
 
+set(CMAKE_GENERATOR_PLATFORM win32)
+
+message("[user info] CMAKE_GENERATOR_PLATFORM = ${CMAKE_GENERATOR_PLATFORM}")
 message("[user info] CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
 message("[user info] CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
 
