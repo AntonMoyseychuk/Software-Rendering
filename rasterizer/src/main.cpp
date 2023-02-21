@@ -1,13 +1,14 @@
-#include "lin_math.hpp"
-#include "mat3x3.hpp"
-#include "vector.hpp"
-#include "color.hpp"
+#include "math_3d/lin_math.hpp"
+#include "math_3d/mat3x3.hpp"
+#include "math_3d/vector.hpp"
+#include "math_3d/color.hpp"
 
 #include <iostream>
 #include <algorithm>
 #include <vector>
 #include <fstream>
 #include <SDL2/SDL.h>
+#include <Windows.h>
 
 #define ASSERT_SDL_CALL(expr, ...) if (!(expr)) { \
     std::cerr << SDL_GetError() << std::endl; \
@@ -77,9 +78,10 @@ int main( int argc, char* argv[] ) {
             float gamma = LinMath::Dot(E2, sample);
 
             if (alpha >= 0.0f && beta >= 0.0f && gamma >= 0.0f) {
-                //#define BLENDING
+                #define BLENDING
                 #ifdef BLENDING
-                    frameBuffer[x + y * w] = Color(Color::CYAN * alpha + Color::YELLOW * beta + Color::MAGENTA * gamma);
+                    Color result_color(Color::CYAN * alpha + Color::YELLOW * beta + Color::MAGENTA * gamma);
+                    frameBuffer[x + y * w] = SDL_MapRGB(surface->format, result_color.r,  result_color.g,  result_color.b);
                 #else
                     frameBuffer[x + y * w] = SDL_MapRGB(surface->format, Color::CYAN.r,  Color::CYAN.g,  Color::CYAN.b);
                 #endif
