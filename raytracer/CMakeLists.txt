@@ -1,4 +1,4 @@
-project(rasterizer)
+project(raytracer)
 
 file(GLOB SRC_FILES 
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
