@@ -1,5 +1,6 @@
 /build
 /dependencies
+/scripts
 
 own_math_3d/lib
 window_framework/lib

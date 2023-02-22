@@ -3,7 +3,6 @@
 
 #include "window_framework/window.hpp"
 
-
 #define TO_VIEWPORT(vector, viewport_w, viewport_h) \
     math::Vector3(viewport_w * (1.0f + vector.x) / 2, viewport_h * (1.0f - vector.y) / 2, vector.z)
 

@@ -8,7 +8,6 @@
 #include <memory>
 #include <stdint.h>
 
-
 //#define LOG_ALL
 
 namespace window_framework {

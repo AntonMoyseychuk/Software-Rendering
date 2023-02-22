@@ -174,7 +174,7 @@ namespace window_framework {
 
     const SDL_Surface* Window::GetSDLSurface() const noexcept {
         #ifdef LOG_ALL
-            LOG("log info", "Window::GetSDLSurface() const");
+           LOG("log info", "Window::GetSDLSurface() const");
         #endif
         return m_surface;
     }
