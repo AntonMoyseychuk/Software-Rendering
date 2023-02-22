@@ -2,6 +2,14 @@
 #include "math_3d/color.hpp"
 #include <iostream>
 
+#define LOG(tag, msg) std::cerr << '[' << (tag) << "] " << (msg) << '\n' \
+    << __FILE__ << " : " << __LINE__ << "\n\n"
+
+#define LOG_ERROR(condition, tag, msg) if (!(condition)) { \
+    LOG((tag), (msg)); \
+    exit(-1); \
+}
+
 #define MAP_RGBA(format, color) SDL_MapRGBA(format, color.r, color.g, color.b, color.a)
 
 namespace window_framework {
@@ -116,6 +124,12 @@ namespace window_framework {
             case SDL_QUIT:
                 m_is_quit = true;
                 break;
+            case SDL_WINDOWEVENT:
+                if(m_event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                    LOG("log info", "SDL_WINDOWEVENT_SIZE_CHANGED");
+                    SDL_GetWindowSize(m_window_ptr.get(), (int*)&m_width, (int*)&m_height);
+                    LOG_ERROR(UpdateSurface(), "sdl error", SDL_GetError());
+                }
             }
         }
     }
@@ -159,12 +173,16 @@ namespace window_framework {
     }
 
     const SDL_Surface* Window::GetSDLSurface() const noexcept {
-        LOG("log info", "Window::GetSDLSurface() const");
+        #ifdef LOG_ALL
+            LOG("log info", "Window::GetSDLSurface() const");
+        #endif
         return m_surface;
     }
 
     SDL_Surface* Window::GetSDLSurface() noexcept {
-        LOG("log info", "Window::GetSDLSurface()");
+        #ifdef LOG_ALL
+            LOG("log info", "Window::GetSDLSurface()");
+        #endif
         return m_surface;
     }
     

@@ -8,13 +8,6 @@
 #include <memory>
 #include <stdint.h>
 
-#define LOG(tag, msg) std::cerr << '[' << (tag) << "] " << (msg) << '\n' \
-    << __FILE__ << " : " << __LINE__ << "\n\n"
-
-#define LOG_ERROR(condition, tag, msg) if (!(condition)) { \
-    LOG((tag), (msg)); \
-    exit(-1); \
-}
 
 //#define LOG_ALL
 
