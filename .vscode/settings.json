@@ -72,6 +72,7 @@
         "xtree": "cpp",
         "condition_variable": "cpp",
         "functional": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "string_view": "cpp"
     }
 }

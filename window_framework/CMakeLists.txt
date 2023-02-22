@@ -1,27 +1,24 @@
-project(raytracer)
+set(LIB_NAME "window_framework_")
 
-file(GLOB SRC_FILES 
-    "${PROJECT_SOURCE_DIR}/src/*.cpp"
-    "${PROJECT_SOURCE_DIR}/src/*.hpp"
-)
+project("${LIB_NAME}${CMAKE_GENERATOR_PLATFORM}")
 
-add_executable(${PROJECT_NAME} ${SRC_FILES})
+file(GLOB LIB_SRC "${PROJECT_SOURCE_DIR}/src/*.cpp" "${PROJECT_SOURCE_DIR}/include/window_framework/*.hpp")
+
+add_library(${PROJECT_NAME} STATIC ${LIB_SRC})
 
 target_include_directories(${PROJECT_NAME} 
     PUBLIC "${MATH_3D_DIR}/include" 
     PUBLIC "${SDL_DIR}/include"
-    PUBLIC "${WINDOW_FRAMEWORK_DIR}/include"
+    PUBLIC "${PROJECT_SOURCE_DIR}/include/window_framework"
 )
 
 target_link_directories(${PROJECT_NAME} 
     PUBLIC "${SDL_DIR}/lib/${CMAKE_GENERATOR_PLATFORM}"
     PUBLIC "${MATH_3D_DIR}/lib/${CMAKE_GENERATOR_PLATFORM}"
-    PUBLIC "${WINDOW_FRAMEWORK_DIR}/lib/${CMAKE_GENERATOR_PLATFORM}"
 )
 
 target_link_libraries(${PROJECT_NAME} 
     "SDL2.lib" 
     "SDL2main.lib" 
     "own_math_3d_${CMAKE_GENERATOR_PLATFORM}.lib"
-    "window_framework_${CMAKE_GENERATOR_PLATFORM}.lib"
 )
