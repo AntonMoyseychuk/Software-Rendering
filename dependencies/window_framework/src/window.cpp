@@ -1,6 +1,8 @@
-#include "window.hpp"
+#include "window_framework/window.hpp"
 #include "math_3d/color.hpp"
+
 #include <iostream>
+
 
 #define LOG(tag, msg) std::cerr << '[' << (tag) << "] " << (msg) << '\n' \
     << __FILE__ << " : " << __LINE__ << "\n\n"

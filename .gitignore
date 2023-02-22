@@ -1,5 +1,5 @@
 /build
-/dependencies
+dependencies/SDL2
 /scripts
 
 own_math_3d/lib

@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 
         for(std::size_t y = 0; y < height; ++y) {
            for (std::size_t x = 0; x < width; ++x) {
-               buffer[x + y * width] = ((viewport_pos.x - x) * (viewport_pos.x - x) + (viewport_pos.y - y) * (viewport_pos.y - y) <= R * R) ? 
+               buffer[x + y * width] = ((viewport_pos - math::Vector3(x, y, 0)).Length() <= R) ? 
                   Color_t::YELLOW : Color_t::BLACK;
            }
         }
