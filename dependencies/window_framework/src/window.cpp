@@ -4,8 +4,7 @@
 #include <iostream>
 
 
-#define LOG(tag, msg) std::cerr << '[' << (tag) << "] " << (msg) << '\n' \
-    << __FILE__ << " : " << __LINE__ << "\n\n"
+#define LOG(tag, msg) std::cerr << '[' << (tag) << "] " << (msg) << '\n'
 
 #define LOG_ERROR(condition, tag, msg) if (!(condition)) { \
     LOG((tag), (msg)); \
@@ -34,14 +33,14 @@ namespace window_framework {
         : m_title(std::move(window.m_title)), m_width(window.m_width), m_height(window.m_height), m_is_quit(window.m_is_quit),
             m_window_ptr(std::move(window.m_window_ptr)), m_surface(window.m_surface), m_event(window.m_event)
     {
-        LOG("log info", "Window::Window(Window &&window)");
+        LOG("log info", __FUNCTION__);
 
         window.m_surface = nullptr;
         memset(&window.m_event, 0, sizeof(window.m_event));
     }
 
     Window &Window::operator=(Window &&window) noexcept {
-        LOG("log info", "Window::operator=(Window &&window)");
+        LOG("log info", __FUNCTION__);
 
         m_title = std::move(window.m_title);
         m_width = window.m_width;
@@ -59,7 +58,7 @@ namespace window_framework {
     }
 
     bool Window::InitializeSDL() {
-        LOG("log info", "Window::InitializeSDL()");
+        LOG("log info", __FUNCTION__);
         return SDL_Init(SDL_INIT_EVERYTHING) == 0;
     }
 
@@ -69,10 +68,10 @@ namespace window_framework {
     }
 
     bool Window::Init(const std::string_view title, std::uint32_t width, std::uint32_t height) {
-        LOG("log info", "Window::Init(const std::string_view title, std::uint32_t width, std::uint32_t height)");
+        LOG("log info", __FUNCTION__);
 
         if (m_window_ptr != nullptr) {
-            LOG("log info", "window is already exists. Don't use Init() method");
+            LOG("log info", __FUNCTION__);
             return false;
         }
 
@@ -90,14 +89,14 @@ namespace window_framework {
 
     bool Window::IsOpen() const noexcept {
         #ifdef LOG_ALL
-            LOG("log info", "Window::IsOpen()");
+            LOG("log info", __FUNCTION__);
         #endif
         return !m_is_quit;
     }
 
     void Window::FillPixelBuffer(const std::vector<math::Color> &pixels) const noexcept {
         #ifdef LOG_ALL
-            LOG("log info", "Window::FillPixelBuffer(const std::vector<math::Color> &pixels)");
+            LOG("log info", __FUNCTION__);
         #endif
 
         auto pixel_buffer = static_cast<std::uint32_t*>(m_surface->pixels);
@@ -110,7 +109,7 @@ namespace window_framework {
 
     void Window::PresentPixelBuffer() const noexcept {
         #ifdef LOG_ALL
-            LOG("log info", "Window::PresentPixelBuffer()");
+            LOG("log info", __FUNCTION__);
         #endif
 
         SDL_UpdateWindowSurface(m_window_ptr.get());
@@ -118,7 +117,7 @@ namespace window_framework {
 
     void Window::PollEvent() noexcept {
         #ifdef LOG_ALL
-            LOG("log info", "Window::PollEvent()");
+            LOG("log info", __FUNCTION__);
         #endif
 
         while (SDL_PollEvent(&m_event)) {
@@ -128,7 +127,7 @@ namespace window_framework {
                 break;
             case SDL_WINDOWEVENT:
                 if(m_event.window.event == SDL_WINDOWEVENT_RESIZED) {
-                    LOG("log info", "SDL_WINDOWEVENT_SIZE_CHANGED");
+                    LOG("event log info", "SDL_WINDOWEVENT_SIZE_CHANGED");
                     SDL_GetWindowSize(m_window_ptr.get(), (int*)&m_width, (int*)&m_height);
                     LOG_ERROR(UpdateSurface(), "sdl error", SDL_GetError());
                 }
@@ -137,19 +136,19 @@ namespace window_framework {
     }
 
     void Window::SetTitle(const std::string_view title) noexcept {
-        LOG("log info", "Window::SetTitle(const std::string_view title)");
+        LOG("log info", __FUNCTION__);
 
         m_title = title;
         SDL_SetWindowTitle(m_window_ptr.get(), m_title.c_str());
     }
 
     const std::string_view Window::GetTitle() const noexcept {
-        LOG("log info", "Window::GetTitle()");
+        LOG("log info", __FUNCTION__);
         return m_title;
     }
 
     void Window::SetWidth(std::uint32_t width) noexcept {
-        LOG("log info", "Window::SetWidth(std::uint32_t width)");
+        LOG("log info", __FUNCTION__);
         m_width = width;
         SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
 
@@ -157,12 +156,12 @@ namespace window_framework {
     }
 
     std::uint32_t Window::GetWidth() const noexcept {
-        LOG("log info", "Window::GetWidth()");
+        LOG("log info", __FUNCTION__);
         return m_width;
     }
 
     void Window::SetHeight(std::uint32_t height) noexcept {
-        LOG("log info", "Window::SetHeight(std::uint32_t height)");
+        LOG("log info", __FUNCTION__);
         m_height = height;
         SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
         
@@ -170,27 +169,27 @@ namespace window_framework {
     }
 
     std::uint32_t Window::GetHeight() const noexcept {
-        LOG("log info", "Window::SetHeight(std::uint32_t height)");
+        LOG("log info", __FUNCTION__);
         return m_height;
     }
 
     const SDL_Surface* Window::GetSDLSurface() const noexcept {
         #ifdef LOG_ALL
-           LOG("log info", "Window::GetSDLSurface() const");
+           LOG("log info", __FUNCTION__);
         #endif
         return m_surface;
     }
 
     SDL_Surface* Window::GetSDLSurface() noexcept {
         #ifdef LOG_ALL
-            LOG("log info", "Window::GetSDLSurface()");
+            LOG("log info", __FUNCTION__);
         #endif
         return m_surface;
     }
     
     void Window::SDLDeinitializer::operator()(bool *is_sdl_initialized) const {
         if (is_sdl_initialized) {
-            LOG("log info", "SDLDeinitializer::SDL_Quit()");
+            LOG("log info", __FUNCTION__);
             SDL_Quit();
             *is_sdl_initialized = false;
         }
@@ -198,7 +197,7 @@ namespace window_framework {
     
     void Window::WindowDeleter::operator()(SDL_Window *window) const {
         if (window != nullptr) {
-            LOG("log info", "SDLDeinitializer::SDL_DestroyWindow(window)");
+            LOG("log info", __FUNCTION__);
             SDL_DestroyWindow(window);
             window = nullptr;
         }

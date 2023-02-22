@@ -1,7 +1,5 @@
 #pragma once
 #include "declarations.hpp"
-#include "vector.hpp"
-
 
 namespace math {
     struct Mat3x3 {

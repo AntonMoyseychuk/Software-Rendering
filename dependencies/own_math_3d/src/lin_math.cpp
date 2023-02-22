@@ -1,6 +1,6 @@
 #include "math_3d/lin_math.hpp"
 
-#include "math_3d/vector.hpp"
+#include "math_3d/vector3.hpp"
 #include "math_3d/mat3x3.hpp"
 
 #include <stdexcept>

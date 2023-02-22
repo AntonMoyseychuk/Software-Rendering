@@ -1,5 +1,5 @@
 #include "math_3d/color.hpp"
-#include "math_3d/vector.hpp"
+#include "math_3d/vector3.hpp"
 
 #include <algorithm>
 
