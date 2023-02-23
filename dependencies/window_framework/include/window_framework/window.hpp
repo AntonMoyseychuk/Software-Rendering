@@ -13,7 +13,6 @@
 namespace window_framework {
     class Window {
     public:
-        // ~Window();
         static Window* Get() noexcept;
         bool Init(const std::string_view title, std::uint32_t width, std::uint32_t height);
         
@@ -47,17 +46,15 @@ namespace window_framework {
 
     private:
         struct SDLDeinitializer {
-            SDLDeinitializer() = default;
-            void operator()(bool* is_sdl_initialized) const;
+            void operator()(bool* is_initialized) const;
         };
 
         struct WindowDeleter {
-            WindowDeleter() = default;
             void operator()(SDL_Window* window) const;
         };
 
     private:
-        static std::unique_ptr<bool, SDLDeinitializer> is_sdl_initialized;
+        static std::unique_ptr<bool, SDLDeinitializer> is_sdl_initialized_ptr;
 
     private:
         std::string m_title;
@@ -65,7 +62,7 @@ namespace window_framework {
         bool m_is_quit = false;
 
         std::unique_ptr<SDL_Window, WindowDeleter> m_window_ptr = nullptr;
-        mutable SDL_Surface* m_surface = nullptr;
+        mutable SDL_Surface* m_surface_ptr = nullptr;
         SDL_Event m_event;
     };
 }

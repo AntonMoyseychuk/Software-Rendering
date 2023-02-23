@@ -1,29 +1,20 @@
 #include "window_framework/window.hpp"
+#include "window_framework/logger.hpp"
 #include "math_3d/color.hpp"
-
-#include <iostream>
-
-
-#define LOG(tag, msg) std::cerr << '[' << (tag) << "] " << (msg) << '\n'
-
-#define LOG_ERROR(condition, tag, msg) if (!(condition)) { \
-    LOG((tag), (msg)); \
-    exit(-1); \
-}
 
 #define MAP_RGBA(format, color) SDL_MapRGBA(format, color.r, color.g, color.b, color.a)
 
 namespace window_framework {
-    std::unique_ptr<bool, Window::SDLDeinitializer> Window::is_sdl_initialized = false;
+    std::unique_ptr<bool, Window::SDLDeinitializer> Window::is_sdl_initialized_ptr = nullptr;
 
     Window* Window::Get() noexcept {
         LOG("log info", "Window::Get()");
 
-        if (is_sdl_initialized == false) {
-            is_sdl_initialized.reset(new bool(InitializeSDL()));
+        if (is_sdl_initialized_ptr == nullptr || *is_sdl_initialized_ptr == false) {
+            is_sdl_initialized_ptr.reset(new bool(InitializeSDL()));
         }
 
-        LOG_ERROR(*is_sdl_initialized, "sdl error", SDL_GetError());
+        LOG_ERROR(*is_sdl_initialized_ptr, "sdl error", SDL_GetError());
         
         static Window window;
         return &window;
@@ -31,11 +22,11 @@ namespace window_framework {
 
     Window::Window(Window &&window)
         : m_title(std::move(window.m_title)), m_width(window.m_width), m_height(window.m_height), m_is_quit(window.m_is_quit),
-            m_window_ptr(std::move(window.m_window_ptr)), m_surface(window.m_surface), m_event(window.m_event)
+            m_window_ptr(std::move(window.m_window_ptr)), m_surface_ptr(window.m_surface_ptr), m_event(window.m_event)
     {
         LOG("log info", __FUNCTION__);
 
-        window.m_surface = nullptr;
+        window.m_surface_ptr = nullptr;
         memset(&window.m_event, 0, sizeof(window.m_event));
     }
 
@@ -48,10 +39,10 @@ namespace window_framework {
         m_is_quit = window.m_is_quit;
 
         m_window_ptr = std::move(window.m_window_ptr);
-        m_surface = window.m_surface;
+        m_surface_ptr = window.m_surface_ptr;
         m_event = window.m_event;
 
-        window.m_surface = nullptr;
+        window.m_surface_ptr = nullptr;
         memset(&window.m_event, 0, sizeof(window.m_event));
 
         return *this;
@@ -63,8 +54,8 @@ namespace window_framework {
     }
 
     bool Window::UpdateSurface() const noexcept {
-        m_surface = SDL_GetWindowSurface(m_window_ptr.get());
-        return m_surface != nullptr;
+        m_surface_ptr = SDL_GetWindowSurface(m_window_ptr.get());
+        return m_surface_ptr != nullptr;
     }
 
     bool Window::Init(const std::string_view title, std::uint32_t width, std::uint32_t height) {
@@ -99,10 +90,10 @@ namespace window_framework {
             LOG("log info", __FUNCTION__);
         #endif
 
-        auto pixel_buffer = static_cast<std::uint32_t*>(m_surface->pixels);
+        auto pixel_buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
         for (std::size_t y = 0; y < m_height; ++y) {
             for (std::size_t x = 0; x < m_width; ++x) {
-                pixel_buffer[x + y * m_width] = MAP_RGBA(m_surface->format, pixels[x + y * m_width]);
+                pixel_buffer[x + y * m_width] = MAP_RGBA(m_surface_ptr->format, pixels[x + y * m_width]);
             }
         }
     }
@@ -177,21 +168,21 @@ namespace window_framework {
         #ifdef LOG_ALL
            LOG("log info", __FUNCTION__);
         #endif
-        return m_surface;
+        return m_surface_ptr;
     }
 
     SDL_Surface* Window::GetSDLSurface() noexcept {
         #ifdef LOG_ALL
             LOG("log info", __FUNCTION__);
         #endif
-        return m_surface;
+        return m_surface_ptr;
     }
     
-    void Window::SDLDeinitializer::operator()(bool *is_sdl_initialized) const {
-        if (is_sdl_initialized) {
+    void Window::SDLDeinitializer::operator()(bool *is_sdl_initialized_ptr) const {
+        if (is_sdl_initialized_ptr) {
             LOG("log info", __FUNCTION__);
             SDL_Quit();
-            *is_sdl_initialized = false;
+            *is_sdl_initialized_ptr = false;
         }
     }
     

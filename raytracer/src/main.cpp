@@ -6,6 +6,10 @@
 #define TO_VIEWPORT(vector, viewport_w, viewport_h) \
     math::Vector3(viewport_w * (1.0f + vector.x) / 2, viewport_h * (1.0f - vector.y) / 2, vector.z)
 
+void RenderSphere() noexcept {
+    
+}
+
 int main(int argc, char* argv[]) {
     std::uint32_t width = 1080, height = 720, R = 50;
 
