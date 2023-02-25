@@ -4,7 +4,7 @@
 namespace math {
     struct Mat3x3 {
         Mat3x3();
-        Mat3x3(const Vector3 &r0, const Vector3 &r1, const Vector3 &r2);
+        Mat3x3(const Vector3f &r0, const Vector3f &r1, const Vector3f &r2);
 
         void SetIdentity() noexcept;
         float Determinant() const noexcept;

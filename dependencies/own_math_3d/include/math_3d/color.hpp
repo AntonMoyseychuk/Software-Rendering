@@ -5,7 +5,7 @@ namespace math {
     struct Color {
         Color() = default;
         Color(std::uint8_t value);
-        Color(const Vector3& vec);
+        Color(const Vector3f& vec);
         Color(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 255);
 
         Color& operator*=(float value) noexcept;

@@ -23,7 +23,7 @@ namespace math {
     {
     }
     
-    Color::Color(const Vector3 &vec)
+    Color::Color(const Vector3f &vec)
         : Color(std::clamp(vec.x * 255, 0.f, 255.f), std::clamp(vec.y * 255, 0.f, 255.f), std::clamp(vec.z * 255, 0.f, 255.f))
     {
     }
