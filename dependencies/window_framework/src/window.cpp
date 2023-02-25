@@ -118,7 +118,8 @@ namespace window_framework {
                 break;
             case SDL_WINDOWEVENT:
                 if(m_event.window.event == SDL_WINDOWEVENT_RESIZED) {
-                    LOG("event", "SDL_WINDOWEVENT_SIZE_CHANGED");
+                    LOG_WIN_EVENT("SDL_WINDOWEVENT_RESIZED", 
+                        "New size -> [" + std::to_string(m_surface_ptr->w) + ", " + std::to_string(m_surface_ptr->h) + "]");
                     SDL_GetWindowSize(m_window_ptr.get(), (int*)&m_width, (int*)&m_height);
                     LOG_SDL_ERROR(UpdateSurface(), SDL_GetError());
                 }

@@ -6,13 +6,13 @@ namespace shape {
         : position(pos), radius(r)
     {
     }
-    
-    bool Sphere::IsRayIntersect(const math::Vector3f &ray_orig, const math::Vector3f &ray_dir) const noexcept {
+
+    bool Sphere::IsIntersect(const math::Ray &ray) const noexcept {
         using namespace math;
 
-        Vector3f AB = position - ray_orig;
+        Vector3f AB = position - ray.original;
 
-        auto AC = LinMath::Dot(AB, ray_dir) / ray_dir.Length();
+        auto AC = LinMath::Dot(AB, ray.direction) / ray.direction.Length();
         if (AC < 0.000001f) {
             return false;
         }

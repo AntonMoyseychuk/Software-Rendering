@@ -9,5 +9,7 @@ namespace math {
 
     struct Color;
 
+    struct Ray;
+
     constexpr double EPSILON = 1e-6;
 }

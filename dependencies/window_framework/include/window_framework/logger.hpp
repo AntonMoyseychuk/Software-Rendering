@@ -9,3 +9,5 @@
 }
 
 #define LOG_WIN_INFO(msg) LOG("window info", (msg))
+
+#define LOG_WIN_EVENT(event_type, msg) LOG("event", "type: " + std::string(event_type) + ". " + msg)
