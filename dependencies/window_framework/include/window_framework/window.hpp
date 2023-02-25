@@ -1,14 +1,14 @@
 #pragma once
 #include "math_3d/declarations.hpp"
 
+#include "window_framework/logger.hpp"
+
 #include <SDL2/SDL.h>
 #include <string>
 #include <string_view>
 #include <vector>
 #include <memory>
 #include <stdint.h>
-
-//#define LOG_ALL
 
 namespace window_framework {
     class Window {
@@ -20,6 +20,8 @@ namespace window_framework {
         void FillPixelBuffer(const std::vector<math::Color>& pixels) const noexcept;
         void PresentPixelBuffer() const noexcept;
         void PollEvent() noexcept;
+
+        math::Color GetPixelColor(std::size_t x, std::size_t y) noexcept;
 
         void SetTitle(const std::string_view title) noexcept;
         const std::string_view GetTitle() const noexcept;
