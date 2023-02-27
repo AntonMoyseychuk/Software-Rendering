@@ -3,10 +3,10 @@
 
 namespace math {
     struct Ray {
-        Vec3f original;
-        Vec3f direction;
+        Vector<float> original;
+        Vector<float> direction;
 
         Ray() = default;
-        Ray(const Vec3f& original, const Vec3f& direction);
+        Ray(const Vector<float>& original, const Vector<float>& direction);
     };
 }

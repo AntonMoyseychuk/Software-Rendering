@@ -23,7 +23,7 @@ namespace math {
     {
     }
     
-    Color::Color(const Vec3f &vec)
+    Color::Color(const Vector<float>& vec)
         : Color(static_cast<std::uint8_t>(std::clamp(vec.x * 255, 0.f, 255.f)), 
                 static_cast<std::uint8_t>(std::clamp(vec.y * 255, 0.f, 255.f)), 
                 static_cast<std::uint8_t>(std::clamp(vec.z * 255, 0.f, 255.f))) 

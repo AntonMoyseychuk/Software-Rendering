@@ -43,14 +43,14 @@ math::Color CastRay(const math::Ray& ray, const std::vector<Sphere_t>& spheres) 
 }
 
 void RenderSphere(std::vector<Color_t>& buffer,  const std::vector<Sphere_t>& spheres) noexcept {
-    math::Vec3f camera_dir(0.0f, 0.0f, -1.0f);
+    math::vec4f camera_dir(0.0f, 0.0f, -1.0f);
     math::Ray ray({0.0f}, camera_dir);
 
     for (std::size_t y = 0; y < height; ++y) {
         for (std::size_t x = 0; x < width; ++x) {
             float pixel_x = (2 * (x + 0.5f) / static_cast<float>(width) - 1) * tanf(FOV / 2.f) * width / static_cast<float>(height);
             float pixel_y = -(2 * (y + 0.5f) / static_cast<float>(height) - 1) * tanf(FOV /2.f);
-            ray.direction = math::Vec3f(pixel_x, pixel_y, ray.direction.z).Normalize();
+            ray.direction = math::vec4f(pixel_x, pixel_y, ray.direction.z).Normalize();
             buffer[y * width + x] = CastRay(ray, spheres);
         }
     }
@@ -61,10 +61,11 @@ int main(int argc, char* argv[]) {
     auto init_res = window->Init("Raytracer", width, height);
 
     std::vector<Sphere_t> spheres = {
-        { math::Vec3f(-0.3f, 0.0f, -4), 0.3f, gfx::Material(Color_t::YELLOW, 1.5f) },
-        { math::Vec3f(0.0f, 0.0f, -3),  0.3f, gfx::Material(Color_t::MAGENTA, 1.5f) },
-        { math::Vec3f(0.3f, 0.0f, -2),  0.3f, gfx::Material(Color_t::GREEN, 1.5f) },
+        { math::vec4f(-0.3f, 0.0f, -4), 0.3f, gfx::Material(Color_t::YELLOW, 1.5f) },
+        { math::vec4f(0.0f, 0.0f, -3),  0.3f, gfx::Material(Color_t::MAGENTA, 1.5f) },
+        { math::vec4f(0.3f, 0.0f, -2),  0.3f, gfx::Material(Color_t::GREEN, 1.5f) },
     };
+
 
     std::vector<Color_t> buffer(width * height);
 

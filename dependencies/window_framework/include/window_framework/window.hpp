@@ -1,6 +1,4 @@
 #pragma once
-#include "math_3d/declarations.hpp"
-
 #include "window_framework/logger.hpp"
 
 #include <SDL2/SDL.h>
@@ -9,6 +7,10 @@
 #include <vector>
 #include <memory>
 #include <stdint.h>
+
+namespace math {
+    struct Color;
+}
 
 namespace window_framework {
     class Window {

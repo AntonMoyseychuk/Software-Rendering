@@ -1,5 +1,4 @@
 #include "math_3d/mat3x3.hpp"
-#include "math_3d/vector.hpp"
 
 #include <stdexcept>
 
@@ -9,7 +8,7 @@ namespace math
         this->SetIdentity();
     }
 
-    Mat3x3::Mat3x3(const Vec3f &r0, const Vec3f &r1, const Vec3f &r2) {
+    Mat3x3::Mat3x3(const Vector<float> &r0, const Vector<float> &r1, const Vector<float> &r2) {
         const auto raw_size = sizeof(solid_array[0]);
         memcpy_s(solid_array[0], raw_size, &r0.x, raw_size);
         memcpy_s(solid_array[1], raw_size, &r1.x, raw_size);

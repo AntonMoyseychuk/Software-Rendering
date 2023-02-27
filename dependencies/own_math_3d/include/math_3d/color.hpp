@@ -1,11 +1,11 @@
 #pragma once
-#include "declarations.hpp"
+#include "math_3d/vector.hpp"
 
 namespace math {
     struct Color {
         Color() = default;
         Color(std::uint8_t value);
-        Color(const Vec3f& vec);
+        Color(const Vector<float>& vec);
         Color(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 255);
 
         Color& operator*=(float value) noexcept;
