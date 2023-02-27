@@ -1,16 +1,15 @@
 project(raytracer)
 
 file(GLOB SRC_FILES 
-    "${PROJECT_SOURCE_DIR}/src/*.cpp" 
-    "${PROJECT_SOURCE_DIR}/src/*.hpp"
-    "${PROJECT_SOURCE_DIR}/shapes/*.cpp" 
-    "${PROJECT_SOURCE_DIR}/shapes/*.hpp"
+    "${PROJECT_SOURCE_DIR}/src/*.cpp"
+    "${PROJECT_SOURCE_DIR}/shapes/*.cpp"
+    "${PROJECT_SOURCE_DIR}/graphics/*.cpp"
 
-    "${MATH_3D_DIR}/src/*.cpp" 
-    "${MATH_3D_DIR}/include/math_3d/*.hpp"
+    "${MATH_3D_DIR}/src/*.cpp"
 
-    "${WINDOW_FRAMEWORK_DIR}/src/*.cpp" 
-    "${WINDOW_FRAMEWORK_DIR}/include/window_framework/*.hpp"
+    "${WINDOW_FRAMEWORK_DIR}/src/*.cpp"
+
+    "${IMGUI_DIR}/imgui/*.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
@@ -19,8 +18,7 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC "${MATH_3D_DIR}/include" 
     PUBLIC "${SDL_DIR}/include"
     PUBLIC "${WINDOW_FRAMEWORK_DIR}/include"
-    
-    PUBLIC "${PROJECT_SOURCE_DIR}"
+    PUBLIC "${IMGUI_DIR}"
 )
 
 target_link_directories(${PROJECT_NAME} 

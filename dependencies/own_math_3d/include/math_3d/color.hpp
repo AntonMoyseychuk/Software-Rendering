@@ -14,8 +14,11 @@ namespace math {
         Color& operator/=(float value) noexcept;
         Color operator/(float value) const noexcept;
 
-        Color& operator+=(const Color& c) noexcept;
-        Color operator+(const Color& c) const noexcept;
+        Color& operator+=(const Color& color) noexcept;
+        Color operator+(const Color& color) const noexcept;
+
+        bool operator==(const Color& color) const noexcept;
+        bool operator!=(const Color& color) const noexcept;
 
         static const Color RED;
         static const Color GREEN;

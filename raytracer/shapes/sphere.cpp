@@ -2,12 +2,13 @@
 #include "math_3d/lin_math.hpp"
 
 namespace shape {
-    Sphere::Sphere(const math::Vector3f &pos, float r)
-        : position(pos), radius(r)
+    Sphere::Sphere(const math::Vector3f& p, float r, const gfx::Material &m)
+        : position(p), radius(r), material(m)
     {
     }
 
-    bool Sphere::IsIntersect(const math::Ray &ray) const noexcept {
+    bool Sphere::IsIntersect(const math::Ray &ray) const noexcept
+    {
         using namespace math;
 
         Vector3f AB = position - ray.original;

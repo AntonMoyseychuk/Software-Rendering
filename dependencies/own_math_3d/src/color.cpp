@@ -24,9 +24,11 @@ namespace math {
     }
     
     Color::Color(const Vector3f &vec)
-        : Color(std::clamp(vec.x * 255, 0.f, 255.f), std::clamp(vec.y * 255, 0.f, 255.f), std::clamp(vec.z * 255, 0.f, 255.f))
-    {
-    }
+        : Color(static_cast<std::uint8_t>(std::clamp(vec.x * 255, 0.f, 255.f)), 
+                static_cast<std::uint8_t>(std::clamp(vec.y * 255, 0.f, 255.f)), 
+                static_cast<std::uint8_t>(std::clamp(vec.z * 255, 0.f, 255.f))) 
+        {
+        }
 
     Color &Color::operator*=(float value) noexcept {
         r = std::clamp(static_cast<int>(r * value), 0, 255);
@@ -80,5 +82,13 @@ namespace math {
             std::clamp(b + c.b, 0, 255),
             std::clamp(a + c.a, 0, 255)
         );
+    }
+
+    bool math::Color::operator==(const Color &color) const noexcept {
+        return rgba == color.rgba;
+    }
+    
+    bool Color::operator!=(const Color &color) const noexcept {
+        return rgba != color.rgba;
     }
 }

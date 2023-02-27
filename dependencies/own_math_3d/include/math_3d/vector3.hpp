@@ -3,7 +3,6 @@
 
 #include <type_traits>
 
-
 namespace math {
     struct Vector3f {
         Vector3f();

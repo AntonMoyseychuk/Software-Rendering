@@ -1,6 +1,3 @@
 /build
-dependencies/SDL2
-/scripts
+dependencies/vendor
 
-own_math_3d/lib
-window_framework/lib
