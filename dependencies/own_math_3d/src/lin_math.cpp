@@ -1,24 +1,32 @@
 #include "math_3d/lin_math.hpp"
 
-#include "math_3d/vector3.hpp"
+#include "math_3d/vector.hpp"
 #include "math_3d/mat3x3.hpp"
 
 #include <stdexcept>
 
 
 namespace math {
-    float LinMath::Dot(const Vector3f &a, const Vector3f &b) noexcept {
+    float LinMath::Dot(const Vec3f &a, const Vec3f &b) noexcept {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
 
-    Vector3f LinMath::Cross(const Vector3f &a, const Vector3f &b) noexcept {
-        return Vector3f(
+    Vec3f LinMath::Cross(const Vec3f &a, const Vec3f &b) noexcept {
+        return Vec3f(
             a.y * b.z - a.z * b.y,
             a.z * b.x - a.x * b.z,
             a.x * b.y - a.y * b.x
         );
     }
     
+    Vec3f LinMath::Mult(const Vec3f vec, const Mat3x3 &mat) noexcept {
+        return Vec3f(
+            vec.x * mat[0][0] + vec.y * mat[1][0] + vec.z * mat[2][0],
+            vec.x * mat[0][1] + vec.y * mat[1][1] + vec.z * mat[2][1],
+            vec.x * mat[0][2] + vec.y * mat[1][2] + vec.z * mat[2][2]
+        );
+    }
+
     Mat3x3 LinMath::Transpose(const Mat3x3& mat) noexcept {
         auto temp = mat;
 

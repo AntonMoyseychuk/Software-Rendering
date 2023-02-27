@@ -2,7 +2,7 @@
 #include "math_3d/lin_math.hpp"
 
 namespace shape {
-    Sphere::Sphere(const math::Vector3f& p, float r, const gfx::Material &m)
+    Sphere::Sphere(const math::Vec3f& p, float r, const gfx::Material &m)
         : position(p), radius(r), material(m)
     {
     }
@@ -11,7 +11,7 @@ namespace shape {
     {
         using namespace math;
 
-        Vector3f AB = position - ray.original;
+        Vec3f AB = position - ray.original;
 
         auto AC = LinMath::Dot(AB, ray.direction) / ray.direction.Length();
         if (AC < 0.000001f) {

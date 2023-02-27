@@ -1,12 +1,12 @@
 #pragma once
-#include "vector3.hpp"
+#include "vector.hpp"
 
 namespace math {
     struct Ray {
-        Vector3f original;
-        Vector3f direction;
+        Vec3f original;
+        Vec3f direction;
 
         Ray() = default;
-        Ray(const Vector3f& original, const Vector3f& direction);
+        Ray(const Vec3f& original, const Vec3f& direction);
     };
 }

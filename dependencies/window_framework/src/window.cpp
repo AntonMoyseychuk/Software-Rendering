@@ -11,7 +11,7 @@ namespace window_framework {
         LOG_WIN_INFO(__FUNCTION__);
 
         if (is_sdl_initialized_ptr == nullptr || *is_sdl_initialized_ptr == false) {
-            is_sdl_initialized_ptr.reset(new bool(InitializeSDL()));
+            is_sdl_initialized_ptr.reset(new bool(_InitializeSDL()));
         }
 
         LOG_SDL_ERROR(*is_sdl_initialized_ptr, SDL_GetError());
@@ -22,7 +22,8 @@ namespace window_framework {
 
     Window::Window(Window &&window)
         : m_title(std::move(window.m_title)), m_width(window.m_width), m_height(window.m_height), m_is_quit(window.m_is_quit),
-            m_window_ptr(std::move(window.m_window_ptr)), m_surface_ptr(window.m_surface_ptr), m_event(window.m_event)
+            m_window_ptr(std::move(window.m_window_ptr)), m_surface_ptr(window.m_surface_ptr), 
+                m_event(window.m_event)
     {
         LOG_WIN_INFO(__FUNCTION__);
 
@@ -48,17 +49,35 @@ namespace window_framework {
         return *this;
     }
 
-    bool Window::InitializeSDL() {
+    bool Window::_InitializeSDL() {
         LOG_WIN_INFO(__FUNCTION__);
         return SDL_Init(SDL_INIT_EVERYTHING) == 0;
     }
 
-    bool Window::UpdateSurface() const noexcept {
+    bool Window::_UpdateSurface() const noexcept {
         m_surface_ptr = SDL_GetWindowSurface(m_window_ptr.get());
         return m_surface_ptr != nullptr;
     }
 
-    bool Window::Init(const std::string_view title, std::uint32_t width, std::uint32_t height) {
+    void Window::_OnEvent(SDL_Event *event) noexcept {
+        switch (m_event.type)  {
+        case SDL_QUIT:
+            m_is_quit = true;
+            break;
+
+        case SDL_WINDOWEVENT:
+            if(m_event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                LOG_WIN_EVENT("SDL_WINDOWEVENT_RESIZED", 
+                    "New size -> [" + std::to_string(m_surface_ptr->w) + ", " + std::to_string(m_surface_ptr->h) + "]");
+                SDL_GetWindowSize(m_window_ptr.get(), (int*)&m_width, (int*)&m_height);
+                LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
+            }
+            break;
+        }
+    }
+    
+    bool Window::Init(const std::string_view title, std::uint32_t width, std::uint32_t height)
+    {
         LOG_WIN_INFO(__FUNCTION__);
 
         if (m_window_ptr != nullptr) {
@@ -73,7 +92,7 @@ namespace window_framework {
         LOG_SDL_ERROR(m_window_ptr != nullptr, SDL_GetError());
         SDL_SetWindowResizable(m_window_ptr.get(), SDL_TRUE);
 
-        LOG_SDL_ERROR(UpdateSurface() == true, SDL_GetError());
+        LOG_SDL_ERROR(_UpdateSurface() == true, SDL_GetError());
 
         return true;
     }
@@ -112,18 +131,7 @@ namespace window_framework {
         #endif
 
         while (SDL_PollEvent(&m_event)) {
-            switch (m_event.type)  {
-            case SDL_QUIT:
-                m_is_quit = true;
-                break;
-            case SDL_WINDOWEVENT:
-                if(m_event.window.event == SDL_WINDOWEVENT_RESIZED) {
-                    LOG_WIN_EVENT("SDL_WINDOWEVENT_RESIZED", 
-                        "New size -> [" + std::to_string(m_surface_ptr->w) + ", " + std::to_string(m_surface_ptr->h) + "]");
-                    SDL_GetWindowSize(m_window_ptr.get(), (int*)&m_width, (int*)&m_height);
-                    LOG_SDL_ERROR(UpdateSurface(), SDL_GetError());
-                }
-            }
+            this->_OnEvent(&m_event);
         }
     }
 
@@ -158,7 +166,7 @@ namespace window_framework {
         m_width = width;
         SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
 
-        LOG_SDL_ERROR(UpdateSurface() == true, SDL_GetError());
+        LOG_SDL_ERROR(_UpdateSurface() == true, SDL_GetError());
     }
 
     std::uint32_t Window::GetWidth() const noexcept {
@@ -171,7 +179,7 @@ namespace window_framework {
         m_height = height;
         SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
         
-        LOG_SDL_ERROR(UpdateSurface() == true, SDL_GetError());
+        LOG_SDL_ERROR(_UpdateSurface() == true, SDL_GetError());
     }
 
     std::uint32_t Window::GetHeight() const noexcept {

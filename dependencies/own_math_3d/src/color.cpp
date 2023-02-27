@@ -1,5 +1,5 @@
 #include "math_3d/color.hpp"
-#include "math_3d/vector3.hpp"
+#include "math_3d/vector.hpp"
 
 #include <algorithm>
 
@@ -23,7 +23,7 @@ namespace math {
     {
     }
     
-    Color::Color(const Vector3f &vec)
+    Color::Color(const Vec3f &vec)
         : Color(static_cast<std::uint8_t>(std::clamp(vec.x * 255, 0.f, 255.f)), 
                 static_cast<std::uint8_t>(std::clamp(vec.y * 255, 0.f, 255.f)), 
                 static_cast<std::uint8_t>(std::clamp(vec.z * 255, 0.f, 255.f))) 

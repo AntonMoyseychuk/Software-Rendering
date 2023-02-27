@@ -4,7 +4,7 @@
 
 namespace math {
     class LinMath;
-    struct Vector3f;
+    struct Vec3f;
     struct Mat3x3;
 
     struct Color;
