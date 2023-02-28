@@ -8,11 +8,12 @@
 #include "window_framework/window.hpp"
 
 #include <iostream>
+#include <chrono>
 #include <cassert>
 
 //#define LOG_ALL
 
-std::uint32_t width = 1080, height = 720, R = 50;
+std::uint32_t width = 480, height = 360;
 const float FOV = 3.1415f / 4.0f;
 
 // #define TO_VIEWPORT(vector, viewport_w, viewport_h) \
@@ -20,8 +21,6 @@ const float FOV = 3.1415f / 4.0f;
 
 using Sphere_t = shape::Sphere;
 using Color_t = math::Color;
-
-#define MAX_RAY_DEPTH 3 
 
 math::Color CastRay(const math::Ray& ray, const std::vector<Sphere_t>& spheres) noexcept {
     assert(std::fabs(ray.direction.Length() - 1.0f) <= math::EPSILON);
@@ -43,8 +42,8 @@ math::Color CastRay(const math::Ray& ray, const std::vector<Sphere_t>& spheres) 
 }
 
 void RenderSphere(std::vector<Color_t>& buffer,  const std::vector<Sphere_t>& spheres) noexcept {
-    math::vec4f camera_dir(0.0f, 0.0f, -1.0f);
-    math::Ray ray({0.0f}, camera_dir);
+    const static math::vec4f CAMERA_DIR(0.0f, 0.0f, -1.0f), RAY_ORIGIN(0.0f);
+    math::Ray ray(RAY_ORIGIN, CAMERA_DIR);
 
     for (std::size_t y = 0; y < height; ++y) {
         for (std::size_t x = 0; x < width; ++x) {
@@ -69,6 +68,7 @@ int main(int argc, char* argv[]) {
 
     std::vector<Color_t> buffer(width * height);
 
+    auto frame_begin = std::chrono::steady_clock::now();
     while (window->IsOpen()) {
         window->PollEvent();
 
@@ -82,6 +82,10 @@ int main(int argc, char* argv[]) {
         
         window->FillPixelBuffer(buffer);
         window->PresentPixelBuffer();
+
+        auto frame_end = std::chrono::steady_clock::now();
+        window->SetTitle("Raytracer | " + std::to_string(1.0f / std::chrono::duration<float>(frame_end - frame_begin).count()));
+        frame_begin = frame_end;
     }
 
     return 0;

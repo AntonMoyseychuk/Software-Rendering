@@ -110,6 +110,7 @@ namespace window_framework {
         #endif
 
         auto pixel_buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
+
         for (std::size_t y = 0; y < m_height; ++y) {
             for (std::size_t x = 0; x < m_width; ++x) {
                 pixel_buffer[x + y * m_width] = MAP_RGBA(m_surface_ptr->format, pixels[x + y * m_width]);
@@ -150,14 +151,18 @@ namespace window_framework {
     }
 
     void Window::SetTitle(const std::string_view title) noexcept  {
-        LOG_WIN_INFO(__FUNCTION__);
+        #ifdef LOG_ALL
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
 
         m_title = title;
         SDL_SetWindowTitle(m_window_ptr.get(), m_title.c_str());
     }
 
-    const std::string_view Window::GetTitle() const noexcept {
-        LOG_WIN_INFO(__FUNCTION__);
+    const std::string& Window::GetTitle() const noexcept {
+        #ifdef LOG_ALL
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
         return m_title;
     }
 

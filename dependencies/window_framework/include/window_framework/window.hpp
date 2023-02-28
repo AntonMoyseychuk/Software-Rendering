@@ -3,7 +3,6 @@
 
 #include <SDL2/SDL.h>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <memory>
 #include <stdint.h>
@@ -26,7 +25,7 @@ namespace window_framework {
         math::Color GetPixelColor(std::size_t x, std::size_t y) noexcept;
 
         void SetTitle(const std::string_view title) noexcept;
-        const std::string_view GetTitle() const noexcept;
+        const std::string& GetTitle() const noexcept;
 
         void SetWidth(std::uint32_t width) noexcept;
         std::uint32_t GetWidth() const noexcept;
