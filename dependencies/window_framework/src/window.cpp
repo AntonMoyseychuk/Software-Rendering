@@ -221,14 +221,14 @@ namespace window_framework {
         return m_height;
     }
 
-    const SDL_Surface* Window::GetSDLSurface() const noexcept {
+    const SDL_Surface* Window::GetSDLSurfaceHandle() const noexcept {
         #ifdef LOG_ALL
            LOG_WIN_INFO(__FUNCTION__);
         #endif
         return m_surface_ptr;
     }
 
-    SDL_Surface* Window::GetSDLSurface() noexcept {
+    SDL_Surface* Window::GetSDLSurfaceHandle() noexcept {
         #ifdef LOG_ALL
             LOG_WIN_INFO(__FUNCTION__);
         #endif

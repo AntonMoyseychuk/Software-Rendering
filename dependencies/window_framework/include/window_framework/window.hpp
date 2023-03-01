@@ -34,8 +34,8 @@ namespace window_framework {
         void SetHeight(std::uint32_t height) noexcept;
         std::uint32_t GetHeight() const noexcept;
 
-        const SDL_Surface* GetSDLSurface() const noexcept;
-        SDL_Surface* GetSDLSurface() noexcept;
+        const SDL_Surface* GetSDLSurfaceHandle() const noexcept;
+        SDL_Surface* GetSDLSurfaceHandle() noexcept;
 
         Window(Window&& window);
         Window& operator=(Window&& window) noexcept;
