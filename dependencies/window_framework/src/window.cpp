@@ -1,7 +1,6 @@
 #include "window_framework/window.hpp"
 #include "math_3d/color.hpp"
 
-#define MAP_RGBA(format, color) SDL_MapRGBA(format, color.r, color.g, color.b, color.a)
 #define LOG_SDL_ERROR(condition, msg) LOG_WIN_ERROR((condition), "sdl error", msg)
 
 namespace window_framework {
@@ -49,12 +48,20 @@ namespace window_framework {
         return *this;
     }
 
+    inline std::uint32_t Window::_MapRGBA(SDL_PixelFormat* format, const math::Color &color) noexcept {
+        return SDL_MapRGBA(format, color.r, color.g, color.b, color.a);
+    }
+
     bool Window::_InitializeSDL() {
         LOG_WIN_INFO(__FUNCTION__);
         return SDL_Init(SDL_INIT_EVERYTHING) == 0;
     }
 
     bool Window::_UpdateSurface() const noexcept {
+        #ifdef LOG_ALL
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
+
         m_surface_ptr = SDL_GetWindowSurface(m_window_ptr.get());
         return m_surface_ptr != nullptr;
     }
@@ -76,8 +83,7 @@ namespace window_framework {
         }
     }
     
-    bool Window::Init(const std::string_view title, std::uint32_t width, std::uint32_t height)
-    {
+    bool Window::Init(const std::string_view title, std::uint32_t width, std::uint32_t height) {
         LOG_WIN_INFO(__FUNCTION__);
 
         if (m_window_ptr != nullptr) {
@@ -113,7 +119,7 @@ namespace window_framework {
 
         for (std::size_t y = 0; y < m_height; ++y) {
             for (std::size_t x = 0; x < m_width; ++x) {
-                pixel_buffer[x + y * m_width] = MAP_RGBA(m_surface_ptr->format, pixels[x + y * m_width]);
+                pixel_buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, pixels[x + y * m_width]);
             }
         }
     }
@@ -122,6 +128,8 @@ namespace window_framework {
         #ifdef LOG_ALL
             LOG_WIN_INFO(__FUNCTION__);
         #endif
+
+        _UpdateSurface();
 
         LOG_SDL_ERROR(SDL_UpdateWindowSurface(m_window_ptr.get()) == 0, SDL_GetError());
     }
@@ -150,7 +158,19 @@ namespace window_framework {
         return math::Color(r, g, b, a);
     }
 
-    void Window::SetTitle(const std::string_view title) noexcept  {
+    void Window::SetPixelColor(std::size_t x, std::size_t y, const math::Color &color) noexcept {
+        #ifdef LOG_ALL
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
+
+        if (x < m_width && y < m_height) {
+            auto pixel_buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
+            pixel_buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, color);
+        }
+    }
+
+    void Window::SetTitle(const std::string_view title) noexcept
+    {
         #ifdef LOG_ALL
             LOG_WIN_INFO(__FUNCTION__);
         #endif
@@ -167,7 +187,10 @@ namespace window_framework {
     }
 
     void Window::SetWidth(std::uint32_t width) noexcept {
-        LOG_WIN_INFO(__FUNCTION__);
+        #ifdef LOG_ALL
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
+
         m_width = width;
         SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
 
@@ -175,12 +198,16 @@ namespace window_framework {
     }
 
     std::uint32_t Window::GetWidth() const noexcept {
-        LOG_WIN_INFO(__FUNCTION__);
+        #ifdef LOG_ALL
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
         return m_width;
     }
 
     void Window::SetHeight(std::uint32_t height) noexcept {
-        LOG_WIN_INFO(__FUNCTION__);
+        #ifdef LOG_ALL
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
         m_height = height;
         SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
         
@@ -188,7 +215,9 @@ namespace window_framework {
     }
 
     std::uint32_t Window::GetHeight() const noexcept {
-        LOG_WIN_INFO(__FUNCTION__);
+        #ifdef LOG_ALL
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
         return m_height;
     }
 

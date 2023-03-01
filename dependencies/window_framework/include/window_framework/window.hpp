@@ -23,6 +23,7 @@ namespace window_framework {
         void PollEvent() noexcept;
 
         math::Color GetPixelColor(std::size_t x, std::size_t y) noexcept;
+        void SetPixelColor(std::size_t x, std::size_t y, const math::Color& color) noexcept;
 
         void SetTitle(const std::string_view title) noexcept;
         const std::string& GetTitle() const noexcept;
@@ -41,6 +42,9 @@ namespace window_framework {
 
         Window(const Window& window) = delete;
         Window& operator=(const Window& window) = delete;
+        
+    private:
+        static std::uint32_t _MapRGBA(SDL_PixelFormat* format, const math::Color& color) noexcept;
 
     private:
         Window() = default;
