@@ -3,9 +3,9 @@
 namespace gfx {
     struct Material {
         Material() = default;
-        Material(const math::Color& color, float refractive_index);
+        Material(const Color& color, float refractive_index);
 
-        math::Color color;
+        Color color;
         float refractive_index = 0;
     };
 }

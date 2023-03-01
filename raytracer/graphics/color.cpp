@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-namespace math {
+namespace gfx {
     const Color Color::BLACK(0u);
     const Color Color::WHITE(255u);
     const Color Color::RED(255u, 0u, 0u);
@@ -12,29 +12,29 @@ namespace math {
     const Color Color::MAGENTA(255u, 0u, 255u);
     const Color Color::CYAN(0u, 255u, 255u);
 
-    Color::Color(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a) 
+    Color::Color(std::uint8_t _r, std::uint8_t _g, std::uint8_t _b, std::uint8_t _a) 
         : r(_r), g(_g), b(_b), a(_a) 
     {         
     }
 
-    Color::Color(uint8_t value)
+    Color::Color(std::uint8_t value)
         : Color(value, value, value, value) 
     {
     }
-    
-    Color::Color(const vec4f& vec)
+
+    Color::Color(const math::vec4f& vec)
         : Color(static_cast<std::uint8_t>(std::clamp(vec.x * 255, 0.f, 255.f)), 
                 static_cast<std::uint8_t>(std::clamp(vec.y * 255, 0.f, 255.f)), 
                 static_cast<std::uint8_t>(std::clamp(vec.z * 255, 0.f, 255.f))) 
     {
     }
 
-    Color::Color(const vec4ub& vec)
+    Color::Color(const math::vec4ub& vec)
         : Color(vec.x, vec.y, vec.z, vec.w)
     {
     }
 
-    Color &Color::operator*=(float value) noexcept
+    Color& Color::operator*=(float value) noexcept
     {
         r = std::clamp(static_cast<int>(r * value), 0, 255);
         g = std::clamp(static_cast<int>(g * value), 0, 255);
@@ -88,15 +88,15 @@ namespace math {
         );
     }
 
-    bool math::Color::operator==(const Color &color) const noexcept {
-        return rgba == color.rgba;
+    bool Color::operator==(const Color &color) const noexcept {
+        return r == color.r && g == color.g && b == color.b && a == color.a;
     }
     
     bool Color::operator!=(const Color &color) const noexcept {
-        return rgba != color.rgba;
+        return r != color.r && g != color.g && b != color.b && a != color.a;
     }
-    
-    Color::operator vec4ub() const noexcept {
-        return vec4ub(r, g, b, a);
+
+    Color::operator math::vec4ub() const noexcept {
+        return math::vec4ub(r, g, b, a);
     }
 }

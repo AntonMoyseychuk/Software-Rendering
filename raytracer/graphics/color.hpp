@@ -1,12 +1,12 @@
 #pragma once
 #include "math_3d/vector.hpp"
 
-namespace math {
+namespace gfx {
     struct Color {
         Color() = default;
         explicit Color(std::uint8_t value);
-        Color(const vec4f& vec);
-        Color(const vec4ub& vec);
+        Color(const math::vec4f& vec);
+        Color(const math::vec4ub& vec);
         Color(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 255);
 
         Color& operator*=(float value) noexcept;
@@ -21,8 +21,7 @@ namespace math {
         bool operator==(const Color& color) const noexcept;
         bool operator!=(const Color& color) const noexcept;
 
-        operator vec4ub() const noexcept;
-        
+        operator math::vec4ub() const noexcept;
 
         static const Color RED;
         static const Color GREEN;
@@ -38,7 +37,7 @@ namespace math {
                 std::uint8_t r, g, b, a;
             };
 
-            std::uint32_t rgba;
+            std::uint32_t rgba; //endian dependent
         };
     };
 }

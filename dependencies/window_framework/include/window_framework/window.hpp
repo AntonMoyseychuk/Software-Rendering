@@ -1,5 +1,5 @@
 #pragma once
-#include "window_framework/logger.hpp"
+#include "logger.hpp"
 
 #include <SDL2/SDL.h>
 #include <string>
@@ -7,9 +7,6 @@
 #include <memory>
 #include <stdint.h>
 
-namespace math {
-    struct Color;
-}
 
 namespace window_framework {
     class Window {
@@ -18,12 +15,12 @@ namespace window_framework {
         bool Init(const std::string_view title, std::uint32_t width, std::uint32_t height);
         
         bool IsOpen() const noexcept;
-        void FillPixelBuffer(const std::vector<math::Color>& pixels) const noexcept;
+        void FillPixelBuffer(const std::vector<std::uint32_t>& pixels) const noexcept;
         void PresentPixelBuffer() const noexcept;
         void PollEvent() noexcept;
 
-        math::Color GetPixelColor(std::size_t x, std::size_t y) noexcept;
-        void SetPixelColor(std::size_t x, std::size_t y, const math::Color& color) noexcept;
+        std::uint32_t GetPixelColor(std::size_t x, std::size_t y) noexcept;
+        void SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept;
 
         void SetTitle(const std::string_view title) noexcept;
         const std::string& GetTitle() const noexcept;
@@ -44,7 +41,7 @@ namespace window_framework {
         Window& operator=(const Window& window) = delete;
         
     private:
-        static std::uint32_t _MapRGBA(SDL_PixelFormat* format, const math::Color& color) noexcept;
+        static std::uint32_t _MapRGBA(SDL_PixelFormat* format, std::uint32_t color) noexcept;
 
     private:
         Window() = default;

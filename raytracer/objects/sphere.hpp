@@ -1,19 +1,20 @@
 #pragma once
-#include "math_3d/vector.hpp"
-#include "graphics/ray.hpp"
-
-#include "graphics/material.hpp"
+#include "object.hpp"
 
 namespace gfx {
-    struct Sphere {
+    class Sphere : public Object {
+    public:
         Sphere() = default;
-        Sphere(const math::Vector<float>& position, float radius, const Material& material);
+        Sphere(const math::vec4f& position, float radius, const Material& material);
 
-        bool IsIntersect(const Ray& ray) const noexcept;
+        bool IsIntersect(const Ray& ray, math::vec4f& intersect_point, math::vec4f& local_normal, Color& local_color) const noexcept override;
 
-        math::Vector<float> position;
-        float radius = 0.0f;
-        gfx::Material material;
+        void SetRadius(float radius) noexcept;
+        float GetRadius() const noexcept;
+        float& GetRadius() noexcept;
+
+    private:
+        float m_radius = 0.0f;
     };
     
 }

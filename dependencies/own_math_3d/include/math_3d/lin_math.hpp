@@ -40,7 +40,12 @@ namespace math {
 
         static Mat3x3 Transpose(const Mat3x3& mat) noexcept;
         static Mat3x3 Inverse(const Mat3x3& mat);
+
+        template<typename _Type>
+        static bool IsTendsTo(const _Type& value, const _Type& limit) {
+            return std::abs(limit - value) <= EPSILON;
+        }
     };
 
-    constexpr double EPSILON = 1e-6;
+    constexpr auto EPSILON = 1e-6;
 }

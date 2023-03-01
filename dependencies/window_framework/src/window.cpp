@@ -1,5 +1,4 @@
 #include "window_framework/window.hpp"
-#include "graphics/color.hpp"
 
 #define LOG_SDL_ERROR(condition, msg) LOG_WIN_ERROR((condition), "sdl error", msg)
 
@@ -48,8 +47,12 @@ namespace window_framework {
         return *this;
     }
 
-    inline std::uint32_t Window::_MapRGBA(SDL_PixelFormat* format, const math::Color &color) noexcept {
-        return SDL_MapRGBA(format, color.r, color.g, color.b, color.a);
+    std::uint32_t Window::_MapRGBA(SDL_PixelFormat *format, std::uint32_t big_endian_color) noexcept {
+        std::uint8_t rgba[4];
+        for (std::size_t i = 0; i < 4; ++i) {
+            rgba[3 - i] = (big_endian_color >> (8 * i)) & 0xFF; //0xABCD -> 0x000A
+        }
+        return SDL_MapRGBA(format, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
     bool Window::_InitializeSDL() {
@@ -106,7 +109,7 @@ namespace window_framework {
         return !m_is_quit;
     }
 
-    void Window::FillPixelBuffer(const std::vector<math::Color> &pixels) const noexcept {
+    void Window::FillPixelBuffer(const std::vector<std::size_t> &pixels) const noexcept {
         #ifdef LOG_ALL
             LOG_WIN_INFO(__FUNCTION__);
         #endif
@@ -115,7 +118,7 @@ namespace window_framework {
 
         for (std::size_t y = 0; y < m_height; ++y) {
             for (std::size_t x = 0; x < m_width; ++x) {
-                pixel_buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, pixels[x + y * m_width]);
+                pixel_buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, SDL_SwapBE32(pixels[x + y * m_width]));
             }
         }
     }
@@ -148,32 +151,38 @@ namespace window_framework {
         }
     }
 
-    math::Color Window::GetPixelColor(std::size_t x, std::size_t y) noexcept {
+    std::uint32_t Window::GetPixelColor(std::size_t x, std::size_t y) noexcept {
         #ifdef LOG_ALL
             LOG_WIN_INFO(__FUNCTION__);
         #endif
         
-        SDL_assert(x < static_cast<std::size_t>(m_surface_ptr->w) && y < static_cast<std::size_t>(m_surface_ptr->h));
-
+        if (x >= m_surface_ptr->w || y >= m_surface_ptr->h) {
+            return 0;
+        }
+    
+        auto pixels = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
         std::uint8_t r, g, b, a;
-        auto pixels = (std::uint32_t*)m_surface_ptr->pixels;
         SDL_GetRGBA(pixels[y * m_surface_ptr->w + x], m_surface_ptr->format, &r, &g, &b, &a);
 
-        return math::Color(r, g, b, a);
+        std::uint32_t big_endian_color = 0;  
+        big_endian_color |= r;
+        (big_endian_color <<= 8) |= g;
+        (big_endian_color <<= 8) |= b;
+        (big_endian_color <<= 8) |= a;
+        return big_endian_color;
     }
 
-    void Window::SetPixelColor(std::size_t x, std::size_t y, const math::Color &color) noexcept {
+    void Window::SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept {
         #ifdef LOG_ALL
             LOG_WIN_INFO(__FUNCTION__);
         #endif
 
         if (x < m_width && y < m_height) {
-            static_cast<std::uint32_t*>(m_surface_ptr->pixels)[x + y * m_width] = _MapRGBA(m_surface_ptr->format, color);
+            static_cast<std::uint32_t*>(m_surface_ptr->pixels)[x + y * m_width] = _MapRGBA(m_surface_ptr->format, SDL_SwapBE32(color));
         }
     }
 
-    void Window::SetTitle(const std::string_view title) noexcept
-    {
+    void Window::SetTitle(const std::string_view title) noexcept {
         #ifdef LOG_ALL
             LOG_WIN_INFO(__FUNCTION__);
         #endif
