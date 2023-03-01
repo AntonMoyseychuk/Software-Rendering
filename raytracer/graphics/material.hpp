@@ -1,4 +1,4 @@
-#include "math_3d/color.hpp"
+#include "color.hpp"
 
 namespace gfx {
     struct Material {

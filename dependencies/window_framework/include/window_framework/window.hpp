@@ -51,7 +51,8 @@ namespace window_framework {
         static bool _InitializeSDL();
         bool _UpdateSurface() const noexcept;
 
-        void _OnEvent(SDL_Event* event) noexcept;
+        void _OnWindowEvent() noexcept;
+        void _OnQuitEvent() noexcept;
 
     private:
         struct SDLDeinitializer {

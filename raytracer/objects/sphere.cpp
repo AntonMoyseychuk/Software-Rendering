@@ -1,13 +1,13 @@
 #include "sphere.hpp"
 #include "math_3d/lin_math.hpp"
 
-namespace shape {
+namespace gfx {
     Sphere::Sphere(const math::Vector<float>& p, float r, const gfx::Material &m)
         : position(p), radius(r), material(m)
     {
     }
 
-    bool Sphere::IsIntersect(const math::Ray &ray) const noexcept
+    bool Sphere::IsIntersect(const Ray &ray) const noexcept
     {
         using namespace math;
 

@@ -1,5 +1,5 @@
 #include "window_framework/window.hpp"
-#include "math_3d/color.hpp"
+#include "graphics/color.hpp"
 
 #define LOG_SDL_ERROR(condition, msg) LOG_WIN_ERROR((condition), "sdl error", msg)
 
@@ -66,21 +66,17 @@ namespace window_framework {
         return m_surface_ptr != nullptr;
     }
 
-    void Window::_OnEvent(SDL_Event *event) noexcept {
-        switch (m_event.type)  {
-        case SDL_QUIT:
-            m_is_quit = true;
-            break;
-
-        case SDL_WINDOWEVENT:
-            if(m_event.window.event == SDL_WINDOWEVENT_RESIZED) {
-                LOG_WIN_EVENT("SDL_WINDOWEVENT_RESIZED", 
-                    "New size -> [" + std::to_string(m_surface_ptr->w) + ", " + std::to_string(m_surface_ptr->h) + "]");
-                SDL_GetWindowSize(m_window_ptr.get(), (int*)&m_width, (int*)&m_height);
-                LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
-            }
-            break;
+    void Window::_OnWindowEvent() noexcept {
+        if(m_event.window.event == SDL_WINDOWEVENT_RESIZED) {
+            LOG_WIN_EVENT("SDL_WINDOWEVENT_RESIZED", 
+                "New size -> [" + std::to_string(m_surface_ptr->w) + ", " + std::to_string(m_surface_ptr->h) + "]");
+            SDL_GetWindowSize(m_window_ptr.get(), (int*)&m_width, (int*)&m_height);
+            LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
         }
+    }
+    
+    void Window::_OnQuitEvent() noexcept {
+        m_is_quit = true;
     }
     
     bool Window::Init(const std::string_view title, std::uint32_t width, std::uint32_t height) {
@@ -140,7 +136,15 @@ namespace window_framework {
         #endif
 
         while (SDL_PollEvent(&m_event)) {
-            this->_OnEvent(&m_event);
+            switch (m_event.type)  {
+            case SDL_QUIT:
+                this->_OnQuitEvent();
+                break;
+
+            case SDL_WINDOWEVENT:
+                this->_OnWindowEvent();
+                break;
+            }
         }
     }
 
@@ -164,8 +168,7 @@ namespace window_framework {
         #endif
 
         if (x < m_width && y < m_height) {
-            auto pixel_buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
-            pixel_buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, color);
+            static_cast<std::uint32_t*>(m_surface_ptr->pixels)[x + y * m_width] = _MapRGBA(m_surface_ptr->format, color);
         }
     }
 

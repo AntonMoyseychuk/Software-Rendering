@@ -1,9 +1,10 @@
-#include "math_3d/color.hpp"
 #include "math_3d/vector.hpp"
-#include "math_3d/ray.hpp"
 #include "math_3d/lin_math.hpp"
 
-#include "../shapes/sphere.hpp"
+#include "graphics/color.hpp"
+#include "graphics/ray.hpp"
+
+#include "objects/sphere.hpp"
 
 #include "window_framework/window.hpp"
 
@@ -16,10 +17,10 @@
 // #define TO_VIEWPORT(vector, viewport_w, viewport_h) \
 //     math::Vec3f(viewport_w * (1.0f + vector.x) / 2, viewport_h * (1.0f - vector.y) / 2, vector.z)
 
-using Sphere_t = shape::Sphere;
+using Sphere_t = gfx::Sphere;
 using Color_t = math::Color;
 
-math::Color CastRay(const math::Ray& ray, const std::vector<Sphere_t>& spheres) noexcept {
+math::Color CastRay(const gfx::Ray& ray, const std::vector<Sphere_t>& spheres) noexcept {
     assert(std::fabs(ray.direction.Length() - 1.0f) <= math::EPSILON);
 
     auto min_dist = INFINITY;
@@ -41,7 +42,7 @@ math::Color CastRay(const math::Ray& ray, const std::vector<Sphere_t>& spheres) 
 void RenderSphere(window_framework::Window* window, const std::vector<Sphere_t>& spheres) noexcept {
     const static math::vec4f CAMERA_DIR(0.0f, 0.0f, -1.0f), RAY_ORIGIN(0.0f);
     const static float FOV = tanf(3.1415f / 4.0f / 2.f);
-    math::Ray ray(RAY_ORIGIN, CAMERA_DIR);
+    gfx::Ray ray(RAY_ORIGIN, CAMERA_DIR);
 
     const auto _height = window->GetHeight();
     const auto _width = window->GetWidth();
@@ -58,6 +59,9 @@ void RenderSphere(window_framework::Window* window, const std::vector<Sphere_t>&
 
 int main(int argc, char* argv[]) {
     std::uint32_t width = 480, height = 360;
+
+    math::Color color = math::vec4ub(255);
+    math::vec4ub vec = color;
     
     window_framework::Window* window = window_framework::Window::Get();
     auto init_res = window->Init("Raytracer", width, height);

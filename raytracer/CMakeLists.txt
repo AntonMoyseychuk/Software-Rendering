@@ -2,7 +2,7 @@ project(raytracer)
 
 file(GLOB SRC_FILES 
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
-    "${PROJECT_SOURCE_DIR}/shapes/*.cpp"
+    "${PROJECT_SOURCE_DIR}/objects/*.cpp"
     "${PROJECT_SOURCE_DIR}/graphics/*.cpp"
 
     "${MATH_3D_DIR}/src/*.cpp"
@@ -15,6 +15,8 @@ file(GLOB SRC_FILES
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 target_include_directories(${PROJECT_NAME} 
+    PUBLIC "${PROJECT_SOURCE_DIR}"
+    
     PUBLIC "${MATH_3D_DIR}/include" 
     PUBLIC "${SDL_DIR}/include"
     PUBLIC "${WINDOW_FRAMEWORK_DIR}/include"

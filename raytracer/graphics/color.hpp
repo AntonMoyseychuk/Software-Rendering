@@ -4,8 +4,9 @@
 namespace math {
     struct Color {
         Color() = default;
-        Color(std::uint8_t value);
-        Color(const Vector<float>& vec);
+        explicit Color(std::uint8_t value);
+        Color(const vec4f& vec);
+        Color(const vec4ub& vec);
         Color(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 255);
 
         Color& operator*=(float value) noexcept;
@@ -19,6 +20,9 @@ namespace math {
 
         bool operator==(const Color& color) const noexcept;
         bool operator!=(const Color& color) const noexcept;
+
+        operator vec4ub() const noexcept;
+        
 
         static const Color RED;
         static const Color GREEN;
@@ -34,7 +38,7 @@ namespace math {
                 std::uint8_t r, g, b, a;
             };
 
-            uint32_t rgba;
+            std::uint32_t rgba;
         };
     };
 }

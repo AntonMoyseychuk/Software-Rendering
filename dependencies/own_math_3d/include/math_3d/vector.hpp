@@ -19,7 +19,7 @@ namespace math {
             : x(_x), y(_y), z(_z), w(_w) 
         {
         }
-        Vector(_Type value)
+        explicit Vector(_Type value)
             : x(value), y(value), z(value), w(value) 
         {
         }

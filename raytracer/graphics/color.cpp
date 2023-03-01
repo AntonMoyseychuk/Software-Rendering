@@ -1,5 +1,4 @@
-#include "math_3d/color.hpp"
-#include "math_3d/vector.hpp"
+#include "color.hpp"
 
 #include <algorithm>
 
@@ -23,19 +22,24 @@ namespace math {
     {
     }
     
-    Color::Color(const Vector<float>& vec)
+    Color::Color(const vec4f& vec)
         : Color(static_cast<std::uint8_t>(std::clamp(vec.x * 255, 0.f, 255.f)), 
                 static_cast<std::uint8_t>(std::clamp(vec.y * 255, 0.f, 255.f)), 
                 static_cast<std::uint8_t>(std::clamp(vec.z * 255, 0.f, 255.f))) 
-        {
-        }
+    {
+    }
 
-    Color &Color::operator*=(float value) noexcept {
+    Color::Color(const vec4ub& vec)
+        : Color(vec.x, vec.y, vec.z, vec.w)
+    {
+    }
+
+    Color &Color::operator*=(float value) noexcept
+    {
         r = std::clamp(static_cast<int>(r * value), 0, 255);
         g = std::clamp(static_cast<int>(g * value), 0, 255);
         b = std::clamp(static_cast<int>(b * value), 0, 255);
         a = std::clamp(static_cast<int>(a * value), 0, 255);
-
         return *this;
     }
 
@@ -90,5 +94,9 @@ namespace math {
     
     bool Color::operator!=(const Color &color) const noexcept {
         return rgba != color.rgba;
+    }
+    
+    Color::operator vec4ub() const noexcept {
+        return vec4ub(r, g, b, a);
     }
 }
