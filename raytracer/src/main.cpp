@@ -41,7 +41,7 @@ Color_t CastRay(const gfx::Ray& ray, const std::vector<Sphere_t>& spheres) noexc
 }
 
 void RenderSphere(window_framework::Window* window, const std::vector<Sphere_t>& spheres) noexcept {
-    const static math::vec4f CAMERA_DIR(0.0f, 0.0f, -1.0f), RAY_ORIGIN(0.0f, 0.0f, 1.0f);
+    const static math::vec4f CAMERA_DIR(math::VECTOR_BACKWARD), RAY_ORIGIN(0.0f);
     const static float FOV = tanf(3.1415f / 4.0f / 2.f);
     gfx::Ray ray(RAY_ORIGIN, CAMERA_DIR);
 
@@ -82,7 +82,6 @@ int main(int argc, char* argv[]) {
         auto frame_end = std::chrono::steady_clock::now();
         LOG_WIN_INFO("FPS: " + std::to_string(1.0f / std::chrono::duration<float>(frame_end - frame_begin).count()));
         frame_begin = frame_end;
-        spheres[0].SetPositon(spheres[0].GetPositon() + math::VECTOR_BACKWARD * 0.5f);
     }
 
     return 0;

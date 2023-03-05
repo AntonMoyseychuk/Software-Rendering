@@ -38,8 +38,11 @@ namespace math {
             );
         }
 
+        static float ToDegrees(float radians) noexcept; 
+        static float ToRadians(float degrees) noexcept; 
+
         static Mat3x3 Transpose(const Mat3x3& mat) noexcept;
-        static Mat3x3 Inverse(const Mat3x3& mat);
+        static bool Inverse(const Mat3x3& mat, Mat3x3& out);
 
         template<typename _Type>
         static bool IsTendsTo(const _Type& value, const _Type& limit) {
@@ -48,4 +51,5 @@ namespace math {
     };
 
     constexpr auto EPSILON = 1e-6;
+    constexpr auto PI = 3.14159265359;
 }
