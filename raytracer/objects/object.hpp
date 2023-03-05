@@ -9,6 +9,7 @@ namespace gfx {
         virtual ~Object() = 0 {}
 
         void SetPositon(const math::vec4f& position) noexcept { m_position = position; }
+        void MoveFor(const math::vec4f& dist) noexcept { m_position += dist; }
         const math::vec4f& GetPositon() const noexcept { return m_position; }
         math::vec4f& GetPositon() noexcept { return m_position; }
 
