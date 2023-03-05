@@ -8,7 +8,7 @@
 #include <stdint.h>
 
 
-namespace window_framework {
+namespace win_framewrk {
     class Window {
     public:
         static Window* Get() noexcept;

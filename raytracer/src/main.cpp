@@ -14,9 +14,6 @@
 
 //#define LOG_ALL
 
-// #define TO_VIEWPORT(vector, viewport_w, viewport_h) \
-//     math::Vec3f(viewport_w * (1.0f + vector.x) / 2, viewport_h * (1.0f - vector.y) / 2, vector.z)
-
 using Sphere_t = gfx::Sphere;
 using Color_t = gfx::Color;
 
@@ -40,7 +37,7 @@ Color_t CastRay(const gfx::Ray& ray, const std::vector<Sphere_t>& spheres) noexc
     return out_color;
 }
 
-void RenderSphere(window_framework::Window* window, const std::vector<Sphere_t>& spheres) noexcept {
+void RenderSphere(win_framewrk::Window* window, const std::vector<Sphere_t>& spheres) noexcept {
     const static math::vec4f CAMERA_DIR(math::VECTOR_BACKWARD), RAY_ORIGIN(0.0f);
     const static float FOV = tanf(3.1415f / 4.0f / 2.f);
     gfx::Ray ray(RAY_ORIGIN, CAMERA_DIR);
@@ -62,11 +59,11 @@ void RenderSphere(window_framework::Window* window, const std::vector<Sphere_t>&
 int main(int argc, char* argv[]) {
     std::uint32_t width = 480, height = 360;
 
-    window_framework::Window* window = window_framework::Window::Get();
+    win_framewrk::Window* window = win_framewrk::Window::Get();
     auto init_res = window->Init("Raytracer", width, height);
 
     std::vector<Sphere_t> spheres = {
-        { math::vec4f(0.0f, 0.0f, -5.0f),  0.5f, gfx::Material(Color_t::YELLOW, 1.5f) },
+        { math::vec4f(0.0f, 0.0f, -2.5f),  0.5f, gfx::Material(Color_t::YELLOW, 1.5f) },
     };
 
     std::uint32_t color = 0;

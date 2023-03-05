@@ -2,7 +2,7 @@
 
 #define LOG_SDL_ERROR(condition, msg) LOG_WIN_ERROR((condition), "sdl error", msg)
 
-namespace window_framework {
+namespace win_framewrk {
     std::unique_ptr<bool, Window::SDLDeinitializer> Window::is_sdl_initialized_ptr = nullptr;
 
     Window* Window::Get() noexcept {
