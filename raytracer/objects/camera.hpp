@@ -1,8 +1,10 @@
 #pragma once
 #include "object.hpp"
 
-namespace gfx {
-    class Camera {
+#include "graphics/ray.hpp"
 
+namespace gfx {
+    class Camera : public Object {
+        
     };
 }

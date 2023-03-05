@@ -1,6 +1,7 @@
 #pragma once
 #include "object.hpp"
 
+#include "graphics/ray.hpp"
 #include "graphics/material.hpp"
 
 namespace gfx {

@@ -7,10 +7,6 @@ namespace gfx {
     {
     }
 
-    // Sphere::~Sphere()
-    // {
-    // }
-
     bool Sphere::IsIntersect(const Ray& ray, math::vec4f& intersect_point, math::vec4f& local_normal, Color& local_color) const noexcept {
         using namespace math;
 
