@@ -1,9 +1,8 @@
 #pragma once
 #include "window_framework/window.hpp"
 #include "objects/drawable.hpp"
-#include "graphics/camera.hpp"
 
-#include <vector>
+#include <list>
 #include <memory>
 
 namespace app {
@@ -14,9 +13,12 @@ namespace app {
 
         void Render() const noexcept;
 
+        void SetWindow(win_framewrk::Window* window) noexcept;
+        void AddDrawble(std::shared_ptr<gfx::Drawable> drawable) noexcept;
+
     private:
         win_framewrk::Window* m_window = nullptr;
-        std::vector<std::shared_ptr<gfx::Drawable>> m_drawables;
-        std::vector<gfx::Camera> m_cameras;
+        mutable std::vector<std::uint32_t> m_buffer;
+        std::list<std::shared_ptr<gfx::Drawable>> m_drawables;
     };
 }

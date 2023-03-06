@@ -18,6 +18,9 @@ namespace gfx {
         Color& operator+=(const Color& color) noexcept;
         Color operator+(const Color& color) const noexcept;
 
+        Color& operator-=(const Color& color) noexcept;
+        Color operator-(const Color& color) const noexcept;
+
         bool operator==(const Color& color) const noexcept;
         bool operator!=(const Color& color) const noexcept;
 

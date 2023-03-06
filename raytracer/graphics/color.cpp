@@ -88,6 +88,24 @@ namespace gfx {
         );
     }
 
+    Color &Color::operator-=(const Color &c) noexcept {
+        r = std::clamp(r - c.r, 0, 255);
+        g = std::clamp(g - c.g, 0, 255);
+        b = std::clamp(b - c.b, 0, 255);
+        a = std::clamp(a - c.a, 0, 255);
+
+        return *this;
+    }
+
+    Color Color::operator-(const Color &c) const noexcept {
+        return Color(
+            std::clamp(r - c.r, 0, 255),
+            std::clamp(g - c.g, 0, 255),
+            std::clamp(b - c.b, 0, 255),
+            std::clamp(a - c.a, 0, 255)
+        );
+    }
+
     bool Color::operator==(const Color &color) const noexcept {
         return r == color.r && g == color.g && b == color.b && a == color.a;
     }
