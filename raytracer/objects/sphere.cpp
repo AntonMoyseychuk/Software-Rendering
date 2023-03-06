@@ -1,6 +1,8 @@
 #include "sphere.hpp"
 #include "math_3d/lin_math.hpp"
 
+#include <algorithm>
+
 namespace gfx {
     Sphere::Sphere(const math::vec4f& p, float r, const gfx::Material &m)
         : Drawable(p, m), m_radius(r)

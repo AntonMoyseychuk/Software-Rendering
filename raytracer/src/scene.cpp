@@ -2,7 +2,7 @@
 
 namespace app {
     Scene::Scene(win_framewrk::Window *window)
-        : m_window(window), m_drawables(), m_cameras()
+        : m_window(window), m_drawables()
     {
     }
     
