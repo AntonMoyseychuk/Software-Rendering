@@ -14,6 +14,9 @@ namespace app {
         void Render() const noexcept;
 
         void SetWindow(win_framewrk::Window* window) noexcept;
+        win_framewrk::Window* GetWindow() noexcept;
+        const win_framewrk::Window* GetWindow() const noexcept;
+        
         void AddDrawble(std::shared_ptr<gfx::Drawable> drawable) noexcept;
 
     private:

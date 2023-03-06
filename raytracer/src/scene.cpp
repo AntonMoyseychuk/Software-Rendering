@@ -23,6 +23,14 @@ namespace app {
         m_buffer.resize(window->GetWidth() * window->GetHeight());
     }
 
+    win_framewrk::Window *Scene::GetWindow() noexcept {
+        return m_window;
+    }
+
+    const win_framewrk::Window *Scene::GetWindow() const noexcept {
+        return m_window;
+    }
+
     void Scene::AddDrawble(std::shared_ptr<gfx::Drawable> drawable) noexcept {
         m_drawables.push_back(drawable);
     }
