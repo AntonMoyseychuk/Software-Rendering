@@ -5,7 +5,7 @@
 
 namespace gfx {
     Sphere::Sphere(const math::vec4f& p, float r, const gfx::Material &m)
-        : Drawable(p, m), m_radius(r)
+        : IDrawable(p, m), m_radius(r)
     {
     }
 

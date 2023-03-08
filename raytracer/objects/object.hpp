@@ -2,11 +2,11 @@
 #include "math_3d/vector.hpp"
 
 namespace gfx {
-    class Object {
+    class IObject {
     public:
-        Object() = default;
-        Object(const math::vec4f& position) : m_position(position) {}
-        virtual ~Object() = 0 {}
+        IObject() = default;
+        IObject(const math::vec4f& position) : m_position(position) {}
+        virtual ~IObject() = 0 {}
 
         void SetPositon(const math::vec4f& position) noexcept { m_position = position; }
         void MoveFor(const math::vec4f& dist) noexcept { m_position += dist; }

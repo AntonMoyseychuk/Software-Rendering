@@ -2,7 +2,7 @@
 #include "drawable.hpp"
 
 namespace gfx {
-    class Sphere : public Drawable {
+    class Sphere : public IDrawable {
     public:
         Sphere() = default;
         Sphere(const math::vec4f& position, float radius, const Material& material);

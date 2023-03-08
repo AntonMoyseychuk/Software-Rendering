@@ -17,11 +17,11 @@ namespace app {
         win_framewrk::Window* GetWindow() noexcept;
         const win_framewrk::Window* GetWindow() const noexcept;
         
-        void AddDrawble(std::shared_ptr<gfx::Drawable> drawable) noexcept;
+        void AddDrawble(std::shared_ptr<gfx::IDrawable> drawable) noexcept;
 
     private:
         win_framewrk::Window* m_window = nullptr;
         // mutable std::vector<std::uint32_t> m_buffer;
-        std::list<std::shared_ptr<gfx::Drawable>> m_drawables;
+        std::list<std::shared_ptr<gfx::IDrawable>> m_drawables;
     };
 }

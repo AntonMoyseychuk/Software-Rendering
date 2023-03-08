@@ -47,10 +47,14 @@ namespace win_framewrk {
         return *this;
     }
 
-    std::uint32_t Window::_MapRGBA(SDL_PixelFormat *format, std::uint32_t big_endian_color) noexcept {
+    std::uint32_t Window::_MapRGBA(SDL_PixelFormat *format, std::uint32_t color) noexcept {
+        #if SDL_BYTEORDER == SDL_LIL_ENDIAN
+            color = SDL_SwapBE32(color);
+        #endif
+
         std::uint8_t rgba[4];
         for (std::size_t i = 0; i < 4; ++i) {
-            rgba[3 - i] = (big_endian_color >> (8 * i)) & 0xFF; //0xABCD -> 0x000A
+            rgba[3 - i] = (color >> (8 * i)) & 0xFF;
         }
         return SDL_MapRGBA(format, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
@@ -118,7 +122,7 @@ namespace win_framewrk {
 
         for (std::size_t y = 0; y < m_height; ++y) {
             for (std::size_t x = 0; x < m_width; ++x) {
-                pixel_buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, SDL_SwapBE32(pixels[x + y * m_width]));
+                pixel_buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, pixels[x + y * m_width]);
             }
         }
     }
@@ -164,12 +168,11 @@ namespace win_framewrk {
         std::uint8_t r, g, b, a;
         SDL_GetRGBA(pixels[y * m_surface_ptr->w + x], m_surface_ptr->format, &r, &g, &b, &a);
 
-        std::uint32_t big_endian_color = 0;  
-        big_endian_color |= r;
-        (big_endian_color <<= 8) |= g;
-        (big_endian_color <<= 8) |= b;
-        (big_endian_color <<= 8) |= a;
-        return big_endian_color;
+        #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+            return (r << 24) + (g << 16) + (g << 8) + a;
+        #else
+            return (a << 24) + (b << 16) + (g << 8) + r;
+        #endif
     }
 
     void Window::SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept {
@@ -178,7 +181,7 @@ namespace win_framewrk {
         #endif
 
         if (x < m_width && y < m_height) {
-            static_cast<std::uint32_t*>(m_surface_ptr->pixels)[x + y * m_width] = _MapRGBA(m_surface_ptr->format, SDL_SwapBE32(color));
+            static_cast<std::uint32_t*>(m_surface_ptr->pixels)[x + y * m_width] = _MapRGBA(m_surface_ptr->format, color);
         }
     }
 

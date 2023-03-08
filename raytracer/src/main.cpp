@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     app::Scene scene(window);
 
     auto sphere = std::make_shared<Sphere_t>(math::vec4f(0.0f, 0.0f, -3.5f), 1.0f, gfx::Material(Color_t::YELLOW, 1.5f));
-    auto sphere2 = std::make_shared<Sphere_t>(math::vec4f(-1.0f, 0.0f, -4.6f), 1.0f, gfx::Material(Color_t::MAGENTA, 1.5f));
+    auto sphere2 = std::make_shared<Sphere_t>(math::vec4f(-1.5f, 0.0f, -4.5f), 1.0f, gfx::Material(Color_t::MAGENTA, 1.5f));
     scene.AddDrawble(sphere);
     scene.AddDrawble(sphere2);
 
@@ -38,9 +38,17 @@ int main(int argc, char* argv[]) {
         scene.GetWindow()->PollEvent();
         
         scene.Render();
-        scene.GetWindow()->PresentPixelBuffer();
         
         // sphere->MoveFor(math::VECTOR_BACKWARD * 0.01f);
+        Color_t color(scene.GetWindow()->GetPixelColor(width / 2, height / 2));
+        for (std::size_t y = 0; y < 30; ++y) {
+            for (std::size_t x = 0; x < 30; ++x) {
+                scene.GetWindow()->SetPixelColor(x, y, color.rgba);
+            }
+        }
+
+
+        scene.GetWindow()->PresentPixelBuffer();
 
         auto frame_end = std::chrono::steady_clock::now();
         LOG_WIN_INFO("FPS: " + std::to_string(1.0f / std::chrono::duration<float>(frame_end - frame_begin).count()));

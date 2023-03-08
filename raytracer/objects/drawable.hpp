@@ -7,11 +7,11 @@
 #include <vector>
 
 namespace gfx {
-    class Drawable : public Object {
+    class IDrawable : public IObject {
     public:
-        Drawable() = default;
-        Drawable(const math::vec4f& position, const Material& material) 
-            : Object(position), m_material(material) {}
+        IDrawable() = default;
+        IDrawable(const math::vec4f& position, const Material& material) 
+            : IObject(position), m_material(material) {}
 
         virtual bool IsIntersect(const Ray& ray, 
                                     math::vec4f& int_point, 
