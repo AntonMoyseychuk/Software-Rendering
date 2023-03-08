@@ -30,7 +30,7 @@ namespace math {
         Vector Normalize() const noexcept {
             auto length = this->Length();
 
-            if (length <= EPSILON) {
+            if (length <= MATH_EPSILON) {
                 return *this;
             }
 

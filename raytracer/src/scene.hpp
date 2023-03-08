@@ -1,6 +1,7 @@
 #pragma once
 #include "window_framework/window.hpp"
 #include "objects/drawable.hpp"
+#include "objects/point_light.hpp"
 
 #include <list>
 #include <memory>
@@ -18,10 +19,11 @@ namespace app {
         const win_framewrk::Window* GetWindow() const noexcept;
         
         void AddDrawble(std::shared_ptr<gfx::IDrawable> drawable) noexcept;
+        void AddLight(std::shared_ptr<gfx::ILight> light) noexcept;
 
     private:
         win_framewrk::Window* m_window = nullptr;
-        // mutable std::vector<std::uint32_t> m_buffer;
         std::list<std::shared_ptr<gfx::IDrawable>> m_drawables;
+        std::list<std::shared_ptr<gfx::ILight>> m_lights;
     };
 }

@@ -4,11 +4,11 @@
 
 namespace math {
     float LinMath::ToDegrees(float radians) noexcept {
-        return (180.0f * radians) / PI;
+        return (180.0f * radians) / MATH_PI;
     }
     
     float LinMath::ToRadians(float degrees) noexcept {
-        return degrees * (PI / 180.0);
+        return degrees * (MATH_PI / 180.0);
     }
 
     Mat3x3 LinMath::Transpose(const Mat3x3 &mat) noexcept

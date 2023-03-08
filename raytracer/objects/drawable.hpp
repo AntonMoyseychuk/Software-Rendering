@@ -18,7 +18,6 @@ namespace gfx {
                                     math::vec4f& int_point_normal, 
                                     Color& int_point_color) const noexcept = 0;
         
-        // virtual void Render(std::vector<std::uint32_t>& buffer, 
         //                         std::uint32_t buffer_width, 
         //                         std::uint32_t buffer_height, 
         //                         const math::vec4f& camera_pos, 

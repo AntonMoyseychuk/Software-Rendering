@@ -5,6 +5,7 @@
 #include "graphics/ray.hpp"
 
 #include "objects/sphere.hpp"
+#include "objects/point_light.hpp"
 
 #include "window_framework/window.hpp"
 
@@ -28,26 +29,38 @@ int main(int argc, char* argv[]) {
 
     app::Scene scene(window);
 
-    auto sphere = std::make_shared<Sphere_t>(math::vec4f(0.0f, 0.0f, -3.5f), 1.0f, gfx::Material(Color_t::YELLOW, 1.5f));
-    auto sphere2 = std::make_shared<Sphere_t>(math::vec4f(-1.5f, 0.0f, -4.5f), 1.0f, gfx::Material(Color_t::MAGENTA, 1.5f));
-    scene.AddDrawble(sphere);
-    scene.AddDrawble(sphere2);
+    scene.AddDrawble(std::make_shared<Sphere_t>(math::vec4f(0.0f, 0.0f, 0.0f), 1.0f, gfx::Material(Color_t::RED, 1.5f)));
+    //scene.AddDrawble(std::make_shared<Sphere_t>(math::vec4f(1.5f, 0.0f, 0.0f), 0.5f, gfx::Material(Color_t::MAGENTA, 1.5f)));
+
+    auto light = std::make_shared<gfx::PointLigth>(math::vec4f(2.0f, -2.0f, 5.0f), gfx::Color::WHITE, 1.0f);
+    scene.AddLight(light);
 
     auto frame_begin = std::chrono::steady_clock::now();
     while (scene.GetWindow()->IsOpen()) {
         scene.GetWindow()->PollEvent();
         
-        scene.Render();
-        
-        // sphere->MoveFor(math::VECTOR_BACKWARD * 0.01f);
-        Color_t color(scene.GetWindow()->GetPixelColor(width / 2, height / 2));
-        for (std::size_t y = 0; y < 30; ++y) {
-            for (std::size_t x = 0; x < 30; ++x) {
-                scene.GetWindow()->SetPixelColor(x, y, color.rgba);
-            }
+        SDL_PumpEvents();
+        auto keyboard_state = SDL_GetKeyboardState(nullptr);
+        if (keyboard_state[SDL_Scancode::SDL_SCANCODE_A]) {
+            light->MoveFor(math::VECTOR_LEFT * 0.1f);
+        }
+        if (keyboard_state[SDL_Scancode::SDL_SCANCODE_W]) {
+            light->MoveFor(math::VECTOR_UP * 0.1f);
+        }
+        if (keyboard_state[SDL_Scancode::SDL_SCANCODE_D]) {
+            light->MoveFor(math::VECTOR_RIGHT * 0.1f);
+        }
+        if (keyboard_state[SDL_Scancode::SDL_SCANCODE_S]) {
+            light->MoveFor(math::VECTOR_DOWN * 0.1f);
+        }
+        if (keyboard_state[SDL_Scancode::SDL_SCANCODE_UP]) {
+            light->MoveFor(math::VECTOR_BACKWARD * 0.1f);
+        }
+        if (keyboard_state[SDL_Scancode::SDL_SCANCODE_DOWN]) {
+            light->MoveFor(math::VECTOR_FORWARD * 0.1f);
         }
 
-
+        scene.Render();
         scene.GetWindow()->PresentPixelBuffer();
 
         auto frame_end = std::chrono::steady_clock::now();

@@ -46,10 +46,10 @@ namespace math {
 
         template<typename _Type>
         static bool IsTendsTo(const _Type& value, const _Type& limit) {
-            return std::abs(limit - value) <= EPSILON;
+            return std::abs(limit - value) <= MATH_EPSILON;
         }
     };
 
-    constexpr auto EPSILON = 1e-6;
-    constexpr auto PI = 3.14159265359;
+    constexpr auto MATH_EPSILON = 1e-6;
+    constexpr auto MATH_PI = 3.14159265359;
 }
