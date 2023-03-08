@@ -29,7 +29,9 @@ int main(int argc, char* argv[]) {
     app::Scene scene(window);
 
     auto sphere = std::make_shared<Sphere_t>(math::vec4f(0.0f, 0.0f, -3.5f), 1.0f, gfx::Material(Color_t::YELLOW, 1.5f));
+    auto sphere2 = std::make_shared<Sphere_t>(math::vec4f(-1.0f, 0.0f, -4.6f), 1.0f, gfx::Material(Color_t::MAGENTA, 1.5f));
     scene.AddDrawble(sphere);
+    scene.AddDrawble(sphere2);
 
     auto frame_begin = std::chrono::steady_clock::now();
     while (scene.GetWindow()->IsOpen()) {

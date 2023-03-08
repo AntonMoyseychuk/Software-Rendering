@@ -21,7 +21,7 @@ namespace app {
 
     private:
         win_framewrk::Window* m_window = nullptr;
-        mutable std::vector<std::uint32_t> m_buffer;
+        // mutable std::vector<std::uint32_t> m_buffer;
         std::list<std::shared_ptr<gfx::Drawable>> m_drawables;
     };
 }

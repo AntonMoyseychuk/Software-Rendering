@@ -1,26 +1,54 @@
 #include "scene.hpp"
+#include "math_3d/lin_math.hpp"
 
 namespace app {
     Scene::Scene(win_framewrk::Window *window)
-        : m_window(window), m_buffer(window->GetWidth() * window->GetHeight()), m_drawables()
+        : m_window(window), m_drawables()
     {
     }
     
     void Scene::Render() const noexcept {
         const auto FOV = tanf(3.1415f / 4.0f / 2.f);
-        const auto WIDTH = m_window->GetWidth();
-        const auto HEIGHT = m_window->GetHeight();
+        const std::size_t WIDTH = m_window->GetWidth();
+        const std::size_t HEIGHT = m_window->GetHeight();
         const auto CAMERA_POS = math::vec4f(0);
-        for (const auto& drawable : m_drawables) {
-            drawable->Render(m_buffer, WIDTH, HEIGHT, CAMERA_POS, math::VECTOR_BACKWARD, FOV);
+        gfx::Ray ray(CAMERA_POS, math::VECTOR_BACKWARD);
+
+        math::vec4f int_point, int_normal;
+
+        for (std::size_t y = 0; y < HEIGHT; ++y) {
+            for (std::size_t x = 0; x < WIDTH; ++x) {
+                float pixel_x = (2 * (x + 0.5f) / static_cast<float>(WIDTH) - 1) * FOV * WIDTH / static_cast<float>(HEIGHT);
+                float pixel_y = -(2 * (y + 0.5f) / static_cast<float>(HEIGHT) - 1) * FOV;
+                ray.direction = math::vec4f(pixel_x, pixel_y, ray.direction.z).Normalize();
+                gfx::Color out_color = gfx::Color::BLACK;
+
+                auto min_dist = INFINITY;
+                for (const auto& drawable : m_drawables) {
+                    auto drawable_cent_point = drawable->GetPositon() - ray.original;
+
+                    if (drawable->IsIntersect(ray, int_point, int_normal, out_color)) {
+                        auto c = math::LinMath::Dot(int_point, drawable_cent_point) / (int_point.Length() * drawable_cent_point.Length());
+                        c *= 10000;
+                        c = static_cast<std::int32_t>(c) % 500;
+                        c /= 500;
+
+                        auto int_point_dist = (int_point - CAMERA_POS).Length();
+                        if (int_point_dist < min_dist) {
+                            out_color = drawable->GetMaterial().color * c;
+                            min_dist = int_point_dist;
+                        }
+                    }
+                }
+
+                m_window->SetPixelColor(x, y, out_color.rgba);
+            }
         }
-        m_window->FillPixelBuffer(m_buffer);
     }
     
     void Scene::SetWindow(win_framewrk::Window *window) noexcept {
         assert(window != nullptr);
         m_window = window;
-        m_buffer.resize(window->GetWidth() * window->GetHeight());
     }
 
     win_framewrk::Window *Scene::GetWindow() noexcept {
