@@ -16,18 +16,16 @@ namespace gfx {
             const std::shared_ptr<IObject>& curr_obj, 
             gfx::Color& color, float& intensity) const noexcept
     {
-        using namespace math;
-
         auto light_dir = (m_position - intersect_point).Normalize();
-        auto angle = acosf(LinMath::Dot(normal, light_dir));
+        auto angle = acosf(math::LinMath::Dot(normal, light_dir));
 
         color = m_color;
-        if (angle > MATH_PI / 2) {
+        if (angle > math::MATH_PI / 2) {
             intensity = 0;
             return false;
         }
 
-        intensity = m_intensity * (1.0f - (angle / (MATH_PI / 2)));
+        intensity = m_intensity * (1.0f - (angle / (math::MATH_PI / 2)));
         return true;
     }
 }

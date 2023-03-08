@@ -33,7 +33,8 @@ namespace gfx {
             float t = (min_t >= 0) ? min_t : max_t;
             intersect_point = ray.original + ray.direction * t;
             
-            local_normal = intersect_point.Normalize();
+            local_normal = (intersect_point - m_position).Normalize();
+            local_color = m_material.color;
             
             return t > 0;
         }

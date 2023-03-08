@@ -21,6 +21,7 @@ namespace app {
                 float pixel_x = (2 * (x + 0.5f) / static_cast<float>(WIDTH) - 1) * FOV * WIDTH / static_cast<float>(HEIGHT);
                 float pixel_y = -(2 * (y + 0.5f) / static_cast<float>(HEIGHT) - 1) * FOV;
                 ray.direction = math::vec4f(pixel_x, pixel_y, ray.direction.z).Normalize();
+                
                 gfx::Color out_color = gfx::Color::BLACK;
 
                 auto min_dist = INFINITY;
@@ -28,11 +29,6 @@ namespace app {
                     auto drawable_cent_point = drawable->GetPositon() - ray.original;
 
                     if (drawable->IsIntersect(ray, int_point, int_normal, out_color)) {
-                        // float c = math::LinMath::Dot(int_point, drawable_cent_point) / (int_point.Length() * drawable_cent_point.Length());
-                        // c *= 10000;
-                        // c = static_cast<std::int32_t>(c) % 500;
-                        // c /= 500;
-
                         float intensity;
                         gfx::Color color;
                         for (const auto& light : m_lights) {
