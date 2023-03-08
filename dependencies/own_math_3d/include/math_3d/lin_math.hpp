@@ -50,6 +50,6 @@ namespace math {
         }
     };
 
-    constexpr auto MATH_EPSILON = 1e-6;
-    constexpr auto MATH_PI = 3.14159265359;
+    constexpr float MATH_EPSILON = 1e-6;
+    constexpr float MATH_PI = 3.14159265359f;
 }
