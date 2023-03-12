@@ -12,7 +12,7 @@ namespace win_framewrk {
     class Window {
     public:
         static Window* Get() noexcept;
-        bool Init(const std::string_view title, std::uint32_t width, std::uint32_t height);
+        bool Init(const std::string& title, std::uint32_t width, std::uint32_t height);
         
         bool IsOpen() const noexcept;
         void FillPixelBuffer(const std::vector<std::uint32_t>& pixels) const noexcept;

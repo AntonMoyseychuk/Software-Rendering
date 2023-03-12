@@ -16,28 +16,30 @@ namespace app {
 
         math::vec4f int_point, int_normal;
 
+        gfx::Color out_color, local_color;
+
         for (std::size_t y = 0; y < HEIGHT; ++y) {
             for (std::size_t x = 0; x < WIDTH; ++x) {
-                float pixel_x = (2 * (x + 0.5f) / static_cast<float>(WIDTH) - 1) * FOV * WIDTH / static_cast<float>(HEIGHT);
-                float pixel_y = -(2 * (y + 0.5f) / static_cast<float>(HEIGHT) - 1) * FOV;
+                float pixel_x = (2.0f * (x + 0.5f) / static_cast<float>(WIDTH) - 1.0f) * FOV * WIDTH / static_cast<float>(HEIGHT);
+                float pixel_y = -(2.0f * (y + 0.5f) / static_cast<float>(HEIGHT) - 1.0f) * FOV;
                 ray.direction = math::vec4f(pixel_x, pixel_y, ray.direction.z).Normalize();
-                
-                gfx::Color out_color = gfx::Color::BLACK;
+
+                out_color = gfx::Color::BLACK;
 
                 auto min_dist = INFINITY;
                 for (const auto& drawable : m_drawables) {
                     auto drawable_cent_point = drawable->GetPositon() - ray.original;
 
-                    if (drawable->IsIntersect(ray, int_point, int_normal, out_color)) {
-                        float intensity;
-                        gfx::Color color;
-                        for (const auto& light : m_lights) {
-                            bool valid_illum = light->ComputeIllumination(int_point, int_normal, m_drawables, light, color, intensity);
-                        }
-
+                    if (drawable->IsIntersect(ray, int_point, int_normal, local_color)) {
                         auto int_point_dist = (int_point - CAMERA_POS).Length();
                         if (int_point_dist < min_dist) {
-                            out_color = drawable->GetMaterial().color * intensity;
+                            float intensity;
+                            gfx::Color color;
+                            for (const auto& light : m_lights) {
+                                bool valid_illum = light->ComputeIllumination(int_point, int_normal, m_drawables, light, color, intensity);
+                            }
+
+                            out_color = local_color * intensity;
                             min_dist = int_point_dist;
                         }
                     }

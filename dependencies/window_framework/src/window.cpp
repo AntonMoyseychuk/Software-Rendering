@@ -86,7 +86,7 @@ namespace win_framewrk {
         m_is_quit = true;
     }
     
-    bool Window::Init(const std::string_view title, std::uint32_t width, std::uint32_t height) {
+    bool Window::Init(const std::string& title, std::uint32_t width, std::uint32_t height) {
         LOG_WIN_INFO(__FUNCTION__);
 
         if (m_window_ptr != nullptr) {

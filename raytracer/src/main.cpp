@@ -22,15 +22,15 @@ using Color_t = gfx::Color;
 
 
 int main(int argc, char* argv[]) {
-    std::uint32_t width = 720, height = 480;
+    std::uint32_t width = 500, height = 350;
 
     win_framewrk::Window* window = win_framewrk::Window::Get();
     auto init_res = window->Init("Raytracer", width, height);
 
     app::Scene scene(window);
 
-    scene.AddDrawble(std::make_shared<Sphere_t>(math::vec4f(0.0f), 0.7f, gfx::Material(Color_t::MAGENTA, 1.5f)));
-    //scene.AddDrawble(std::make_shared<Sphere_t>(math::vec4f(1.5f, 0.0f, 0.0f), 0.5f, gfx::Material(Color_t::MAGENTA, 1.5f)));
+    scene.AddDrawble(std::make_shared<Sphere_t>(math::vec4f(0.0f), 0.7f, gfx::Material(Color_t::RED, 1.5f)));
+    scene.AddDrawble(std::make_shared<Sphere_t>(math::VECTOR_RIGHT * 2 + math::VECTOR_BACKWARD * 3, 0.7f, gfx::Material(Color_t::YELLOW, 1.5f)));
 
     auto light = std::make_shared<gfx::PointLigth>(math::vec4f(2.0f, -2.0f, 5.0f), gfx::Color::WHITE, 1.0f);
     scene.AddLight(light);
