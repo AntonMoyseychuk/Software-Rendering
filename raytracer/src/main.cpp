@@ -1,5 +1,5 @@
 #include "math_3d/vector.hpp"
-#include "math_3d/lin_math.hpp"
+#include "math_3d/math.hpp"
 
 #include "graphics/color.hpp"
 #include "graphics/ray.hpp"
@@ -29,10 +29,11 @@ int main(int argc, char* argv[]) {
 
     app::Scene scene(window);
 
-    scene.AddDrawble(std::make_shared<Sphere_t>(math::vec4f(0.0f), 0.7f, gfx::Material(Color_t::RED, 1.5f)));
+    scene.AddDrawble(std::make_shared<Sphere_t>(math::vec3f(0.0f), 0.7f, gfx::Material(Color_t::RED, 1.5f)));
     scene.AddDrawble(std::make_shared<Sphere_t>(math::VECTOR_RIGHT * 2 + math::VECTOR_BACKWARD * 3, 0.7f, gfx::Material(Color_t::YELLOW, 1.5f)));
+    scene.AddDrawble(std::make_shared<Sphere_t>(math::VECTOR_LEFT * 2 + math::VECTOR_BACKWARD * 3 + math::VECTOR_UP, 0.7f, gfx::Material(Color_t::CYAN, 1.5f)));
 
-    auto light = std::make_shared<gfx::PointLigth>(math::vec4f(2.0f, -2.0f, 5.0f), gfx::Color::WHITE, 1.0f);
+    auto light = std::make_shared<gfx::PointLigth>(math::vec3f(2.0f, -2.0f, 5.0f), gfx::Color::WHITE, 1.0f);
     scene.AddLight(light);
 
     auto frame_begin = std::chrono::steady_clock::now();

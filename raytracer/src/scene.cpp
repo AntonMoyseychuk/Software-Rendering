@@ -1,5 +1,5 @@
 #include "scene.hpp"
-#include "math_3d/lin_math.hpp"
+#include "math_3d/math.hpp"
 
 namespace app {
     Scene::Scene(win_framewrk::Window *window)
@@ -11,10 +11,10 @@ namespace app {
         const auto FOV = tanf(3.1415f / 4.0f / 2.f);
         const std::size_t WIDTH = m_window->GetWidth();
         const std::size_t HEIGHT = m_window->GetHeight();
-        const auto CAMERA_POS = math::vec4f(0.0f, 0.0f, 2.5f);
+        const auto CAMERA_POS = math::vec3f(0.0f, 0.0f, 2.5f);
         gfx::Ray ray(CAMERA_POS, math::VECTOR_BACKWARD);
 
-        math::vec4f int_point, int_normal;
+        math::vec3f int_point, int_normal;
 
         gfx::Color out_color, local_color;
 
@@ -22,7 +22,7 @@ namespace app {
             for (std::size_t x = 0; x < WIDTH; ++x) {
                 float pixel_x = (2.0f * (x + 0.5f) / static_cast<float>(WIDTH) - 1.0f) * FOV * WIDTH / static_cast<float>(HEIGHT);
                 float pixel_y = -(2.0f * (y + 0.5f) / static_cast<float>(HEIGHT) - 1.0f) * FOV;
-                ray.direction = math::vec4f(pixel_x, pixel_y, ray.direction.z).Normalize();
+                ray.direction = math::vec3f(pixel_x, pixel_y, ray.direction.z).Normalize();
 
                 out_color = gfx::Color::BLACK;
 

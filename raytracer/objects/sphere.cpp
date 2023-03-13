@@ -1,10 +1,10 @@
 #include "sphere.hpp"
-#include "math_3d/lin_math.hpp"
+#include "math_3d/math.hpp"
 
 #include <algorithm>
 
 namespace gfx {
-    Sphere::Sphere(const math::vec4f& p, float r, const gfx::Material &m)
+    Sphere::Sphere(const math::vec3f& p, float r, const gfx::Material &m)
         : IDrawable(p, m), m_radius(r)
     {
     }
@@ -13,12 +13,12 @@ namespace gfx {
     {
     }
 
-    bool Sphere::IsIntersect(const Ray& ray, math::vec4f& intersect_point, math::vec4f& local_normal, Color& local_color) const noexcept {
+    bool Sphere::IsIntersect(const Ray& ray, math::vec3f& intersect_point, math::vec3f& local_normal, Color& local_color) const noexcept {
         using namespace math;
 
-        vec4f k = ray.original - m_position;
-        float b = LinMath::Dot(k, ray.direction);
-        float c = LinMath::Dot(k,k) - m_radius * m_radius;
+        vec3f k = ray.original - m_position;
+        float b = Dot(k, ray.direction);
+        float c = Dot(k,k) - m_radius * m_radius;
         float d = b * b - c;
 
         if (d > 0) {

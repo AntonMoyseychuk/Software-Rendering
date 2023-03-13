@@ -13,10 +13,10 @@ namespace gfx {
         virtual ~ILight() = 0 {}
         
         ILight() = default;
-        ILight(const math::vec4f& position, const gfx::Color& color, float intensity) 
+        ILight(const math::vec3f& position, const gfx::Color& color, float intensity) 
             : IObject(position), m_color(color), m_intensity(intensity < 0.0f ? 0.0f : intensity) {}
 
-        virtual bool ComputeIllumination(const math::vec4f& intersect_point, const math::vec4f& normal, 
+        virtual bool ComputeIllumination(const math::vec3f& intersect_point, const math::vec3f& normal, 
             const std::list<std::shared_ptr<IDrawable>>& drawables, 
             const std::shared_ptr<IObject>& curr_obj, 
             gfx::Color& color, float& intensity) const noexcept = 0;
