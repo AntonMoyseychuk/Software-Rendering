@@ -22,7 +22,7 @@ using Color_t = gfx::Color;
 
 
 int main(int argc, char* argv[]) {
-    std::uint32_t width = 500, height = 350;
+    std::uint32_t width = 720, height = 480;
 
     win_framewrk::Window* window = win_framewrk::Window::Get();
     auto init_res = window->Init("Raytracer", width, height);

@@ -24,13 +24,15 @@ namespace app {
                 float pixel_y = -(2.0f * (y + 0.5f) / static_cast<float>(HEIGHT) - 1.0f) * FOV;
                 ray.direction = math::vec3f(pixel_x, pixel_y, ray.direction.z).Normalize();
 
-                out_color = gfx::Color::BLACK;
+                out_color = gfx::Color(99, 99, 99);
 
                 auto min_dist = INFINITY;
+                bool hit_anything = false;
                 for (const auto& drawable : m_drawables) {
                     auto drawable_cent_point = drawable->GetPositon() - ray.original;
 
                     if (drawable->IsIntersect(ray, int_point, int_normal, local_color)) {
+                        hit_anything = true;
                         auto int_point_dist = (int_point - CAMERA_POS).Length();
                         if (int_point_dist < min_dist) {
                             float intensity;

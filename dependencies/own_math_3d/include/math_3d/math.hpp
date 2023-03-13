@@ -1,12 +1,15 @@
 #pragma once
 #include "mat3x3.hpp"
 #include "vector.hpp"
+
 #include <cmath>
+#include <limits>
 
 
 namespace math {
-    constexpr float MATH_EPSILON = 1e-6f;
+    constexpr float MATH_EPSILON = std::numeric_limits<float>::epsilon();
     constexpr float MATH_PI = 3.14159265359f;
+    constexpr float MATH_INFINITY = std::numeric_limits<float>::infinity();
 
     inline float ToDegrees(float radians) noexcept {
         return (180.0f * radians) / MATH_PI;
@@ -26,7 +29,7 @@ namespace math {
     }
 
     template<typename Type>
-    static bool IsTendsTo(const Type& value, const Type& limit) {
+    bool IsTendsTo(const Type& value, const Type& limit) {
         return std::abs(limit - value) <= MATH_EPSILON;
     }
 }
