@@ -2,8 +2,8 @@
 #include "math_3d/math.hpp"
 
 namespace gfx {
-    Sphere::Sphere(const math::vec3f& p, float r, const gfx::Material &m)
-        : IDrawable(p, m), m_radius(r)
+    Sphere::Sphere(const math::vec3f& position, float r, const gfx::Material &material)
+        : IDrawable(position, material), m_radius(r)
     {
     }
 
@@ -11,7 +11,7 @@ namespace gfx {
     {
     }
 
-    bool Sphere::IsIntersect(const Ray& ray, math::vec3f& intersect_point, math::vec3f& local_normal, Color& local_color) const noexcept {
+    std::optional<IntersectionData> Sphere::IsIntersect(const Ray& ray) const noexcept {
         using namespace math;
 
         vec3f k = ray.original - m_position;
@@ -26,15 +26,15 @@ namespace gfx {
             float t2 = (-b - sqrtd) / 2.0f;
 
             float t = t2;
-            intersect_point = ray.original + ray.direction * t;
+
+            auto intersect_point = ray.original + ray.direction * t;
+            auto local_normal = (intersect_point - m_position).Normalize();
+            auto local_color = m_material.color;
             
-            local_normal = (intersect_point - m_position).Normalize();
-            local_color = m_material.color;
-            
-            return t > 0;
+            return t > 0 ? IntersectionData{intersect_point, local_normal, local_color} : std::optional<IntersectionData>{};
         }
 
-        return false;
+        return {};
     }
 
     void Sphere::SetRadius(float radius) noexcept {

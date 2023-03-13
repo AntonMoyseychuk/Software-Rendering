@@ -8,7 +8,7 @@ namespace gfx {
         Sphere(const math::vec3f& position, float radius, const Material& material);
         ~Sphere() override;
 
-        bool IsIntersect(const Ray& ray, math::vec3f& intersect_point, math::vec3f& local_normal, Color& local_color) const noexcept override;
+        std::optional<IntersectionData> IsIntersect(const Ray& ray) const noexcept override;
 
         void SetRadius(float radius) noexcept;
         float GetRadius() const noexcept;

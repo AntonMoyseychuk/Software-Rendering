@@ -14,34 +14,31 @@ namespace app {
         const auto CAMERA_POS = math::vec3f(0.0f, 0.0f, 2.5f);
         gfx::Ray ray(CAMERA_POS, math::VECTOR_BACKWARD);
 
-        math::vec3f int_point, int_normal;
-
-        gfx::Color out_color, local_color;
+        gfx::Color out_color;
 
         for (std::size_t y = 0; y < HEIGHT; ++y) {
             for (std::size_t x = 0; x < WIDTH; ++x) {
-                float pixel_x = (2.0f * (x + 0.5f) / static_cast<float>(WIDTH) - 1.0f) * FOV * WIDTH / static_cast<float>(HEIGHT);
-                float pixel_y = -(2.0f * (y + 0.5f) / static_cast<float>(HEIGHT) - 1.0f) * FOV;
+                float pixel_x = (2.0f * (x + 0.5f) / WIDTH - 1.0f) * FOV * WIDTH / HEIGHT;
+                float pixel_y = -(2.0f * (y + 0.5f) / HEIGHT - 1.0f) * FOV;
                 ray.direction = math::vec3f(pixel_x, pixel_y, ray.direction.z).Normalize();
 
                 out_color = gfx::Color(99, 99, 99);
 
-                auto min_dist = INFINITY;
+                auto min_dist = math::MATH_INFINITY;
                 bool hit_anything = false;
                 for (const auto& drawable : m_drawables) {
-                    auto drawable_cent_point = drawable->GetPositon() - ray.original;
-
-                    if (drawable->IsIntersect(ray, int_point, int_normal, local_color)) {
+                    auto intersection = drawable->IsIntersect(ray);
+                    if (intersection.has_value()) {
                         hit_anything = true;
-                        auto int_point_dist = (int_point - CAMERA_POS).Length();
+                        auto int_point_dist = (intersection->point - CAMERA_POS).Length();
                         if (int_point_dist < min_dist) {
                             float intensity;
                             gfx::Color color;
                             for (const auto& light : m_lights) {
-                                bool valid_illum = light->ComputeIllumination(int_point, int_normal, m_drawables, light, color, intensity);
+                                bool valid_illum = light->ComputeIllumination(intersection->point, intersection->normal, m_drawables, light, color, intensity);
                             }
 
-                            out_color = local_color * intensity;
+                            out_color = intersection->color * intensity;
                             min_dist = int_point_dist;
                         }
                     }
