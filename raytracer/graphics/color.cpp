@@ -3,8 +3,8 @@
 #include <algorithm>
 
 namespace gfx {
-    const Color Color::BLACK(0u);
-    const Color Color::WHITE(255u);
+    const Color Color::BLACK(0u, 0u, 0u);
+    const Color Color::WHITE(255u, 255u, 255u);
     const Color Color::RED(255u, 0u, 0u);
     const Color Color::GREEN(0u, 255u, 0u);
     const Color Color::BLUE(0u, 0u, 255u);
@@ -17,15 +17,15 @@ namespace gfx {
     {         
     }
 
-    Color::Color(std::uint8_t value)
-        : Color(value, value, value, value) 
+    Color::Color(std::uint32_t value)
+        : rgba(value)
     {
     }
 
-    Color::Color(const math::vec4f& vec)
-        : Color(static_cast<std::uint8_t>(std::clamp(vec.x * 255, 0.f, 255.f)), 
-                static_cast<std::uint8_t>(std::clamp(vec.y * 255, 0.f, 255.f)), 
-                static_cast<std::uint8_t>(std::clamp(vec.z * 255, 0.f, 255.f))) 
+    Color::Color(const math::vec4f &vec)
+        : Color(static_cast<std::uint8_t>(std::clamp(vec.x * 255, 0.f, 255.f)),
+                static_cast<std::uint8_t>(std::clamp(vec.y * 255, 0.f, 255.f)),
+                static_cast<std::uint8_t>(std::clamp(vec.z * 255, 0.f, 255.f)))
     {
     }
 
@@ -85,6 +85,24 @@ namespace gfx {
             std::clamp(g + c.g, 0, 255),
             std::clamp(b + c.b, 0, 255),
             std::clamp(a + c.a, 0, 255)
+        );
+    }
+
+    Color &Color::operator-=(const Color &c) noexcept {
+        r = std::clamp(r - c.r, 0, 255);
+        g = std::clamp(g - c.g, 0, 255);
+        b = std::clamp(b - c.b, 0, 255);
+        a = std::clamp(a - c.a, 0, 255);
+
+        return *this;
+    }
+
+    Color Color::operator-(const Color &c) const noexcept {
+        return Color(
+            std::clamp(r - c.r, 0, 255),
+            std::clamp(g - c.g, 0, 255),
+            std::clamp(b - c.b, 0, 255),
+            std::clamp(a - c.a, 0, 255)
         );
     }
 

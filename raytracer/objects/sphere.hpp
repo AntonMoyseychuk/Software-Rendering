@@ -2,13 +2,13 @@
 #include "drawable.hpp"
 
 namespace gfx {
-    class Sphere : public Drawable {
+    class Sphere : public IDrawable {
     public:
         Sphere() = default;
-        Sphere(const math::vec4f& position, float radius, const Material& material);
-        ~Sphere() override {}
+        Sphere(const math::vec3f& position, float radius, const Material& material);
+        ~Sphere() override;
 
-        bool IsIntersect(const Ray& ray, math::vec4f& intersect_point, math::vec4f& local_normal, Color& local_color) const noexcept override;
+        bool IsIntersect(const Ray& ray, math::vec3f& intersect_point, math::vec3f& local_normal, Color& local_color) const noexcept override;
 
         void SetRadius(float radius) noexcept;
         float GetRadius() const noexcept;

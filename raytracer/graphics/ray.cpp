@@ -1,7 +1,7 @@
 #include "ray.hpp"
 
 namespace gfx {
-    Ray::Ray(const math::vec4f& o, const math::vec4f& dir) 
+    Ray::Ray(const math::vec3f& o, const math::vec3f& dir) 
         : original(o), direction(dir) 
     {
     }

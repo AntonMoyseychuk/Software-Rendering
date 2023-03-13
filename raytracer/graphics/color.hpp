@@ -4,7 +4,7 @@
 namespace gfx {
     struct Color {
         Color() = default;
-        explicit Color(std::uint8_t value);
+        explicit Color(std::uint32_t value);
         Color(const math::vec4f& vec);
         Color(const math::vec4ub& vec);
         Color(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 255);
@@ -17,6 +17,9 @@ namespace gfx {
 
         Color& operator+=(const Color& color) noexcept;
         Color operator+(const Color& color) const noexcept;
+
+        Color& operator-=(const Color& color) noexcept;
+        Color operator-(const Color& color) const noexcept;
 
         bool operator==(const Color& color) const noexcept;
         bool operator!=(const Color& color) const noexcept;
