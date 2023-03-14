@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <limits>
+#include <random>
 
 
 namespace math {
@@ -17,6 +18,12 @@ namespace math {
     
     inline float ToRadians(float degrees) noexcept {
         return degrees * (MATH_PI / 180.0f);
+    }
+
+    inline float Random() noexcept {
+        static std::uniform_real_distribution<float> distribution(0.0, 1.0);
+        static std::mt19937 generator;
+        return distribution(generator);
     }
 
     template<typename _VecType, typename _MatrixType>

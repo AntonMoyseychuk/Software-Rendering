@@ -14,20 +14,21 @@ namespace gfx {
     std::optional<IntersectionData> Sphere::IsIntersect(const Ray& ray) const noexcept {
         using namespace math;
 
-        vec3f k = ray.original - m_position;
+        vec3f k = ray.origin - m_position;
         float b = 2.0f * Dot(k, ray.direction);
         float c = Dot(k,k) - m_radius * m_radius;
         float d = b * b - 4.0f * c;
 
-        if (d > 0) {
-            float sqrtd = sqrtf(d);
+        if (d >= 0.0f) {
+            float half_sqrtd = sqrtf(d) / 2.0f;
+            float half_b = b / 2.0f;
 
-            float t1 = (-b + sqrtd) / 2.0f;
-            float t2 = (-b - sqrtd) / 2.0f;
+            // float t1 = (-b + sqrtd) / 2.0f;
+            // float t2 = (-b - sqrtd) / 2.0f;
 
-            float t = t2;
+            float t = -half_b - half_sqrtd;
 
-            auto intersect_point = ray.original + ray.direction * t;
+            auto intersect_point = ray.origin + ray.direction * t;
             auto local_normal = (intersect_point - m_position).Normalize();
             auto local_color = m_material.color;
             

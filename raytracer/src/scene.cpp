@@ -32,7 +32,7 @@ namespace app {
                         hit_anything = true;
                         auto int_point_dist = (intersection->point - CAMERA_POS).Length();
                         if (int_point_dist < min_dist) {
-                            float intensity;
+                            float intensity = 1.0f;
                             gfx::Color color;
                             for (const auto& light : m_lights) {
                                 bool valid_illum = light->ComputeIllumination(intersection->point, intersection->normal, m_drawables, light, color, intensity);
