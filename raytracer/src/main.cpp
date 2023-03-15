@@ -21,27 +21,28 @@
 #endif
 
 int main(int argc, char* argv[]) {
-    std::uint32_t width = 720, height = 480;
-
     win_framewrk::Window* window = win_framewrk::Window::Get();
-    auto init_res = window->Init("Raytracer", width, height);
-    window->SetBackgroundColor(gfx::Color(100, 100, 100).rgba);
+    auto init_res = window->Init("Raytracer", 480, 360);
+    window->SetBackgroundColor(gfx::Color(100).rgba);
 
     app::Scene scene(window);
+    scene.SetAntialiasingLevel(app::AntialiasingLevel::X8);
 
-    scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.0f, -1.0f), 2.0f, gfx::Material(gfx::Color::RED, 1.5f)));
+    scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, -100.5f, -1.0f), 100.0f, gfx::Material(gfx::Color::YELLOW, 1.5f)));
+
+    scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.0f, -1.0f), 0.5f, gfx::Material(gfx::Color::MAGENTA, 1.5f)));
     // scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(2.0f, 2.0f, -4.0f), 0.5f, gfx::Material(gfx::Color::YELLOW, 1.5f)));
     // scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-3.0f, 1.0f, -3.0f), 0.5f, gfx::Material(gfx::Color::CYAN, 1.5f)));
     // scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(3.0f, -5.0f, -10.0f), 0.5f, gfx::Material(gfx::Color::MAGENTA, 1.5f)));
     // scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-3.0f, 5.0f, -10.0f), 0.5f, gfx::Material(gfx::Color::BLUE, 1.5f)));
 
-    auto light = std::make_shared<gfx::PointLigth>(math::vec3f(0.0f, 0.0f, 5.0f), gfx::Color::WHITE, 1.0f);
+    auto light = std::make_shared<gfx::PointLigth>(math::vec3f(5.0f, 5.0f, 5.0f), gfx::Color::WHITE, 1.0f);
     scene.AddLight(light);
 
     auto frame_begin = std::chrono::steady_clock::now();
     while (scene.GetWindow()->IsOpen()) {
         scene.GetWindow()->PollEvent();
-        
+
         SDL_PumpEvents();
         auto keyboard_state = SDL_GetKeyboardState(nullptr);
         if (keyboard_state[SDL_Scancode::SDL_SCANCODE_A]) {

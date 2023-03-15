@@ -73,6 +73,7 @@
         "condition_variable": "cpp",
         "functional": "cpp",
         "span": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "random": "cpp"
     }
 }

@@ -8,9 +8,9 @@
 
 
 namespace math {
+    constexpr float MATH_INFINITY = std::numeric_limits<float>::infinity();
     constexpr float MATH_EPSILON = std::numeric_limits<float>::epsilon();
     constexpr float MATH_PI = 3.14159265359f;
-    constexpr float MATH_INFINITY = std::numeric_limits<float>::infinity();
 
     inline float ToDegrees(float radians) noexcept {
         return (180.0f * radians) / MATH_PI;
@@ -20,8 +20,8 @@ namespace math {
         return degrees * (MATH_PI / 180.0f);
     }
 
-    inline float Random() noexcept {
-        static std::uniform_real_distribution<float> distribution(0.0, 1.0);
+    inline float Random(float min, float max) noexcept {
+        static std::uniform_real_distribution<float> distribution(min, max);
         static std::mt19937 generator;
         return distribution(generator);
     }
