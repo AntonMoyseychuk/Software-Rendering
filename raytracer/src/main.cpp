@@ -13,13 +13,12 @@
 
 #include <iostream>
 #include <chrono>
-#include <cassert>
 
 //#define LOG_ALL
 
-#define LOG_EXPR(expresion) \
-    std::cout << "{" << #expresion << "}: " << (expresion) << std::endl
-
+#ifdef _DEBUG
+    #define LOG_EXPR(expresion) std::cout << "{" << #expresion << "}: " << (expresion) << std::endl
+#endif
 
 int main(int argc, char* argv[]) {
     std::uint32_t width = 720, height = 480;
@@ -29,13 +28,13 @@ int main(int argc, char* argv[]) {
 
     app::Scene scene(window);
 
-    scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.0f, -1.0f), 0.5f, gfx::Material(gfx::Color::RED, 1.5f)));
-    scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(2.0f, 2.0f, -4.0f), 0.5f, gfx::Material(gfx::Color::YELLOW, 1.5f)));
-    scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-3.0f, 1.0f, -3.0f), 0.5f, gfx::Material(gfx::Color::CYAN, 1.5f)));
-    scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(3.0f, -5.0f, -10.0f), 0.5f, gfx::Material(gfx::Color::MAGENTA, 1.5f)));
-    scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-3.0f, 5.0f, -10.0f), 0.5f, gfx::Material(gfx::Color::BLUE, 1.5f)));
+    scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.0f, -1.0f), 2.0f, gfx::Material(gfx::Color::RED, 1.5f)));
+    // scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(2.0f, 2.0f, -4.0f), 0.5f, gfx::Material(gfx::Color::YELLOW, 1.5f)));
+    // scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-3.0f, 1.0f, -3.0f), 0.5f, gfx::Material(gfx::Color::CYAN, 1.5f)));
+    // scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(3.0f, -5.0f, -10.0f), 0.5f, gfx::Material(gfx::Color::MAGENTA, 1.5f)));
+    // scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-3.0f, 5.0f, -10.0f), 0.5f, gfx::Material(gfx::Color::BLUE, 1.5f)));
 
-    auto light = std::make_shared<gfx::PointLigth>(math::vec3f(2.0f, -2.0f, 5.0f), gfx::Color::WHITE, 1.0f);
+    auto light = std::make_shared<gfx::PointLigth>(math::vec3f(0.0f, 0.0f, 5.0f), gfx::Color::WHITE, 1.0f);
     scene.AddLight(light);
 
     auto frame_begin = std::chrono::steady_clock::now();

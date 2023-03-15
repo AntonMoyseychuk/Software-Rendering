@@ -26,8 +26,8 @@ namespace math {
         return distribution(generator);
     }
 
-    template<typename _VecType, typename _MatrixType>
-    auto Mult(const Vector<_VecType, 3>& vec, const Mat3x3<_MatrixType>& mat) noexcept -> Vector<decltype(vec.x * mat[0][0]), 3> {
+    template<typename VecType, typename MatrixType>
+    inline auto Mult(const Vector<VecType, 3>& vec, const Mat3x3<MatrixType>& mat) noexcept -> Vector<decltype(vec.x * mat[0][0]), 3> {
         return Vector<decltype(vec.x * mat[0][0]), 3>(
             vec.x * mat[0][0] + vec.y * mat[1][0] + vec.z * mat[2][0],
             vec.x * mat[0][1] + vec.y * mat[1][1] + vec.z * mat[2][1],
@@ -36,7 +36,17 @@ namespace math {
     }
 
     template<typename Type>
-    bool IsTendsTo(const Type& value, const Type& limit) {
+    inline bool IsTendsTo(const Type& value, const Type& limit) noexcept {
         return std::abs(limit - value) <= MATH_EPSILON;
+    }
+
+    template <typename Type>
+    Type Clamp(Type value, Type min, Type max) noexcept {
+        static_assert(std::is_arithmetic_v<Type>, "Type must be an arithmetic value");
+        if (min > max) {
+            std::swap(min, max);
+        }
+
+        return (value > max) ? max : (value < min) ? min : value;
     }
 }
