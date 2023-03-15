@@ -40,10 +40,10 @@ namespace gfx {
 
         template <typename Type>
         const Color& LoadColorFromVector(const math::Vector<Type, 4>& vec) noexcept {
-            r = math::Clamp(vec.x, 0, 255);
-            g = math::Clamp(vec.y, 0, 255);
-            b = math::Clamp(vec.z, 0, 255);
-            a = math::Clamp(vec.w, 0, 255);
+            r = math::Clamp(vec.x, static_cast<Type>(0), static_cast<Type>(255));
+            g = math::Clamp(vec.y, static_cast<Type>(0), static_cast<Type>(255));
+            b = math::Clamp(vec.z, static_cast<Type>(0), static_cast<Type>(255));
+            a = math::Clamp(vec.w, static_cast<Type>(0), static_cast<Type>(255));
             return *this;
         }
 

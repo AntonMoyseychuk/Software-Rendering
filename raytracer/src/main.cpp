@@ -11,6 +11,8 @@
 
 #include "scene.hpp"
 
+#include "imgui/imgui.h"
+
 #include <iostream>
 #include <chrono>
 

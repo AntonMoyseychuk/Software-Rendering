@@ -14,15 +14,16 @@ namespace math {
         static_assert(std::is_arithmetic_v<Type>, "Type must be an arithmetic type");
     
     #pragma region interface
-        Vector() : Vector(0.0f) 
-        {
-        }
-        Vector(Type _x, Type _y, Type _z, Type _w = Type(0)) : x(_x), y(_y), z(_z), w(_w) 
-        {
-        }
-        Vector(Type value) : x(value), y(value), z(value), w(value) 
-        {
-        }
+        Vector() 
+            : Vector(0.0f) { }
+        Vector(Type _x, Type _y, Type _z, Type _w = Type(0)) 
+            : x(_x), y(_y), z(_z), w(_w) { }
+        Vector(Type value) 
+            : x(value), y(value), z(value), w(value) { }
+        Vector(const Vector<Type, 3>& vec, Type _w = Type(0)) 
+            : x(vec.x), y(vec.y), z(vec.z), w(_w) { }
+        Vector(const Vector<Type, 2>& vec, Type _z = Type(0), Type _w = Type(0)) 
+            : x(vec.x), y(vec.y), z(_z), w(_w) { }
 
         float Length() const noexcept {
             return sqrtf(x * x + y * y + z * z + w * w);
@@ -112,15 +113,16 @@ namespace math {
         static_assert(std::is_arithmetic_v<Type>, "Type must be an arithmetic value");
     
     #pragma region interface
-        Vector() : Vector(0.0f) 
-        {
-        }
-        Vector(Type _x, Type _y, Type _z) : x(_x), y(_y), z(_z)
-        {
-        }
-        Vector(Type value) : x(value), y(value), z(value) 
-        {
-        }
+        Vector() 
+            : Vector(0.0f) { }
+        Vector(Type _x, Type _y, Type _z) 
+            : x(_x), y(_y), z(_z) { }
+        Vector(Type value) 
+            : x(value), y(value), z(value) { }
+        Vector(const Vector<Type, 4>& vec) 
+            : x(vec.x), y(vec.y), z(vec.z) { }
+        Vector(const Vector<Type, 2>& vec, Type _z = Type(0)) 
+            : x(vec.x), y(vec.y), z(_z) { }
 
         float Length() const noexcept {
             return sqrtf(x * x + y * y + z * z);
@@ -206,15 +208,16 @@ namespace math {
         static_assert(std::is_arithmetic_v<Type>, "Type must be an arithmetic type");
     
     #pragma region interface
-        Vector() : Vector(0.0f) 
-        {
-        }
-        Vector(Type _x, Type _y) : x(_x), y(_y)
-        {
-        }
-        Vector(Type value) : x(value), y(value) 
-        {
-        }
+        Vector() 
+            : Vector(0.0f) { }
+        Vector(Type _x, Type _y) 
+            : x(_x), y(_y) { }
+        Vector(Type value) 
+            : x(value), y(value) { }
+        Vector(const Vector<Type, 4>& vec) 
+            : x(vec.x), y(vec.y) { }
+        Vector(const Vector<Type, 3>& vec) 
+            : x(vec.x), y(vec.y) { }
 
         float Length() const noexcept {
             return sqrtf(x * x + y * y);

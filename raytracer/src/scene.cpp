@@ -35,7 +35,6 @@ namespace app {
                         hit_anything = true;
 
                         out_color = intersection->color;
-
                         auto int_point_dist = (intersection->point - CAMERA_POS).Length();
                         
                         if (int_point_dist < min_dist) {
