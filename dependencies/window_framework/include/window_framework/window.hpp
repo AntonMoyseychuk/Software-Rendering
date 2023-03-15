@@ -25,6 +25,9 @@ namespace win_framewrk {
         void SetTitle(const std::string_view title) noexcept;
         const std::string& GetTitle() const noexcept;
 
+        void SetBackgroundColor(std::uint32_t color) noexcept;
+        std::uint32_t GetBackgroundColor() const noexcept;
+
         void SetWidth(std::uint32_t width) noexcept;
         std::uint32_t GetWidth() const noexcept;
 
@@ -41,6 +44,7 @@ namespace win_framewrk {
         Window& operator=(const Window& window) = delete;
         
     private:
+        static std::uint32_t _ConvertToBigEndian(std::uint32_t color) noexcept;
         static std::uint32_t _MapRGBA(SDL_PixelFormat* format, std::uint32_t color) noexcept;
 
     private:
@@ -71,5 +75,7 @@ namespace win_framewrk {
         std::unique_ptr<SDL_Window, WindowDeleter> m_window_ptr = nullptr;
         mutable SDL_Surface* m_surface_ptr = nullptr;
         SDL_Event m_event;
+
+        std::uint32_t m_background_color = 0;
     };
 }

@@ -6,7 +6,9 @@ namespace win_framewrk {
     std::unique_ptr<bool, Window::SDLDeinitializer> Window::is_sdl_initialized_ptr = nullptr;
 
     Window* Window::Get() noexcept {
-        LOG_WIN_INFO(__FUNCTION__);
+        #if defined(_DEBUG)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
 
         if (is_sdl_initialized_ptr == nullptr || *is_sdl_initialized_ptr == false) {
             is_sdl_initialized_ptr.reset(new bool(_InitializeSDL()));
@@ -20,17 +22,20 @@ namespace win_framewrk {
 
     Window::Window(Window &&window)
         : m_title(std::move(window.m_title)), m_width(window.m_width), m_height(window.m_height), m_is_quit(window.m_is_quit),
-            m_window_ptr(std::move(window.m_window_ptr)), m_surface_ptr(window.m_surface_ptr), 
-                m_event(window.m_event)
+            m_window_ptr(std::move(window.m_window_ptr)), m_surface_ptr(window.m_surface_ptr), m_event(window.m_event), m_background_color(0)
     {
-        LOG_WIN_INFO(__FUNCTION__);
+        #if defined(_DEBUG)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
 
         window.m_surface_ptr = nullptr;
         memset(&window.m_event, 0, sizeof(window.m_event));
     }
 
     Window &Window::operator=(Window &&window) noexcept {
-        LOG_WIN_INFO(__FUNCTION__);
+        #if defined(_DEBUG)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
 
         m_title = std::move(window.m_title);
         m_width = window.m_width;
@@ -40,6 +45,7 @@ namespace win_framewrk {
         m_window_ptr = std::move(window.m_window_ptr);
         m_surface_ptr = window.m_surface_ptr;
         m_event = window.m_event;
+        m_background_color = window.m_background_color;
 
         window.m_surface_ptr = nullptr;
         memset(&window.m_event, 0, sizeof(window.m_event));
@@ -47,10 +53,24 @@ namespace win_framewrk {
         return *this;
     }
 
-    std::uint32_t Window::_MapRGBA(SDL_PixelFormat *format, std::uint32_t color) noexcept {
-        #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-            color = SDL_SwapBE32(color);
+    std::uint32_t Window::_ConvertToBigEndian(std::uint32_t color) noexcept {
+        #if defined(_DEBUG) && defined(LOG_ALL)
+            LOG_WIN_INFO(__FUNCTION__);
         #endif
+
+        #if SDL_BYTEORDER == SDL_LIL_ENDIAN
+            return SDL_SwapBE32(color);
+        #else
+            return color;
+        #endif
+    }
+        
+    std::uint32_t Window::_MapRGBA(SDL_PixelFormat *format, std::uint32_t color) noexcept {
+        #if defined(_DEBUG) && defined(LOG_ALL)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
+
+        color = _ConvertToBigEndian(color);
 
         std::uint8_t rgba[4];
         for (std::size_t i = 0; i < 4; ++i) {
@@ -60,12 +80,15 @@ namespace win_framewrk {
     }
 
     bool Window::_InitializeSDL() {
-        LOG_WIN_INFO(__FUNCTION__);
+        #if defined(_DEBUG)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
+        
         return SDL_Init(SDL_INIT_EVERYTHING) == 0;
     }
 
     bool Window::_UpdateSurface() const noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
 
@@ -75,22 +98,33 @@ namespace win_framewrk {
 
     void Window::_OnWindowEvent() noexcept {
         if(m_event.window.event == SDL_WINDOWEVENT_RESIZED) {
-            LOG_WIN_EVENT("SDL_WINDOWEVENT_RESIZED", 
-                "New size -> [" + std::to_string(m_surface_ptr->w) + ", " + std::to_string(m_surface_ptr->h) + "]");
+            #if defined(_DEBUG)
+                LOG_WIN_EVENT("SDL_WINDOWEVENT_RESIZED", 
+                    "New size -> [" + std::to_string(m_surface_ptr->w) + ", " + std::to_string(m_surface_ptr->h) + "]");
+            #endif            
+            
             SDL_GetWindowSize(m_window_ptr.get(), (int*)&m_width, (int*)&m_height);
             LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
         }
     }
     
     void Window::_OnQuitEvent() noexcept {
+        #if defined(_DEBUG)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
+        
         m_is_quit = true;
     }
     
     bool Window::Init(const std::string& title, std::uint32_t width, std::uint32_t height) {
-        LOG_WIN_INFO(__FUNCTION__);
+        #if defined(_DEBUG)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
 
         if (m_window_ptr != nullptr) {
-            LOG_WIN_INFO("There was an atempt to secondory initialize window");
+            #ifdef _DEBUG
+                LOG_WIN_INFO("There was an atempt to secondory initialize window");
+            #endif
             return false;
         }
 
@@ -107,14 +141,14 @@ namespace win_framewrk {
     }
 
     bool Window::IsOpen() const noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
         return !m_is_quit;
     }
 
     void Window::FillPixelBuffer(const std::vector<std::size_t> &pixels) const noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
 
@@ -128,7 +162,7 @@ namespace win_framewrk {
     }
 
     void Window::PresentPixelBuffer() const noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
 
@@ -138,7 +172,7 @@ namespace win_framewrk {
     }
 
     void Window::PollEvent() noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
 
@@ -156,7 +190,7 @@ namespace win_framewrk {
     }
 
     std::uint32_t Window::GetPixelColor(std::size_t x, std::size_t y) noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
         
@@ -176,7 +210,7 @@ namespace win_framewrk {
     }
 
     void Window::SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
 
@@ -186,7 +220,7 @@ namespace win_framewrk {
     }
 
     void Window::SetTitle(const std::string_view title) noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
 
@@ -195,14 +229,30 @@ namespace win_framewrk {
     }
 
     const std::string& Window::GetTitle() const noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
         return m_title;
     }
 
-    void Window::SetWidth(std::uint32_t width) noexcept {
-        #ifdef LOG_ALL
+    void Window::SetBackgroundColor(std::uint32_t color) noexcept {
+        #if defined(_DEBUG) && defined(LOG_ALL)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
+
+        m_background_color = color;
+    }
+
+    std::uint32_t Window::GetBackgroundColor() const noexcept {
+        #if defined(_DEBUG) && defined(LOG_ALL)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
+
+        return m_background_color;
+    }
+
+    void Window::SetWidth(std::uint32_t width) noexcept  {
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
 
@@ -213,16 +263,18 @@ namespace win_framewrk {
     }
 
     std::uint32_t Window::GetWidth() const noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
+
         return m_width;
     }
 
     void Window::SetHeight(std::uint32_t height) noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
+
         m_height = height;
         SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
         
@@ -230,28 +282,33 @@ namespace win_framewrk {
     }
 
     std::uint32_t Window::GetHeight() const noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
+
         return m_height;
     }
 
     const SDL_Surface* Window::GetSDLSurfaceHandle() const noexcept {
-        #ifdef LOG_ALL
-           LOG_WIN_INFO(__FUNCTION__);
+        #if defined(_DEBUG) && defined(LOG_ALL)
+            LOG_WIN_INFO(__FUNCTION__);
         #endif
+
         return m_surface_ptr;
     }
 
     SDL_Surface* Window::GetSDLSurfaceHandle() noexcept {
-        #ifdef LOG_ALL
+        #if defined(_DEBUG) && defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
+
         return m_surface_ptr;
     }
     
     void Window::SDLDeinitializer::operator()(bool *is_sdl_initialized_ptr) const {
-        LOG_WIN_INFO(__FUNCTION__);
+        #if defined(_DEBUG)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
         
         if (is_sdl_initialized_ptr) {
             SDL_Quit();
@@ -260,7 +317,9 @@ namespace win_framewrk {
     }
     
     void Window::WindowDeleter::operator()(SDL_Window *window) const {
-        LOG_WIN_INFO(__FUNCTION__);
+        #if defined(_DEBUG)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
         
         if (window != nullptr) {
             SDL_DestroyWindow(window);

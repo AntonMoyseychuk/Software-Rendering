@@ -14,15 +14,13 @@ namespace app {
         const auto CAMERA_POS = math::vec3f(0.0f, 0.0f, 2.5f);
         gfx::Ray ray(CAMERA_POS, math::VECTOR_BACKWARD);
 
-        gfx::Color out_color;
-
         for (std::size_t y = 0; y < HEIGHT; ++y) {
             for (std::size_t x = 0; x < WIDTH; ++x) {
                 float pixel_x = (2.0f * (x + 0.5f) / WIDTH - 1.0f) * FOV * WIDTH / HEIGHT;
                 float pixel_y = -(2.0f * (y + 0.5f) / HEIGHT - 1.0f) * FOV;
                 ray.direction = math::vec3f(pixel_x, pixel_y, ray.direction.z).Normalize();
 
-                out_color = gfx::Color(99, 99, 99);
+                gfx::Color out_color(m_window->GetBackgroundColor());
 
                 auto min_dist = math::MATH_INFINITY;
                 bool hit_anything = false;

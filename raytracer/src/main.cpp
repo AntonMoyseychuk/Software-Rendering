@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
 
     win_framewrk::Window* window = win_framewrk::Window::Get();
     auto init_res = window->Init("Raytracer", width, height);
+    window->SetBackgroundColor(gfx::Color(100, 100, 100).rgba);
 
     app::Scene scene(window);
 
