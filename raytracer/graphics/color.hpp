@@ -5,7 +5,7 @@
 namespace gfx {
     struct Color {
         Color() = default;
-        Color(std::uint8_t value);
+        explicit Color(std::uint8_t value);
         Color(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 255);
 
         Color& operator*=(float value) noexcept;
