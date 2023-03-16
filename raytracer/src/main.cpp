@@ -14,8 +14,6 @@
 #include <iostream>
 #include <chrono>
 
-#define LOG_ALL
-
 #ifdef _DEBUG
     #define LOG_EXPR(expresion) std::cout << "{" << #expresion << "}: " << (expresion) << std::endl
 #endif
@@ -49,19 +47,19 @@ int main(int argc, char* argv[]) {
             light->MoveFor(math::VECTOR_LEFT * 0.1f);
         }
         if (keyboard_state[SDL_Scancode::SDL_SCANCODE_W]) {
-            light->MoveFor(math::VECTOR_UP * 0.1f);
+            light->MoveFor(math::VECTOR_BACKWARD * 0.1f);
         }
         if (keyboard_state[SDL_Scancode::SDL_SCANCODE_D]) {
             light->MoveFor(math::VECTOR_RIGHT * 0.1f);
         }
         if (keyboard_state[SDL_Scancode::SDL_SCANCODE_S]) {
-            light->MoveFor(math::VECTOR_DOWN * 0.1f);
+            light->MoveFor(math::VECTOR_FORWARD * 0.1f);
         }
         if (keyboard_state[SDL_Scancode::SDL_SCANCODE_UP]) {
-            light->MoveFor(math::VECTOR_BACKWARD * 0.1f);
+            light->MoveFor(math::VECTOR_UP * 0.1f);
         }
         if (keyboard_state[SDL_Scancode::SDL_SCANCODE_DOWN]) {
-            light->MoveFor(math::VECTOR_FORWARD * 0.1f);
+            light->MoveFor(math::VECTOR_DOWN * 0.1f);
         }
 
         scene.Render();
