@@ -15,7 +15,7 @@ set(SDL_DIR "${DEPENDENCIES_DIR}/vendor/SDL2")
 set(IMGUI_DIR "${DEPENDENCIES_DIR}/vendor/imgui")
 set(MATH_3D_DIR "${DEPENDENCIES_DIR}/vendor/own-math-3d")
 
-set(WINDOW_FRAMEWORK_DIR "${DEPENDENCIES_DIR}/window_framework")
+set(WINDOW_FRAMEWORK_DIR "${CMAKE_SOURCE_DIR}/window_framework")
 
 add_subdirectory(raytracer)
 #add_subdirectory(rasterizer)
