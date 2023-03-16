@@ -9,14 +9,12 @@
 
 #include "window_framework/window.hpp"
 
-#include "scene.hpp"
-
-#include "imgui/imgui.h"
+#include "graphics/scene.hpp"
 
 #include <iostream>
 #include <chrono>
 
-//#define LOG_ALL
+#define LOG_ALL
 
 #ifdef _DEBUG
     #define LOG_EXPR(expresion) std::cout << "{" << #expresion << "}: " << (expresion) << std::endl
@@ -27,8 +25,8 @@ int main(int argc, char* argv[]) {
     auto init_res = window->Init("Raytracer", 480, 360);
     window->SetBackgroundColor(gfx::Color(100).rgba);
 
-    app::Scene scene(window);
-    scene.SetAntialiasingLevel(app::AntialiasingLevel::X8);
+    gfx::Scene scene(window);
+    scene.SetAntialiasingLevel(gfx::AntialiasingLevel::X8);
 
     scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, -100.5f, -1.0f), 100.0f, gfx::Material(gfx::Color::YELLOW, 1.5f)));
 
@@ -70,7 +68,7 @@ int main(int argc, char* argv[]) {
         scene.GetWindow()->PresentPixelBuffer();
 
         auto frame_end = std::chrono::steady_clock::now();
-        LOG_WIN_INFO("FPS: " + std::to_string(1.0f / std::chrono::duration<float>(frame_end - frame_begin).count()));
+        std::cout << "FPS: " << std::to_string(1.0f / std::chrono::duration<float>(frame_end - frame_begin).count()) << std::endl;
         frame_begin = frame_end;
     }
 

@@ -6,7 +6,7 @@
 #include <list>
 #include <memory>
 
-namespace app {
+namespace gfx {
     enum class AntialiasingLevel : std::size_t { NONE = 0, X2 = 2, X4 = 4, X8 = 8, X16 = 16, X32 = 32 };
 
     class Scene {

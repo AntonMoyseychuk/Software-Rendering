@@ -1,7 +1,7 @@
 #include "scene.hpp"
 #include "math_3d/math.hpp"
 
-namespace app {
+namespace gfx {
     Scene::Scene(win_framewrk::Window *window)
         : m_window(window), m_drawables()
     {

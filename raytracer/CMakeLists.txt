@@ -9,7 +9,7 @@ file(GLOB SRC_FILES
 
     "${WINDOW_FRAMEWORK_DIR}/src/*.cpp"
 
-    "${IMGUI_DIR}/imgui/*.cpp"
+    # "${IMGUI_DIR}/imgui/*.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
@@ -20,7 +20,7 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC "${MATH_3D_DIR}/include" 
     PUBLIC "${SDL_DIR}/include"
     PUBLIC "${WINDOW_FRAMEWORK_DIR}/include"
-    PUBLIC "${IMGUI_DIR}"
+    # PUBLIC "${IMGUI_DIR}"
 )
 
 target_link_directories(${PROJECT_NAME} 

@@ -1,5 +1,18 @@
 #include "window_framework/window.hpp"
 
+#include <iostream>
+
+#define LOG(tag, msg) std::cerr << '[' << (tag) << "]\t" << (msg) << '\n'
+
+#define LOG_WIN_ERROR(condition, tag, msg) if (!(condition)) { \
+    LOG((tag), (msg)); \
+    exit(-1); \
+}
+
+#define LOG_WIN_INFO(msg) LOG("window info", (msg))
+
+#define LOG_WIN_EVENT(event_type, msg) LOG("event", "type: " + std::string(event_type) + ". " + msg)
+
 #define LOG_SDL_ERROR(condition, msg) LOG_WIN_ERROR((condition), "sdl error", msg)
 
 namespace win_framewrk {
@@ -194,7 +207,7 @@ namespace win_framewrk {
             LOG_WIN_INFO(__FUNCTION__);
         #endif
         
-        if (x >= m_surface_ptr->w || y >= m_surface_ptr->h) {
+        if (x >= static_cast<std::size_t>(m_surface_ptr->w) || y >= static_cast<std::size_t>(m_surface_ptr->h)) {
             return 0;
         }
     

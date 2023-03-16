@@ -1,6 +1,4 @@
 #pragma once
-#include "logger.hpp"
-
 #include <SDL2/SDL.h>
 #include <string>
 #include <vector>
