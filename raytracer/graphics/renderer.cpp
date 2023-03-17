@@ -45,10 +45,9 @@ namespace gfx {
 
     #ifdef MT
         std::for_each(std::execution::par, m_vertical_it.cbegin(), m_vertical_it.cend(), 
-        [this, &scene, width, height, dx, dy, aspect_ratio, fov, &ray, &background, &CAMERA_POS](std::uint32_t y) {
+        [this, &scene, &camera, dx, dy, aspect_ratio, fov, &ray, &background](std::uint32_t y) {
             std::for_each(std::execution::par, m_horizontal_it.cbegin(), m_horizontal_it.cend(), 
-            [this, y, &scene, width, height, dx, dy, aspect_ratio, fov, &ray, &background, &CAMERA_POS](std::uint32_t x) {
-                // math::vec4f out_color = BACKGROUND_COLOR.ToVector4<float>();
+            [this, y, &scene, &camera, dx, dy, aspect_ratio, fov, &ray, &background](std::uint32_t x) {
                 gfx::Color out_color = background;
 
                 float pixel_x = (-1.0f + (x * dx)) * aspect_ratio * fov;
@@ -63,7 +62,7 @@ namespace gfx {
                         hit_anything = true;
 
                         out_color = intersection->color;
-                        auto int_point_dist = (intersection->point - CAMERA_POS).Length();
+                        auto int_point_dist = (intersection->point - camera.GetPositon()).Length();
                         
                         if (int_point_dist < min_dist) {
                             float intensity = 1.0f;
@@ -95,7 +94,7 @@ namespace gfx {
                     }
                 }
 
-                m_frame[x + y * width] = out_color.rgba;
+                m_frame[x + y * camera.GetViewportWidth()] = out_color.rgba;
             });
        });
     #else
