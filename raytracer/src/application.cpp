@@ -25,8 +25,6 @@ namespace app {
 
         while (m_window->IsOpen()) {
             m_window->PollEvent();
-
-            // SDL_PumpEvents();
             // auto keyboard_state = SDL_GetKeyboardState(nullptr);
             // if (keyboard_state[SDL_Scancode::SDL_SCANCODE_A]) {
             //     light->MoveFor(math::VECTOR_LEFT * 0.1f);

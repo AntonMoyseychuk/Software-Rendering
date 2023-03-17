@@ -25,6 +25,11 @@ namespace gfx {
             for (std::size_t i = 0; i < height; ++i) {
                 m_vertical_it[i] = i;
             }
+
+            m_horizontal_it.resize(width);
+            for (std::size_t i = 0; i < width; ++i) {
+                m_horizontal_it[i] = i;
+            }
         #endif
         }
 
@@ -36,8 +41,10 @@ namespace gfx {
         const auto aspect_ratio = (float)width / height;
 
     #ifdef MT
-        std::for_each(std::execution::par, m_vertical_it.cbegin(), m_vertical_it.cend(), [&](std::uint32_t y){
-            for (std::size_t x = 0; x < width; ++x) {
+        std::for_each(std::execution::par, m_vertical_it.cbegin(), m_vertical_it.cend(), 
+        [this, &scene, width, height, dx, dy, aspect_ratio, fov, &ray, &background, &CAMERA_POS](std::uint32_t y) {
+            std::for_each(std::execution::par, m_horizontal_it.cbegin(), m_horizontal_it.cend(), 
+            [this, y, &scene, width, height, dx, dy, aspect_ratio, fov, &ray, &background, &CAMERA_POS](std::uint32_t x) {
                 // math::vec4f out_color = BACKGROUND_COLOR.ToVector4<float>();
                 gfx::Color out_color = background;
 
@@ -86,12 +93,11 @@ namespace gfx {
                 }
 
                 m_frame[x + y * width] = out_color.rgba;
-            }
+            });
        });
     #else
         for (std::size_t y = 0; y < height; ++y) {
             for (std::size_t x = 0; x < width; ++x) {
-                // math::vec4f out_color = BACKGROUND_COLOR.ToVector4<float>();
                 gfx::Color out_color = background;
 
                 float pixel_x = (-1.0f + (x * dx)) * aspect_ratio * fov;

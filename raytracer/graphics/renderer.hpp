@@ -23,6 +23,7 @@ namespace gfx {
 
         #ifdef MT
             std::vector<std::uint32_t> m_vertical_it;   
+            std::vector<std::uint32_t> m_horizontal_it;   
         #endif
 
     };
