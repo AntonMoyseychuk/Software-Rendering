@@ -74,6 +74,7 @@
         "functional": "cpp",
         "span": "cpp",
         "string_view": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "execution": "cpp"
     }
 }
