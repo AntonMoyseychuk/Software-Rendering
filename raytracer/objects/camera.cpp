@@ -18,15 +18,15 @@ namespace gfx {
         return m_viewport_width;
     }
 
-    void Camera::GetViewportWidth(std::uint32_t width) noexcept {
+    void Camera::SetViewportWidth(std::uint32_t width) noexcept {
         m_viewport_width = width;
     }
 
     std::uint32_t Camera::GetViewportHeight() const noexcept {
         return m_viewport_height;
     }
-    
-    void Camera::GetViewportHeight(std::uint32_t height) noexcept {
+
+    void Camera::SetViewportHeight(std::uint32_t height) noexcept {
         m_viewport_height = height;
     }
 }

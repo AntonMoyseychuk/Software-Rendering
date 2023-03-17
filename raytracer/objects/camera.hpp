@@ -11,10 +11,10 @@ namespace gfx {
         float GetFOVInRadians() const noexcept;
 
         std::uint32_t GetViewportWidth() const noexcept;
-        void GetViewportWidth(std::uint32_t width) noexcept;
+        void SetViewportWidth(std::uint32_t width) noexcept;
 
         std::uint32_t GetViewportHeight() const noexcept;
-        void GetViewportHeight(std::uint32_t height) noexcept;
+        void SetViewportHeight(std::uint32_t height) noexcept;
 
     private:
         math::mat3f m_view;

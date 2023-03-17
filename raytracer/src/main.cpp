@@ -1,6 +1,7 @@
 #include "application.hpp"
 
 #ifdef _DEBUG
+    #include <iostream>
     #define LOG_EXPR(expresion) std::cout << "{" << #expresion << "}: " << (expresion) << std::endl
 #endif
 

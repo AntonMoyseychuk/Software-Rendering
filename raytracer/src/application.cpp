@@ -25,6 +25,8 @@ namespace app {
         while (m_window->IsOpen()) {
             m_window->PollEvent();
 
+            m_camera.SetViewportHeight(m_window->GetHeight());
+            m_camera.SetViewportWidth(m_window->GetWidth());
             auto& buffer = m_renderer.Render(m_scene, m_camera, gfx::LoadColorFromUInt32(m_window->GetBackgroundColor()));
             
             m_window->FillPixelBuffer(buffer);
