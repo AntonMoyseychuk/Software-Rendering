@@ -75,6 +75,13 @@
         "span": "cpp",
         "string_view": "cpp",
         "random": "cpp",
-        "execution": "cpp"
+        "execution": "cpp",
+        "cstdarg": "cpp",
+        "deque": "cpp",
+        "filesystem": "cpp",
+        "numeric": "cpp",
+        "queue": "cpp",
+        "ranges": "cpp",
+        "regex": "cpp"
     }
 }
