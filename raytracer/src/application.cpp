@@ -7,7 +7,8 @@
 
 namespace app {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height)
-        : m_window(win_framewrk::Window::Get()), m_renderer(), m_scene(), m_last_frame(std::chrono::steady_clock::now())
+        : m_window(win_framewrk::Window::Get()), m_renderer(), m_scene(), m_camera(math::VECTOR_FORWARD * 2.5f, width, height, 45.0f), 
+            m_last_frame(std::chrono::steady_clock::now())
     {
         m_window->Init(title, width, height);
         m_window->SetBackgroundColor(gfx::Color(100).rgba);
@@ -21,32 +22,10 @@ namespace app {
     }
     
     void Application::Run() noexcept {
-        const float FOV = tanf(3.1415f / 4.0f / 2.f);
-
         while (m_window->IsOpen()) {
             m_window->PollEvent();
-            // auto keyboard_state = SDL_GetKeyboardState(nullptr);
-            // if (keyboard_state[SDL_Scancode::SDL_SCANCODE_A]) {
-            //     light->MoveFor(math::VECTOR_LEFT * 0.1f);
-            // }
-            // if (keyboard_state[SDL_Scancode::SDL_SCANCODE_W]) {
-            //     light->MoveFor(math::VECTOR_BACKWARD * 0.1f);
-            // }
-            // if (keyboard_state[SDL_Scancode::SDL_SCANCODE_D]) {
-            //     light->MoveFor(math::VECTOR_RIGHT * 0.1f);
-            // }
-            // if (keyboard_state[SDL_Scancode::SDL_SCANCODE_S]) {
-            //     light->MoveFor(math::VECTOR_FORWARD * 0.1f);
-            // }
-            // if (keyboard_state[SDL_Scancode::SDL_SCANCODE_UP]) {
-            //     light->MoveFor(math::VECTOR_UP * 0.1f);
-            // }
-            // if (keyboard_state[SDL_Scancode::SDL_SCANCODE_DOWN]) {
-            //     light->MoveFor(math::VECTOR_DOWN * 0.1f);
-            // }
 
-            auto& buffer = m_renderer.Render(m_scene, m_window->GetWidth(), m_window->GetHeight(), FOV, 
-                gfx::LoadColorFromUInt32(m_window->GetBackgroundColor()));
+            auto& buffer = m_renderer.Render(m_scene, m_camera, gfx::LoadColorFromUInt32(m_window->GetBackgroundColor()));
             
             m_window->FillPixelBuffer(buffer);
             m_window->PresentPixelBuffer();

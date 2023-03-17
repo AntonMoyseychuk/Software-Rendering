@@ -16,7 +16,10 @@ namespace gfx {
     }
 
 
-    const std::vector<std::uint32_t> &Renderer::Render(const gfx::Scene &scene, std::uint32_t width, std::uint32_t height, float fov, const gfx::Color& background) noexcept {
+    const std::vector<std::uint32_t> &Renderer::Render(const gfx::Scene &scene, const Camera& camera, const gfx::Color& background) noexcept {
+        const auto width = camera.GetViewportWidth(); 
+        const auto height = camera.GetViewportHeight(); 
+        
         if (m_frame.size() != width * height) {
             m_frame.resize(width * height);
         
@@ -33,12 +36,12 @@ namespace gfx {
         #endif
         }
 
-        const auto CAMERA_POS = math::vec3f(0.0f, 0.0f, 2.5f);
-        gfx::Ray ray(CAMERA_POS, math::VECTOR_BACKWARD);
+        gfx::Ray ray(camera.GetPositon(), math::VECTOR_BACKWARD);
 
         const auto dx = 2.0f / width;
         const auto dy = 2.0f / height;
         const auto aspect_ratio = (float)width / height;
+        const auto fov = tanf(camera.GetFOVInRadians() / 2.0f);
 
     #ifdef MT
         std::for_each(std::execution::par, m_vertical_it.cbegin(), m_vertical_it.cend(), 
@@ -112,7 +115,7 @@ namespace gfx {
                         hit_anything = true;
 
                         out_color = intersection->color;
-                        auto int_point_dist = (intersection->point - CAMERA_POS).Length();
+                        auto int_point_dist = (intersection->point - camera.GetPositon()).Length();
                         
                         if (int_point_dist < min_dist) {
                             float intensity = 1.0f;

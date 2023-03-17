@@ -1,7 +1,10 @@
 #pragma once
 #include "window_framework/window.hpp"
+
 #include "graphics/renderer.hpp"
 #include "graphics/scene.hpp"
+
+#include "objects/camera.hpp"
 
 #include <string>
 #include <chrono>
@@ -16,6 +19,7 @@ namespace app {
         win_framewrk::Window* m_window;
         gfx::Renderer m_renderer;
         gfx::Scene m_scene;
+        gfx::Camera m_camera;
 
         std::chrono::steady_clock::time_point m_last_frame;
     };

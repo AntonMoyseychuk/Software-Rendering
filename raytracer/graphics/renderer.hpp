@@ -1,5 +1,6 @@
 #pragma once
 #include "graphics/scene.hpp"
+#include "objects/camera.hpp"
 
 #include <vector>
         
@@ -15,7 +16,7 @@ namespace gfx {
         void SetAntialiasingLevel(AntialiasingLevel level) noexcept;
         AntialiasingLevel GetAntialiasingLevel() const noexcept;
 
-        const std::vector<std::uint32_t>& Render(const gfx::Scene& scene, std::uint32_t width, std::uint32_t height, float fov, const gfx::Color& background) noexcept;
+        const std::vector<std::uint32_t>& Render(const gfx::Scene& scene, const Camera& camera, const gfx::Color& background) noexcept;
 
     private:
         std::vector<std::uint32_t> m_frame;
