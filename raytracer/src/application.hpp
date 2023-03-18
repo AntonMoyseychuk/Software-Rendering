@@ -2,9 +2,6 @@
 #include "window_framework/window.hpp"
 
 #include "graphics/renderer.hpp"
-#include "graphics/scene.hpp"
-
-#include "objects/camera.hpp"
 
 #include <string>
 #include <chrono>

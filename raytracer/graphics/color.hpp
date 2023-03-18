@@ -1,5 +1,4 @@
 #pragma once
-#include "math_3d/vector.hpp"
 #include "math_3d/math.hpp"
 
 namespace gfx {
