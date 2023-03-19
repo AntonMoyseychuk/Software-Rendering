@@ -16,7 +16,6 @@ namespace app {
         
         m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::NONE);
 
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, -100.5f, -1.0f), 100.0f, gfx::Material(gfx::Color::YELLOW, 1.5f)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.0f, -1.0f), 0.5f, gfx::Material(gfx::Color::MAGENTA, 1.5f)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, 1.0f, -1.0f), 0.5f, gfx::Material(gfx::Color::GREEN, 1.5f)));
 
