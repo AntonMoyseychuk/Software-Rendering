@@ -16,10 +16,12 @@ namespace gfx {
         std::uint32_t GetViewportHeight() const noexcept;
         void SetViewportHeight(std::uint32_t height) noexcept;
 
-    private:
-        math::mat3f m_view;
+        float GetAspectRatio() const noexcept;
 
-        float m_fov = 45.0f;
+    private:
+        math::mat4f m_view;
+
+        float m_fov_degrees = 45.0f;
         std::uint32_t m_viewport_width = 0;
         std::uint32_t m_viewport_height = 0;
     };

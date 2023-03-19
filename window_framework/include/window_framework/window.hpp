@@ -49,6 +49,7 @@ namespace win_framewrk {
         Window() = default;
         static bool _InitializeSDL();
         bool _UpdateSurface() const noexcept;
+        void _UpdateVerticalIterator(std::uint32_t new_height) noexcept;
 
         void _OnWindowEvent() noexcept;
         void _OnQuitEvent() noexcept;
@@ -75,5 +76,7 @@ namespace win_framewrk {
         SDL_Event m_event;
 
         std::uint32_t m_background_color = 0;
+
+        std::vector<std::uint32_t> m_vertical_it;
     };
 }

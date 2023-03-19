@@ -4,10 +4,9 @@
 
 #include <vector>
         
-// #define MT
 
 namespace gfx {
-    enum class AntialiasingLevel : std::size_t { NONE = 0, X2 = 2, X4 = 4, X8 = 8, X16 = 16, X32 = 32 };
+    enum class AntialiasingLevel : std::size_t { NONE = 0, X2 = 2, X4 = 4, X8 = 8 };
 
     class Renderer {
     public:
@@ -22,10 +21,6 @@ namespace gfx {
         std::vector<std::uint32_t> m_frame;
         AntialiasingLevel m_antialiasing_level = AntialiasingLevel::NONE;
 
-        #ifdef MT
-            std::vector<std::uint32_t> m_vertical_it;   
-            std::vector<std::uint32_t> m_horizontal_it;   
-        #endif
-
+        std::vector<std::uint32_t> m_vertical_it;  
     };
 }
