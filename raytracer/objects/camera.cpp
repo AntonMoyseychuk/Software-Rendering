@@ -1,9 +1,10 @@
 #include "camera.hpp"
 
 namespace gfx {
-    Camera::Camera(const math::vec3f& position, std::uint32_t viewport_width, std::uint32_t viewport_height, float fov_in_degrees)
-        : IObject(position), m_fov_degrees(fov_in_degrees), m_viewport_width(viewport_width), m_viewport_height(viewport_height)
+    Camera::Camera(const math::vec3f &position, const math::vec3f &look_at, const math::vec3f &up, float fov_degrees, float aspect_ratio)
+        : IObject(position), m_fov_degrees(fov_degrees), m_aspect_ratio(aspect_ratio), m_dir((look_at - position).Normalize())
     {
+
     }
 
     float Camera::GetFOVInDegrees() const noexcept {
@@ -14,23 +15,40 @@ namespace gfx {
         return math::ToRadians(m_fov_degrees);
     }
 
-    std::uint32_t Camera::GetViewportWidth() const noexcept {
-        return m_viewport_width;
+    void Camera::SetAspectRatio(float aspect) noexcept {
+        if (aspect > 0.0f) {
+            m_aspect_ratio = aspect;
+        }
     }
 
-    void Camera::SetViewportWidth(std::uint32_t width) noexcept {
-        m_viewport_width = width;
+    float Camera::GetAspectRatio() const noexcept
+    {
+        return m_aspect_ratio;
     }
 
-    std::uint32_t Camera::GetViewportHeight() const noexcept {
-        return m_viewport_height;
+    const math::vec2ui &Camera::GetRayCacheSize() const noexcept {
+        return m_ray_cache_size;
     }
 
-    void Camera::SetViewportHeight(std::uint32_t height) noexcept {
-        m_viewport_height = height;
-    }
-    
-    float Camera::GetAspectRatio() const noexcept {
-        return static_cast<float>(m_viewport_width) / static_cast<float>(m_viewport_height);
+    const std::vector<gfx::Ray>& Camera::GenerateRays(const math::vec2ui &screen_size) const noexcept {
+        if (screen_size.x != m_ray_cache_size.x && screen_size.y != m_ray_cache_size.y) {
+            m_ray_cache.resize(screen_size.x * screen_size.y);
+            m_ray_cache_size = screen_size;
+
+            const float fov = tanf(math::ToRadians(m_fov_degrees) / 2.0f);
+            const auto dx = 2.0f / screen_size.x;
+            const auto dy = 2.0f / screen_size.y;
+
+            for (std::size_t y = 0; y < screen_size.y; ++y) {
+                for (std::size_t x = 0; x < screen_size.x; ++x) {
+                    float pixel_x = (-1.0f + (x * dx)) * m_aspect_ratio * fov;
+                    float pixel_y = (1.0f - (y * dy)) * fov;
+
+                    m_ray_cache[x + y * screen_size.x] = Ray(m_position, math::vec3f(pixel_x, pixel_y, m_dir.z).Normalize());
+                }
+            }
+        }
+
+        return m_ray_cache;
     }
 }
