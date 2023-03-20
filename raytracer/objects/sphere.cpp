@@ -29,10 +29,9 @@ namespace gfx {
             float t = -half_b - half_sqrtd;
 
             auto intersect_point = ray.origin + ray.direction * t;
-            auto local_normal = (intersect_point - m_position).Normalize();
-            auto local_color = m_material.color;
+            auto local_normal = math::Normalize(intersect_point - m_position);
             
-            return t > 0 ? IntersectionData{intersect_point, local_normal, local_color} : std::optional<IntersectionData>{};
+            return t > 0 ? IntersectionData(intersect_point, local_normal, m_material, t) : std::optional<IntersectionData>{};
         }
 
         return {};

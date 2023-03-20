@@ -17,7 +17,7 @@ namespace gfx {
             const std::shared_ptr<IObject>& curr_obj, 
             gfx::Color& color, float& intensity) const noexcept
     {
-        auto light_dir = (m_position - intersect_point).Normalize();
+        auto light_dir = math::Normalize(m_position - intersect_point);
         auto angle = acosf(math::Dot(normal, light_dir));
 
         color = m_color;

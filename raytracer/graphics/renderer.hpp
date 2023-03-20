@@ -15,7 +15,10 @@ namespace gfx {
         void SetAntialiasingLevel(AntialiasingLevel level) noexcept;
         AntialiasingLevel GetAntialiasingLevel() const noexcept;
 
-        const std::vector<std::uint32_t>& Render(const gfx::Scene& scene, const Camera& camera, const math::vec2ui& screen_size, const gfx::Color& background) noexcept;
+        void SetOutputFrameSize(const math::vec2ui& size) noexcept;
+        const math::vec2ui& GetOutputFrameSize() const noexcept;
+
+        const std::vector<std::uint32_t>& Render(const gfx::Scene& scene, const Camera& camera, const gfx::Color& background) noexcept;
 
     private:
         std::vector<std::uint32_t> m_frame;

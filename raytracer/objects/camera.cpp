@@ -2,7 +2,7 @@
 
 namespace gfx {
     Camera::Camera(const math::vec3f &position, const math::vec3f &look_at, const math::vec3f &up, float fov_degrees, float aspect_ratio)
-        : IObject(position), m_fov_degrees(fov_degrees), m_aspect_ratio(aspect_ratio), m_dir((look_at - position).Normalize())
+        : IObject(position), m_fov_degrees(fov_degrees), m_aspect_ratio(aspect_ratio), m_dir(math::Normalize(look_at - position))
     {
 
     }
@@ -31,7 +31,7 @@ namespace gfx {
     }
 
     const std::vector<gfx::Ray>& Camera::GenerateRays(const math::vec2ui &screen_size) const noexcept {
-        if (screen_size.x != m_ray_cache_size.x && screen_size.y != m_ray_cache_size.y) {
+        if (screen_size.x != m_ray_cache_size.x || screen_size.y != m_ray_cache_size.y) {
             m_ray_cache.resize(screen_size.x * screen_size.y);
             m_ray_cache_size = screen_size;
 
@@ -44,7 +44,7 @@ namespace gfx {
                     float pixel_x = (-1.0f + (x * dx)) * m_aspect_ratio * fov;
                     float pixel_y = (1.0f - (y * dy)) * fov;
 
-                    m_ray_cache[x + y * screen_size.x] = Ray(m_position, math::vec3f(pixel_x, pixel_y, m_dir.z).Normalize());
+                    m_ray_cache[x + y * screen_size.x] = Ray(m_position, math::Normalize(math::vec3f(pixel_x, pixel_y, m_dir.z)));
                 }
             }
         }

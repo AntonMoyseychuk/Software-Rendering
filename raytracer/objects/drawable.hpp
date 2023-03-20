@@ -11,12 +11,14 @@
 namespace gfx {
     struct IntersectionData {
         IntersectionData() = default;
-        IntersectionData(const math::vec3f& _point, const math::vec3f& _normal, const Color& _color) 
-            : point(_point), normal(_normal), color(_color) {}
+        IntersectionData(const math::vec3f& _point, const math::vec3f& _normal, const Material& _material, float _distance) 
+            : point(_point), normal(_normal), material(_material), distance(_distance) {}
 
         math::vec3f point;
         math::vec3f normal;
-        Color color;
+        Material material;
+
+        float distance;
     };
 
     class IDrawable : public IObject {
