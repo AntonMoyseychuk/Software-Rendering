@@ -1,6 +1,7 @@
 #include "application.hpp"
 #include "objects/sphere.hpp"
 #include "objects/point_light.hpp"
+#include "objects/directional_light.hpp"
 
 #include <iostream>
 #include <memory>
@@ -18,8 +19,15 @@ namespace app {
 
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.0f, -1.0f), 0.5f, gfx::Material(gfx::Color::MAGENTA, 1.5f)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, 0.3f, -2.0f), 0.5f, gfx::Material(gfx::Color::GREEN, 1.5f)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, 2.3f, -5.0f), 0.5f, gfx::Material(gfx::Color::RED, 1.5f)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(2.0f, 1.3f, -2.0f), 0.5f, gfx::Material(gfx::Color::YELLOW, 1.5f)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 3.0f, -7.0f), 0.5f, gfx::Material(gfx::Color::CYAN, 1.5f)));
 
-        m_scene.AddLight(std::make_shared<gfx::PointLigth>(math::vec3f(5.0f, 5.0f, 5.0f), gfx::Color::WHITE, 1.0f));
+        
+        
+        m_scene.AddLight(std::make_shared<gfx::DirectionalLigth>(math::vec3f(1.0f, 0.0f, -2.0f), gfx::Color::WHITE, 1.0f));
+        // m_scene.AddLight(std::make_shared<gfx::PointLigth>(math::vec3f(8.0f, -10.0f, 8.0f), gfx::Color::WHITE, 1.0f));
+        // m_scene.AddLight(std::make_shared<gfx::PointLigth>(math::vec3f(-3.0f, 1.0f, 0.0f), gfx::Color::WHITE, 1.0f));
     }
     
     void Application::Run() noexcept {
@@ -38,7 +46,12 @@ namespace app {
             m_window->FillPixelBuffer(buffer);
             m_window->PresentPixelBuffer();
             
-            m_scene.GetLights().begin()->get()->MoveFor(math::VECTOR_LEFT * 0.1f);
+            // {
+            //     dynamic_cast<gfx::DirectionalLigth*>(m_scene.GetLights().begin()->get())->SetDirection(math::vec3f(
+            //             math::Random(-1.0f, 1.0f), math::Random(-1.0f, 1.0f), math::Random(-1.0f, 1.0f)
+            //         )
+            //     );
+            // }
 
             auto curr_frame = std::chrono::steady_clock::now();
             std::cout << "FPS: " << std::to_string(1.0f / std::chrono::duration<float>(curr_frame - m_last_frame).count()) << std::endl;

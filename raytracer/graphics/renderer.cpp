@@ -64,11 +64,11 @@ namespace gfx {
                             if (int_point_dist < min_dist) {
                                 out_color = gfx::StoreColor<float>(intersection->material.color);
 
-                                float intensity = 1.0f;
+                                float intensity = 0.0f;
                                 gfx::Color light_color;
                                 for (const auto& light : scene.GetLights()) {
                                     bool valid_illum = light->ComputeIllumination(intersection->point, 
-                                        intersection->normal, scene.GetDrawables(), light, light_color, intensity);
+                                        intersection->normal, light_color, intensity);
                                 }
 
                                 out_color *= intensity;
@@ -93,15 +93,14 @@ namespace gfx {
                                 auto int_point_dist = (intersection->point - camera.GetPositon()).Length();
                                     
                                 if (int_point_dist < min_dist) {
-                                    float intensity = 1.0f;
+                                    float intensity = 0.0f;
                                     gfx::Color light_color;
                                     for (const auto& light : scene.GetLights()) {
                                         bool valid_illum = light->ComputeIllumination(intersection->point, 
-                                            intersection->normal, scene.GetDrawables(), light, light_color, intensity);
+                                            intersection->normal, light_color, intensity);
                                     }
 
-                                    //out_color = intersection->color;
-                                    out_color += gfx::StoreColor<float>(intersection->material.color) * intensity;
+                                    out_color *= intensity;
                                     min_dist = int_point_dist;
                                 }
                             }

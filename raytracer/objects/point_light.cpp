@@ -14,19 +14,19 @@ namespace gfx {
     
     bool PointLigth::ComputeIllumination(
         const math::vec3f& at_point, const math::vec3f& at_normal, 
-        const std::list<std::shared_ptr<IDrawable>>& drawables, const std::shared_ptr<IObject>& curr_obj, 
-        gfx::Color& color, float& intensity) const noexcept
+            gfx::Color& light_color, float& intensity) const noexcept
     {
-        auto light_dir = math::Normalize(m_position - at_point);
-        auto angle = acosf(math::Dot(at_normal, light_dir));
+        const auto light_dir = math::Normalize(m_position - at_point);
+        const auto angle = acosf(math::Dot(at_normal, light_dir));
 
-        color = m_color;
-        if (angle > math::MATH_PI / 2) {
-            intensity = 0.0f;
+        light_color = m_color;
+
+        if (angle > math::MATH_PI_DIV_2) {
+            // intensity = 0.0f;
             return false;
         }
 
-        intensity = intensity * (1.0f - (angle / (math::MATH_PI / 2)));
+        intensity += (1.0f - (angle / math::MATH_PI_DIV_2));
         return true;
     }
 }

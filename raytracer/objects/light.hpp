@@ -17,8 +17,6 @@ namespace gfx {
             : IObject(position), m_color(color), m_intensity(intensity < 0.0f ? 0.0f : intensity) {}
 
         virtual bool ComputeIllumination(const math::vec3f& at_point, const math::vec3f& at_normal, 
-            const std::list<std::shared_ptr<IDrawable>>& drawables, 
-            const std::shared_ptr<IObject>& curr_obj, 
             gfx::Color& color, float& intensity) const noexcept = 0;
 
         void SetColor(const Color& color) noexcept { m_color = color; }

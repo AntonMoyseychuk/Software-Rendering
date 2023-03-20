@@ -8,9 +8,7 @@ namespace gfx {
         PointLigth(const math::vec3f& position, const gfx::Color& color, float intensity);
         ~PointLigth() override;
 
-        bool ComputeIllumination(const math::vec3f& at_point, const math::vec3f& at_normal, 
-            const std::list<std::shared_ptr<IDrawable>>& drawables, 
-            const std::shared_ptr<IObject>& curr_obj, 
-            gfx::Color& color, float& intensity) const noexcept override;
+        bool ComputeIllumination(const math::vec3f& at_point, const math::vec3f& at_normal,
+            gfx::Color& light_color, float& intensity) const noexcept override;
     };
 }
