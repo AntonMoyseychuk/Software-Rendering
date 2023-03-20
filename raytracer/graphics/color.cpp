@@ -23,73 +23,73 @@ namespace gfx {
     }
 
     Color& Color::operator*=(float value) noexcept {
-        r = std::clamp(static_cast<int>(r * value), 0, 255);
-        g = std::clamp(static_cast<int>(g * value), 0, 255);
-        b = std::clamp(static_cast<int>(b * value), 0, 255);
-        a = std::clamp(static_cast<int>(a * value), 0, 255);
+        r = static_cast<uint8_t>(math::Clamp(r * value, 0.0f, 255.0f));
+        g = static_cast<uint8_t>(math::Clamp(g * value, 0.0f, 255.0f));
+        b = static_cast<uint8_t>(math::Clamp(b * value, 0.0f, 255.0f));
+        a = static_cast<uint8_t>(math::Clamp(a * value, 0.0f, 255.0f));
         return *this;
     }
 
     Color Color::operator*(float value) const noexcept {
         return Color(
-            std::clamp(static_cast<int>(r * value), 0, 255),
-            std::clamp(static_cast<int>(g * value), 0, 255),
-            std::clamp(static_cast<int>(b * value), 0, 255),
-            std::clamp(static_cast<int>(a * value), 0, 255)
+            static_cast<uint8_t>(math::Clamp(r * value, 0.0f, 255.0f)),
+            static_cast<uint8_t>(math::Clamp(g * value, 0.0f, 255.0f)),
+            static_cast<uint8_t>(math::Clamp(b * value, 0.0f, 255.0f)),
+            static_cast<uint8_t>(math::Clamp(a * value, 0.0f, 255.0f))
         );
     }
 
     Color &Color::operator/=(float value) noexcept {
-        r = std::clamp(static_cast<int>(r / value), 0, 255);
-        g = std::clamp(static_cast<int>(g / value), 0, 255);
-        b = std::clamp(static_cast<int>(b / value), 0, 255);
-        a = std::clamp(static_cast<int>(a / value), 0, 255);
+        r = static_cast<uint8_t>(math::Clamp(r / value, 0.0f, 255.0f));
+        g = static_cast<uint8_t>(math::Clamp(g / value, 0.0f, 255.0f));
+        b = static_cast<uint8_t>(math::Clamp(b / value, 0.0f, 255.0f));
+        a = static_cast<uint8_t>(math::Clamp(a / value, 0.0f, 255.0f));
 
         return *this;
     }
 
     Color Color::operator/(float value) const noexcept {
         return Color(
-            std::clamp(static_cast<int>(r / value), 0, 255),
-            std::clamp(static_cast<int>(g / value), 0, 255),
-            std::clamp(static_cast<int>(b / value), 0, 255),
-            std::clamp(static_cast<int>(a / value), 0, 255)
+            static_cast<uint8_t>(math::Clamp(r / value, 0.0f, 255.0f)),
+            static_cast<uint8_t>(math::Clamp(g / value, 0.0f, 255.0f)),
+            static_cast<uint8_t>(math::Clamp(b / value, 0.0f, 255.0f)),
+            static_cast<uint8_t>(math::Clamp(a / value, 0.0f, 255.0f))
         );
     }
 
     Color &Color::operator+=(const Color &c) noexcept {
-        r = std::clamp(r + c.r, 0, 255);
-        g = std::clamp(g + c.g, 0, 255);
-        b = std::clamp(b + c.b, 0, 255);
-        a = std::clamp(a + c.a, 0, 255);
+        r = math::Clamp(r + c.r, 0, 255);
+        g = math::Clamp(g + c.g, 0, 255);
+        b = math::Clamp(b + c.b, 0, 255);
+        a = math::Clamp(a + c.a, 0, 255);
 
         return *this;
     }
     
     Color Color::operator+(const Color &c) const noexcept {
         return Color(
-            std::clamp(r + c.r, 0, 255),
-            std::clamp(g + c.g, 0, 255),
-            std::clamp(b + c.b, 0, 255),
-            std::clamp(a + c.a, 0, 255)
+            math::Clamp(r + c.r, 0, 255),
+            math::Clamp(g + c.g, 0, 255),
+            math::Clamp(b + c.b, 0, 255),
+            math::Clamp(a + c.a, 0, 255)
         );
     }
 
     Color &Color::operator-=(const Color &c) noexcept {
-        r = std::clamp(r - c.r, 0, 255);
-        g = std::clamp(g - c.g, 0, 255);
-        b = std::clamp(b - c.b, 0, 255);
-        a = std::clamp(a - c.a, 0, 255);
+        r = math::Clamp(r - c.r, 0, 255);
+        g = math::Clamp(g - c.g, 0, 255);
+        b = math::Clamp(b - c.b, 0, 255);
+        a = math::Clamp(a - c.a, 0, 255);
 
         return *this;
     }
 
     Color Color::operator-(const Color &c) const noexcept {
         return Color(
-            std::clamp(r - c.r, 0, 255),
-            std::clamp(g - c.g, 0, 255),
-            std::clamp(b - c.b, 0, 255),
-            std::clamp(a - c.a, 0, 255)
+            math::Clamp(r - c.r, 0, 255),
+            math::Clamp(g - c.g, 0, 255),
+            math::Clamp(b - c.b, 0, 255),
+            math::Clamp(a - c.a, 0, 255)
         );
     }
 
@@ -98,6 +98,6 @@ namespace gfx {
     }
     
     bool Color::operator!=(const Color &color) const noexcept {
-        return r != color.r && g != color.g && b != color.b && a != color.a;
+        return !(*this == color);
     }
 }

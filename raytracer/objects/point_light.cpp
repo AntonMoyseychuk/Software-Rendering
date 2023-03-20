@@ -12,21 +12,21 @@ namespace gfx {
     {
     }
     
-    bool PointLigth::ComputeIllumination(const math::vec3f& intersect_point, const math::vec3f& normal, 
-            const std::list<std::shared_ptr<IDrawable>>& drawables, 
-            const std::shared_ptr<IObject>& curr_obj, 
-            gfx::Color& color, float& intensity) const noexcept
+    bool PointLigth::ComputeIllumination(
+        const math::vec3f& at_point, const math::vec3f& at_normal, 
+        const std::list<std::shared_ptr<IDrawable>>& drawables, const std::shared_ptr<IObject>& curr_obj, 
+        gfx::Color& color, float& intensity) const noexcept
     {
-        auto light_dir = math::Normalize(m_position - intersect_point);
-        auto angle = acosf(math::Dot(normal, light_dir));
+        auto light_dir = math::Normalize(m_position - at_point);
+        auto angle = acosf(math::Dot(at_normal, light_dir));
 
         color = m_color;
         if (angle > math::MATH_PI / 2) {
-            intensity = 0;
+            intensity = 0.0f;
             return false;
         }
 
-        intensity = m_intensity * (1.0f - (angle / (math::MATH_PI / 2)));
+        intensity = intensity * (1.0f - (angle / (math::MATH_PI / 2)));
         return true;
     }
 }

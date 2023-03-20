@@ -15,8 +15,6 @@ static math::vec3f _RandomVectorInUnitSphere() noexcept {
     }
 }
 
-
-
 namespace gfx {
     void Renderer::SetAntialiasingLevel(AntialiasingLevel level) noexcept {
         m_antialiasing_level = level;
@@ -52,7 +50,7 @@ namespace gfx {
                 const auto screen_height = m_frame_size.y;
 
                 for (std::size_t x = 0; x < screen_width; ++x) {
-                    math::vec4f out_color = gfx::ToVector4<float>(background);
+                    math::vec4f out_color = gfx::StoreColor<float>(background);
 
                     bool hit_anything = false;
                     auto min_dist = math::MATH_INFINITY;
@@ -64,7 +62,7 @@ namespace gfx {
                             auto int_point_dist = (intersection->point - camera.GetPositon()).Length();
                                 
                             if (int_point_dist < min_dist) {
-                                out_color = gfx::ToVector4<float>(intersection->material.color);
+                                out_color = gfx::StoreColor<float>(intersection->material.color);
 
                                 float intensity = 1.0f;
                                 gfx::Color light_color;
@@ -103,14 +101,14 @@ namespace gfx {
                                     }
 
                                     //out_color = intersection->color;
-                                    out_color += gfx::ToVector4<float>(intersection->material.color) * intensity;
+                                    out_color += gfx::StoreColor<float>(intersection->material.color) * intensity;
                                     min_dist = int_point_dist;
                                 }
                             }
                         }
 
                         if (!hit_anything) {
-                            out_color += gfx::ToVector4<float>(background);
+                            out_color += gfx::StoreColor<float>(background);
                         }
                     }
 
@@ -118,7 +116,7 @@ namespace gfx {
                         out_color /= static_cast<float>(m_antialiasing_level);
                     }
 
-                    m_frame[x + y * screen_width] = gfx::LoadColorFromVector(out_color).rgba;
+                    m_frame[x + y * screen_width] = gfx::LoadColor(out_color).rgba;
                 }
             }
         );

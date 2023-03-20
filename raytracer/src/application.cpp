@@ -12,7 +12,7 @@ namespace app {
                 m_last_frame(std::chrono::steady_clock::now())
     {
         m_window->Init(title, width, height);
-        m_window->SetBackgroundColor(gfx::Color(100).rgba);
+        m_window->SetBackgroundColor(gfx::Color(80).rgba);
         
         m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::X2);
 
@@ -37,6 +37,8 @@ namespace app {
             
             m_window->FillPixelBuffer(buffer);
             m_window->PresentPixelBuffer();
+            
+            m_scene.GetLights().begin()->get()->MoveFor(math::VECTOR_LEFT * 0.1f);
 
             auto curr_frame = std::chrono::steady_clock::now();
             std::cout << "FPS: " << std::to_string(1.0f / std::chrono::duration<float>(curr_frame - m_last_frame).count()) << std::endl;
