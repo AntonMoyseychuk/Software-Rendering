@@ -26,7 +26,7 @@ namespace gfx {
             return false;
         }
 
-        intensity += (1.0f - (angle / math::MATH_PI_DIV_2));
+        intensity += m_intensity * (1.0f - (angle / math::MATH_PI_DIV_2));
         return true;
     }
 }

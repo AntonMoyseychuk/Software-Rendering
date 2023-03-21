@@ -50,71 +50,79 @@ namespace gfx {
                 const auto screen_height = m_frame_size.y;
 
                 for (std::size_t x = 0; x < screen_width; ++x) {
-                    math::vec4f out_color = gfx::StoreColor<float>(background);
+                    math::vec4f out_color(0.0f);
 
-                    bool hit_anything = false;
-                    auto min_dist = math::MATH_INFINITY;
-                    for (const auto& drawable : scene.GetDrawables()) {
-                        auto intersection = drawable->IsIntersect(rays[x + y * screen_width]);
-                        if (intersection.has_value()) {
-                            hit_anything = true;
-
-                            auto int_point_dist = (intersection->point - camera.GetPositon()).Length();
-                                
-                            if (int_point_dist < min_dist) {
-                                out_color = gfx::StoreColor<float>(intersection->material.color);
-
-                                float intensity = 0.0f;
-                                gfx::Color light_color;
-                                for (const auto& light : scene.GetLights()) {
-                                    bool valid_illum = light->ComputeIllumination(intersection->point, 
-                                        intersection->normal, light_color, intensity);
-                                }
-
-                                out_color *= intensity;
-                                min_dist = int_point_dist;
-                            }
-                        }
-                    }
-
-                    for (std::int32_t s = 0; s < static_cast<std::int32_t>(m_antialiasing_level) - 1; ++s) {
-                        bool hit_anything = false;
+                    {
                         auto min_dist = math::MATH_INFINITY;
+                        std::optional<gfx::IntersectionData> closest_intersection = {}, curr_intersection = {};
+                        
                         for (const auto& drawable : scene.GetDrawables()) {
-                            const auto dx = math::Random(-1, 1);
-                            const auto dy = math::Random(-1, 1);
-                            const auto index = (x + (x > math::Abs(dx) && x < screen_width - math::Abs(dx) ? dx : 0)) 
-                                + (y + (y > math::Abs(dy) && y < screen_height - math::Abs(dy) ? dy : 0)) * screen_width;
-                            
-                            auto intersection = drawable->IsIntersect(rays[index]);
-                            if (intersection.has_value()) {
-                                hit_anything = true;
-
-                                auto int_point_dist = (intersection->point - camera.GetPositon()).Length();
+                            if ((curr_intersection = drawable->IsIntersect(rays[x + y * screen_width])).has_value()) {
+                                auto int_point_dist = curr_intersection->distance;
                                     
                                 if (int_point_dist < min_dist) {
-                                    float intensity = 0.0f;
+                                    closest_intersection = curr_intersection;
+                                    out_color = gfx::StoreColor<float>(closest_intersection->material.color);
+
+                                    float sum_intensity = 0.0f;
                                     gfx::Color light_color;
                                     for (const auto& light : scene.GetLights()) {
-                                        bool valid_illum = light->ComputeIllumination(intersection->point, 
-                                            intersection->normal, light_color, intensity);
+                                        bool valid_illum = light->ComputeIllumination(closest_intersection->point, 
+                                            closest_intersection->normal, light_color, sum_intensity);
                                     }
 
-                                    out_color *= intensity;
+                                    out_color *= sum_intensity;
                                     min_dist = int_point_dist;
                                 }
                             }
                         }
 
-                        if (!hit_anything) {
-                            out_color += gfx::StoreColor<float>(background);
+                        if (closest_intersection.has_value() == false) {
+                            out_color = gfx::StoreColor<float>(background);
                         }
                     }
 
-                    if (m_antialiasing_level != AntialiasingLevel::NONE) {
-                        out_color /= static_cast<float>(m_antialiasing_level);
-                    }
+                    {
+                        for (std::int32_t s = 0; s < static_cast<std::int32_t>(m_antialiasing_level) - 1; ++s) {
+                            auto min_dist = math::MATH_INFINITY;
+                            std::optional<gfx::IntersectionData> closest_intersection = {}, curr_intersection = {};
 
+                            float sum_intensity = 0.0f;
+                            for (const auto& drawable : scene.GetDrawables()) {
+                                const auto dx = math::Random(-1, 1);
+                                const auto dy = math::Random(-1, 1);
+
+                                const auto index = math::Clamp(x + dx + (y + dy) * screen_width, 
+                                    decltype(screen_width * screen_height)(0), screen_width * screen_height - 1);
+                                
+                                if ((curr_intersection = drawable->IsIntersect(rays[index])).has_value()) {
+
+                                    auto int_point_dist = curr_intersection->distance;
+                                        
+                                    if (int_point_dist < min_dist) {
+                                        closest_intersection = curr_intersection;
+                                        
+                                        sum_intensity = 0.0f;
+                                        gfx::Color light_color;
+                                        for (const auto& light : scene.GetLights()) {
+                                            bool valid_illum = light->ComputeIllumination(closest_intersection->point, 
+                                                closest_intersection->normal, light_color, sum_intensity);
+                                        }
+
+                                        min_dist = int_point_dist;
+                                    }
+                                }
+                            }
+                            
+                            out_color += closest_intersection.has_value() ? 
+                                gfx::StoreColor<float>(closest_intersection->material.color) * sum_intensity : gfx::StoreColor<float>(background);
+                        }
+
+                        if (m_antialiasing_level != AntialiasingLevel::NONE) {
+                            out_color /= static_cast<float>(m_antialiasing_level);
+                        }
+                    }
+                    
                     m_frame[x + y * screen_width] = gfx::LoadColor(out_color).rgba;
                 }
             }

@@ -42,21 +42,6 @@ namespace gfx {
     };
 
     template <typename Type>
-    inline math::Vector<Type, 4> StoreColor(Color color) noexcept {
-        return math::Vector<Type, 4>(color.r, color.g, color.b, color.a);
-    }
-
-    template <>
-    inline math::Vector<float, 4> StoreColor(Color color) noexcept {
-        return math::Vector<float, 4>(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f);
-    }
-
-    template <>
-    inline math::Vector<double, 4> StoreColor(Color color) noexcept {
-        return math::Vector<double, 4>(color.r / 255.0, color.g / 255.0, color.b / 255.0, color.a / 255.0);
-    }
-
-    template <typename Type>
     inline Color LoadColor(const math::Vector<Type, 4>& vec) noexcept {
         auto r = static_cast<uint8_t>(math::Clamp(vec.x, Type(0), Type(255)));
         auto g = static_cast<uint8_t>(math::Clamp(vec.y, Type(0), Type(255)));
@@ -87,5 +72,20 @@ namespace gfx {
         Color c;
         c.rgba = color;
         return c;
+    }
+
+    template <typename Type>
+    inline math::Vector<Type, 4> StoreColor(Color color) noexcept {
+        return math::Vector<Type, 4>(color.r, color.g, color.b, color.a);
+    }
+
+    template <>
+    inline math::Vector<float, 4> StoreColor(Color color) noexcept {
+        return math::Vector<float, 4>(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f);
+    }
+
+    template <>
+    inline math::Vector<double, 4> StoreColor(Color color) noexcept {
+        return math::Vector<double, 4>(color.r / 255.0, color.g / 255.0, color.b / 255.0, color.a / 255.0);
     }
 }

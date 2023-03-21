@@ -25,7 +25,8 @@ namespace app {
 
         
         
-        m_scene.AddLight(std::make_shared<gfx::DirectionalLigth>(math::vec3f(1.0f, 0.0f, -2.0f), gfx::Color::WHITE, 1.0f));
+        // m_scene.AddLight(std::make_shared<gfx::DirectionalLigth>(math::vec3f(1.0f, 0.0f, -2.0f), gfx::Color::WHITE, 1.0f));
+        m_scene.AddLight(std::make_shared<gfx::DirectionalLigth>(math::VECTOR_RIGHT, gfx::Color::WHITE, 1.0f));
         // m_scene.AddLight(std::make_shared<gfx::PointLigth>(math::vec3f(8.0f, -10.0f, 8.0f), gfx::Color::WHITE, 1.0f));
         // m_scene.AddLight(std::make_shared<gfx::PointLigth>(math::vec3f(-3.0f, 1.0f, 0.0f), gfx::Color::WHITE, 1.0f));
     }
