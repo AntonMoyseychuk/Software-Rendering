@@ -6,7 +6,7 @@
         
 
 namespace gfx {
-    enum class AntialiasingLevel : std::size_t { NONE = 0, X2 = 2, X4 = 4, X8 = 8, X16 = 16 };
+    enum class AntialiasingLevel { NONE = 1, X2 = 2, X4 = 4, X8 = 8 };
 
     class Renderer {
     public:
@@ -23,6 +23,7 @@ namespace gfx {
     private:
         std::vector<std::uint32_t> m_frame;
         math::vec2ui m_frame_size;
+        math::vec2ui m_antialiasing_frame_size;
         
         AntialiasingLevel m_antialiasing_level = AntialiasingLevel::NONE;
 
