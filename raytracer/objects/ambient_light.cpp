@@ -6,8 +6,8 @@ namespace gfx {
     {
     }
     
-    bool AmbientLight::ComputeIllumination(const math::vec3f &at_point, const math::vec3f &at_normal, 
-        gfx::Color &light_color, float &intensity) const noexcept
+    bool AmbientLight::ComputeIllumination(const IntersectionData& int_data, const math::vec3f& camera_pos, 
+        gfx::Color& light_color, float& intensity) const noexcept 
     {
         light_color = m_color;
         intensity += m_intensity;

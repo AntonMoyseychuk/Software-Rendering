@@ -7,7 +7,7 @@ namespace gfx {
         AmbientLight() = default;
         AmbientLight(const gfx::Color& color, float intensity);
 
-        bool ComputeIllumination(const math::vec3f& at_point, const math::vec3f& at_normal, 
+        bool ComputeIllumination(const IntersectionData& int_data, const math::vec3f& camera_pos, 
             gfx::Color& light_color, float& intensity) const noexcept override;
     };
 }

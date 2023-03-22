@@ -27,6 +27,6 @@ namespace gfx {
         
         AntialiasingLevel m_antialiasing_level = AntialiasingLevel::NONE;
 
-        std::vector<std::uint32_t> m_vertical_it;  
+        std::vector<std::uint32_t> m_vertical_it;
     };
 }

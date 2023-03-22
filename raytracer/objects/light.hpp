@@ -2,6 +2,8 @@
 #include "graphics/ray.hpp"
 #include "graphics/color.hpp"
 
+#include "graphics/intersection_data.hpp"
+
 #include <memory>
 #include <list>
 
@@ -12,7 +14,7 @@ namespace gfx {
         ILight(const gfx::Color& color, float intensity) : m_color(color), m_intensity(intensity < 0.0f ? 0.0f : intensity) {}
         virtual ~ILight() {}
 
-        virtual bool ComputeIllumination(const math::vec3f& at_point, const math::vec3f& at_normal, 
+        virtual bool ComputeIllumination(const IntersectionData& int_data, const math::vec3f& camera_pos, 
             gfx::Color& light_color, float& intensity) const noexcept = 0;
 
         void SetColor(const Color& color) noexcept { m_color = color; }

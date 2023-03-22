@@ -6,8 +6,8 @@ namespace gfx {
     {
     }
     
-    bool DirectionalLigth::ComputeIllumination(const math::vec3f &at_point, const math::vec3f &at_normal, 
-        gfx::Color &light_color, float &intensity) const noexcept 
+    bool DirectionalLigth::ComputeIllumination(const IntersectionData& int_data, const math::vec3f& camera_pos, 
+        gfx::Color& light_color, float& intensity) const noexcept 
     {
         #if 0
             const auto angle = acosf(math::Dot(math::Normalize(at_normal), -m_direction)); // angle = (0, PI)
@@ -21,7 +21,7 @@ namespace gfx {
             intensity += m_intensity * (1.0f - (angle / math::MATH_PI_DIV_2));
             return true;
         #else
-            const auto cos_angle = math::Dot(math::Normalize(at_normal), -m_direction); // angle = (0, PI)
+            const auto cos_angle = math::Dot(math::Normalize(int_data.normal), -m_direction); // angle = (0, PI)
                 
             if (cos_angle < 0.0f) {
                 // intensity = 0.0f;
@@ -30,6 +30,15 @@ namespace gfx {
 
             light_color = m_color;
             intensity += m_intensity * cos_angle;
+
+            if (int_data.material.specular_index > 0) {
+                const auto R = math::Normalize(math::Reflect(int_data.point, int_data.normal));
+                const auto V = -math::Normalize((int_data.point - camera_pos));
+                const auto r_dot_v = math::Dot(R, V);
+                if (r_dot_v > 0) {
+                    intensity += m_intensity * powf(r_dot_v, int_data.material.specular_index);
+                }
+            }
             return true;
         #endif
     }

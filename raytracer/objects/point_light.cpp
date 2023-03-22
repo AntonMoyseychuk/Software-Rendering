@@ -24,8 +24,8 @@ namespace gfx {
         return m_position;
     }
 
-    bool PointLigth::ComputeIllumination(const math::vec3f& at_point, const math::vec3f& at_normal, 
-            gfx::Color& light_color, float& intensity) const noexcept
+    bool PointLigth::ComputeIllumination(const IntersectionData& int_data, const math::vec3f& camera_pos, 
+        gfx::Color& light_color, float& intensity) const noexcept 
     {
         #if 0
             const auto light_dir = math::Normalize(m_position - at_point);
@@ -41,8 +41,8 @@ namespace gfx {
             intensity += m_intensity * (1.0f - (angle / math::MATH_PI_DIV_2));
             return true;
         #else
-            const auto light_dir = -math::Normalize(at_point - m_position);
-            const auto cos_angle = math::Dot(at_normal, light_dir);
+            const auto light_dir = -math::Normalize(int_data.point - m_position);
+            const auto cos_angle = math::Dot(int_data.normal, light_dir);
 
 
             if (cos_angle < 0.0f) {
@@ -52,6 +52,16 @@ namespace gfx {
 
             light_color = m_color;
             intensity += m_intensity * (cos_angle);
+
+            if (int_data.material.specular_index > 0) {
+                const auto R = math::Normalize(math::Reflect(int_data.point, int_data.normal));
+                const auto V = -math::Normalize((int_data.point - camera_pos));
+                const auto r_dot_v = math::Dot(R, V);
+                if (r_dot_v > 0) {
+                    intensity += m_intensity * powf(r_dot_v, int_data.material.specular_index);
+                }
+            }
+
             return true;
         #endif
     }
