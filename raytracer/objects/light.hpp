@@ -14,8 +14,8 @@ namespace gfx {
         ILight(const gfx::Color& color, float intensity) : m_color(color), m_intensity(intensity < 0.0f ? 0.0f : intensity) {}
         virtual ~ILight() {}
 
-        virtual bool ComputeIllumination(const IntersectionData& int_data, const math::vec3f& camera_pos, 
-            gfx::Color& light_color, float& intensity) const noexcept = 0;
+        virtual bool ComputeIllumination(const IntersectionData& int_data,
+            gfx::Color& out_light_color, float& out_intensity) const noexcept = 0;
 
         void SetColor(const Color& color) noexcept { m_color = color; }
         const Color& GetColor() const noexcept { return m_color; }

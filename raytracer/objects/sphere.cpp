@@ -31,7 +31,7 @@ namespace gfx {
             auto intersect_point = ray.origin + ray.direction * t;
             auto local_normal = math::Normalize(intersect_point - m_position);
             
-            return t > 0 ? IntersectionData(intersect_point, local_normal, m_material, t) : std::optional<IntersectionData>{};
+            return t > 0 ? IntersectionData(intersect_point, local_normal, ray, t, m_material) : std::optional<IntersectionData>{};
         }
 
         return {};

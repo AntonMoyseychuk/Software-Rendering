@@ -6,7 +6,7 @@ namespace gfx {
         Material() = default;
         Material(const Color& color, float specular_index);
 
-        Color color;
-        float specular_index = 0;
+        Color color = Color::BLACK;
+        float specular_index = 0.0f;
     };
 }

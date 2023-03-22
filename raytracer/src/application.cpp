@@ -10,19 +10,19 @@
 namespace app {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height)
         : m_window(win_framewrk::Window::Get()), m_renderer(), m_scene(), 
-            m_camera(math::VECTOR_FORWARD * 25.0f, math::vec3f(0.0f), math::VECTOR_UP, 45.0f, (float)width / height), 
+            m_camera(math::VECTOR_FORWARD * 20.0f, math::vec3f(0.0f), math::VECTOR_UP, 45.0f, (float)width / height), 
                 m_last_frame(std::chrono::steady_clock::now())
     {
         m_window->Init(title, width, height);
         m_window->SetBackgroundColor(gfx::Color(80).rgba);
         
-        m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::X2);
+        m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::X4);
 
-        for (std::size_t i = 0; i < 30; ++i) {
+        for (std::size_t i = 0; i < 100; ++i) {
             m_scene.AddDrawble(std::make_shared<gfx::Sphere>(
                     math::vec3f(math::Random(-9.0f, 9.0f), math::Random(-9.0f, 9.0f), math::Random(-9.0f, 9.0f)),
-                    math::Random(0.5f, 1.5f), 
-                    gfx::Material(gfx::Color(math::Random(0, 255), math::Random(0, 255), math::Random(0, 255)), math::Random(-100.0f, 100.0f))
+                    math::Random(0.5f, 1.0f), 
+                    gfx::Material(gfx::Color(math::Random(0, 255), math::Random(0, 255), math::Random(0, 255)), 500.0f)
                 )
             );
         }

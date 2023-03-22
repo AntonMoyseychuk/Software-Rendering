@@ -1,17 +1,23 @@
 #pragma once
-#include "math_3d/vector.hpp"
+#include "ray.hpp"
 #include "material.hpp"
 
 namespace gfx {
     struct IntersectionData {
         IntersectionData() = default;
-        IntersectionData(const math::vec3f& _point, const math::vec3f& _normal, const Material& _material, float _distance) 
-            : point(_point), normal(_normal), material(_material), distance(_distance) {}
+        IntersectionData(
+            const math::vec3f& _point, 
+            const math::vec3f& _normal, 
+            const gfx::Ray& _casted_ray, 
+            float _distance, 
+            const Material& _material
+        ) : point(_point), normal(_normal), casted_ray(_casted_ray), distance(_distance), material(_material) {}
 
         math::vec3f point;
         math::vec3f normal;
-        Material material;
-
+        gfx::Ray casted_ray;
         float distance;
+
+        Material material;
     };
 }

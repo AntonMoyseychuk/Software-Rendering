@@ -68,7 +68,7 @@ namespace gfx {
                                 gfx::Color light_color;
                                 for (const auto& light : scene.GetLights()) {
                                     bool valid_illum = light->ComputeIllumination(
-                                        closest_intersection.value(), camera.GetPosition(), light_color, sum_intensity
+                                        closest_intersection.value(), light_color, sum_intensity
                                     );
                                 }
 
