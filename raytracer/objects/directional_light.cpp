@@ -10,14 +10,13 @@ namespace gfx {
         gfx::Color &light_color, float &intensity) const noexcept 
     {
         const auto angle = acosf(math::Dot(math::Normalize(at_normal), -m_direction)); // angle = (0, PI)
-
-        light_color = m_color;
             
         if (angle > math::MATH_PI_DIV_2) {
             // intensity = 0.0f;
             return false;
         } // angle = (0, PI_DIV_2)
 
+        light_color = m_color;
         intensity += m_intensity * (1.0f - (angle / math::MATH_PI_DIV_2));
         return true;
     }

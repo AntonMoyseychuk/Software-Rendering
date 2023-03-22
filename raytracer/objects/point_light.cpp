@@ -30,13 +30,13 @@ namespace gfx {
         const auto light_dir = math::Normalize(m_position - at_point);
         const auto angle = acosf(math::Dot(at_normal, light_dir));
 
-        light_color = m_color;
 
         if (angle > math::MATH_PI_DIV_2) {
             // intensity = 0.0f;
             return false;
         }
 
+        light_color = m_color;
         intensity += m_intensity * (1.0f - (angle / math::MATH_PI_DIV_2));
         return true;
     }

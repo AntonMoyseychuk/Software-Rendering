@@ -8,6 +8,6 @@ namespace gfx {
         AmbientLight(const gfx::Color& color, float intensity);
 
         bool ComputeIllumination(const math::vec3f& at_point, const math::vec3f& at_normal, 
-            gfx::Color& color, float& intensity) const noexcept override;
+            gfx::Color& light_color, float& intensity) const noexcept override;
     };
 }
