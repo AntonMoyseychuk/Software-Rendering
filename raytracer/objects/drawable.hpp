@@ -4,23 +4,11 @@
 #include "shape.hpp"
 
 #include "graphics/ray.hpp"
-#include "graphics/material.hpp"
+#include "graphics/intersection_data.hpp"
 
 #include <vector>
 
 namespace gfx {
-    struct IntersectionData {
-        IntersectionData() = default;
-        IntersectionData(const math::vec3f& _point, const math::vec3f& _normal, const Material& _material, float _distance) 
-            : point(_point), normal(_normal), material(_material), distance(_distance) {}
-
-        math::vec3f point;
-        math::vec3f normal;
-        Material material;
-
-        float distance;
-    };
-
     class IDrawable : public IShape {
     public:
         IDrawable() = default;
