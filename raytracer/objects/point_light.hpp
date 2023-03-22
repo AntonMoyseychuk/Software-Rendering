@@ -13,8 +13,8 @@ namespace gfx {
         const math::vec3f& GetPositon() const noexcept;
         math::vec3f& GetPositon() noexcept;
 
-        bool ComputeIllumination(const IntersectionData& int_data,
-            gfx::Color& out_light_color, float& out_intensity) const noexcept override;
+        bool ComputeIllumination(const IntersectionData& int_data, const std::list<std::shared_ptr<IDrawable>>& drawables,
+            float& out_intensity) const noexcept override;
 
     protected:
         math::vec3f m_position;

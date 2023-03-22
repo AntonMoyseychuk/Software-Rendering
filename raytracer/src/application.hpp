@@ -13,6 +13,11 @@ namespace app {
         void Run() noexcept;
 
     private:
+        void _UpdateCamera(gfx::Camera* camera, float dt) noexcept;
+        void _UpdateDrawable(gfx::IDrawable* drawable, float dt) noexcept;
+        void _UpdateLight(gfx::ILight* light, float dt) noexcept;
+
+    private:
         win_framewrk::Window* m_window;
         gfx::Renderer m_renderer;
         gfx::Scene m_scene;

@@ -213,7 +213,17 @@ namespace win_framewrk {
         }
     }
 
-    std::uint32_t Window::GetPixelColor(std::size_t x, std::size_t y) noexcept {
+    bool Window::IsKeyPressed(Key key) const noexcept {
+        #if defined(LOG_ALL)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
+        
+        SDL_PumpEvents();
+        return SDL_GetKeyboardState(nullptr)[static_cast<SDL_Scancode>(key)];
+    }
+
+    std::uint32_t Window::GetPixelColor(std::size_t x, std::size_t y) noexcept
+    {
         #if defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif

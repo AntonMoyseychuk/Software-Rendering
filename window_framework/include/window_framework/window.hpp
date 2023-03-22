@@ -7,6 +7,18 @@
 
 
 namespace win_framewrk {
+    enum class Key { 
+        W = SDL_Scancode::SDL_SCANCODE_W,
+        A = SDL_Scancode::SDL_SCANCODE_A,
+        D = SDL_Scancode::SDL_SCANCODE_D,
+        S = SDL_Scancode::SDL_SCANCODE_S,
+        
+        UP_ARROW = SDL_Scancode::SDL_SCANCODE_UP,
+        RIGHT_ARROW = SDL_Scancode::SDL_SCANCODE_RIGHT,
+        LEFT_ARROW = SDL_Scancode::SDL_SCANCODE_LEFT,
+        DOWN_ARROW = SDL_Scancode::SDL_SCANCODE_DOWN,
+    };
+
     class Window {
     public:
         static Window* Get() noexcept;
@@ -16,6 +28,8 @@ namespace win_framewrk {
         void FillPixelBuffer(const std::vector<std::uint32_t>& pixels) const noexcept;
         void PresentPixelBuffer() const noexcept;
         void PollEvent() noexcept;
+
+        bool IsKeyPressed(Key key) const noexcept;
 
         std::uint32_t GetPixelColor(std::size_t x, std::size_t y) noexcept;
         void SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept;

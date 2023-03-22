@@ -47,33 +47,30 @@ namespace gfx {
         
         std::for_each(std::execution::par, m_vertical_it.cbegin(), m_vertical_it.cend(), 
             [this, &scene, &camera, &background, rays](std::uint32_t y) {
-                auto min_dist = math::MATH_INFINITY;
                 std::optional<gfx::IntersectionData> closest_intersection, curr_intersection;
+                float min_dist;
 
                 for (std::size_t x = 0; x < m_antialiasing_frame_size.x; ++x) {
-                    gfx::Color curr_pixel_color(0);
+                    gfx::Color curr_pixel_color = gfx::Color::BLACK;
                     min_dist = math::MATH_INFINITY;
                     closest_intersection.reset();
                     curr_intersection.reset();
 
                     for (const auto& drawable : scene.GetDrawables()) {
                         if ((curr_intersection = drawable->IsIntersect(rays[x + y * m_antialiasing_frame_size.x])).has_value()) {
-                            auto int_point_dist = curr_intersection->distance;
-                            
-                            if (int_point_dist < min_dist) {
+                            if (curr_intersection->distance < min_dist) {
                                 closest_intersection = curr_intersection;
                                 curr_pixel_color = closest_intersection->material.color;
 
                                 float sum_intensity = 0.0f;
-                                gfx::Color light_color;
                                 for (const auto& light : scene.GetLights()) {
                                     bool valid_illum = light->ComputeIllumination(
-                                        closest_intersection.value(), light_color, sum_intensity
+                                        closest_intersection.value(), scene.GetDrawables(), sum_intensity
                                     );
                                 }
 
                                 curr_pixel_color *= sum_intensity;
-                                min_dist = int_point_dist;
+                                min_dist = curr_intersection->distance;
                             }
                         }
                     }

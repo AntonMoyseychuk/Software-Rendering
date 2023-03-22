@@ -7,7 +7,7 @@ namespace gfx {
         AmbientLight() = default;
         AmbientLight(const gfx::Color& color, float intensity);
 
-        bool ComputeIllumination(const IntersectionData& int_data,
-            gfx::Color& out_light_color, float& out_intensity) const noexcept override;
+        bool ComputeIllumination(const IntersectionData& int_data, const std::list<std::shared_ptr<IDrawable>>& drawables,
+            float& out_intensity) const noexcept override;
     };
 }

@@ -24,8 +24,8 @@ namespace gfx {
         return m_position;
     }
 
-    bool PointLigth::ComputeIllumination(const IntersectionData& int_data,
-            gfx::Color& out_light_color, float& out_intensity) const noexcept 
+    bool PointLigth::ComputeIllumination(const IntersectionData& int_data, const std::list<std::shared_ptr<IDrawable>>& drawables,
+            float& out_intensity) const noexcept 
     {
         #if 0
             const auto light_dir = math::Normalize(m_position - at_point);
@@ -48,7 +48,13 @@ namespace gfx {
                 return false;
             }
 
-            out_light_color = m_color;
+            const auto ray_to_light = gfx::Ray(int_data.point + math::vec3f(0.0001f), math::Normalize(m_position - int_data.point));
+            for (const auto& drawable : drawables) {
+                if (drawable->IsIntersect(ray_to_light)) {
+                    return false;
+                }
+            }
+
             out_intensity += m_intensity * (cos_angle);
 
             if (int_data.material.specular_index > 0) {
