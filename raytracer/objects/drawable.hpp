@@ -1,7 +1,7 @@
 #pragma once
 #include <optional>
 
-#include "object.hpp"
+#include "shape.hpp"
 
 #include "graphics/ray.hpp"
 #include "graphics/material.hpp"
@@ -21,11 +21,11 @@ namespace gfx {
         float distance;
     };
 
-    class IDrawable : public IObject {
+    class IDrawable : public IShape {
     public:
         IDrawable() = default;
         IDrawable(const math::vec3f& position, const Material& material) 
-            : IObject(position), m_material(material) {}
+            : IShape(position), m_material(material) {}
 
         virtual std::optional<IntersectionData> IsIntersect(const Ray& ray) const noexcept = 0;
 

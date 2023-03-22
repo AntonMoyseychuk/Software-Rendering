@@ -7,7 +7,6 @@ namespace gfx {
     public:
         DirectionalLigth() = default;
         DirectionalLigth(const math::vec3f& direction, const gfx::Color& color, float intensity);
-        ~DirectionalLigth() override;
 
         bool ComputeIllumination(const math::vec3f& at_point, const math::vec3f& at_normal,
             gfx::Color& light_color, float& intensity) const noexcept override;

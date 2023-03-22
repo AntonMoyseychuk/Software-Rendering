@@ -2,7 +2,7 @@
 
 namespace gfx {
     Camera::Camera(const math::vec3f &position, const math::vec3f &look_at, const math::vec3f &up, float fov_degrees, float aspect_ratio)
-        : IObject(position), m_fov_degrees(fov_degrees), m_aspect_ratio(aspect_ratio), m_dir(math::Normalize(look_at - position))
+        : m_fov_degrees(fov_degrees), m_aspect_ratio(aspect_ratio), m_dir(math::Normalize(look_at - position)), m_position(position)
     {
 
     }

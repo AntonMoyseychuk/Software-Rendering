@@ -45,7 +45,7 @@ namespace gfx {
         const auto& rays = camera.GenerateRays(m_antialiasing_frame_size);
         m_frame.resize(m_antialiasing_frame_size.x * m_antialiasing_frame_size.y); // ДОЛЖНО БЫТЬ ТУТ!!!
         
-        std::for_each(std::execution::seq, m_vertical_it.cbegin(), m_vertical_it.cend(), 
+        std::for_each(std::execution::par, m_vertical_it.cbegin(), m_vertical_it.cend(), 
             [this, &scene, &camera, &background, rays](std::uint32_t y) {
                 auto min_dist = math::MATH_INFINITY;
                 std::optional<gfx::IntersectionData> closest_intersection, curr_intersection;

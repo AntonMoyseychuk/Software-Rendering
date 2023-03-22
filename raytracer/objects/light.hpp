@@ -1,6 +1,4 @@
 #pragma once
-#include "object.hpp"
-#include "drawable.hpp"
 #include "graphics/ray.hpp"
 #include "graphics/color.hpp"
 
@@ -8,16 +6,14 @@
 #include <list>
 
 namespace gfx {
-    class ILight : public IObject {
+    class ILight {
     public:
-        virtual ~ILight() = 0 {}
-        
         ILight() = default;
-        ILight(const math::vec3f& position, const gfx::Color& color, float intensity) 
-            : IObject(position), m_color(color), m_intensity(intensity < 0.0f ? 0.0f : intensity) {}
+        ILight(const gfx::Color& color, float intensity) : m_color(color), m_intensity(intensity < 0.0f ? 0.0f : intensity) {}
+        virtual ~ILight() {}
 
         virtual bool ComputeIllumination(const math::vec3f& at_point, const math::vec3f& at_normal, 
-            gfx::Color& color, float& intensity) const noexcept = 0;
+            gfx::Color& light_color, float& intensity) const noexcept = 0;
 
         void SetColor(const Color& color) noexcept { m_color = color; }
         const Color& GetColor() const noexcept { return m_color; }

@@ -4,16 +4,27 @@
 
 namespace gfx {
     PointLigth::PointLigth(const math::vec3f& position, const gfx::Color &color, float intensity)
-        : ILight(position, color, intensity)
+        : ILight(color, intensity), m_position(position)
     {
     }
-    
-    PointLigth::~PointLigth()
-    {
+
+    void PointLigth::MoveFor(const math::vec3f &dist) noexcept {
+        m_position += dist;
     }
-    
-    bool PointLigth::ComputeIllumination(
-        const math::vec3f& at_point, const math::vec3f& at_normal, 
+
+    void PointLigth::SetPositon(const math::vec3f &position) noexcept {
+        m_position = position;
+    }
+
+    const math::vec3f &PointLigth::GetPositon() const noexcept {
+        return m_position;
+    }
+
+    math::vec3f &PointLigth::GetPositon() noexcept {
+        return m_position;
+    }
+
+    bool PointLigth::ComputeIllumination(const math::vec3f& at_point, const math::vec3f& at_normal, 
             gfx::Color& light_color, float& intensity) const noexcept
     {
         const auto light_dir = math::Normalize(m_position - at_point);

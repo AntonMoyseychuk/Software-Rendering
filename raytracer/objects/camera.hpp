@@ -1,13 +1,14 @@
 #pragma once
-#include "object.hpp"
 #include "graphics/ray.hpp"
 #include "math_3d/math.hpp"
 
 namespace gfx {
-    class Camera : public IObject {
+    class Camera {
     public:
         Camera(const math::vec3f& position, const math::vec3f& look_at, const math::vec3f& up, float fov_degrees, float aspect_ratio);
 
+        const std::vector<gfx::Ray>& GenerateRays(const math::vec2ui& screen_size) const noexcept;
+        
         float GetFOVInDegrees() const noexcept;
         float GetFOVInRadians() const noexcept;
 
@@ -16,26 +17,27 @@ namespace gfx {
 
         const math::vec2ui& GetRayCacheSize() const noexcept;
 
-        const std::vector<gfx::Ray>& GenerateRays(const math::vec2ui& screen_size) const noexcept;
-
     private:
         math::mat4f m_view;
 
         float m_fov_degrees = 0.0f;
         float m_aspect_ratio = 0.0f;
 
+        //
         math::vec3f m_dir;
+        math::vec3f m_position;
+        //
 
         mutable std::vector<gfx::Ray> m_ray_cache;
         mutable math::vec2ui m_ray_cache_size;    
     };
 
 
-    // class Camera : protected IObject {
+    // class Camera : protected IShape {
     // public:
     //     Camera() = default;
     //     Camera(const math::vec3f& position, const math::vec3f& look_at, const math::vec3f& up, float fov_degrees, float aspect_ratio)
-    //         : IObject(position), m_fov(fov_degrees), m_aspect_ratio(aspect_ratio)
+    //         : IShape(position), m_fov(fov_degrees), m_aspect_ratio(aspect_ratio)
     //     {
     //         m_dir = (look_at - m_position).Normalize();
     //         const auto right = math::Cross(math::VECTOR_UP, -m_dir);
