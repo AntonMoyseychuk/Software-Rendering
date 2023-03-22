@@ -27,17 +27,32 @@ namespace gfx {
     bool PointLigth::ComputeIllumination(const math::vec3f& at_point, const math::vec3f& at_normal, 
             gfx::Color& light_color, float& intensity) const noexcept
     {
-        const auto light_dir = math::Normalize(m_position - at_point);
-        const auto angle = acosf(math::Dot(at_normal, light_dir));
+        #if 0
+            const auto light_dir = math::Normalize(m_position - at_point);
+            const auto angle = acosf(math::Dot(at_normal, light_dir));
 
 
-        if (angle > math::MATH_PI_DIV_2) {
-            // intensity = 0.0f;
-            return false;
-        }
+            if (angle > math::MATH_PI_DIV_2) {
+                // intensity = 0.0f;
+                return false;
+            }
 
-        light_color = m_color;
-        intensity += m_intensity * (1.0f - (angle / math::MATH_PI_DIV_2));
-        return true;
+            light_color = m_color;
+            intensity += m_intensity * (1.0f - (angle / math::MATH_PI_DIV_2));
+            return true;
+        #else
+            const auto light_dir = -math::Normalize(at_point - m_position);
+            const auto cos_angle = math::Dot(at_normal, light_dir);
+
+
+            if (cos_angle < 0.0f) {
+                // intensity = 0.0f;
+                return false;
+            }
+
+            light_color = m_color;
+            intensity += m_intensity * (cos_angle);
+            return true;
+        #endif
     }
 }

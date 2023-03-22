@@ -17,6 +17,9 @@ namespace gfx {
 
         const math::vec2ui& GetRayCacheSize() const noexcept;
 
+        math::vec3f& GetPosition() noexcept;
+        const math::vec3f& GetPosition() const noexcept;
+
     private:
         math::mat4f m_view;
 

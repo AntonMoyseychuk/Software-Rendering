@@ -30,6 +30,14 @@ namespace gfx {
         return m_ray_cache_size;
     }
 
+    math::vec3f &Camera::GetPosition() noexcept {
+        return m_position;
+    }
+
+    const math::vec3f &Camera::GetPosition() const noexcept {
+        return m_position;
+    }
+
     const std::vector<gfx::Ray>& Camera::GenerateRays(const math::vec2ui &screen_size) const noexcept {
         if (screen_size.x != m_ray_cache_size.x || screen_size.y != m_ray_cache_size.y) {
             m_ray_cache.resize(screen_size.x * screen_size.y);
