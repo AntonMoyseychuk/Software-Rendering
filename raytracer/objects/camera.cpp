@@ -2,7 +2,7 @@
 
 namespace gfx {
     Camera::Camera(const math::vec3f &position, const math::vec3f &look_at, const math::vec3f &up, float fov_degrees, float aspect_ratio)
-        : m_fov_degrees(fov_degrees), m_aspect_ratio(aspect_ratio), m_dir(math::Normalize(look_at - position)), m_position(position)
+        : m_fov_degrees(fov_degrees), m_aspect_ratio(aspect_ratio), m_direction(math::Normalize(look_at - position)), m_position(position)
     {
 
     }
@@ -52,7 +52,7 @@ namespace gfx {
                     float pixel_x = (-1.0f + (x * dx)) * m_aspect_ratio * fov;
                     float pixel_y = (1.0f - (y * dy)) * fov;
 
-                    m_ray_cache[x + y * screen_size.x] = Ray(m_position, math::Normalize(math::vec3f(pixel_x, pixel_y, m_dir.z)));
+                    m_ray_cache[x + y * screen_size.x] = Ray(m_position, math::Normalize(math::vec3f(pixel_x, pixel_y, m_direction.z)));
                 }
             }
         }

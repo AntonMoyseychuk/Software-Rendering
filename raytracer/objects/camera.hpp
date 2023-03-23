@@ -29,8 +29,9 @@ namespace gfx {
         float m_aspect_ratio = 0.0f;
 
         //
-        math::vec3f m_dir;
         math::vec3f m_position;
+        math::vec3f m_direction;
+        math::vec3f m_up;
         //
 
         mutable std::vector<gfx::Ray> m_ray_cache;

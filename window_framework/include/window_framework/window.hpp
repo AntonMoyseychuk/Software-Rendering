@@ -40,12 +40,13 @@ namespace win_framewrk {
         Window& operator=(const Window& window) = delete;
         
     #pragma region getters-setters
-        std::uint32_t GetPixelColor(std::size_t x, std::size_t y) noexcept;
-        void SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept;
-
         void SetTitle(const std::string_view title) noexcept;
         const std::string& GetTitle() const noexcept;
 
+        std::uint32_t GetPixelColor(std::size_t x, std::size_t y) noexcept;
+        void SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept;
+
+       
         void SetBackgroundColor(std::uint32_t color) noexcept;
         std::uint32_t GetBackgroundColor() const noexcept;
 
@@ -86,16 +87,17 @@ namespace win_framewrk {
         static std::unique_ptr<bool, SDLDeinitializer> is_sdl_initialized_ptr;
 
     private:
-        std::string m_title;
-        std::uint32_t m_width, m_height;
-        bool m_is_quit = false;
-
         std::unique_ptr<SDL_Window, WindowDeleter> m_window_ptr = nullptr;
         mutable SDL_Surface* m_surface_ptr = nullptr;
         SDL_Event m_event;
 
-        std::uint32_t m_background_color = 0;
+        std::string m_title;
+        std::uint32_t m_width;
+        std::uint32_t m_height;
+        bool m_is_quit = false;
 
+        std::uint32_t m_background_color = 0;
+        
         std::vector<std::uint32_t> m_vertical_it;
     };
 }
