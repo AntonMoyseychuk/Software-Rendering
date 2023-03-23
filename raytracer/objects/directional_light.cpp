@@ -1,4 +1,5 @@
 #include "directional_light.hpp"
+#include "math_3d/vector_operations.hpp"
 
 namespace gfx {
     DirectionalLigth::DirectionalLigth(const math::vec3f &direction, const gfx::Color &color, float intensity)
