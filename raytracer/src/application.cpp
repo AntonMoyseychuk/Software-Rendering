@@ -16,7 +16,7 @@ namespace app {
         m_window->Init(title, width, height);
         m_window->SetBackgroundColor(gfx::Color(80).rgba);
         
-        m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::X4);
+        m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::NONE);
 
         // for (std::size_t i = 0; i < 100; ++i) {
         //     m_scene.AddDrawble(std::make_shared<gfx::Sphere>(
@@ -27,10 +27,11 @@ namespace app {
         //     );
         // }
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.0f, -1.0f), 0.5f, gfx::Material(gfx::Color::MAGENTA, 100)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(1.0f, 1.0f, -2.5f), 1.0f, gfx::Material(gfx::Color::GREEN, 100)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(1.0f, -1.0f, -2.5f), 1.0f, gfx::Material(gfx::Color::GREEN, 100)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, -1.0f, -2.5f), 1.0f, gfx::Material(gfx::Color::GREEN, 100)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, 1.0f, -2.5f), 1.0f, gfx::Material(gfx::Color::GREEN, 100)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, -100--.0f, -100.5f), 100.0f, gfx::Material(gfx::Color::WHITE, 100)));
+        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(1.0f, 1.0f, -2.5f), 1.0f, gfx::Material(gfx::Color::WHITE, 100)));
+        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(1.0f, -1.0f, -2.5f), 1.0f, gfx::Material(gfx::Color::WHITE, 100)));
+        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, -1.0f, -2.5f), 1.0f, gfx::Material(gfx::Color::WHITE, 100)));
+        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, 1.0f, -2.5f), 1.0f, gfx::Material(gfx::Color::WHITE, 100)));
         // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-2.0f, 2.3f, -5.0f), 0.5f, gfx::Material(gfx::Color::RED, 100)));
         // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(2.0f, 1.3f, -2.0f), 0.5f, gfx::Material(gfx::Color::YELLOW, 100)));
         // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 3.0f, -7.0f), 0.5f, gfx::Material(gfx::Color::CYAN, 100)));
