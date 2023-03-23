@@ -17,9 +17,11 @@ namespace gfx {
 
         virtual std::optional<IntersectionData> IsIntersect(const Ray& ray) const noexcept = 0;
 
+    #pragma region getters-setters
         void SetMaterial(const Material& material) noexcept { m_material = material; }
         const Material& GetMaterial() const noexcept { return m_material; }
         Material& GetMaterial() noexcept { return m_material; }
+    #pragma endregion getters-setters
 
     protected:
         Material m_material;

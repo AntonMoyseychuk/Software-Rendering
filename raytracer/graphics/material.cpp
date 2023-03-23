@@ -1,8 +1,8 @@
 #include "material.hpp"
 
 namespace gfx {
-    Material::Material(const Color &c, float r)
-        : color(c), specular_index(r)
+    Material::Material(const Color &c, float specular, float reflective)
+        : color(c), specular_index(specular), reflective_index(reflective)
     {
     }
 }

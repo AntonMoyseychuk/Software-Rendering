@@ -9,6 +9,7 @@ namespace gfx {
 
         const std::vector<gfx::Ray>& GenerateRays(const math::vec2ui& screen_size) const noexcept;
         
+    #pragma region getters-setters
         float GetFOVInDegrees() const noexcept;
         float GetFOVInRadians() const noexcept;
 
@@ -19,6 +20,7 @@ namespace gfx {
 
         math::vec3f& GetPosition() noexcept;
         const math::vec3f& GetPosition() const noexcept;
+    #pragma endregion getters-setters
 
     private:
         math::mat4f m_view;

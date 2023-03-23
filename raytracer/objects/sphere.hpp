@@ -10,9 +10,11 @@ namespace gfx {
 
         std::optional<IntersectionData> IsIntersect(const Ray& ray) const noexcept override;
 
+    #pragma region getters-setters
         void SetRadius(float radius) noexcept;
         float GetRadius() const noexcept;
         float& GetRadius() noexcept;
+    #pragma endregion getters-setters
 
     private:
         float m_radius = 0.0f;

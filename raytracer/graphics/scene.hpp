@@ -11,6 +11,7 @@ namespace gfx {
     public:
         Scene() = default;
         
+    #pragma region getters-setters
         void AddDrawble(std::shared_ptr<gfx::IDrawable> drawable) noexcept;
         const std::list<std::shared_ptr<gfx::IDrawable>>& GetDrawables() const noexcept;
         std::list<std::shared_ptr<gfx::IDrawable>>& GetDrawables() noexcept;
@@ -18,6 +19,7 @@ namespace gfx {
         void AddLight(std::shared_ptr<gfx::ILight> light) noexcept;
         const std::list<std::shared_ptr<gfx::ILight>>& GetLights() const noexcept;
         std::list<std::shared_ptr<gfx::ILight>>& GetLights() noexcept;
+    #pragma endregion getters-setters
 
     private:
         std::list<std::shared_ptr<gfx::IDrawable>> m_drawables;

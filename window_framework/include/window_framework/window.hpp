@@ -17,6 +17,8 @@ namespace win_framewrk {
         RIGHT_ARROW = SDL_Scancode::SDL_SCANCODE_RIGHT,
         LEFT_ARROW = SDL_Scancode::SDL_SCANCODE_LEFT,
         DOWN_ARROW = SDL_Scancode::SDL_SCANCODE_DOWN,
+
+        SPASE = SDL_Scancode::SDL_SCANCODE_SPACE,
     };
 
     class Window {
@@ -31,6 +33,13 @@ namespace win_framewrk {
 
         bool IsKeyPressed(Key key) const noexcept;
 
+        Window(Window&& window);
+        Window& operator=(Window&& window) noexcept;
+
+        Window(const Window& window) = delete;
+        Window& operator=(const Window& window) = delete;
+        
+    #pragma region getters-setters
         std::uint32_t GetPixelColor(std::size_t x, std::size_t y) noexcept;
         void SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept;
 
@@ -48,20 +57,16 @@ namespace win_framewrk {
 
         const SDL_Surface* GetSDLSurfaceHandle() const noexcept;
         SDL_Surface* GetSDLSurfaceHandle() noexcept;
+    #pragma endregion getters-setters
 
-        Window(Window&& window);
-        Window& operator=(Window&& window) noexcept;
-
-        Window(const Window& window) = delete;
-        Window& operator=(const Window& window) = delete;
-        
     private:
         static std::uint32_t _ConvertToBigEndian(std::uint32_t color) noexcept;
         static std::uint32_t _MapRGBA(SDL_PixelFormat* format, std::uint32_t color) noexcept;
+        static bool _InitializeSDL();
 
     private:
         Window() = default;
-        static bool _InitializeSDL();
+        
         bool _UpdateSurface() const noexcept;
         void _UpdateVerticalIterator(std::uint32_t new_height) noexcept;
 

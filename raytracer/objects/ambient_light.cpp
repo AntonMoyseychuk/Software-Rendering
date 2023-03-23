@@ -1,7 +1,7 @@
 #include "ambient_light.hpp"
 
 namespace gfx {
-    AmbientLight::AmbientLight(const gfx::Color &color, float intensity)
+    AmbientLight::AmbientLight(Color color, float intensity)
         : ILight(color, intensity)
     {
     }
