@@ -6,7 +6,7 @@
         
 
 namespace gfx {
-    enum class AntialiasingLevel { NONE = 1, X2 = 2, X4 = 4, X8 = 8, X10 = 10, X12 = 12 };
+    enum class AntialiasingLevel { NONE = 1, X2 = 2, X4 = 4, X8 = 8 };
 
     class Renderer {
     public:

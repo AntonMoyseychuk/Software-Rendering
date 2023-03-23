@@ -130,7 +130,7 @@ namespace gfx {
             return local_color;
         }
         
-        const auto reflected_ray_dir = math::Reflect(-closest_intersection->casted_ray.direction, closest_intersection->normal);
+        const auto reflected_ray_dir = math::Reflect(closest_intersection->casted_ray.direction, closest_intersection->normal);
         const auto reflected_ray = Ray(closest_intersection->point, reflected_ray_dir);
 
         return local_color * (1.0f - reflective_index) + _TraceRay(reflected_ray, scene, recursion_depth - 1) * reflective_index;

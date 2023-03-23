@@ -14,9 +14,9 @@ namespace app {
                 m_last_frame(std::chrono::steady_clock::now())
     {
         m_window->Init(title, width, height);
-        // m_window->SetBackgroundColor(gfx::Color(80).rgba);
+        m_window->SetBackgroundColor(gfx::Color(80).rgba);
         
-        m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::X12);
+        m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::X2);
         m_renderer.SetReflectionDepth(2);
 
         // for (std::size_t i = 0; i < 100; ++i) {
