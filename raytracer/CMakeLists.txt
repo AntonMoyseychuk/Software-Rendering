@@ -6,6 +6,8 @@ file(GLOB SRC_FILES
     "${PROJECT_SOURCE_DIR}/graphics/*.cpp"
 
     "${WINDOW_FRAMEWORK_DIR}/src/*.cpp"
+
+    "${MATH_3D_DIR}/src/*.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
