@@ -21,8 +21,7 @@ namespace gfx {
         }
     }
 
-    float Camera::GetAspectRatio() const noexcept
-    {
+    float Camera::GetAspectRatio() const noexcept {
         return m_aspect_ratio;
     }
 

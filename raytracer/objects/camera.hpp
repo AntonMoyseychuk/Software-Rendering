@@ -23,6 +23,8 @@ namespace gfx {
     #pragma endregion getters-setters
 
     private:
+
+
         math::mat4f m_view;
 
         float m_fov_degrees = 0.0f;
@@ -39,22 +41,20 @@ namespace gfx {
     };
 
 
-    // class Camera : protected IShape {
+    // class Camera {
     // public:
     //     Camera() = default;
     //     Camera(const math::vec3f& position, const math::vec3f& look_at, const math::vec3f& up, float fov_degrees, float aspect_ratio)
-    //         : IShape(position), m_fov(fov_degrees), m_aspect_ratio(aspect_ratio)
+    //         : m_up(math::Normalize(up)), m_fov(fov_degrees), m_aspect_ratio(aspect_ratio)
     //     {
-    //         m_dir = (look_at - m_position).Normalize();
-    //         const auto right = math::Cross(math::VECTOR_UP, -m_dir);
-    //         const auto up = math::Cross(-m_dir, right);
+    //         m_forward = math::Normalize(look_at - m_position);
+    //         m_right = math::Cross(m_up, -m_forward);
 
-    //         m_view = math::LookAtRH(m_position, look_at, up);
+    //         m_view = math::LookAtRH(m_position, look_at, m_up);
     //     }
         
     //     void Rotate(const math::vec3f& axis, float angle_degrees) noexcept {
     //         m_view = math::Rotate(m_view, axis, math::ToRadians(angle_degrees));
-    //         m_dir = math::vec3f(math::vec4f(m_dir) * m_view);
     //     }
         
     //     void MoveFor(const math::vec3f& dist) noexcept {
@@ -71,7 +71,7 @@ namespace gfx {
     //         return m_view;
     //     }
 
-    //     const std::vector<gfx::Ray>& GenerateRays(const math::vec2ui& screen_size) const noexcept {
+    //     const std::vector<gfx::Ray>& GenerateRays() const noexcept {
     //         if (screen_size.x != m_ray_cache_size.x && screen_size.y != m_ray_cache_size.y) {
     //             m_ray_cache.resize(screen_size.x * screen_size.y);
     //             m_ray_cache_size = screen_size;
@@ -93,9 +93,13 @@ namespace gfx {
     //         return m_ray_cache;
     //     }
         
-    // // private:
+    // private:
     //     math::mat4f m_view;
-    //     math::vec3f m_dir;
+
+    //     math::vec3f m_position;
+    //     math::vec3f m_forward = math::VECTOR_BACKWARD;
+    //     math::vec3f m_right = math::VECTOR_RIGHT;
+    //     math::vec3f m_up = math::VECTOR_UP;
         
     //     float m_fov = 0.0f;
     //     float m_aspect_ratio = 0.0f;

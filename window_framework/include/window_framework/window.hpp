@@ -19,6 +19,15 @@ namespace win_framewrk {
         DOWN_ARROW = SDL_Scancode::SDL_SCANCODE_DOWN,
 
         SPASE = SDL_Scancode::SDL_SCANCODE_SPACE,
+        ENTER = SDL_Scancode::SDL_SCANCODE_KP_ENTER,
+        TAB = SDL_Scancode::SDL_SCANCODE_TAB,
+        
+        LSHIFT = SDL_Scancode::SDL_SCANCODE_LSHIFT,
+        RSHIFT = SDL_Scancode::SDL_SCANCODE_RSHIFT,
+        LCTRL = SDL_Scancode::SDL_SCANCODE_LCTRL,
+        RCTRL = SDL_Scancode::SDL_SCANCODE_RCTRL,
+        LALT = SDL_Scancode::SDL_SCANCODE_LALT,
+        RALT = SDL_Scancode::SDL_SCANCODE_RALT,
     };
 
     class Window {
