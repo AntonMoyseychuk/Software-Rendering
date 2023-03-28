@@ -1,4 +1,6 @@
 #pragma once
+#include "thread_pool/thread_pool.hpp"
+
 #include <SDL2/SDL.h>
 #include <string>
 #include <vector>
@@ -78,10 +80,12 @@ namespace win_framewrk {
         Window() = default;
         
         bool _UpdateSurface() const noexcept;
-        void _UpdateVerticalIterator(std::uint32_t new_height) noexcept;
 
         void _OnWindowEvent() noexcept;
         void _OnQuitEvent() noexcept;
+
+        static void _ThreadBufferFillingFunc(std::uint32_t x0, std::uint32_t y0, std::uint32_t x_end, std::uint32_t y_end, 
+            SDL_Surface* surface, const std::vector<std::uint32_t> &in_pixels) noexcept;
 
     private:
         struct SDLDeinitializer {
@@ -107,6 +111,6 @@ namespace win_framewrk {
 
         std::uint32_t m_background_color = 0;
         
-        std::vector<std::uint32_t> m_vertical_it;
+        mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
     };
 }

@@ -65,7 +65,7 @@ namespace app {
             this->_UpdateLight(m_scene.GetLights().begin()->get(), dt);
             this->_UpdateDrawable(m_scene.GetDrawables().begin()->get(), dt);
 
-            auto& buffer = m_renderer.Render(m_scene, m_camera);
+            const auto& buffer = m_renderer.Render(m_scene, m_camera);
             
             m_window->FillPixelBuffer(buffer);
             m_window->PresentPixelBuffer();          

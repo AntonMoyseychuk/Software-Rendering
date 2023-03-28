@@ -9,14 +9,9 @@
 namespace gfx {
     void Renderer::SetAntialiasingLevel(AntialiasingLevel level) noexcept {
         m_antialiasing_level = level;
-        m_antialiasing_frame_size = m_frame_size * static_cast<float>(level);
         
-        m_frame.resize(m_antialiasing_frame_size.x * m_antialiasing_frame_size.y);
-        
-        m_vertical_it.resize(m_antialiasing_frame_size.y);
-        for (std::size_t i = 0; i < m_antialiasing_frame_size.y; ++i) {
-            m_vertical_it[i] = i;
-        }
+        const auto antialiasing_frame_size = m_frame_size * static_cast<float>(level);
+        m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y);
     }
 
     AntialiasingLevel Renderer::GetAntialiasingLevel() const noexcept {
@@ -26,14 +21,9 @@ namespace gfx {
     void Renderer::SetOutputFrameSize(const math::vec2ui &size) noexcept {
         if (m_frame_size.x != size.x || m_frame_size.y != size.y) {
             m_frame_size = size;
-            m_antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
             
-            m_frame.resize(m_antialiasing_frame_size.x * m_antialiasing_frame_size.y);
-
-            m_vertical_it.resize(m_antialiasing_frame_size.y);
-            for (std::size_t i = 0; i < m_antialiasing_frame_size.y; ++i) {
-                m_vertical_it[i] = i;
-            }
+            const auto antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
+            m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y);
         }
     }
 
@@ -65,28 +55,37 @@ namespace gfx {
         return m_reflection_depth;
     }
 
-    const std::vector<std::uint32_t> &Renderer::Render(const gfx::Scene &scene, const Camera& camera) noexcept {
-        const auto& rays = camera.GenerateRays(m_antialiasing_frame_size);
-        m_frame.resize(m_antialiasing_frame_size.x * m_antialiasing_frame_size.y); // ДОЛЖНО БЫТЬ ТУТ!!!
+    void Renderer::_ThreadRenderFunc(std::uint32_t x0, std::uint32_t y0, std::uint32_t x_end, std::uint32_t y_end, 
+        const std::vector<gfx::Ray>& rays, const gfx::Scene& scene) noexcept {
+        const auto length = x_end - x0;
         
-        std::for_each(std::execution::par, m_vertical_it.cbegin(), m_vertical_it.cend(), 
-            [this, &scene, &camera, rays](std::uint32_t y) {
-                for (std::size_t x = 0; x < m_antialiasing_frame_size.x; ++x) {
-                    gfx::Color curr_pixel_color = _TraceRay(rays[x + y * m_antialiasing_frame_size.x], scene, m_reflection_depth);
-                    m_frame[x + y * m_antialiasing_frame_size.x] = curr_pixel_color.rgba;
-                }
+        for (std::size_t y = y0; y < y_end; ++y) {
+            for (std::size_t x = x0; x < x_end; ++x) {
+                m_frame[x + y * length] = _TraceRay(rays[x + y * length], scene, m_reflection_depth).rgba;
             }
-        );
+        }
+    }
+
+    const std::vector<std::uint32_t> &Renderer::Render(const gfx::Scene &scene, const Camera& camera) noexcept {
+        const auto antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
+        const auto& rays = camera.GenerateRays(antialiasing_frame_size);
+        m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y); // ДОЛЖНО БЫТЬ ТУТ!!!
+        
+        const auto step = static_cast<std::uint32_t>(m_antialiasing_level);
+        for (std::uint32_t i = 0; i < antialiasing_frame_size.y; i += step) {
+            m_thread_pool.AddTask(&Renderer::_ThreadRenderFunc, this, 0, i, antialiasing_frame_size.x, i + step, std::cref(rays), std::cref(scene));
+        }
+        m_thread_pool.WaitAll();
 
         // computing antialiasing
         const auto typed_antialiasing_level = static_cast<std::size_t>(m_antialiasing_level);
-        for (std::size_t y = 0; y < m_antialiasing_frame_size.y; y += typed_antialiasing_level) {
-            for (std::size_t x = 0; x < m_antialiasing_frame_size.x; x += typed_antialiasing_level) {
+        for (std::size_t y = 0; y < antialiasing_frame_size.y; y += typed_antialiasing_level) {
+            for (std::size_t x = 0; x < antialiasing_frame_size.x; x += typed_antialiasing_level) {
                 math::vec4f final_color(0);
                 for (std::size_t i = 0; i < typed_antialiasing_level; ++i) {
                     for (std::size_t j = 0; j < typed_antialiasing_level; ++j) {
                         final_color += gfx::ColorToVector<float>(
-                            gfx::UInt32ToColor(m_frame[(x + j) + (y + i) * m_antialiasing_frame_size.x])
+                            gfx::UInt32ToColor(m_frame[(x + j) + (y + i) * antialiasing_frame_size.x])
                         );
                     }
                 }

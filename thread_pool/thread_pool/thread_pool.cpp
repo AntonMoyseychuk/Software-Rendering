@@ -17,7 +17,7 @@ namespace util {
         }
     }
 
-    void ThreadPool::Wait(std::int64_t task_id) noexcept {
+    void ThreadPool::Wait(std::int64_t task_id) const noexcept {
         std::unique_lock<std::mutex> lock(m_completed_tasks_ids_mutex);
     
         m_completed_tasks_ids_cv.wait(lock, [this, task_id]() -> bool {
@@ -25,7 +25,7 @@ namespace util {
         });
     }
 
-    void ThreadPool::WaitAll() noexcept {
+    void ThreadPool::WaitAll() const noexcept {
         std::unique_lock<std::mutex> lock(m_completed_tasks_ids_mutex);
     
         m_completed_tasks_ids_cv.wait(lock, [this]() -> bool {
@@ -34,7 +34,7 @@ namespace util {
         });
     }
 
-    bool ThreadPool::IsCompleted(std::int64_t task_id) noexcept {
+    bool ThreadPool::IsCompleted(std::int64_t task_id) const noexcept {
         std::scoped_lock<std::mutex> lock(m_completed_tasks_ids_mutex);
         return m_completed_tasks_ids.find(task_id) != m_completed_tasks_ids.cend();
     }
@@ -60,16 +60,5 @@ namespace util {
                 m_completed_tasks_ids_cv.notify_all();
             }
         }
-    }
-
-    template <typename Func, typename... Args>
-    std::int64_t ThreadPool::AddTask(const Func &func, Args &&...args) noexcept {
-        auto task_id = m_last_id++;
-
-        std::scoped_lock<std::mutex> tasks_lock(m_tasks_mutex);
-        m_tasks.emplace(std::async(std::launch::deferred, func, args...), task_id);
-
-        m_tasks_cv.notify_one();
-        return task_id;
     }
 }

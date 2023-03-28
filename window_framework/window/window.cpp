@@ -114,15 +114,6 @@ namespace win_framewrk {
         m_surface_ptr = SDL_GetWindowSurface(m_window_ptr.get());
         return m_surface_ptr != nullptr;
     }
-
-    void Window::_UpdateVerticalIterator(std::uint32_t new_height) noexcept {
-        if (new_height != m_vertical_it.size()) {
-            m_vertical_it.resize(m_height);
-            for (std::size_t i = 0; i < m_height; ++i) {
-                m_vertical_it[i] = i;
-            }
-        }
-    }
     
     void Window::_OnWindowEvent() noexcept
     {
@@ -131,7 +122,6 @@ namespace win_framewrk {
                 "New size -> [" + std::to_string(m_surface_ptr->w) + ", " + std::to_string(m_surface_ptr->h) + "]");
             
             SDL_GetWindowSize(m_window_ptr.get(), (int*)&m_width, (int*)&m_height);
-            _UpdateVerticalIterator(m_height);
 
             LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
         }
@@ -141,7 +131,8 @@ namespace win_framewrk {
         LOG_WIN_INFO(__FUNCTION__);
         m_is_quit = true;
     }
-    
+
+
     bool Window::Init(const std::string& title, std::uint32_t width, std::uint32_t height) {
         LOG_WIN_INFO(__FUNCTION__);
 
@@ -152,8 +143,6 @@ namespace win_framewrk {
 
         m_width = width;
         m_height = height;
-
-        _UpdateVerticalIterator(m_height);
 
         m_window_ptr.reset(SDL_CreateWindow(title.data(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0));
         LOG_SDL_ERROR(m_window_ptr != nullptr, SDL_GetError());
@@ -170,19 +159,33 @@ namespace win_framewrk {
         #endif
         return !m_is_quit;
     }
+    
+    void Window::_ThreadBufferFillingFunc(std::uint32_t x0, std::uint32_t y0, std::uint32_t x_end, std::uint32_t y_end, 
+        SDL_Surface* surface, const std::vector<std::uint32_t> &in_pixels) noexcept {
+        
+        const auto lenght = x_end - x0;
+        auto bufer = static_cast<std::uint32_t*>(surface->pixels);
 
-    void Window::FillPixelBuffer(const std::vector<std::size_t> &in_pixels) const noexcept {
+        for (std::size_t y = y0; y < y_end; ++y) {
+            for (std::size_t x = x0; x < x_end; ++x) {
+                bufer[x + y * lenght] = _MapRGBA(surface->format, in_pixels[x + y * lenght]);
+            }
+        }
+    }
+
+    void Window::FillPixelBuffer(const std::vector<std::uint32_t>& in_pixels) const noexcept {
         #if defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
 
-        auto pixel_buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
+        // auto pixel_buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
 
-        std::for_each(std::execution::par, m_vertical_it.cbegin(), m_vertical_it.cend(), [this, &pixel_buffer, &in_pixels](std::uint32_t y) {
-            for (std::size_t x = 0; x < m_width; ++x) {
-                pixel_buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, in_pixels[x + y * m_width]);
-            }
-        });
+        const std::uint32_t step = 1;
+        for (std::uint32_t y = 0; y < m_height; y += step) {
+            m_thread_pool.AddTask(&Window::_ThreadBufferFillingFunc, 0, y, m_width, y + step, m_surface_ptr, std::cref(in_pixels));
+        }
+
+        m_thread_pool.WaitAll();
     }
 
     void Window::PresentPixelBuffer() const noexcept {
