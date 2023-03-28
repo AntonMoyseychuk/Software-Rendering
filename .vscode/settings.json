@@ -82,6 +82,8 @@
         "numeric": "cpp",
         "queue": "cpp",
         "ranges": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "future": "cpp",
+        "unordered_set": "cpp"
     }
 }

@@ -1,5 +1,4 @@
 #pragma once
-#include "window_framework/window.hpp"
 #include "objects/drawable.hpp"
 #include "objects/point_light.hpp"
 

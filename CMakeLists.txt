@@ -17,4 +17,6 @@ set(MATH_3D_DIR "${DEPENDENCIES_DIR}/own-math-3d")
 
 set(WINDOW_FRAMEWORK_DIR "${CMAKE_SOURCE_DIR}/window_framework")
 
+set(THREAD_POOL_DIR "${CMAKE_SOURCE_DIR}/thread_pool")
+
 add_subdirectory(raytracer)

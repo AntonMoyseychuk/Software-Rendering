@@ -1,5 +1,5 @@
 #pragma once
-#include "window_framework/window.hpp"
+#include "window/window.hpp"
 
 #include "graphics/renderer.hpp"
 
