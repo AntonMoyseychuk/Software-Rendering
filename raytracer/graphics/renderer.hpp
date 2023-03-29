@@ -16,6 +16,18 @@ namespace gfx {
 
         const std::vector<std::uint32_t>& Render(const Scene& scene, const Camera& camera) noexcept;
 
+    private:
+        Color _PixelShader(const Ray& ray, const Scene& scene, std::size_t recursion_depth) const noexcept;
+
+    private:
+        void _TreadTileRenderFunc(
+            std::uint32_t tile_left_up_x, std::uint32_t tile_left_up_y, 
+            std::uint32_t tile_right_down_x, std::uint32_t tile_right_down_y, 
+            const std::vector<gfx::Ray>& rays, 
+            const gfx::Scene& scene
+        ) noexcept;
+    
+    public:
     #pragma region getters-setters
         void SetAntialiasingLevel(AntialiasingLevel level) noexcept;
         AntialiasingLevel GetAntialiasingLevel() const noexcept;
@@ -25,17 +37,10 @@ namespace gfx {
 
         void SetBackgroundColor(Color color) noexcept;
         Color GetBackgroundColor() const noexcept;
-        Color& GetBackgroundColor() noexcept;
 
         void SetReflectionDepth(std::size_t depth) noexcept;
         std::size_t GetReflectionDepth() const noexcept;
-        std::size_t& GetReflectionDepth() noexcept;
     #pragma endregion getters-setters
-
-    private:
-        Color _TraceRay(const Ray& ray, const Scene& scene, std::size_t recursion_depth) const noexcept;
-        void _ThreadRenderFunc(std::uint32_t x0, std::uint32_t y0, std::uint32_t x_end, std::uint32_t y_end, 
-            const std::vector<gfx::Ray>& rays, const gfx::Scene& scene) noexcept;
 
     private:
         std::vector<std::uint32_t> m_frame;

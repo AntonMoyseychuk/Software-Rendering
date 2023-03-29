@@ -19,11 +19,9 @@ namespace gfx {
     #pragma region getters-setters
         void SetColor(Color color) noexcept { m_color = color; }
         Color GetColor() const noexcept { return m_color; }
-        Color& GetColor() noexcept { return m_color; }
 
         void SetIntensity(float intensity) noexcept { m_intensity = intensity; }
         float GetIntensity() const noexcept { return m_intensity; }
-        float& GetIntensity() noexcept { return m_intensity; }
     #pragma endregion getters-setters
 
     protected:

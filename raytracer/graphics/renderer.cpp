@@ -7,73 +7,30 @@
 #include <execution>
 
 namespace gfx {
-    void Renderer::SetAntialiasingLevel(AntialiasingLevel level) noexcept {
-        m_antialiasing_level = level;
-        
-        const auto antialiasing_frame_size = m_frame_size * static_cast<float>(level);
-        m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y);
-    }
-
-    AntialiasingLevel Renderer::GetAntialiasingLevel() const noexcept {
-        return m_antialiasing_level;
-    }
-
-    void Renderer::SetOutputFrameSize(const math::vec2ui &size) noexcept {
-        if (m_frame_size.x != size.x || m_frame_size.y != size.y) {
-            m_frame_size = size;
-            
-            const auto antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
-            m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y);
-        }
-    }
-
-    const math::vec2ui &Renderer::GetOutputFrameSize() const noexcept {
-        return m_frame_size;
-    }
-
-    void Renderer::SetBackgroundColor(Color color) noexcept {
-        m_background = color;
-    }
-
-    Color Renderer::GetBackgroundColor() const noexcept {
-        return m_background;
-    }
-
-    gfx::Color &Renderer::GetBackgroundColor() noexcept {
-        return m_background;
-    }
-
-    void Renderer::SetReflectionDepth(std::size_t depth) noexcept {
-        m_reflection_depth = depth;
-    }
-
-    std::size_t Renderer::GetReflectionDepth() const noexcept {
-        return m_reflection_depth;
-    }
-
-    std::size_t &Renderer::GetReflectionDepth() noexcept {
-        return m_reflection_depth;
-    }
-
-    void Renderer::_ThreadRenderFunc(std::uint32_t x0, std::uint32_t y0, std::uint32_t x_end, std::uint32_t y_end, 
+    void Renderer::_TreadTileRenderFunc(std::uint32_t x0, std::uint32_t y0, std::uint32_t x_end, std::uint32_t y_end, 
         const std::vector<gfx::Ray>& rays, const gfx::Scene& scene) noexcept {
         const auto length = x_end - x0;
         
         for (std::size_t y = y0; y < y_end; ++y) {
             for (std::size_t x = x0; x < x_end; ++x) {
-                m_frame[x + y * length] = _TraceRay(rays[x + y * length], scene, m_reflection_depth).rgba;
+                m_frame[x + y * length] = _PixelShader(rays[x + y * length], scene, m_reflection_depth).rgba;
             }
         }
     }
 
     const std::vector<std::uint32_t> &Renderer::Render(const gfx::Scene &scene, const Camera& camera) noexcept {
         const auto antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
-        const auto& rays = camera.GenerateRays(antialiasing_frame_size);
         m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y); // ДОЛЖНО БЫТЬ ТУТ!!!
         
+        const auto& rays = camera.GenerateRays(antialiasing_frame_size);
         const auto step = static_cast<std::uint32_t>(m_antialiasing_level);
         for (std::uint32_t i = 0; i < antialiasing_frame_size.y; i += step) {
-            m_thread_pool.AddTask(&Renderer::_ThreadRenderFunc, this, 0, i, antialiasing_frame_size.x, i + step, std::cref(rays), std::cref(scene));
+            m_thread_pool.AddTask(&Renderer::_TreadTileRenderFunc, this, 
+                0, i, 
+                antialiasing_frame_size.x, i + step, 
+                std::cref(rays), 
+                std::cref(scene)
+            );
         }
         m_thread_pool.WaitAll();
 
@@ -99,7 +56,7 @@ namespace gfx {
         return m_frame;
     }
     
-    Color Renderer::_TraceRay(const Ray &ray, const Scene &scene, std::size_t recursion_depth) const noexcept {
+    Color Renderer::_PixelShader(const Ray &ray, const Scene &scene, std::size_t recursion_depth) const noexcept {
         std::optional<IntersectionData> closest_intersection;
         std::optional<IntersectionData> curr_intersection;
             
@@ -132,6 +89,46 @@ namespace gfx {
         const auto reflected_ray_dir = math::Reflect(closest_intersection->casted_ray.direction, closest_intersection->normal);
         const auto reflected_ray = Ray(closest_intersection->point, reflected_ray_dir);
 
-        return local_color * (1.0f - reflective_index) + _TraceRay(reflected_ray, scene, recursion_depth - 1) * reflective_index;
+        return local_color * (1.0f - reflective_index) + _PixelShader(reflected_ray, scene, recursion_depth - 1) * reflective_index;
+    }
+
+    void Renderer::SetAntialiasingLevel(AntialiasingLevel level) noexcept {
+        m_antialiasing_level = level;
+        
+        const auto antialiasing_frame_size = m_frame_size * static_cast<float>(level);
+        m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y);
+    }
+
+    AntialiasingLevel Renderer::GetAntialiasingLevel() const noexcept {
+        return m_antialiasing_level;
+    }
+
+    void Renderer::SetOutputFrameSize(const math::vec2ui &size) noexcept {
+        if (m_frame_size.x != size.x || m_frame_size.y != size.y) {
+            m_frame_size = size;
+            
+            const auto antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
+            m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y);
+        }
+    }
+
+    const math::vec2ui &Renderer::GetOutputFrameSize() const noexcept {
+        return m_frame_size;
+    }
+
+    void Renderer::SetBackgroundColor(Color color) noexcept {
+        m_background = color;
+    }
+
+    Color Renderer::GetBackgroundColor() const noexcept {
+        return m_background;
+    }
+
+    void Renderer::SetReflectionDepth(std::size_t depth) noexcept {
+        m_reflection_depth = depth;
+    }
+
+    std::size_t Renderer::GetReflectionDepth() const noexcept {
+        return m_reflection_depth;
     }
 }

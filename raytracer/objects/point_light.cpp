@@ -8,22 +8,6 @@ namespace gfx {
     {
     }
 
-    void PointLigth::MoveFor(const math::vec3f &dist) noexcept {
-        m_position += dist;
-    }
-
-    void PointLigth::SetPositon(const math::vec3f &position) noexcept {
-        m_position = position;
-    }
-
-    const math::vec3f &PointLigth::GetPositon() const noexcept {
-        return m_position;
-    }
-
-    math::vec3f &PointLigth::GetPositon() noexcept {
-        return m_position;
-    }
-
     bool PointLigth::ComputeIllumination(const IntersectionData& int_data, const std::list<std::shared_ptr<IDrawable>>& drawables,
         float& out_intensity) const noexcept 
     {
@@ -53,5 +37,17 @@ namespace gfx {
         }
 
         return true;
+    }
+
+    void PointLigth::MoveFor(const math::vec3f &dist) noexcept {
+        m_position += dist;
+    }
+
+    void PointLigth::SetPositon(const math::vec3f &position) noexcept {
+        m_position = position;
+    }
+
+    const math::vec3f &PointLigth::GetPositon() const noexcept {
+        return m_position;
     }
 }

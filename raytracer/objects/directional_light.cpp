@@ -47,8 +47,4 @@ namespace gfx {
     const math::vec3f &DirectionalLigth::GetDirection() const noexcept {
         return m_direction;
     }
-
-    math::vec3f &DirectionalLigth::GetDirection() noexcept {
-        return m_direction;
-    }
 }

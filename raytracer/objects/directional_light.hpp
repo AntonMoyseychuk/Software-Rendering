@@ -16,7 +16,6 @@ namespace gfx {
     #pragma region getters-setters
         void SetDirection(const math::vec3f& direction) noexcept;
         const math::vec3f& GetDirection() const noexcept;
-        math::vec3f& GetDirection() noexcept;
     #pragma endregion getters-setters
 
     private:

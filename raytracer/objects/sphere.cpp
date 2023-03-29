@@ -45,8 +45,4 @@ namespace gfx {
     float Sphere::GetRadius() const noexcept {
         return m_radius;
     }
-
-    float &Sphere::GetRadius() noexcept {
-        return m_radius;
-    }
 }

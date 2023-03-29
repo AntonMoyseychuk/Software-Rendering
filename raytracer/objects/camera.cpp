@@ -29,10 +29,6 @@ namespace gfx {
         return m_ray_cache_size;
     }
 
-    math::vec3f &Camera::GetPosition() noexcept {
-        return m_position;
-    }
-
     const math::vec3f &Camera::GetPosition() const noexcept {
         return m_position;
     }

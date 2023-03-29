@@ -13,7 +13,6 @@ namespace gfx {
     #pragma region getters-setters
         void SetPositon(const math::vec3f& position) noexcept { m_position = position; }
         const math::vec3f& GetPositon() const noexcept { return m_position; }
-        math::vec3f& GetPositon() noexcept { return m_position; }
     #pragma endregion getters-setters
 
     protected:
