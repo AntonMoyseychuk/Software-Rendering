@@ -23,13 +23,12 @@ namespace app {
         //     m_scene.AddDrawble(std::make_shared<gfx::Sphere>(
         //             math::vec3f(math::Random(-9.0f, 9.0f), math::Random(-9.0f, 9.0f), math::Random(-9.0f, 9.0f)),
         //             math::Random(0.5f, 1.0f), 
-        //             gfx::Material(gfx::Color(math::Random(0, 255), math::Random(0, 255), math::Random(0, 255)), 500.0f)
+        //             gfx::Material(gfx::Color(math::Random(0, 255), math::Random(0, 255), math::Random(0, 255)), math::Random(-500.0f, 500.0f), math::Random(0.0f, 0.8f))
         //         )
         //     );
         // }
         
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.0f, -3.0f), 0.4f, gfx::Material(gfx::Color::MAGENTA, 500)));
-        
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, 0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::RED, 500)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::GREEN, 500, 0.2f)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(1.0f, 0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::BLUE, 500, 0.4f)));
@@ -64,6 +63,7 @@ namespace app {
 
             this->_UpdateLight(m_scene.GetLights().begin()->get(), dt);
             this->_UpdateDrawable(m_scene.GetDrawables().begin()->get(), dt);
+            this->_UpdateCamera(&m_camera, dt);
 
             const auto& buffer = m_renderer.Render(m_scene, m_camera);
             
@@ -75,7 +75,7 @@ namespace app {
     }
     
     void Application::_UpdateCamera(gfx::Camera* camera, float dt) noexcept {
-
+        
     }
     
     void Application::_UpdateDrawable(gfx::IDrawable* drawable, float dt) noexcept {
