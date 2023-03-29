@@ -114,20 +114,19 @@ namespace win_framewrk {
         m_surface_ptr = SDL_GetWindowSurface(m_window_ptr.get());
         return m_surface_ptr != nullptr;
     }
-    
-    void Window::_OnWindowEvent() noexcept
-    {
-        if(m_event.window.event == SDL_WINDOWEVENT_RESIZED) {
-            LOG_WIN_EVENT("SDL_WINDOWEVENT_RESIZED", 
-                "New size -> [" + std::to_string(m_surface_ptr->w) + ", " + std::to_string(m_surface_ptr->h) + "]");
-            
-            SDL_GetWindowSize(m_window_ptr.get(), (int*)&m_width, (int*)&m_height);
 
-            LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
-        }
+    void Window::_OnResize(std::uint32_t new_width, std::uint32_t new_height) noexcept {
+        LOG_WIN_EVENT("SDL_WINDOWEVENT_RESIZED", 
+            "New size -> [" + std::to_string(new_width) + ", " + std::to_string(new_width) + "]");
+            
+        m_width = new_width;
+        m_height = new_height;
+        // SDL_GetWindowSize(m_window_ptr.get(), (int*)&m_width, (int*)&m_height);
+
+        LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
     }
 
-    void Window::_OnQuitEvent() noexcept {
+    void Window::_OnQuit() noexcept {
         LOG_WIN_INFO(__FUNCTION__);
         m_is_quit = true;
     }
@@ -164,11 +163,11 @@ namespace win_framewrk {
         SDL_Surface* surface, const std::vector<std::uint32_t> &in_pixels) noexcept {
         
         const auto lenght = x_end - x0;
-        auto bufer = static_cast<std::uint32_t*>(surface->pixels);
+        auto buffer = static_cast<std::uint32_t*>(surface->pixels);
 
         for (std::size_t y = y0; y < y_end; ++y) {
             for (std::size_t x = x0; x < x_end; ++x) {
-                bufer[x + y * lenght] = _MapRGBA(surface->format, in_pixels[x + y * lenght]);
+                buffer[x + y * lenght] = _MapRGBA(surface->format, in_pixels[x + y * lenght]);
             }
         }
     }
@@ -206,11 +205,13 @@ namespace win_framewrk {
         while (SDL_PollEvent(&m_event)) {
             switch (m_event.type)  {
             case SDL_QUIT:
-                this->_OnQuitEvent();
+                this->_OnQuit();
                 break;
 
             case SDL_WINDOWEVENT:
-                this->_OnWindowEvent();
+                if(m_event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                    this->_OnResize(m_event.window.data1, m_event.window.data2);
+                }
                 break;
             }
         }
@@ -221,8 +222,9 @@ namespace win_framewrk {
             LOG_WIN_INFO(__FUNCTION__);
         #endif
         
-        SDL_PumpEvents();
-        return SDL_GetKeyboardState(nullptr)[static_cast<SDL_Scancode>(key)];
+        static const std::uint8_t* keyboard = SDL_GetKeyboardState(nullptr);
+
+        return keyboard[static_cast<SDL_Scancode>(key)];
     }
 
     std::uint32_t Window::GetPixelColor(std::size_t x, std::size_t y) noexcept

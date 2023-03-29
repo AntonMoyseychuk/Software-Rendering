@@ -7,18 +7,29 @@
 #include <iostream>
 #include <memory>
 
+#ifdef _DEBUG
+    #include <iostream>
+    #define LOG_EXPR(expresion) std::cout << "{" << #expresion << "}: " << (expresion) << std::endl
+    #define LOG(tag, expresion) std::cout << "{" << tag << "}: " << (expresion) << std::endl
+#else 
+    #define LOG_EXPR(expresion) (void)0
+    #define LOG(tag, expresion) (void)0
+#endif
+
 namespace app {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height)
         : m_window(win_framewrk::Window::Get()), m_renderer(), m_scene(), 
-            m_camera(math::vec3f(0.0f), math::VECTOR_BACKWARD, math::VECTOR_UP, 45.0f, (float)width / height), 
+            m_camera(math::vec3f(0.0f, 0.0f, 3.0f), math::VECTOR_BACKWARD, math::VECTOR_UP, 45.0f, (float)width / height), 
                 m_last_frame(std::chrono::steady_clock::now())
     {
         m_window->Init(title, width, height);
         m_window->SetBackgroundColor(gfx::Color(80).rgba);
-        
+
         m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::X2);
         m_renderer.SetReflectionDepth(2);
 
+        m_camera.SetViewportSize(math::vec2ui(width, height) * static_cast<float>(m_renderer.GetAntialiasingLevel()));
+        
         // for (std::size_t i = 0; i < 100; ++i) {
         //     m_scene.AddDrawble(std::make_shared<gfx::Sphere>(
         //             math::vec3f(math::Random(-9.0f, 9.0f), math::Random(-9.0f, 9.0f), math::Random(-9.0f, 9.0f)),
@@ -46,7 +57,7 @@ namespace app {
     
     void Application::Run() noexcept {
         m_renderer.SetBackgroundColor(gfx::UInt32ToColor(m_window->GetBackgroundColor()));
-        math::vec2ui actual_window_size;
+        math::vec2ui last_window_size;
 
         while (m_window->IsOpen()) {
             const auto curr_frame = std::chrono::steady_clock::now();
@@ -55,27 +66,44 @@ namespace app {
 
             m_window->PollEvent();
 
-            actual_window_size.x = m_window->GetWidth();
-            actual_window_size.y = m_window->GetHeight();
-            m_camera.SetAspectRatio((float)actual_window_size.x / actual_window_size.y);
+            const math::vec2ui curr_window_size(m_window->GetWidth(), m_window->GetHeight());
+            if (last_window_size != curr_window_size) {
+                m_renderer.SetOutputFrameSize(curr_window_size);
+                
+                m_camera.SetAspectRatio((float)curr_window_size.x / curr_window_size.y);
+                m_camera.SetViewportSize(curr_window_size * static_cast<float>(m_renderer.GetAntialiasingLevel()));
 
-            m_renderer.SetOutputFrameSize(actual_window_size);
+                last_window_size = curr_window_size;
+            }
 
-            this->_UpdateLight(m_scene.GetLights().begin()->get(), dt);
-            this->_UpdateDrawable(m_scene.GetDrawables().begin()->get(), dt);
+            // this->_UpdateLight(m_scene.GetLights().begin()->get(), dt);
+            // this->_UpdateDrawable(m_scene.GetDrawables().begin()->get(), dt);
             this->_UpdateCamera(&m_camera, dt);
-
-            const auto& buffer = m_renderer.Render(m_scene, m_camera);
             
-            m_window->FillPixelBuffer(buffer);
+            const auto& frame = m_renderer.Render(m_scene, m_camera);
+            m_window->FillPixelBuffer(frame);
             m_window->PresentPixelBuffer();          
-           
+            
             std::cout << "FPS: " << std::to_string(1.0f / dt) << std::endl;
         }
     }
     
     void Application::_UpdateCamera(gfx::Camera* camera, float dt) noexcept {
-        
+        using namespace win_framewrk;
+    
+        if (camera != nullptr) {
+            if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
+                camera->Rotate(math::ToRadians(dt), math::vec2f(0.0f, 1.0f));
+            } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
+                camera->Rotate(-math::ToRadians(dt), math::vec2f(0.0f, 1.0f));
+            }
+
+            if (m_window->IsKeyPressed(Key::UP_ARROW)) {
+                camera->Rotate(-math::ToRadians(dt), math::vec2f(1.0f, 0.0f));
+            } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
+                camera->Rotate(math::ToRadians(dt), math::vec2f(1.0f, 0.0f));
+            }
+        }
     }
     
     void Application::_UpdateDrawable(gfx::IDrawable* drawable, float dt) noexcept {
@@ -85,20 +113,19 @@ namespace app {
             if (m_window->IsKeyPressed(Key::SPASE) == false) {
                 if (m_window->IsKeyPressed(Key::W)) {
                     drawable->MoveFor(math::VECTOR_UP * 2.0f * dt);
-                }
-                if (m_window->IsKeyPressed(Key::A)) {
-                    drawable->MoveFor(math::VECTOR_LEFT * 2.0f * dt);
-                }
-                if (m_window->IsKeyPressed(Key::S)) {
+                } else if (m_window->IsKeyPressed(Key::S)) {
                     drawable->MoveFor(math::VECTOR_DOWN * 2.0f * dt);
                 }
-                if (m_window->IsKeyPressed(Key::D)) {
+                
+                if (m_window->IsKeyPressed(Key::A)) {
+                    drawable->MoveFor(math::VECTOR_LEFT * 2.0f * dt);
+                } else if (m_window->IsKeyPressed(Key::D)) {
                     drawable->MoveFor(math::VECTOR_RIGHT * 2.0f * dt);
                 }
+
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
                     drawable->MoveFor(math::VECTOR_BACKWARD * 2.0f * dt);
-                }
-                if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
+                } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
                     drawable->MoveFor(math::VECTOR_FORWARD * 2.0f * dt);
                 }
             }
@@ -112,21 +139,20 @@ namespace app {
         if ((point_light = dynamic_cast<gfx::PointLigth*>(light)) != nullptr) {
             if (m_window->IsKeyPressed(Key::SPASE)) {
                 if (m_window->IsKeyPressed(Key::W)) {
-                point_light->MoveFor(math::VECTOR_UP * 2.0f * dt);
-                }
-                if (m_window->IsKeyPressed(Key::A)) {
-                    point_light->MoveFor(math::VECTOR_LEFT * 2.0f * dt);
-                }
-                if (m_window->IsKeyPressed(Key::S)) {
+                    point_light->MoveFor(math::VECTOR_UP * 2.0f * dt);
+                } else if (m_window->IsKeyPressed(Key::S)) {
                     point_light->MoveFor(math::VECTOR_DOWN * 2.0f * dt);
                 }
-                if (m_window->IsKeyPressed(Key::D)) {
+
+                if (m_window->IsKeyPressed(Key::A)) {
+                    point_light->MoveFor(math::VECTOR_LEFT * 2.0f * dt);
+                } else if (m_window->IsKeyPressed(Key::D)) {
                     point_light->MoveFor(math::VECTOR_RIGHT * 2.0f * dt);
                 }
+                
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
                     point_light->MoveFor(math::VECTOR_BACKWARD * 2.0f * dt);
-                }
-                if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
+                } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
                     point_light->MoveFor(math::VECTOR_FORWARD * 2.0f * dt);
                 }
             }

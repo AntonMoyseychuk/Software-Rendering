@@ -7,7 +7,9 @@ namespace gfx {
     public:
         Camera(const math::vec3f& position, const math::vec3f& look_at, const math::vec3f& up, float fov_degrees, float aspect_ratio);
 
-        const std::vector<gfx::Ray>& GenerateRays(const math::vec2ui& screen_size) const noexcept;
+        const std::vector<gfx::Ray>& GenerateRays() const noexcept;
+
+        void Rotate(float angle_radians, const math::vec2f& axis) noexcept;
 
     #pragma region getters-setters
         float GetFOVInDegrees() const noexcept;
@@ -16,22 +18,26 @@ namespace gfx {
         void SetAspectRatio(float aspect) noexcept;
         float GetAspectRatio() const noexcept;
 
+        void SetViewportSize(const math::vec2ui& size) const noexcept;
+
         const math::vec2ui& GetRayCacheSize() const noexcept;
 
         const math::vec3f& GetPosition() const noexcept;
     #pragma endregion getters-setters
 
     private:
+        void _RecalculateRays() const noexcept;
+
+    private:
         math::mat4f m_view;
+
+        math::vec3f m_position;
+        math::vec3f m_forward;
+        math::vec3f m_right;
+        math::vec3f m_up;
 
         float m_tan_fov_div2 = 0.0f;
         float m_aspect_ratio = 0.0f;
-
-        //
-        math::vec3f m_position;
-        math::vec3f m_forward;
-        math::vec3f m_up;
-        //
 
         mutable std::vector<gfx::Ray> m_ray_cache;
         mutable math::vec2ui m_ray_cache_size;

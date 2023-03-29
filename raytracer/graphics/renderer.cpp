@@ -22,7 +22,7 @@ namespace gfx {
         const auto antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
         m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y); // ДОЛЖНО БЫТЬ ТУТ!!!
         
-        const auto& rays = camera.GenerateRays(antialiasing_frame_size);
+        const auto& rays = camera.GenerateRays();
         const auto step = static_cast<std::uint32_t>(m_antialiasing_level);
         for (std::uint32_t i = 0; i < antialiasing_frame_size.y; i += step) {
             m_thread_pool.AddTask(&Renderer::_TreadTileRenderFunc, this, 

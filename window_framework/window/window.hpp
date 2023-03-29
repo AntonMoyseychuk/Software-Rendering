@@ -56,7 +56,6 @@ namespace win_framewrk {
 
         std::uint32_t GetPixelColor(std::size_t x, std::size_t y) noexcept;
         void SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept;
-
        
         void SetBackgroundColor(std::uint32_t color) noexcept;
         std::uint32_t GetBackgroundColor() const noexcept;
@@ -81,9 +80,11 @@ namespace win_framewrk {
         
         bool _UpdateSurface() const noexcept;
 
-        void _OnWindowEvent() noexcept;
-        void _OnQuitEvent() noexcept;
+    private:
+        void _OnResize(std::uint32_t new_width, std::uint32_t new_height) noexcept;
+        void _OnQuit() noexcept;
 
+    private:
         static void _ThreadBufferFillingFunc(std::uint32_t x0, std::uint32_t y0, std::uint32_t x_end, std::uint32_t y_end, 
             SDL_Surface* surface, const std::vector<std::uint32_t> &in_pixels) noexcept;
 
@@ -104,9 +105,9 @@ namespace win_framewrk {
         mutable SDL_Surface* m_surface_ptr = nullptr;
         SDL_Event m_event;
 
-        std::string m_title;
-        std::uint32_t m_width;
-        std::uint32_t m_height;
+        std::string m_title = "";
+        std::uint32_t m_width = 0;
+        std::uint32_t m_height = 0;
         bool m_is_quit = false;
 
         std::uint32_t m_background_color = 0;
