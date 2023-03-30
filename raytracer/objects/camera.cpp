@@ -1,5 +1,7 @@
 #include "camera.hpp"
 
+#include <iostream>
+
 namespace gfx {
     Camera::Camera(const math::vec3f &position, const math::vec3f &look_at, const math::vec3f &up, float fov_degrees, float aspect_ratio)
         : m_view(math::LookAtRH(position, look_at, up)),
@@ -17,21 +19,20 @@ namespace gfx {
         return m_ray_cache;
     }
     
-    void Camera::Rotate(float angle_radians, const math::vec2f &axis) noexcept {
+    void Camera::Rotate(float angle_radians, const math::vec2f& axis) noexcept {
         m_view = math::RotateX(m_view, angle_radians * axis.x);
         m_view = math::RotateY(m_view, angle_radians * axis.y);
 
-        m_forward = m_forward * m_view;
+        m_forward = math::VECTOR_BACKWARD * m_view;
+        m_right = math::VECTOR_RIGHT * m_view;
+        m_up = math::VECTOR_UP * m_view;
 
         this->_RecalculateRays();
     }
 
-    float Camera::GetFOVInDegrees() const noexcept {
-        return math::ToDegrees(atanf(m_tan_fov_div2) * 2.0f);
-    }
-
-    float Camera::GetFOVInRadians() const noexcept {
-        return atanf(m_tan_fov_div2) * 2.0f;
+    void Camera::MoveFor(const math::vec3f& offset) noexcept {
+        m_position += offset;
+        this->_RecalculateRays();
     }
 
     void Camera::SetAspectRatio(float aspect) noexcept {
@@ -55,12 +56,20 @@ namespace gfx {
         this->_RecalculateRays();
     }
 
-    const math::vec2ui &Camera::GetRayCacheSize() const noexcept {
-        return m_ray_cache_size;
-    }
-
     const math::vec3f &Camera::GetPosition() const noexcept {
         return m_position;
+    }
+
+    const math::vec3f &Camera::GetForward() const noexcept {
+        return m_forward;
+    }
+
+    const math::vec3f &Camera::GetRight() const noexcept {
+        return m_right;
+    }
+
+    const math::vec3f &Camera::GetUp() const noexcept {
+        return m_up;
     }
 
     void Camera::_RecalculateRays() const noexcept {
@@ -69,14 +78,10 @@ namespace gfx {
 
         for (std::size_t y = 0; y < m_ray_cache_size.y; ++y) {
             for (std::size_t x = 0; x < m_ray_cache_size.x; ++x) {
-                // float pixel_x = m_forward.x + (-1.0f + (x * dx)) * m_aspect_ratio * m_tan_fov_div2;
-                // float pixel_y = m_forward.y + (1.0f - (y * dy)) * m_tan_fov_div2;
+                const float pixel_x = m_forward.x + (-1.0f + (x * dx)) * m_aspect_ratio * m_tan_fov_div2;
+                const float pixel_y = m_forward.y + (1.0f - (y * dy)) * m_tan_fov_div2;
 
-                const auto ray_dir = m_forward + math::vec3f(
-                    (-1.0f + (x * dx)) * m_aspect_ratio * m_tan_fov_div2, 
-                    (1.0f - (y * dy)) * m_tan_fov_div2, 
-                    m_forward.z
-                );
+                const auto ray_dir = m_forward + m_right * pixel_x + m_up * pixel_y; //???????????????????????????
 
                 m_ray_cache[x + y * m_ray_cache_size.x] = Ray(m_position, math::Normalize(ray_dir));
             }

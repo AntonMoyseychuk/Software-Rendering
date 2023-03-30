@@ -19,7 +19,7 @@
 namespace app {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height)
         : m_window(win_framewrk::Window::Get()), m_renderer(), m_scene(), 
-            m_camera(math::vec3f(0.0f, 0.0f, 3.0f), math::VECTOR_BACKWARD, math::VECTOR_UP, 45.0f, (float)width / height), 
+            m_camera(math::vec3f(0.0f, 0.0f, 2.0f), math::VECTOR_BACKWARD, math::VECTOR_UP, 45.0f, (float)width / height),
                 m_last_frame(std::chrono::steady_clock::now())
     {
         m_window->Init(title, width, height);
@@ -92,16 +92,38 @@ namespace app {
         using namespace win_framewrk;
     
         if (camera != nullptr) {
+            if (m_window->IsKeyPressed(Key::LALT)) {
+                camera->Rotate(-math::ToRadians(180.0f), math::vec2f(0.0f, 1.0f));
+            }
+
             if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
-                camera->Rotate(math::ToRadians(dt), math::vec2f(0.0f, 1.0f));
+                camera->Rotate(math::ToRadians(5.0f * dt), math::vec2f(0.0f, 1.0f));
             } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
-                camera->Rotate(-math::ToRadians(dt), math::vec2f(0.0f, 1.0f));
+                camera->Rotate(-math::ToRadians(5.0f * dt), math::vec2f(0.0f, 1.0f));
             }
 
             if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                camera->Rotate(-math::ToRadians(dt), math::vec2f(1.0f, 0.0f));
+                camera->Rotate(-math::ToRadians(5.0f * dt), math::vec2f(1.0f, 0.0f));
             } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                camera->Rotate(math::ToRadians(dt), math::vec2f(1.0f, 0.0f));
+                camera->Rotate(math::ToRadians(5.0f * dt), math::vec2f(1.0f, 0.0f));
+            }
+
+            if (m_window->IsKeyPressed(Key::W)) {
+                camera->MoveFor(2.0f * camera->GetForward() * dt);
+            } else if (m_window->IsKeyPressed(Key::S)) {
+                camera->MoveFor(-2.0f * camera->GetForward() * dt);
+            }
+
+            if (m_window->IsKeyPressed(Key::A)) {
+                camera->MoveFor(-2.0f * camera->GetRight() * dt);
+            } else if (m_window->IsKeyPressed(Key::D)) {
+                camera->MoveFor(2.0f * camera->GetRight() * dt);
+            }
+
+            if (m_window->IsKeyPressed(Key::LCTRL)) {
+                camera->MoveFor(-2.0f * camera->GetUp() * dt);
+            } else if (m_window->IsKeyPressed(Key::SPASE)) {
+                camera->MoveFor(2.0f * camera->GetUp() * dt);
             }
         }
     }

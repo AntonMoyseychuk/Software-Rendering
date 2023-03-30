@@ -103,7 +103,7 @@ namespace gfx {
         return m_antialiasing_level;
     }
 
-    void Renderer::SetOutputFrameSize(const math::vec2ui &size) noexcept {
+    void Renderer::SetOutputFrameSize(const math::vec2ui& size) noexcept {
         if (m_frame_size.x != size.x || m_frame_size.y != size.y) {
             m_frame_size = size;
             
