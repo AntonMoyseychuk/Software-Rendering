@@ -1,5 +1,8 @@
 #include "application.hpp"
+
+#include "objects/triangle.hpp"
 #include "objects/sphere.hpp"
+
 #include "objects/point_light.hpp"
 #include "objects/directional_light.hpp"
 #include "objects/ambient_light.hpp"
@@ -39,13 +42,16 @@ namespace app {
         //     );
         // }
         
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.0f, -3.0f), 0.4f, gfx::Material(gfx::Color::MAGENTA, 500)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, 0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::RED, 500)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::GREEN, 500, 0.2f)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(1.0f, 0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::BLUE, 500, 0.4f)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, -0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::YELLOW, 500, 0.6f)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, -0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::CYAN, 500, 0.8f)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(1.0f, -0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::WHITE, 500, 1.0f)));
+        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.0f, -3.0f), 0.4f, gfx::Material(gfx::Color::MAGENTA, 500)));
+        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, 0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::RED, 500)));
+        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::GREEN, 500, 0.2f)));
+        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(1.0f, 0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::BLUE, 500, 0.4f)));
+        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, -0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::YELLOW, 500, 0.6f)));
+        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, -0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::CYAN, 500, 0.8f)));
+        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(1.0f, -0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::WHITE, 500, 1.0f)));
+        m_scene.AddDrawble(std::make_shared<gfx::Triangle>(math::vec3f(-1.0f, -1.0f, 5.0f), math::vec3f(0.0f, 1.0f, 5.0f), math::vec3f(1.0f, -1.0f, 5.0f), 
+            gfx::Material(gfx::Color::RED))
+        );
 
 
         m_scene.AddLight(std::make_shared<gfx::DirectionalLigth>(math::vec3f(1.0f, -1.0f, -2.0f), gfx::Color::WHITE, 1.0f));

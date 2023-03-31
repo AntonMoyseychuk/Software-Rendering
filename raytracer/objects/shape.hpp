@@ -8,7 +8,7 @@ namespace gfx {
         IShape(const math::vec3f& position) : m_position(position) {}
         virtual ~IShape() = 0 {}
 
-        void MoveFor(const math::vec3f& dist) noexcept { m_position += dist; }
+        virtual void MoveFor(const math::vec3f& dist) noexcept { m_position += dist; }
         
     #pragma region getters-setters
         void SetPositon(const math::vec3f& position) noexcept { m_position = position; }
