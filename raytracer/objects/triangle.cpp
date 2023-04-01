@@ -4,13 +4,15 @@ namespace gfx {
     Triangle::Triangle(const math::vec3f &v0, const math::vec3f &v1, const math::vec3f &v2, const Material &material)
         : IDrawable(math::vec3f(0.0f), material), m_v0(v0), m_v1(v1), m_v2(v2)
     {
+        const auto e = v1 - v0, mid_e = v0 + math::Normalize(e) * (e.Length() / 2.0f);
+        const auto mediana = mid_e - v2, center = v2 + math::Normalize(mediana) * (mediana.Length() * 2.0f / 3.0f);
+        m_position = center;
     }
     
     std::optional<IntersectionData> Triangle::IsIntersect(const Ray &ray) const noexcept {
         const auto e1 = m_v1 - m_v0;
         const auto e2 = m_v2 - m_v0;
 
-        
         const auto pvec = math::Cross(ray.direction, e2);
         const auto det = math::Dot(e1, pvec);
 
@@ -40,5 +42,15 @@ namespace gfx {
         m_v0 += dist;
         m_v1 += dist;
         m_v2 += dist;
+    }
+    
+    const math::vec3f& Triangle::operator[](const std::size_t index) const noexcept {
+        assert(index < 3 && "index must be 0 <= index < 3");
+        return *(&m_v0 + index);
+    }
+    
+    math::vec3f& Triangle::operator[](const std::size_t index) noexcept {
+        assert(index < 3 && "index must be 0 <= index < 3");
+        return *(&m_v0 + index);
     }
 }

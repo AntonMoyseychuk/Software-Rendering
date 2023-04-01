@@ -19,10 +19,17 @@
     #define LOG(tag, expresion) (void)0
 #endif
 
+
+static void Rotate(gfx::Triangle& triangle, const math::mat4f& rotation, const math::mat4f& view) noexcept {
+    triangle[0] = triangle[0] * rotation * view;
+    triangle[1] = triangle[1] * rotation * view;
+    triangle[2] = triangle[2] * rotation * view;
+}
+
 namespace app {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height)
         : m_window(win_framewrk::Window::Get()), m_renderer(), m_scene(), 
-            m_camera(math::vec3f(0.0f, 0.0f, 2.0f), math::VECTOR_BACKWARD, math::VECTOR_UP, 45.0f, (float)width / height),
+            m_camera(math::vec3f(0.0f, 0.0f, 7.0f), math::VECTOR_BACKWARD, math::VECTOR_UP, 45.0f, (float)width / height),
                 m_last_frame(std::chrono::steady_clock::now())
     {
         m_window->Init(title, width, height);
@@ -42,6 +49,9 @@ namespace app {
         //     );
         // }
         
+        m_scene.AddDrawble(std::make_shared<gfx::Triangle>(math::vec3f(-1.0f, -1.0f, 0.0f), math::vec3f(0.0f, 1.0f, 0.0f), math::vec3f(1.0f, -1.0f, 0.0f), 
+            gfx::Material(gfx::Color::WHITE))
+        );
         // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.0f, -3.0f), 0.4f, gfx::Material(gfx::Color::MAGENTA, 500)));
         // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, 0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::RED, 500)));
         // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::GREEN, 500, 0.2f)));
@@ -49,15 +59,12 @@ namespace app {
         // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-1.0f, -0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::YELLOW, 500, 0.6f)));
         // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, -0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::CYAN, 500, 0.8f)));
         // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(1.0f, -0.5f, -4.0f), 0.5f, gfx::Material(gfx::Color::WHITE, 500, 1.0f)));
-        m_scene.AddDrawble(std::make_shared<gfx::Triangle>(math::vec3f(-1.0f, -1.0f, 5.0f), math::vec3f(0.0f, 1.0f, 5.0f), math::vec3f(1.0f, -1.0f, 5.0f), 
-            gfx::Material(gfx::Color::RED))
-        );
 
 
-        m_scene.AddLight(std::make_shared<gfx::DirectionalLigth>(math::vec3f(1.0f, -1.0f, -2.0f), gfx::Color::WHITE, 1.0f));
         // m_scene.AddLight(std::make_shared<gfx::DirectionalLigth>(math::VECTOR_RIGHT, gfx::Color::WHITE, 1.0f));
         // m_scene.AddLight(std::make_shared<gfx::PointLigth>(math::vec3f(8.0f, -10.0f, 8.0f), gfx::Color::WHITE, 1.0f));
         // m_scene.AddLight(std::make_shared<gfx::PointLigth>(math::vec3f(-8.0f, -10.0f, 8.0f), gfx::Color::WHITE, 1.0f));
+        m_scene.AddLight(std::make_shared<gfx::DirectionalLigth>(math::vec3f(1.0f, -1.0f, -2.0f), gfx::Color::WHITE, 1.0f));
         m_scene.AddLight(std::make_shared<gfx::AmbientLight>(gfx::Color::WHITE, 0.1f));
     }
     
@@ -83,7 +90,7 @@ namespace app {
             }
 
             // this->_UpdateLight(m_scene.GetLights().begin()->get(), dt);
-            // this->_UpdateDrawable(m_scene.GetDrawables().begin()->get(), dt);
+            this->_UpdateDrawable(m_scene.GetDrawables().begin()->get(), dt);
             this->_UpdateCamera(&m_camera, dt);
             
             const auto& frame = m_renderer.Render(m_scene, m_camera);
@@ -99,46 +106,45 @@ namespace app {
     
         if (camera != nullptr) {
             if (m_window->IsKeyPressed(Key::LALT)) {
-                camera->Rotate(-math::ToRadians(180.0f), math::vec2f(0.0f, 1.0f));
-            }
+                if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
+                    camera->Rotate(math::ToRadians(5.0f * dt), math::vec2f(0.0f, 1.0f));
+                } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
+                    camera->Rotate(-math::ToRadians(5.0f * dt), math::vec2f(0.0f, 1.0f));
+                }
 
-            if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
-                camera->Rotate(math::ToRadians(5.0f * dt), math::vec2f(0.0f, 1.0f));
-            } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
-                camera->Rotate(-math::ToRadians(5.0f * dt), math::vec2f(0.0f, 1.0f));
-            }
+                if (m_window->IsKeyPressed(Key::UP_ARROW)) {
+                    camera->Rotate(-math::ToRadians(5.0f * dt), math::vec2f(1.0f, 0.0f));
+                } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
+                    camera->Rotate(math::ToRadians(5.0f * dt), math::vec2f(1.0f, 0.0f));
+                }
 
-            if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                camera->Rotate(-math::ToRadians(5.0f * dt), math::vec2f(1.0f, 0.0f));
-            } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                camera->Rotate(math::ToRadians(5.0f * dt), math::vec2f(1.0f, 0.0f));
-            }
+                if (m_window->IsKeyPressed(Key::W)) {
+                    camera->MoveFor(2.0f * camera->GetForward() * dt);
+                } else if (m_window->IsKeyPressed(Key::S)) {
+                    camera->MoveFor(-2.0f * camera->GetForward() * dt);
+                }
 
-            if (m_window->IsKeyPressed(Key::W)) {
-                camera->MoveFor(2.0f * camera->GetForward() * dt);
-            } else if (m_window->IsKeyPressed(Key::S)) {
-                camera->MoveFor(-2.0f * camera->GetForward() * dt);
-            }
+                if (m_window->IsKeyPressed(Key::A)) {
+                    camera->MoveFor(-2.0f * camera->GetRight() * dt);
+                } else if (m_window->IsKeyPressed(Key::D)) {
+                    camera->MoveFor(2.0f * camera->GetRight() * dt);
+                }
 
-            if (m_window->IsKeyPressed(Key::A)) {
-                camera->MoveFor(-2.0f * camera->GetRight() * dt);
-            } else if (m_window->IsKeyPressed(Key::D)) {
-                camera->MoveFor(2.0f * camera->GetRight() * dt);
-            }
-
-            if (m_window->IsKeyPressed(Key::LCTRL)) {
-                camera->MoveFor(-2.0f * camera->GetUp() * dt);
-            } else if (m_window->IsKeyPressed(Key::SPASE)) {
-                camera->MoveFor(2.0f * camera->GetUp() * dt);
+                if (m_window->IsKeyPressed(Key::LCTRL)) {
+                    camera->MoveFor(-2.0f * camera->GetUp() * dt);
+                } else if (m_window->IsKeyPressed(Key::SPASE)) {
+                    camera->MoveFor(2.0f * camera->GetUp() * dt);
+                }
             }
         }
     }
     
     void Application::_UpdateDrawable(gfx::IDrawable* drawable, float dt) noexcept {
         using namespace win_framewrk;
+        using namespace math;
     
         if (drawable != nullptr) {
-            if (m_window->IsKeyPressed(Key::SPASE) == false) {
+            if (m_window->IsKeyPressed(Key::SPASE)) {
                 if (m_window->IsKeyPressed(Key::W)) {
                     drawable->MoveFor(math::VECTOR_UP * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::S)) {
@@ -150,11 +156,17 @@ namespace app {
                 } else if (m_window->IsKeyPressed(Key::D)) {
                     drawable->MoveFor(math::VECTOR_RIGHT * 2.0f * dt);
                 }
-
+                
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                    drawable->MoveFor(math::VECTOR_BACKWARD * 2.0f * dt);
+                    Rotate(*dynamic_cast<gfx::Triangle*>(drawable), RotateX(Identity<mat4f>(), ToRadians(-25.0f * dt)), m_camera.GetView());
                 } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                    drawable->MoveFor(math::VECTOR_FORWARD * 2.0f * dt);
+                    Rotate(*dynamic_cast<gfx::Triangle*>(drawable), RotateX(Identity<mat4f>(), ToRadians(25.0f * dt)), m_camera.GetView());
+                }
+
+                if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
+                    Rotate(*dynamic_cast<gfx::Triangle*>(drawable), RotateY(Identity<mat4f>(), ToRadians(25.0f * dt)), m_camera.GetView());
+                } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
+                    Rotate(*dynamic_cast<gfx::Triangle*>(drawable), RotateY(Identity<mat4f>(), ToRadians(-25.0f * dt)), m_camera.GetView());
                 }
             }
         }
@@ -165,7 +177,7 @@ namespace app {
         
         gfx::PointLigth* point_light = nullptr;
         if ((point_light = dynamic_cast<gfx::PointLigth*>(light)) != nullptr) {
-            if (m_window->IsKeyPressed(Key::SPASE)) {
+            if (m_window->IsKeyPressed(Key::LSHIFT)) {
                 if (m_window->IsKeyPressed(Key::W)) {
                     point_light->MoveFor(math::VECTOR_UP * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::S)) {

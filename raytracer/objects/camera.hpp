@@ -22,6 +22,8 @@ namespace gfx {
         const math::vec3f& GetForward() const noexcept;
         const math::vec3f& GetRight() const noexcept;
         const math::vec3f& GetUp() const noexcept;
+
+        const math::mat4f& GetView() const noexcept;
     #pragma endregion getters-setters
 
     private:

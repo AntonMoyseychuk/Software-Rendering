@@ -72,6 +72,10 @@ namespace gfx {
         return m_up;
     }
 
+    const math::mat4f &Camera::GetView() const noexcept {
+        return m_view;
+    }
+
     void Camera::_RecalculateRays() const noexcept {
         const auto dx = 2.0f / m_ray_cache_size.x;
         const auto dy = 2.0f / m_ray_cache_size.y;
