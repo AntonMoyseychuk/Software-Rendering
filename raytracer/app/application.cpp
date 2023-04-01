@@ -20,10 +20,10 @@
 #endif
 
 
-static void Rotate(gfx::Triangle& triangle, const math::mat4f& rotation, const math::mat4f& view) noexcept {
-    triangle[0] = triangle[0] * rotation * view;
-    triangle[1] = triangle[1] * rotation * view;
-    triangle[2] = triangle[2] * rotation * view;
+static void _VertexShader(gfx::Triangle& triangle, const math::mat4f& model, const math::mat4f& view, const math::mat4f& projection) noexcept {
+    triangle[0] = triangle[0] * model * view * projection;
+    triangle[1] = triangle[1] * model * view * projection;
+    triangle[2] = triangle[2] * model * view * projection;
 }
 
 namespace app {
@@ -146,27 +146,27 @@ namespace app {
         if (drawable != nullptr) {
             if (m_window->IsKeyPressed(Key::SPASE)) {
                 if (m_window->IsKeyPressed(Key::W)) {
-                    drawable->MoveFor(math::VECTOR_UP * 2.0f * dt);
+                    drawable->MoveFor(VECTOR_UP * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::S)) {
-                    drawable->MoveFor(math::VECTOR_DOWN * 2.0f * dt);
+                    drawable->MoveFor(VECTOR_DOWN * 2.0f * dt);
                 }
                 
                 if (m_window->IsKeyPressed(Key::A)) {
-                    drawable->MoveFor(math::VECTOR_LEFT * 2.0f * dt);
+                    drawable->MoveFor(VECTOR_LEFT * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::D)) {
-                    drawable->MoveFor(math::VECTOR_RIGHT * 2.0f * dt);
+                    drawable->MoveFor(VECTOR_RIGHT * 2.0f * dt);
                 }
                 
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                    Rotate(*dynamic_cast<gfx::Triangle*>(drawable), RotateX(Identity<mat4f>(), ToRadians(-25.0f * dt)), m_camera.GetView());
+                    _VertexShader(*dynamic_cast<gfx::Triangle*>(drawable), RotateX(Identity<mat4f>(), ToRadians(25.0f * dt)), m_camera.GetView(), Identity<mat4f>());
                 } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                    Rotate(*dynamic_cast<gfx::Triangle*>(drawable), RotateX(Identity<mat4f>(), ToRadians(25.0f * dt)), m_camera.GetView());
+                    _VertexShader(*dynamic_cast<gfx::Triangle*>(drawable), RotateX(Identity<mat4f>(), ToRadians(-25.0f * dt)), m_camera.GetView(), Identity<mat4f>());
                 }
 
                 if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
-                    Rotate(*dynamic_cast<gfx::Triangle*>(drawable), RotateY(Identity<mat4f>(), ToRadians(25.0f * dt)), m_camera.GetView());
+                    _VertexShader(*dynamic_cast<gfx::Triangle*>(drawable), RotateY(Identity<mat4f>(), ToRadians(25.0f * dt)), m_camera.GetView(), Identity<mat4f>());
                 } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
-                    Rotate(*dynamic_cast<gfx::Triangle*>(drawable), RotateY(Identity<mat4f>(), ToRadians(-25.0f * dt)), m_camera.GetView());
+                    _VertexShader(*dynamic_cast<gfx::Triangle*>(drawable), RotateY(Identity<mat4f>(), ToRadians(-25.0f * dt)), m_camera.GetView(), Identity<mat4f>());
                 }
             }
         }

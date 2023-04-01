@@ -32,6 +32,7 @@ namespace gfx {
 
     void Camera::MoveFor(const math::vec3f& offset) noexcept {
         m_position += offset;
+        m_view = math::Translate(m_view, offset);
         this->_RecalculateRays();
     }
 
