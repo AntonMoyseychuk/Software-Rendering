@@ -15,7 +15,7 @@ set(SDL_DIR "${DEPENDENCIES_DIR}/vendor/SDL2")
 
 set(MATH_3D_DIR "${DEPENDENCIES_DIR}/own-math-3d")
 
-set(WINDOW_FRAMEWORK_DIR "${CMAKE_SOURCE_DIR}/window_framework")
+set(WINDOW_DIR "${CMAKE_SOURCE_DIR}/window")
 
 set(THREAD_POOL_DIR "${CMAKE_SOURCE_DIR}/thread_pool")
 

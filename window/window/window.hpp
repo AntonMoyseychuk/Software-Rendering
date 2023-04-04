@@ -14,6 +14,8 @@ namespace win_framewrk {
         A = SDL_Scancode::SDL_SCANCODE_A,
         D = SDL_Scancode::SDL_SCANCODE_D,
         S = SDL_Scancode::SDL_SCANCODE_S,
+        Z = SDL_Scancode::SDL_SCANCODE_Z,
+        X = SDL_Scancode::SDL_SCANCODE_X,
         
         UP_ARROW = SDL_Scancode::SDL_SCANCODE_UP,
         RIGHT_ARROW = SDL_Scancode::SDL_SCANCODE_RIGHT,
@@ -21,7 +23,6 @@ namespace win_framewrk {
         DOWN_ARROW = SDL_Scancode::SDL_SCANCODE_DOWN,
 
         SPASE = SDL_Scancode::SDL_SCANCODE_SPACE,
-        ENTER = SDL_Scancode::SDL_SCANCODE_KP_ENTER,
         TAB = SDL_Scancode::SDL_SCANCODE_TAB,
         
         LSHIFT = SDL_Scancode::SDL_SCANCODE_LSHIFT,
