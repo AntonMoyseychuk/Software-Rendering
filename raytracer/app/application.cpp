@@ -29,7 +29,7 @@ static void _VertexShader(gfx::Triangle& triangle, const math::mat4f& model, con
 namespace app {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height)
         : m_window(win_framewrk::Window::Get()), m_renderer(), m_scene(), 
-            m_camera(math::vec3f(0.0f, 3.0f, 5.0f), math::vec3f(0.0f, 1.3f, -2.5f), math::VECTOR_UP, 45.0f, (float)width / height),
+            m_camera(math::vec3f(0.0f, 6.0f, 6.0f), math::vec3f(0.0f, 3.0f, -4.0f), math::VECTOR_UP, 45.0f, (float)width / height),
                 m_last_frame(std::chrono::steady_clock::now())
     {
         using namespace math;
@@ -53,9 +53,9 @@ namespace app {
         
         
         m_scene.AddDrawble(std::make_shared<gfx::Triangle>(
-            gfx::Vertex(vec3f(-2.0f, -2.0f, -7.0f) + VECTOR_UP, std::make_shared<gfx::Material>(gfx::Color::RED, 500.0f, 0.9f)), 
+            gfx::Vertex(vec3f(-2.0f, -2.0f, -7.0f) + VECTOR_UP, std::make_shared<gfx::Material>(gfx::Color::RED, 500.0f, 0.7f)), 
             gfx::Vertex(vec3f(0.0f, 2.0f, -7.0f) + VECTOR_UP, std::make_shared<gfx::Material>(gfx::Color::GREEN, 500.0f, 0.7f)), 
-            gfx::Vertex(vec3f(2.0f, -2.0f, -7.0f) + VECTOR_UP, std::make_shared<gfx::Material>(gfx::Color::BLUE, 500.0f, 0.6f)))
+            gfx::Vertex(vec3f(2.0f, -2.0f, -7.0f) + VECTOR_UP, std::make_shared<gfx::Material>(gfx::Color::BLUE, 500.0f, 0.7f)))
         );
 
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(0.0f, 0.0f, -2.0f), 0.4f, gfx::Material(gfx::Color::MAGENTA, 500)));
