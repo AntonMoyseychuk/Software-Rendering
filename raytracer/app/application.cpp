@@ -151,9 +151,6 @@ namespace app {
                 } else if (m_window->IsKeyPressed(Key::SPASE)) {
                     camera->MoveFor(2.0f * camera->GetUp() * dt);
                 }
-
-                // LOG("POSITION: ", std::to_string(camera->GetPosition().x) + " " + std::to_string(camera->GetPosition().y) + " " + std::to_string(camera->GetPosition().z));
-                // LOG("FORWARD: ", std::to_string(camera->GetForward().x) + " " + std::to_string(camera->GetForward().y) + " " + std::to_string(camera->GetForward().z));
             }
         }
     }

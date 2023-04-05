@@ -86,9 +86,9 @@ namespace gfx {
                 const float pixel_x = m_forward.x + (-1.0f + (x * dx)) * m_aspect_ratio * m_tan_fov_div2;
                 const float pixel_y = m_forward.y + (1.0f - (y * dy)) * m_tan_fov_div2;
 
-                const auto ray_dir = m_forward + m_right * pixel_x + m_up * pixel_y; //???????????????????????????
+                const auto ray_dir = math::Normalize(m_forward + m_right * pixel_x + m_up * pixel_y);
 
-                m_ray_cache[x + y * m_ray_cache_size.x] = Ray(m_position, math::Normalize(ray_dir));
+                m_ray_cache[x + y * m_ray_cache_size.x] = Ray(m_position, ray_dir);
             }
         }
     }
