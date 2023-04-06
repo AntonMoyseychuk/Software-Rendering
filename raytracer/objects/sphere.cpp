@@ -2,7 +2,7 @@
 #include "math_3d/math.hpp"
 
 namespace gfx {
-    Sphere::Sphere(const math::vec3f& position, float r, const gfx::Material &material)
+    Sphere::Sphere(const math::vec3f& position, float r, std::shared_ptr<IMaterial> material)
         : IDrawable(position, material), m_radius(r)
     {
     }
@@ -31,7 +31,7 @@ namespace gfx {
             auto intersect_point = ray.origin + ray.direction * t;
             auto local_normal = math::Normalize(intersect_point - m_position);
             
-            return t > 0 ? IntersectionData(intersect_point, local_normal, ray, t, m_material) : std::optional<IntersectionData>{};
+            return t > 0 ? IntersectionData(intersect_point, local_normal, t, ray, m_material) : std::optional<IntersectionData>{};
         }
 
         return {};

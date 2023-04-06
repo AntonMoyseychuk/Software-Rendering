@@ -27,14 +27,14 @@ namespace gfx {
 
         out_intensity += m_intensity * (cos_angle);
 
-        if (int_data.material.specular_index > 0) {
-            const auto R = math::Normalize(math::Reflect(int_data.point, int_data.normal));
-            const auto V = -math::Normalize((int_data.point - int_data.casted_ray.origin));
-            const auto r_dot_v = math::Dot(R, V);
-            if (r_dot_v > 0) {
-                out_intensity += m_intensity * powf(r_dot_v, int_data.material.specular_index);
-            }
-        }
+        // if (int_data.material.specular_index > 0) {
+        //     const auto R = math::Normalize(math::Reflect(int_data.point, int_data.normal));
+        //     const auto V = -math::Normalize((int_data.point - int_data.casted_ray.origin));
+        //     const auto r_dot_v = math::Dot(R, V);
+        //     if (r_dot_v > 0) {
+        //         out_intensity += m_intensity * powf(r_dot_v, int_data.material.specular_index);
+        //     }
+        // }
 
         return true;
     }

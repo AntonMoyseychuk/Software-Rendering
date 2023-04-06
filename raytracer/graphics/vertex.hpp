@@ -7,10 +7,10 @@
 namespace gfx {
     struct Vertex {
         Vertex() = default;
-        Vertex(const math::vec3f& _position, std::shared_ptr<Material> _material = nullptr)
+        Vertex(const math::vec3f& _position, std::shared_ptr<IMaterial> _material = nullptr)
             : position(_position), material(_material) {}
 
         math::vec3f position;
-        std::shared_ptr<Material> material;
+        std::shared_ptr<IMaterial> material;
     };
 }

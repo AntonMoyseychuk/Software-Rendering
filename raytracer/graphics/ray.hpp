@@ -1,5 +1,5 @@
 #pragma once
-#include "math_3d/vector.hpp"
+#include "math_3d/vector_operations.hpp"
 
 namespace gfx {
     struct Ray {

@@ -1,12 +1,11 @@
 #pragma once
 #include "graphics/color.hpp"
+#include "graphics/ray.hpp"
 
 namespace gfx {
-    struct Material {
-        Material(const Color& color = Color::BLACK, float specular_index = 0.0f, float reflective_index = 0.0f);
-
-        Color color;
-        float specular_index;
-        float reflective_index;
+    struct IntersectionData;
+    class IMaterial {
+    public:
+        virtual bool Scatter(const IntersectionData& int_data, Color& attenuation, Ray& scattered_ray) const noexcept = 0;
     };
 }

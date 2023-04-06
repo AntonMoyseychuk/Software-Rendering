@@ -2,7 +2,7 @@
 
 namespace gfx {
     Triangle::Triangle(const Vertex& v0, const Vertex& v1, const Vertex& v2)
-        : IDrawable(math::vec3f(), Material()), m_v0(v0), m_v1(v1), m_v2(v2)
+        : IDrawable(math::vec3f(), nullptr), m_v0(v0), m_v1(v1), m_v2(v2)
     {
         const auto e = v1.position - v0.position, mid_e = v0.position + math::Normalize(e) * (e.Length() / 2.0f);
         const auto mediana = mid_e - v2.position, center = v2.position + math::Normalize(mediana) * (mediana.Length() * 2.0f / 3.0f);
@@ -84,11 +84,13 @@ namespace gfx {
             return {};
         }
 
-        Material result_material(m_v0.material->color * u + m_v1.material->color * v + m_v2.material->color * w,
-            m_v0.material->specular_index * u + m_v1.material->specular_index * v + m_v2.material->specular_index * w,
-            m_v0.material->reflective_index * u + m_v1.material->reflective_index * v + m_v2.material->reflective_index * w
-        );
-        return IntersectionData(hit_point, normal, ray, t, result_material);
+        // Material result_material(m_v0.material->color * u + m_v1.material->color * v + m_v2.material->color * w,
+        //     m_v0.material->specular_index * u + m_v1.material->specular_index * v + m_v2.material->specular_index * w,
+        //     m_v0.material->reflective_index * u + m_v1.material->reflective_index * v + m_v2.material->reflective_index * w
+        // );
+        // return IntersectionData(hit_point, normal, t, ray, result_material);
+
+        return {};
     }
     
     void Triangle::MoveFor(const math::vec3f &dist) noexcept {

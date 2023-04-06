@@ -57,6 +57,10 @@ namespace gfx {
     }
     
     Color Renderer::_PixelShader(const Ray &ray, const Scene &scene, std::size_t recursion_depth) const noexcept {
+        if (recursion_depth == 0) {
+            return m_background;
+        }
+        
         std::optional<IntersectionData> closest_intersection;
         std::optional<IntersectionData> curr_intersection;
             
@@ -70,7 +74,7 @@ namespace gfx {
             }
         }
 
-        if (closest_intersection.has_value() == false) {
+        if (!closest_intersection.has_value()) {
             return m_background;
         }
 
@@ -79,17 +83,34 @@ namespace gfx {
             light->ComputeIllumination(closest_intersection.value(), scene.GetDrawables(), sum_intensity);
         }
             
-        const auto local_color = closest_intersection->material.color * sum_intensity;
-
-        const auto& reflective_index = closest_intersection->material.reflective_index;
-        if (recursion_depth == 0 || reflective_index < math::MATH_EPSILON) {
-            return local_color;
+        Ray scattered;
+        Color attenuation;
+        if (closest_intersection->material->Scatter(closest_intersection.value(), attenuation, scattered)) {
+            // const auto local_color = ColorToVector<float>(attenuation * sum_intensity);
+            // const auto next_color = ColorToVector<float>(_PixelShader(scattered, scene, recursion_depth - 1));
+            // return VectorToColor<float>(math::vec4f(
+            //     local_color.x * next_color.x, 
+            //     local_color.y * next_color.y, 
+            //     local_color.z * next_color.z, 
+            //     local_color.w * next_color.w)
+            // );
+            
+            return attenuation * sum_intensity + _PixelShader(scattered, scene, recursion_depth - 1);
         }
-        
-        const auto reflected_ray_dir = math::Reflect(closest_intersection->casted_ray.direction, closest_intersection->normal);
-        const auto reflected_ray = Ray(closest_intersection->point, reflected_ray_dir);
 
-        return local_color * (1.0f - reflective_index) + _PixelShader(reflected_ray, scene, recursion_depth - 1) * reflective_index;
+        return Color::BLACK;
+
+        // const auto local_color = closest_intersection->material.color * sum_intensity;
+
+        // const auto& reflective_index = closest_intersection->material.reflective_index;
+        // if (recursion_depth == 0 || reflective_index < math::MATH_EPSILON) {
+        //     return local_color;
+        // }
+        
+        // const auto reflected_ray_dir = math::Reflect(closest_intersection->casted_ray.direction, closest_intersection->normal);
+        // const auto reflected_ray = Ray(closest_intersection->point, reflected_ray_dir);
+
+        // return local_color * (1.0f - reflective_index) + _PixelShader(reflected_ray, scene, recursion_depth - 1) * reflective_index;
     }
 
     void Renderer::SetAntialiasingLevel(AntialiasingLevel level) noexcept {

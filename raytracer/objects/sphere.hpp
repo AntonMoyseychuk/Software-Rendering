@@ -5,7 +5,7 @@ namespace gfx {
     class Sphere : public IDrawable {
     public:
         Sphere() = default;
-        Sphere(const math::vec3f& position, float radius, const Material& material);
+        Sphere(const math::vec3f& position, float radius, std::shared_ptr<IMaterial> material);
         ~Sphere() override;
 
         std::optional<IntersectionData> IsIntersect(const Ray& ray) const noexcept override;
