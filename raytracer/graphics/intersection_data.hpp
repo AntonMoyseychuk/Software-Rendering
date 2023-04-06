@@ -1,6 +1,6 @@
 #pragma once
 #include "ray.hpp"
-#include "material.hpp"
+#include "materials/material.hpp"
 
 namespace gfx {
     struct IntersectionData {

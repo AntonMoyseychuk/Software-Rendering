@@ -2,8 +2,11 @@ project(raytracer)
 
 file(GLOB SRC_FILES 
     "${PROJECT_SOURCE_DIR}/app/*.cpp"
+    
     "${PROJECT_SOURCE_DIR}/objects/*.cpp"
+    
     "${PROJECT_SOURCE_DIR}/graphics/*.cpp"
+    "${PROJECT_SOURCE_DIR}/graphics/materials/*.cpp"
 
     "${WINDOW_DIR}/window/*.cpp"
     "${THREAD_POOL_DIR}/thread_pool/*.cpp"

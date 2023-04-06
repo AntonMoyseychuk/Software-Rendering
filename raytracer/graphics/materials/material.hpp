@@ -1,5 +1,5 @@
 #pragma once
-#include "color.hpp"
+#include "graphics/color.hpp"
 
 namespace gfx {
     struct Material {

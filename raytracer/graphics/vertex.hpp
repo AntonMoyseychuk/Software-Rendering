@@ -1,8 +1,8 @@
 #pragma once
-#include "graphics/material.hpp"
+#include "materials/material.hpp"
 #include "math_3d/vector.hpp"
 
-#include "memory"
+#include <memory>
 
 namespace gfx {
     struct Vertex {
