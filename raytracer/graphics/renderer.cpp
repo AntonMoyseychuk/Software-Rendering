@@ -101,15 +101,15 @@ namespace gfx {
         return Color::BLACK;
 
         // const auto local_color = closest_intersection->material.color * sum_intensity;
-
+        // 
         // const auto& reflective_index = closest_intersection->material.reflective_index;
         // if (recursion_depth == 0 || reflective_index < math::MATH_EPSILON) {
         //     return local_color;
         // }
-        
+        // 
         // const auto reflected_ray_dir = math::Reflect(closest_intersection->casted_ray.direction, closest_intersection->normal);
         // const auto reflected_ray = Ray(closest_intersection->point, reflected_ray_dir);
-
+        // 
         // return local_color * (1.0f - reflective_index) + _PixelShader(reflected_ray, scene, recursion_depth - 1) * reflective_index;
     }
 

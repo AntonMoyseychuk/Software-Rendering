@@ -1,14 +1,14 @@
 #include "triangle.hpp"
 
 namespace gfx {
-    Triangle::Triangle(const Vertex& v0, const Vertex& v1, const Vertex& v2)
-        : IDrawable(math::vec3f(), nullptr), m_v0(v0), m_v1(v1), m_v2(v2)
+    Triangle::Triangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, std::shared_ptr<IMaterial> material)
+        : IDrawable(math::vec3f(), material), m_v0(v0), m_v1(v1), m_v2(v2)
     {
         const auto e = v1.position - v0.position, mid_e = v0.position + math::Normalize(e) * (e.Length() / 2.0f);
         const auto mediana = mid_e - v2.position, center = v2.position + math::Normalize(mediana) * (mediana.Length() * 2.0f / 3.0f);
         m_position = center;
     }
-    
+
     std::optional<IntersectionData> Triangle::IsIntersect(const Ray &ray) const noexcept {
         // const auto e1 = m_v1 - m_v0;
         // const auto e2 = m_v2 - m_v0;
@@ -90,9 +90,10 @@ namespace gfx {
         // );
         // return IntersectionData(hit_point, normal, t, ray, result_material);
 
-        return {};
+        // auto result_color = *m_v0.color * u + *m_v1.color * v + *m_v2.color * w;
+        return IntersectionData(hit_point, normal, t, ray, m_material);
     }
-    
+
     void Triangle::MoveFor(const math::vec3f &dist) noexcept {
         m_v0.position += dist;
         m_v1.position += dist;

@@ -7,7 +7,7 @@ namespace gfx {
     class Triangle : public IDrawable {
     public:
         Triangle() = default;
-        Triangle(const Vertex& v0, const Vertex& v1, const Vertex& v2);
+        Triangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, std::shared_ptr<IMaterial> material = nullptr);
 
         std::optional<IntersectionData> IsIntersect(const Ray& ray) const noexcept override;
         void MoveFor(const math::vec3f& dist) noexcept override;
