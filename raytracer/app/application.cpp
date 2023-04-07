@@ -33,7 +33,7 @@ static void _VertexShader(gfx::Triangle& triangle, const math::mat4f& model, con
 namespace app {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height)
         : m_window(win_framewrk::Window::Get()), m_renderer(), m_scene(), 
-            m_camera(math::vec3f(0.0f, 6.0f, 6.0f), math::vec3f(0.0f, 3.0f, -4.0f), math::VECTOR_UP, 45.0f, (float)width / height),
+            m_camera(math::vec3f(0.0f, 5.0f, 7.0f), math::vec3f(0.0f, 3.0f, -4.0f), math::VECTOR_UP, 45.0f, (float)width / height),
                 m_last_frame(std::chrono::steady_clock::now())
     {
         using namespace math;
@@ -55,24 +55,23 @@ namespace app {
         //     );
         // }
 
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(0.0f, 2.0f, -3.0f), 0.5f, std::make_shared<gfx::Metal>(gfx::Color::SKY_BLUE)));
         
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-2.0f, 0.55f, -3.0f), 0.5f, std::make_shared<gfx::Diffuse>(gfx::Color::RED)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-1.0f, 0.55f, -3.0f), 0.5f, std::make_shared<gfx::Metal>(gfx::Color::GREEN, 0.2f)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(0.0f, 0.55f, -3.0f), 0.5f, std::make_shared<gfx::Diffuse>(gfx::Color::BLUE)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(1.0f, 0.55f, -3.0f), 0.5f, std::make_shared<gfx::Metal>(gfx::Color::MAGENTA, 0.4f)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(2.0f, 0.55f, -3.0f), 0.5f, std::make_shared<gfx::Diffuse>(gfx::Color::CYAN)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-2.0f, -0.55f, -3.0f), 0.5f, std::make_shared<gfx::Metal>(gfx::Color::YELLOW, 0.6f)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-1.0f, -0.55f, -3.0f), 0.5f, std::make_shared<gfx::Diffuse>(gfx::Color::PURPLE)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(0.0f, -0.55f, -3.0f), 0.5f, std::make_shared<gfx::Metal>(gfx::Color::ORANGE, 0.8f)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(1.0f, -0.55f, -3.0f), 0.5f, std::make_shared<gfx::Diffuse>(gfx::Color::GOLDEN)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(2.0f, -0.55f, -3.0f), 0.5f, std::make_shared<gfx::Metal>(gfx::Color::WHITE, 1.0f)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-3.0f, 0.65f, -3.0f), 0.8f, std::make_shared<gfx::Diffuse>(gfx::Color::RED)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-1.5f, 0.65f, -3.0f), 0.8f, std::make_shared<gfx::Metal>(gfx::Color::GREEN)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(0.0f, 0.65f, -3.0f), 0.8f, std::make_shared<gfx::Diffuse>(gfx::Color::BLUE)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(1.5f, 0.65f, -3.0f), 0.8f, std::make_shared<gfx::Metal>(gfx::Color::MAGENTA)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(3.0f, 0.65f, -3.0f), 0.8f, std::make_shared<gfx::Diffuse>(gfx::Color::ORANGE)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-3.0f, -1.0f, -3.0f), 0.8f, std::make_shared<gfx::Metal>(gfx::Color::YELLOW)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-1.5f, -1.0f, -3.0f), 0.8f, std::make_shared<gfx::Diffuse>(gfx::Color::PURPLE)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(0.0f, -1.0f, -3.0f), 0.8f, std::make_shared<gfx::Metal>(gfx::Color::CYAN)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(1.5f, -1.0f, -3.0f), 0.8f, std::make_shared<gfx::Diffuse>(gfx::Color::GOLDEN)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(3.0f, -1.0f, -3.0f), 0.8f, std::make_shared<gfx::Metal>(gfx::Color::SKY_BLUE)));
         
         m_scene.AddDrawble(std::make_shared<gfx::Triangle>(
-                gfx::Vertex(vec3f(-15.0f, -1.5f, 2.0f)), 
+                gfx::Vertex(vec3f(-15.0f, -2.0f, 2.0f)), 
                 gfx::Vertex(vec3f(0.0f, -1.0f, -17.0f)), 
-                gfx::Vertex(vec3f(15.0f, -1.5f, 2.0f)),
-                std::make_shared<gfx::Diffuse>(gfx::Color::GREEN)
+                gfx::Vertex(vec3f(15.0f, -2.0f, 2.0f)),
+                std::make_shared<gfx::Metal>(gfx::Color::BLACK)
             )
         );
 
@@ -80,7 +79,7 @@ namespace app {
                 gfx::Vertex(vec3f(-3.0f, -3.0f, -7.0f) + VECTOR_UP), 
                 gfx::Vertex(vec3f(0.0f, 3.0f, -7.0f) + VECTOR_UP), 
                 gfx::Vertex(vec3f(3.0f, -3.0f, -7.0f) + VECTOR_UP),
-                std::make_shared<gfx::Metal>(gfx::Color::WHITE / 2.5f)
+                std::make_shared<gfx::Metal>(gfx::Color::GREY)
             )
         );
 
