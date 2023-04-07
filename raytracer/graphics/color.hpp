@@ -55,8 +55,10 @@ namespace gfx {
         static const Color LIME;
         static const Color PURPLE;
         static const Color INDIGO;
+        static const Color GOLDENROD;
         static const Color WHITE;
         static const Color BLACK;
+        static const Color GREY;
     };
 
     Color UInt32ToColor(std::uint32_t color) noexcept;

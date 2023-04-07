@@ -86,15 +86,6 @@ namespace gfx {
         Ray scattered;
         Color attenuation;
         if (closest_intersection->material->Scatter(closest_intersection.value(), attenuation, scattered)) {
-            // const auto local_color = ColorToVector<float>(attenuation * sum_intensity);
-            // const auto next_color = ColorToVector<float>(_PixelShader(scattered, scene, recursion_depth - 1));
-            // return VectorToColor<float>(math::vec4f(
-            //     local_color.x * next_color.x, 
-            //     local_color.y * next_color.y, 
-            //     local_color.z * next_color.z, 
-            //     local_color.w * next_color.w)
-            // );
-            
             return attenuation * sum_intensity + _PixelShader(scattered, scene, recursion_depth - 1) * 0.5f;
         }
 
