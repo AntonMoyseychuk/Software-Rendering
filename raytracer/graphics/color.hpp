@@ -10,27 +10,32 @@ namespace gfx {
         Color& operator*=(float value) noexcept;
         Color operator*(float value) const noexcept;
 
+        Color& operator*=(Color color) noexcept;
+        Color operator*(Color color) const noexcept;
+
         Color& operator/=(float value) noexcept;
         Color operator/(float value) const noexcept;
 
-        Color& operator+=(const Color& color) noexcept;
-        Color operator+(const Color& color) const noexcept;
+        Color& operator+=(Color color) noexcept;
+        Color operator+(Color color) const noexcept;
 
-        Color& operator-=(const Color& color) noexcept;
-        Color operator-(const Color& color) const noexcept;
+        Color& operator-=(Color color) noexcept;
+        Color operator-(Color color) const noexcept;
 
-        bool operator==(const Color& color) const noexcept;
-        bool operator!=(const Color& color) const noexcept;
+        bool operator==(Color color) const noexcept;
+        bool operator!=(Color color) const noexcept;
 
+        float R() const noexcept { return r / 255.0f; }
+        void R(float r) noexcept { this->r = static_cast<std::uint8_t>(math::Clamp(r * 255.0f, 0.0f, 255.0f)); }
 
-        static const Color RED;
-        static const Color GREEN;
-        static const Color BLUE;
-        static const Color YELLOW;
-        static const Color MAGENTA;
-        static const Color CYAN;
-        static const Color WHITE;
-        static const Color BLACK;
+        float G() const noexcept { return g / 255.0f; }
+        void G(float g) noexcept { this->g = static_cast<std::uint8_t>(math::Clamp(g * 255.0f, 0.0f, 255.0f)); }
+
+        float B() const noexcept { return b / 255.0f; }
+        void B(float b) noexcept { this->b = static_cast<std::uint8_t>(math::Clamp(b * 255.0f, 0.0f, 255.0f)); }
+
+        float A() const noexcept { return a / 255.0f; }
+        void A(float a) noexcept { this->a = static_cast<std::uint8_t>(math::Clamp(a * 255.0f, 0.0f, 255.0f)); }
 
         union {
             struct {
@@ -39,6 +44,19 @@ namespace gfx {
 
             std::uint32_t rgba; //endian dependent
         };
+
+        static const Color RED;
+        static const Color GREEN;
+        static const Color BLUE;
+        static const Color YELLOW;
+        static const Color MAGENTA;
+        static const Color CYAN;
+        static const Color ORANGE;
+        static const Color LIME;
+        static const Color PURPLE;
+        static const Color INDIGO;
+        static const Color WHITE;
+        static const Color BLACK;
     };
 
     Color UInt32ToColor(std::uint32_t color) noexcept;

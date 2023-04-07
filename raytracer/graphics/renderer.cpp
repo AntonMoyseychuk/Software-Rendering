@@ -95,7 +95,7 @@ namespace gfx {
             //     local_color.w * next_color.w)
             // );
             
-            return attenuation * sum_intensity + _PixelShader(scattered, scene, recursion_depth - 1);
+            return attenuation * sum_intensity + _PixelShader(scattered, scene, recursion_depth - 1) * 0.5f;
         }
 
         return Color::BLACK;
