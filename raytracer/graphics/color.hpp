@@ -4,8 +4,8 @@
 namespace gfx {
     struct Color {
         Color() = default;
-        explicit Color(std::uint8_t value);
-        Color(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 255);
+        explicit Color(std::uint8_t value, std::uint8_t a = 255u);
+        Color(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 255u);
 
         Color& operator*=(float value) noexcept;
         Color operator*(float value) const noexcept;
@@ -55,7 +55,8 @@ namespace gfx {
         static const Color LIME;
         static const Color PURPLE;
         static const Color INDIGO;
-        static const Color GOLDENROD;
+        static const Color GOLDEN;
+        static const Color SKY_BLUE;
         static const Color WHITE;
         static const Color BLACK;
         static const Color GREY;

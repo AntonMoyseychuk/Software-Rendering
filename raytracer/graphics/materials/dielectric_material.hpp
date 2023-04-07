@@ -13,6 +13,9 @@ namespace gfx {
         float GetRefractionIndex() noexcept;
 
     protected:
+        static float _Reflectance(float cosine, float refraction_ratio) noexcept;
+
+    protected:
         float m_refraction_index = 0.0f;
     };
 }

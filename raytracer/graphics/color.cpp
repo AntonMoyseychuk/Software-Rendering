@@ -13,13 +13,14 @@ namespace gfx {
     const Color Color::LIME(0u, 255u, 0u);
     const Color Color::PURPLE(128u, 0u, 128u);
     const Color Color::INDIGO(75u, 0u, 130u);
-    const Color Color::GOLDENROD(218u, 165u, 32u);
+    const Color Color::GOLDEN(218u, 165u, 32u);
+    const Color Color::SKY_BLUE(135u, 206u, 235u);
     const Color Color::BLACK(0u, 0u, 0u);
     const Color Color::WHITE(255u, 255u, 255u);
     const Color Color::GREY(128u, 128u, 128u);
 
-    Color::Color(std::uint8_t value)
-        : Color(value, value, value, value)
+    Color::Color(std::uint8_t value, std::uint8_t a)
+        : Color(value, value, value, a)
     {
     }
 
