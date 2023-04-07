@@ -1,23 +1,22 @@
 #pragma once
 #include "ray.hpp"
-#include "material.hpp"
+#include "materials/material.hpp"
+
+#include <memory>
 
 namespace gfx {
     struct IntersectionData {
         IntersectionData() = default;
-        IntersectionData(
-            const math::vec3f& _point, 
-            const math::vec3f& _normal, 
-            const gfx::Ray& _casted_ray, 
-            float _distance, 
-            const Material& _material
-        ) : point(_point), normal(_normal), casted_ray(_casted_ray), distance(_distance), material(_material) {}
+        IntersectionData(const math::vec3f& point, const math::vec3f& normal, float distance, const Ray& casted_ray, std::shared_ptr<IMaterial> material);
+
+        void SetFaceNormal(const Ray& ray, const math::vec3f& outward_normal) noexcept;
 
         math::vec3f point;
         math::vec3f normal;
-        gfx::Ray casted_ray;
         float distance;
+        bool is_front_face;
 
-        Material material;
+        gfx::Ray casted_ray;
+        std::shared_ptr<IMaterial> material;
     };
 }

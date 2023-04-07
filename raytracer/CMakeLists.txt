@@ -2,10 +2,13 @@ project(raytracer)
 
 file(GLOB SRC_FILES 
     "${PROJECT_SOURCE_DIR}/app/*.cpp"
+    
     "${PROJECT_SOURCE_DIR}/objects/*.cpp"
+    
     "${PROJECT_SOURCE_DIR}/graphics/*.cpp"
+    "${PROJECT_SOURCE_DIR}/graphics/materials/*.cpp"
 
-    "${WINDOW_FRAMEWORK_DIR}/window/*.cpp"
+    "${WINDOW_DIR}/window/*.cpp"
     "${THREAD_POOL_DIR}/thread_pool/*.cpp"
 
     "${MATH_3D_DIR}/src/*.cpp"
@@ -18,7 +21,7 @@ target_include_directories(${PROJECT_NAME}
     
     PUBLIC "${MATH_3D_DIR}/include" 
     PUBLIC "${SDL_DIR}/include"
-    PUBLIC "${WINDOW_FRAMEWORK_DIR}"
+    PUBLIC "${WINDOW_DIR}"
     PUBLIC "${THREAD_POOL_DIR}"
 )
 

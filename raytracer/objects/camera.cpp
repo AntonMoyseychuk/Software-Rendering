@@ -32,6 +32,7 @@ namespace gfx {
 
     void Camera::MoveFor(const math::vec3f& offset) noexcept {
         m_position += offset;
+        m_view = math::Translate(m_view, offset);
         this->_RecalculateRays();
     }
 
@@ -72,6 +73,10 @@ namespace gfx {
         return m_up;
     }
 
+    const math::mat4f &Camera::GetView() const noexcept {
+        return m_view;
+    }
+
     void Camera::_RecalculateRays() const noexcept {
         const auto dx = 2.0f / m_ray_cache_size.x;
         const auto dy = 2.0f / m_ray_cache_size.y;
@@ -81,9 +86,9 @@ namespace gfx {
                 const float pixel_x = m_forward.x + (-1.0f + (x * dx)) * m_aspect_ratio * m_tan_fov_div2;
                 const float pixel_y = m_forward.y + (1.0f - (y * dy)) * m_tan_fov_div2;
 
-                const auto ray_dir = m_forward + m_right * pixel_x + m_up * pixel_y; //???????????????????????????
+                const auto ray_dir = math::Normalize(m_forward + m_right * pixel_x + m_up * pixel_y);
 
-                m_ray_cache[x + y * m_ray_cache_size.x] = Ray(m_position, math::Normalize(ray_dir));
+                m_ray_cache[x + y * m_ray_cache_size.x] = Ray(m_position, ray_dir);
             }
         }
     }
