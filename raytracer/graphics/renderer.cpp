@@ -18,6 +18,12 @@ namespace gfx {
         }
     }
 
+    void Renderer::_TreadTileRawAntialiasingFunc(std::uint32_t raw_left_up_x, std::uint32_t raw_left_up_y, 
+        std::uint32_t raw_right_down_x, std::uint32_t raw_right_down_y) noexcept
+    {
+        
+    }
+
     const std::vector<std::uint32_t> &Renderer::Render(const gfx::Scene &scene, const Camera& camera) noexcept {
         const auto antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
         m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y); // ДОЛЖНО БЫТЬ ТУТ!!!

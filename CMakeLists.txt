@@ -13,10 +13,9 @@ message("[user info] CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}\n")
 set(DEPENDENCIES_DIR "${CMAKE_SOURCE_DIR}/dependencies")
 set(SDL_DIR "${DEPENDENCIES_DIR}/vendor/SDL2")
 
-set(MATH_3D_DIR "${DEPENDENCIES_DIR}/own-math-3d")
-
-set(WINDOW_DIR "${CMAKE_SOURCE_DIR}/window")
-
-set(THREAD_POOL_DIR "${CMAKE_SOURCE_DIR}/thread_pool")
+set(UTILS_DIR "${CMAKE_SOURCE_DIR}/utils")
+set(MATH_DIR "${UTILS_DIR}/own-math-3d")
+set(WINDOW_DIR "${UTILS_DIR}/window")
+set(THREAD_POOL_DIR "${UTILS_DIR}/thread_pool")
 
 add_subdirectory(raytracer)

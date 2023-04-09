@@ -26,6 +26,11 @@ namespace gfx {
             const std::vector<gfx::Ray>& rays, 
             const gfx::Scene& scene
         ) noexcept;
+
+        void _TreadTileRawAntialiasingFunc(
+            std::uint32_t raw_left_up_x, std::uint32_t raw_left_up_y, 
+            std::uint32_t raw_right_down_x, std::uint32_t raw_right_down_y
+        ) noexcept;
     
     public:
     #pragma region getters-setters
