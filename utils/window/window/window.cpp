@@ -121,7 +121,6 @@ namespace win_framewrk {
             
         m_width = new_width;
         m_height = new_height;
-        // SDL_GetWindowSize(m_window_ptr.get(), (int*)&m_width, (int*)&m_height);
 
         LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
     }
@@ -176,8 +175,6 @@ namespace win_framewrk {
         #if defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
-
-        // auto pixel_buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
 
         const std::uint32_t step = 1;
         for (std::uint32_t y = 0; y < m_height; y += step) {

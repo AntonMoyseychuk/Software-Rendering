@@ -41,7 +41,7 @@ namespace gfx {
 
     const std::vector<std::uint32_t> &Renderer::Render(const gfx::Scene &scene, const Camera& camera) noexcept {
         const auto antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
-        m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y); // ДОЛЖНО БЫТЬ ТУТ!!!
+        m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y); // Must be here!!!
         
         const auto& rays = camera.GenerateRays();
         const auto step = static_cast<std::uint32_t>(m_antialiasing_level);
@@ -64,7 +64,7 @@ namespace gfx {
         }
         m_thread_pool.WaitAll();
 
-        m_frame.resize(m_frame_size.x * m_frame_size.y); // ДОЛЖНО БЫТЬ ТУТ!!!
+        m_frame.resize(m_frame_size.x * m_frame_size.y); // Must be here!!!
         return m_frame;
     }
     
