@@ -11,7 +11,7 @@ message("[user info] CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
 message("[user info] CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}\n")
 
 set(DEPENDENCIES_DIR "${CMAKE_SOURCE_DIR}/dependencies")
-set(SDL_DIR "${DEPENDENCIES_DIR}/vendor/SDL2")
+set(SDL_DIR "${DEPENDENCIES_DIR}/SDL")
 
 set(UTILS_DIR "${CMAKE_SOURCE_DIR}/utils")
 set(MATH_DIR "${UTILS_DIR}/own-math-3d")

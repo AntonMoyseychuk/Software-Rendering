@@ -1,7 +1,8 @@
 #pragma once
 #include "thread_pool/thread_pool.hpp"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
+
 #include <string>
 #include <vector>
 #include <memory>

@@ -26,7 +26,8 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_directories(${PROJECT_NAME} 
-    PUBLIC "${SDL_DIR}/lib/${CMAKE_GENERATOR_PLATFORM}"
+    PUBLIC "${SDL_DIR}/VisualC/${CMAKE_GENERATOR_PLATFORM}/Debug"
+    PUBLIC "${SDL_DIR}/VisualC/${CMAKE_GENERATOR_PLATFORM}/Release"
 )
 
 target_link_libraries(${PROJECT_NAME} 
