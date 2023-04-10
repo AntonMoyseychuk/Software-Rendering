@@ -58,7 +58,7 @@ namespace app {
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-3.0f, 0.65f, -3.0f), 0.8f, std::make_shared<gfx::Diffuse>(gfx::Color::RED)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-1.5f, 0.65f, -3.0f), 0.8f, std::make_shared<gfx::Metal>(gfx::Color::GREEN)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(0.0f, 0.65f, -3.0f), 0.8f, std::make_shared<gfx::Diffuse>(gfx::Color::BLUE)));
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(1.5f, 0.65f, -3.0f), 0.8f, std::make_shared<gfx::Metal>(gfx::Color::MAGENTA)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(1.5f, 0.65f, -3.0f), 0.8f, std::make_shared<gfx::Metal>(gfx::Color::MAGENTA, 0.2f)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(3.0f, 0.65f, -3.0f), 0.8f, std::make_shared<gfx::Diffuse>(gfx::Color::ORANGE)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-3.0f, -1.0f, -3.0f), 0.8f, std::make_shared<gfx::Metal>(gfx::Color::YELLOW)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-1.5f, -1.0f, -3.0f), 0.8f, std::make_shared<gfx::Diffuse>(gfx::Color::PURPLE)));

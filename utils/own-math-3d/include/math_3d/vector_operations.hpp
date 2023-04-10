@@ -3,6 +3,9 @@
 #include "matrix_operations.hpp"
 
 namespace math {
+    vec3f RandomUnitVector() noexcept;
+    vec3f RandomUnitVectorInHemisphere(const vec3f& normal) noexcept;
+
     float Dot(const vec3f& a, const vec3f& b) noexcept;
     vec3f Cross(const vec3f& a, const vec3f& b) noexcept;
 

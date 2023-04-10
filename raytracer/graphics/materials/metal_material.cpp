@@ -11,15 +11,15 @@ namespace gfx {
     
     bool Metal::Scatter(const IntersectionData &int_data, Color &attenuation, Ray &scattered_ray) const noexcept {
         const auto reflected = math::Reflect(int_data.casted_ray.direction, int_data.normal);
-        scattered_ray = Ray(int_data.point, reflected + m_reflection_index * math::RandomVector<math::vec3f>(-1.0f, 1.0f));
-
+        scattered_ray = Ray(int_data.point, reflected + m_reflection_index * math::RandomUnitVectorInHemisphere(int_data.normal));
+        
         attenuation = m_color;
 
         return math::Dot(reflected, int_data.normal) > 0.0f;
     }
     
-    void Metal::SetReflectionIndex(float fuzz_index) noexcept {
-        m_reflection_index = fuzz_index;
+    void Metal::SetReflectionIndex(float reflection_index) noexcept {
+        m_reflection_index = reflection_index;
     }
     
     float Metal::GetReflectionIndex() noexcept {

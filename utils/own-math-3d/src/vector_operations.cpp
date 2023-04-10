@@ -1,6 +1,15 @@
 #include "../include/math_3d/vector_operations.hpp"
 
 namespace math {
+    vec3f RandomUnitVector() noexcept {
+        return Normalize(RandomVector<vec3f>(-1.0f, 1.0f));
+    }
+    
+    vec3f RandomUnitVectorInHemisphere(const vec3f& normal) noexcept {
+        const auto unit_vec = RandomUnitVector();
+        return Dot(unit_vec, normal) > 0.0f ? unit_vec : -unit_vec;
+    }
+
     float math::Dot(const vec3f& a, const vec3f& b) noexcept {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }

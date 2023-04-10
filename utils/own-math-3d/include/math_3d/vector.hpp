@@ -384,12 +384,6 @@ namespace math {
         return Vector<typename Vec::type, Vec::dimension>::_Random(min, max);
     }
 
-    template <typename Vec>
-    auto RandomUnitVector() noexcept -> Vector<typename Vec::type, Vec::dimension> {
-        return Normalize(RandomVector<Vec>(typename Vec::type(-1), typename Vec::type(1)));
-    }
-
-
     using vec4f = Vector<float, 4>;
     using vec4d = Vector<double, 4>;
     using vec4b = Vector<std::int8_t, 4>;
