@@ -62,6 +62,8 @@ namespace gfx {
         static const Color GREY;
     };
 
+    Color operator*(float value, Color color) noexcept;
+    
     Color UInt32ToColor(std::uint32_t color) noexcept;
     
     template <typename Type>

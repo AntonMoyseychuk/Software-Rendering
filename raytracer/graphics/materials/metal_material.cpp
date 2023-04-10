@@ -11,7 +11,7 @@ namespace gfx {
     
     bool Metal::Scatter(const IntersectionData &int_data, Color &attenuation, Ray &scattered_ray) const noexcept {
         const auto reflected = math::Reflect(int_data.casted_ray.direction, int_data.normal);
-        scattered_ray = Ray(int_data.point, reflected + m_reflection_index * math::RandomUnitVector<math::vec3f>());
+        scattered_ray = Ray(int_data.point, reflected + m_reflection_index * math::RandomVector<math::vec3f>(-1.0f, 1.0f));
 
         attenuation = m_color;
 

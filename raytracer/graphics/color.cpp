@@ -124,8 +124,13 @@ namespace gfx {
     bool Color::operator!=(Color color) const noexcept {
         return !(*this == color);
     }
-    
-    Color UInt32ToColor(std::uint32_t color) noexcept {
+
+    Color operator*(float value, Color color) noexcept  {
+        return color * value;
+    }
+
+    Color UInt32ToColor(std::uint32_t color) noexcept
+    {
         Color c;
         c.rgba = color;
         return c;
