@@ -4,7 +4,6 @@
 #include "math_3d/math.hpp"
 
 #include <algorithm>
-#include <execution>
 
 namespace gfx {
     void Renderer::_TreadTileRenderFunc(std::uint32_t x0, std::uint32_t y0, std::uint32_t x_end, std::uint32_t y_end, 
@@ -21,7 +20,23 @@ namespace gfx {
     void Renderer::_TreadTileRawAntialiasingFunc(std::uint32_t raw_left_up_x, std::uint32_t raw_left_up_y, 
         std::uint32_t raw_right_down_x, std::uint32_t raw_right_down_y) noexcept
     {
-        
+        const auto tile_size = raw_right_down_y - raw_left_up_y;
+        const auto raw_size = raw_right_down_x - raw_left_up_x;
+        const float tile_pixel_num = static_cast<float>(tile_size * tile_size);
+
+        for (std::size_t tile_start = raw_left_up_x; tile_start < raw_right_down_x; tile_start += tile_size) {
+            math::vec4f final_color(0.0f);
+            for (std::size_t y = 0; y < tile_size; ++y) {
+                for (std::size_t x = 0; x < tile_size; ++x) {
+                    final_color += gfx::ColorToVector<float>(
+                        gfx::UInt32ToColor(m_frame[(raw_left_up_y + y) * raw_size + (tile_start + x)])
+                    );
+                }
+            }
+
+            m_frame[(tile_start / tile_size) + (raw_left_up_y / tile_size * m_frame_size.x)] = 
+                    gfx::VectorToColor(final_color / tile_pixel_num).rgba;
+        }
     }
 
     const std::vector<std::uint32_t> &Renderer::Render(const gfx::Scene &scene, const Camera& camera) noexcept {
@@ -41,22 +56,13 @@ namespace gfx {
         m_thread_pool.WaitAll();
 
         // computing antialiasing
-        const auto typed_antialiasing_level = static_cast<std::size_t>(m_antialiasing_level);
-        for (std::size_t y = 0; y < antialiasing_frame_size.y; y += typed_antialiasing_level) {
-            for (std::size_t x = 0; x < antialiasing_frame_size.x; x += typed_antialiasing_level) {
-                math::vec4f final_color(0);
-                for (std::size_t i = 0; i < typed_antialiasing_level; ++i) {
-                    for (std::size_t j = 0; j < typed_antialiasing_level; ++j) {
-                        final_color += gfx::ColorToVector<float>(
-                            gfx::UInt32ToColor(m_frame[(x + j) + (y + i) * antialiasing_frame_size.x])
-                        );
-                    }
-                }
-        
-                m_frame[(x / typed_antialiasing_level) + (y / typed_antialiasing_level * m_frame_size.x)] = 
-                    gfx::VectorToColor(final_color / (typed_antialiasing_level * typed_antialiasing_level)).rgba;
-            }
+        for (std::uint32_t i = 0; i < antialiasing_frame_size.y; i += step) {
+            m_thread_pool.AddTask(&Renderer::_TreadTileRawAntialiasingFunc, this, 
+                0, i, 
+                antialiasing_frame_size.x, i + step
+            );
         }
+        m_thread_pool.WaitAll();
 
         m_frame.resize(m_frame_size.x * m_frame_size.y); // ДОЛЖНО БЫТЬ ТУТ!!!
         return m_frame;
