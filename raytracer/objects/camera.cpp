@@ -20,28 +20,33 @@ namespace gfx {
     }
     
     void Camera::Rotate(float angle_radians, const math::vec2f& axis) noexcept {
-        m_view = math::RotateX(m_view, angle_radians * axis.x);
-        m_view = math::RotateY(m_view, angle_radians * axis.y);
+        if (!math::IsTendsTo(angle_radians, 0.0f)) {
+            m_view = math::RotateX(m_view, angle_radians * axis.x);
+            m_view = math::RotateY(m_view, angle_radians * axis.y);
 
-        m_forward = math::VECTOR_BACKWARD * m_view;
-        m_right = math::VECTOR_RIGHT * m_view;
-        m_up = math::VECTOR_UP * m_view;
+            m_forward = math::VECTOR_BACKWARD * m_view;
+            m_right = math::VECTOR_RIGHT * m_view;
+            m_up = math::VECTOR_UP * m_view;
 
-        this->_RecalculateRays();
+            this->_RecalculateRays();
+        }
     }
 
     void Camera::MoveFor(const math::vec3f& offset) noexcept {
-        m_position += offset;
-        m_view = math::Translate(m_view, offset);
-        this->_RecalculateRays();
+        if (offset != math::vec3f(0.0f)) {
+            m_position += offset;
+            m_view = math::Translate(m_view, offset);
+            
+            this->_RecalculateRays();
+        }
     }
 
     void Camera::SetAspectRatio(float aspect) noexcept {
         if (aspect > 0.0f) {
             m_aspect_ratio = aspect;
+            
+            this->_RecalculateRays();
         }
-
-        this->_RecalculateRays();
     }
 
     float Camera::GetAspectRatio() const noexcept {
@@ -52,9 +57,9 @@ namespace gfx {
         if (m_ray_cache_size != new_size) {
             m_ray_cache_size = new_size;
             m_ray_cache.resize(new_size.x * new_size.y);
+            
+            this->_RecalculateRays();
         }
-
-        this->_RecalculateRays();
     }
 
     const math::vec3f &Camera::GetPosition() const noexcept {
