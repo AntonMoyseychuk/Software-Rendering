@@ -1,6 +1,6 @@
 #pragma once
 #include "graphics/scene.hpp"
-#include "objects/camera.hpp"
+#include "graphics/camera.hpp"
 
 #include "thread_pool/thread_pool.hpp"
 

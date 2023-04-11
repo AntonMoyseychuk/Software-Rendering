@@ -1,5 +1,5 @@
 #pragma once
-#include "graphics/ray.hpp"
+#include "ray.hpp"
 #include "math_3d/math.hpp"
 
 namespace gfx {
