@@ -71,10 +71,6 @@ namespace gfx {
     }
     
     Color Renderer::_PixelShader(const Ray &ray, const Scene &scene, std::size_t recursion_depth) const noexcept {
-        if (recursion_depth == 0) {
-            return m_background;
-        }
-        
         std::optional<IntersectionData> closest_intersection;
         std::optional<IntersectionData> curr_intersection;
             
@@ -91,7 +87,7 @@ namespace gfx {
         if (!closest_intersection.has_value()) {
             return m_background;
         }
-
+        
         Ray scattered;
         Color attenuation;
         IColoredMaterial* colored = dynamic_cast<IColoredMaterial*>(closest_intersection->material.get());
@@ -102,11 +98,12 @@ namespace gfx {
             }
             
             if (closest_intersection->material->Scatter(closest_intersection.value(), attenuation, scattered)) {
-                return attenuation * sum_intensity + _PixelShader(scattered, scene, recursion_depth - 1) * 0.5f;
+                const auto out_color = attenuation * sum_intensity;
+                return recursion_depth == 0 ? out_color : out_color + _PixelShader(scattered, scene, recursion_depth - 1) * 0.5f;
             }
         } else {
             if (closest_intersection->material->Scatter(closest_intersection.value(), attenuation, scattered)) {
-                return attenuation * _PixelShader(scattered, scene, recursion_depth - 1);
+                return recursion_depth == 0 ? attenuation : attenuation * _PixelShader(scattered, scene, recursion_depth - 1);
             }
         }
 
