@@ -3,9 +3,9 @@ project(raytracer)
 file(GLOB SRC_FILES 
     "${PROJECT_SOURCE_DIR}/app/*.cpp"
     
-    "${PROJECT_SOURCE_DIR}/objects/*.cpp"
-    
     "${PROJECT_SOURCE_DIR}/graphics/*.cpp"
+    "${PROJECT_SOURCE_DIR}/graphics/drawables/*.cpp"
+    "${PROJECT_SOURCE_DIR}/graphics/light/*.cpp"
     "${PROJECT_SOURCE_DIR}/graphics/materials/*.cpp"
 
     "${MATH_DIR}/src/*.cpp"

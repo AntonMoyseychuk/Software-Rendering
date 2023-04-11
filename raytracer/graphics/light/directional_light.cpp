@@ -1,6 +1,8 @@
 #include "directional_light.hpp"
 #include "math_3d/vector_operations.hpp"
 
+#include "graphics/materials/glaring_material.hpp"
+
 namespace gfx {
     DirectionalLigth::DirectionalLigth(const math::vec3f &direction, Color color, float intensity)
         : ILight(color, intensity), m_direction(math::Normalize(direction)) 
@@ -25,14 +27,14 @@ namespace gfx {
 
         out_intensity += m_intensity * cos_angle;
 
-        // if (int_data.material.specular_index > 0.0f) {
-        //     const auto reflected_vec = math::Normalize(math::Reflect(int_data.point, int_data.normal));
-        //     const auto vec_to_ray_origin = -math::Normalize((int_data.point - int_data.casted_ray.origin));
-        //     const auto r_dot_v = math::Dot(reflected_vec, vec_to_ray_origin);
-        //     if (r_dot_v > 0) {
-        //         out_intensity += m_intensity * powf(r_dot_v, int_data.material.specular_index);
-        //     }
-        // }
+        const IGlaringMaterial* glaring = dynamic_cast<IGlaringMaterial*>(int_data.material.get());
+        if (glaring && glaring->specular_index > 0.0f) {
+            const auto reflected_vec = math::Reflect(int_data.casted_ray.direction, int_data.normal);
+            const auto r_dot_v = math::Dot(reflected_vec, -int_data.casted_ray.direction);
+            if (r_dot_v > 0.0f) {
+                out_intensity += m_intensity * powf(r_dot_v, glaring->specular_index);
+            }
+        }
         return true;
     }
 

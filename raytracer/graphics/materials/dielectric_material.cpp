@@ -4,13 +4,13 @@
 #include "graphics/intersection_data.hpp"
 
 namespace gfx {
-    Dielectric::Dielectric(float refraction_index)
-        : IMaterial(), m_refraction_index(refraction_index >= 0.0f ? refraction_index : 0.0f)
+    Dielectric::Dielectric(float _refraction_index)
+        : IMaterial(), refraction_index(_refraction_index >= 0.0f ? _refraction_index : 0.0f)
     {
     }
     
     bool Dielectric::Scatter(const IntersectionData &int_data, Color &attenuation, Ray &scattered_ray) const noexcept {
-        const float refraction_ratio = int_data.is_front_face ? (1.0f / m_refraction_index) : m_refraction_index;
+        const float refraction_ratio = int_data.is_front_face ? (1.0f / refraction_index) : refraction_index;
 
         float cos_theta = std::fmin(math::Dot(-int_data.casted_ray.direction, int_data.normal), 1.0f);
         float sin_theta = std::sqrt(1.0f - cos_theta * cos_theta);
@@ -23,14 +23,6 @@ namespace gfx {
         scattered_ray = Ray(int_data.point, direction);
         attenuation = Color::WHITE;
         return true;
-    }
-    
-    void Dielectric::SetRefractionIndex(float refraction_index) noexcept {
-        m_refraction_index = refraction_index >= 0.0f ? refraction_index : 0.0f;
-    }
-    
-    float Dielectric::GetRefractionIndex() noexcept {
-        return m_refraction_index;
     }
     
     float Dielectric::_Reflectance(float cosine, float refraction_ratio) noexcept {

@@ -1,18 +1,14 @@
 #pragma once
 #include "colored_material.hpp"
+#include "glaring_material.hpp"
 
 namespace gfx {
-    class Metal : public IColoredMaterial {
-    public:
+    struct Metal : public IColoredMaterial, public IGlaringMaterial {
         Metal() = default;
-        Metal(Color color, float reflection_index = 0.0f);
+        Metal(Color color, float reflection_index = 0.0f, float specular_index = 0.0f);
 
         bool Scatter(const IntersectionData& int_data, Color& attenuation, Ray& scattered_ray) const noexcept override;
 
-        void SetReflectionIndex(float reflection_index) noexcept;
-        float GetReflectionIndex() noexcept;
-
-    protected:
-        float m_reflection_index;
+        float reflection_index;
     };
 }

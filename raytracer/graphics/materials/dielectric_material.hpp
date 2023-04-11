@@ -2,20 +2,16 @@
 #include "material.hpp"
 
 namespace gfx {
-    class Dielectric : public IMaterial {
-    public:
+    struct Dielectric : public IMaterial {
         Dielectric() = default;
         Dielectric(float refraction_index);
 
         bool Scatter(const IntersectionData& int_data, Color& attenuation, Ray& scattered_ray) const noexcept override;
 
-        void SetRefractionIndex(float refraction_index) noexcept;
-        float GetRefractionIndex() noexcept;
-
     protected:
         static float _Reflectance(float cosine, float refraction_ratio) noexcept;
 
-    protected:
-        float m_refraction_index = 0.0f;
+    public:
+        float refraction_index = 0.0f;
     };
 }

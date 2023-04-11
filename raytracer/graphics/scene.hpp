@@ -1,6 +1,6 @@
 #pragma once
-#include "objects/drawable.hpp"
-#include "objects/light.hpp"
+#include "graphics/drawables/drawable.hpp"
+#include "graphics/light/light.hpp"
 
 #include <list>
 #include <memory>

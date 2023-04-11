@@ -4,8 +4,7 @@
 
 namespace gfx {
     struct IntersectionData;
-    class IMaterial {
-    public:
+    struct IMaterial {
         virtual bool Scatter(const IntersectionData& int_data, Color& attenuation, Ray& scattered_ray) const noexcept = 0;
     };
 }
