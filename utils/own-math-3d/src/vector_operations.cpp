@@ -29,9 +29,13 @@ namespace math {
     
     vec3f Refract(const vec3f &unit_vec, const vec3f &normal, float n1_over_n2) noexcept {
         const auto cos_alpha = std::fmin(math::Dot(-unit_vec, normal), 1.0f);
-        const vec3f ray_dir_out_perp =  n1_over_n2 * (unit_vec + cos_alpha * normal);
-        const vec3f ray_dir_out_parallel = -std::sqrt(math::Abs(1.0f - ray_dir_out_perp.Length())) * normal;
-        return ray_dir_out_perp + ray_dir_out_parallel;
+        
+        const vec3f perp =  n1_over_n2 * (unit_vec + cos_alpha * normal);
+        const auto perp_length = perp.Length();
+
+        const vec3f parallel = -std::sqrt(math::Abs(1.0f - perp_length * perp_length)) * normal;
+
+        return perp + parallel;
     }
 
     float Angle(const vec3f &unit_vec1, const vec3f &unit_vec2) noexcept {

@@ -1,4 +1,5 @@
 #include "dielectric_material.hpp"
+
 #include "graphics/color.hpp"
 #include "graphics/intersection_data.hpp"
 
@@ -14,13 +15,13 @@ namespace gfx {
         float cos_theta = std::fmin(math::Dot(-int_data.casted_ray.direction, int_data.normal), 1.0f);
         float sin_theta = std::sqrt(1.0f - cos_theta * cos_theta);
 
-        bool cannot_refract = refraction_ratio * sin_theta > 1.0;
+        bool cannot_refract = refraction_ratio * sin_theta > 1.0f;
         math::vec3f direction = (cannot_refract || _Reflectance(cos_theta, refraction_ratio) > math::Random(0.0f, 1.0f)) ? 
             math::Reflect(int_data.casted_ray.direction, int_data.normal) : 
             math::Refract(int_data.casted_ray.direction, int_data.normal, refraction_ratio);
 
         scattered_ray = Ray(int_data.point, direction);
-        attenuation = Color(1);
+        attenuation = Color::WHITE;
         return true;
     }
     

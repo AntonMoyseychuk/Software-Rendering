@@ -3,6 +3,8 @@
 
 #include "math_3d/math.hpp"
 
+#include "graphics/materials/colored_material.hpp"
+
 #include <algorithm>
 
 namespace gfx {
@@ -90,15 +92,22 @@ namespace gfx {
             return m_background;
         }
 
-        float sum_intensity = 0.0f;
-        for (const auto& light : scene.GetLights()) {
-            light->ComputeIllumination(closest_intersection.value(), scene.GetDrawables(), sum_intensity);
-        }
-            
         Ray scattered;
         Color attenuation;
-        if (closest_intersection->material->Scatter(closest_intersection.value(), attenuation, scattered)) {
-            return attenuation * sum_intensity + _PixelShader(scattered, scene, recursion_depth - 1) * 0.5f;
+        IColoredMaterial* colored = dynamic_cast<IColoredMaterial*>(closest_intersection->material.get());
+        if (colored) {
+            float sum_intensity = 0.0f;
+            for (const auto& light : scene.GetLights()) {
+                light->ComputeIllumination(closest_intersection.value(), scene.GetDrawables(), sum_intensity);
+            }
+            
+            if (closest_intersection->material->Scatter(closest_intersection.value(), attenuation, scattered)) {
+                return attenuation * sum_intensity + _PixelShader(scattered, scene, recursion_depth - 1) * 0.5f;
+            }
+        } else {
+            if (closest_intersection->material->Scatter(closest_intersection.value(), attenuation, scattered)) {
+                return attenuation * _PixelShader(scattered, scene, recursion_depth - 1);
+            }
         }
 
         return Color::BLACK;
