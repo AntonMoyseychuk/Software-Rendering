@@ -1,5 +1,7 @@
 project(raytracer)
 
+set(CMAKE_CXX_STANDARD 17)
+
 file(GLOB SRC_FILES 
     "${PROJECT_SOURCE_DIR}/app/*.cpp"
     

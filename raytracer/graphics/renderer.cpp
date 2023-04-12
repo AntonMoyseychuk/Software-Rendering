@@ -90,8 +90,7 @@ namespace gfx {
         
         Ray scattered;
         Color attenuation;
-        IColoredMaterial* colored = dynamic_cast<IColoredMaterial*>(closest_intersection->material.get());
-        if (colored) {
+        if (dynamic_cast<IColoredMaterial*>(closest_intersection->material.get())) {
             float sum_intensity = 0.0f;
             for (const auto& light : scene.GetLights()) {
                 light->ComputeIllumination(closest_intersection.value(), scene.GetDrawables(), sum_intensity);

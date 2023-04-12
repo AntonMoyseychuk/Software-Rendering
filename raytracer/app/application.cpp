@@ -88,7 +88,7 @@ namespace app {
         // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(2.0f, 1.0f, 0.0f), 1.0f, material3));
 
 
-        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-3.0f, 2.65f, -5.0f), 1.6f, std::make_shared<gfx::Dielectric>(1.4f)));
+        m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(0.0f, 0.0f, -5.5f), 1.6f, std::make_shared<gfx::Dielectric>(1.4f)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-3.0f, 0.65f, -5.0f), 0.8f, std::make_shared<gfx::Diffuse>(gfx::Color::RED)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-1.5f, 0.65f, -5.0f), 0.8f, std::make_shared<gfx::Metal>(gfx::Color::GREEN, 0.0f, 500.0f)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(0.0f, 0.65f, -5.0f), 0.8f, std::make_shared<gfx::Diffuse>(gfx::Color::BLUE)));
@@ -109,9 +109,9 @@ namespace app {
         );
         
         m_scene.AddDrawble(std::make_shared<gfx::Triangle>(
-                gfx::Vertex(vec3f(-4.0f, -4.0f, -9.0f) + VECTOR_UP), 
-                gfx::Vertex(vec3f(0.0f, 4.0f, -9.0f) + VECTOR_UP), 
-                gfx::Vertex(vec3f(4.0f, -4.0f, -9.0f) + VECTOR_UP),
+                gfx::Vertex(vec3f(-4.0f, -3.0f, -9.0f)), 
+                gfx::Vertex(vec3f(0.0f, 5.0f, -9.0f)), 
+                gfx::Vertex(vec3f(4.0f, -3.0f, -9.0f)),
                 std::make_shared<gfx::Metal>(gfx::Color::GREY)
             )
         );
