@@ -4,8 +4,7 @@
 
 namespace gfx {
     Camera::Camera(const math::vec3f &position, const math::vec3f &look_at, const math::vec3f &up, float fov_degrees, float aspect_ratio)
-        : m_view(math::LookAtRH(position, look_at, up)),
-            m_position(position),
+        : m_position(position),
             m_forward(math::Normalize(look_at - position)),
             m_right(math::Normalize(math::Cross(up, -m_forward))),
             m_up(math::Cross(-m_forward, m_right)),
@@ -21,12 +20,21 @@ namespace gfx {
     
     void Camera::Rotate(float angle_radians, const math::vec2f& axis) noexcept {
         if (!math::IsTendsTo(angle_radians, 0.0f)) {
-            m_view = math::RotateX(m_view, angle_radians * axis.x);
-            m_view = math::RotateY(m_view, angle_radians * axis.y);
+            // auto local_forward = m_forward - m_position;
 
-            m_forward = math::VECTOR_BACKWARD * m_view;
-            m_right = math::VECTOR_RIGHT * m_view;
-            m_up = math::VECTOR_UP * m_view;
+            const auto zx_diag = math::vec2f(m_forward.x, m_forward.z).Length();
+
+            const auto r = m_forward.Length();
+            const auto thi = std::atanf(m_forward.x / m_forward.z) - angle_radians * axis.y;
+            const auto theta = std::atanf(zx_diag / m_forward.y) + angle_radians * axis.x;
+
+            std::cout << "prev forward: " << m_forward.x << ' ' << m_forward.y << ' ' << m_forward.z << '\n';
+            m_forward = math::Normalize(math::vec3f(
+                r * std::sinf(theta) * std::sinf(thi),
+                r * std::cosf(theta),
+                r * std::sinf(theta) * std::cosf(thi)
+            ));
+            std::cout << "forward:      " << m_forward.x << ' ' << m_forward.y << ' ' << m_forward.z << '\n';
 
             this->_RecalculateRays();
         }
@@ -35,7 +43,6 @@ namespace gfx {
     void Camera::MoveFor(const math::vec3f& offset) noexcept {
         if (offset != math::vec3f(0.0f)) {
             m_position += offset;
-            m_view = math::Translate(m_view, offset);
             
             this->_RecalculateRays();
         }
@@ -78,8 +85,8 @@ namespace gfx {
         return m_up;
     }
 
-    const math::mat4f &Camera::GetView() const noexcept {
-        return m_view;
+    math::mat4f Camera::GetView() const noexcept {
+        return math::LookAtRH(m_position, m_position + m_forward, m_up);
     }
 
     void Camera::_RecalculateRays() const noexcept {

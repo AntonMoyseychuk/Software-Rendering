@@ -23,15 +23,13 @@ namespace gfx {
         const math::vec3f& GetRight() const noexcept;
         const math::vec3f& GetUp() const noexcept;
 
-        const math::mat4f& GetView() const noexcept;
+        math::mat4f GetView() const noexcept;
     #pragma endregion getters-setters
 
     private:
         void _RecalculateRays() const noexcept;
 
     private:
-        math::mat4f m_view;
-
         math::vec3f m_position;
         math::vec3f m_forward;
         math::vec3f m_right;
