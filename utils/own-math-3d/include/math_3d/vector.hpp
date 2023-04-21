@@ -405,6 +405,7 @@ namespace math {
     using vec2i = Vector<std::int32_t, 2>;
     using vec2ui = Vector<std::uint32_t, 2>;
 
+    const vec3f VECTOR_ZERO(0.0f);
     const vec3f VECTOR_RIGHT(1.0f, 0.0f, 0.0f);
     const vec3f VECTOR_DOWN(0.0f, -1.0f, 0.0f);
     const vec3f VECTOR_LEFT(-1.0f, 0.0f, 0.0f);

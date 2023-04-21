@@ -39,9 +39,9 @@ namespace app {
         using namespace math;
 
         m_window->Init(title, width, height);
-        m_window->SetBackgroundColor(gfx::Color::GREY.rgba);
+        m_window->SetBackgroundColor(gfx::Color::BLACK.rgba);
 
-        m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::X4);
+        m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::X8);
         m_renderer.SetReflectionDepth(3);
 
         m_camera.SetViewportSize(vec2ui(width, height) * static_cast<float>(m_renderer.GetAntialiasingLevel()));
@@ -116,8 +116,6 @@ namespace app {
             )
         );
         
-        // m_scene.AddLight(std::make_shared<gfx::DirectionalLigth>(VECTOR_RIGHT, gfx::Color::WHITE, 1.0f));
-        // m_scene.AddLight(std::make_shared<gfx::PointLigth>(math::vec3f(8.0f, -10.0f, 8.0f), gfx::Color::WHITE, 1.0f));
         // m_scene.AddLight(std::make_shared<gfx::PointLigth>(math::vec3f(-8.0f, -10.0f, 8.0f), gfx::Color::WHITE, 1.0f));
         m_scene.AddLight(std::make_shared<gfx::DirectionalLigth>(vec3f(2.0f, -1.0f, -2.0f), gfx::Color::WHITE, 1.0f));
         m_scene.AddLight(std::make_shared<gfx::AmbientLight>(gfx::Color::WHITE, 0.1f));
@@ -255,6 +253,12 @@ namespace app {
                     point_light->MoveFor(math::VECTOR_LEFT * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::D)) {
                     point_light->MoveFor(math::VECTOR_RIGHT * 2.0f * dt);
+                }
+
+                if (m_window->IsKeyPressed(Key::Z)) {
+                    point_light->MoveFor(math::VECTOR_BACKWARD * 2.0f * dt);
+                } else if (m_window->IsKeyPressed(Key::X)) {
+                    point_light->MoveFor(math::VECTOR_FORWARD * 2.0f * dt);
                 }
                 
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {

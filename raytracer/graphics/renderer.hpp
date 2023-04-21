@@ -8,7 +8,7 @@
         
 
 namespace gfx {
-    enum class AntialiasingLevel { NONE = 1, X2 = 2, X4 = 4, X8 = 8, X12 = 12, X16 = 16 };
+    enum class AntialiasingLevel { NONE = 1, X2 = 2, X4 = 4, X8 = 8, X12 = 12, X16 = 16, X32 = 32 };
 
     class Renderer {
     public:
