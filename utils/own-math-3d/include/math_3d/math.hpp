@@ -24,7 +24,7 @@ namespace math {
     }
 
     template <typename Type>
-    inline Type Abs(Type value) noexcept {
+    inline constexpr Type Abs(Type value) noexcept {
         static_assert(std::is_arithmetic_v<Type>, "template <typename Type>"
             "inline constexpr Type Abs(Type value) noexcept: Type must be an arithmetic"
         );
@@ -48,7 +48,7 @@ namespace math {
     }
 
     template<typename Type>
-    inline bool IsTendsTo(Type value, Type limit) noexcept {
+    inline constexpr bool IsTendsTo(Type value, Type limit) noexcept {
         static_assert(std::is_arithmetic_v<Type>, "template<typename Type>"
             "inline constexpr bool IsTendsTo(Type value, Type limit) noexcept: Type must be an arithmetic"
         );
@@ -56,7 +56,7 @@ namespace math {
     }
 
     template <typename Type>
-    inline Type Clamp(Type value, Type min, Type max) noexcept {
+    inline constexpr Type Clamp(Type value, Type min, Type max) noexcept {
         static_assert(std::is_arithmetic_v<Type>, "template <typename Type>"
             "inline constexpr Type Clamp(Type value, Type min, Type max) noexcept: Type must be an arithmetic"
         );

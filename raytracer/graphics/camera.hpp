@@ -23,17 +23,20 @@ namespace gfx {
         const math::vec3f& GetRight() const noexcept;
         const math::vec3f& GetUp() const noexcept;
 
-        math::mat4f GetView() const noexcept;
+        // math::mat4f GetView() const noexcept;
     #pragma endregion getters-setters
 
     private:
         void _RecalculateRays() const noexcept;
 
     private:
-        math::vec3f m_position;
-        math::vec3f m_forward;
-        math::vec3f m_right;
-        math::vec3f m_up;
+        math::vec3f m_position = math::VECTOR_ZERO;
+        math::vec3f m_forward = math::VECTOR_BACKWARD;
+        math::vec3f m_right = math::VECTOR_RIGHT;
+        math::vec3f m_up = math::VECTOR_UP;
+        const float m_radius = 1.0f;
+        float m_thi_radians = math::MATH_PI;
+        float m_theta_radians = math::MATH_PI_DIV_2;
 
         float m_tan_fov_div2 = 0.0f;
         float m_aspect_ratio = 0.0f;

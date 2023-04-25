@@ -8,10 +8,12 @@ namespace gfx {
             m_forward(math::Normalize(look_at - position)),
             m_right(math::Normalize(math::Cross(up, -m_forward))),
             m_up(math::Cross(-m_forward, m_right)),
+            m_radius(1.0f),
+            m_thi_radians(math::Angle(math::Normalize(math::vec3f(m_forward.x, 0.0f, m_forward.z)), math::VECTOR_FORWARD)),
+            m_theta_radians(math::Angle(math::Normalize(math::vec3f(m_forward.x, m_forward.y, 0.0f)), math::VECTOR_UP)),
             m_tan_fov_div2(tanf(math::ToRadians(fov_degrees) / 2.0f)), 
             m_aspect_ratio(aspect_ratio)
     {
-
     }
 
     const std::vector<gfx::Ray>& Camera::GenerateRays() const noexcept {
@@ -20,21 +22,21 @@ namespace gfx {
     
     void Camera::Rotate(float angle_radians, const math::vec2f& axis) noexcept {
         if (!math::IsTendsTo(angle_radians, 0.0f)) {
-            // auto local_forward = m_forward - m_position;
+            using namespace math;
 
-            const auto zx_diag = math::vec2f(m_forward.x, m_forward.z).Length();
+            m_thi_radians += axis.y * angle_radians;
+            m_theta_radians += axis.x * angle_radians;
 
-            const auto r = m_forward.Length();
-            const auto thi = std::atanf(m_forward.x / m_forward.z) - angle_radians * axis.y;
-            const auto theta = std::atanf(zx_diag / m_forward.y) + angle_radians * axis.x;
-
-            std::cout << "prev forward: " << m_forward.x << ' ' << m_forward.y << ' ' << m_forward.z << '\n';
-            m_forward = math::Normalize(math::vec3f(
-                r * std::sinf(theta) * std::sinf(thi),
-                r * std::cosf(theta),
-                r * std::sinf(theta) * std::cosf(thi)
+            const auto forward_x = m_radius * std::sinf(m_theta_radians) * std::sinf(m_thi_radians);
+            const auto forward_y = m_radius * std::cosf(m_theta_radians);
+            const auto forward_z = m_radius * std::sinf(m_theta_radians) * std::cosf(m_thi_radians);
+            m_forward = Normalize(vec3f(
+                IsTendsTo(forward_x, 0.0f) ? 0.0f : forward_x,
+                IsTendsTo(forward_y, 0.0f) ? 0.0f : forward_y,
+                IsTendsTo(forward_z, 0.0f) ? 0.0f : forward_z
             ));
-            std::cout << "forward:      " << m_forward.x << ' ' << m_forward.y << ' ' << m_forward.z << '\n';
+            m_right = Cross(VECTOR_UP, -m_forward);
+            m_up = Cross(-m_forward, m_right);
 
             this->_RecalculateRays();
         }
@@ -85,9 +87,9 @@ namespace gfx {
         return m_up;
     }
 
-    math::mat4f Camera::GetView() const noexcept {
-        return math::LookAtRH(m_position, m_position + m_forward, m_up);
-    }
+    // math::mat4f Camera::GetView() const noexcept {
+    //     return math::LookAtRH(m_position, m_position + m_forward, m_up);
+    // }
 
     void Camera::_RecalculateRays() const noexcept {
         const auto dx = 2.0f / m_ray_cache_size.x;
