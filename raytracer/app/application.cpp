@@ -24,11 +24,11 @@
 // #endif
 
 
-// static void _VertexShader(gfx::Triangle& triangle, const math::mat4f& model, const math::mat4f& view, const math::mat4f& projection) noexcept {
-//     triangle[0].position = triangle[0].position * model * view * projection;
-//     triangle[1].position = triangle[1].position * model * view * projection;
-//     triangle[2].position = triangle[2].position * model * view * projection;
-// }
+static void _VertexShader(gfx::Triangle& triangle, const math::Quaternion& q) noexcept {
+    triangle[0].position = triangle[0].position * q;
+    triangle[1].position = triangle[1].position * q;
+    triangle[2].position = triangle[2].position * q;
+}
 
 namespace app {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height)
@@ -87,6 +87,13 @@ namespace app {
         // auto material3 = std::make_shared<gfx::Metal>(gfx::Color(178, 153, 127), 0.0f);
         // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(2.0f, 1.0f, 0.0f), 1.0f, material3));
 
+        m_scene.AddDrawble(std::make_shared<gfx::Triangle>(
+                gfx::Vertex(vec3f(-4.0f, -3.0f, -9.0f)), 
+                gfx::Vertex(vec3f(0.0f, 5.0f, -9.0f)), 
+                gfx::Vertex(vec3f(4.0f, -3.0f, -9.0f)),
+                std::make_shared<gfx::Metal>(gfx::Color::GREY)
+            )
+        );
 
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(0.0f, 0.0f, -5.5f), 1.6f, std::make_shared<gfx::Dielectric>(1.4f)));
         m_scene.AddDrawble(std::make_shared<gfx::Sphere>(vec3f(-3.0f, 0.65f, -5.0f), 0.8f, std::make_shared<gfx::Diffuse>(gfx::Color::RED)));
@@ -105,14 +112,6 @@ namespace app {
                 gfx::Vertex(vec3f(0.0f, -1.0f, -17.0f)), 
                 gfx::Vertex(vec3f(15.0f, -2.0f, 2.0f)),
                 std::make_shared<gfx::Metal>(gfx::Color::BLACK, 0.05f)
-            )
-        );
-        
-        m_scene.AddDrawble(std::make_shared<gfx::Triangle>(
-                gfx::Vertex(vec3f(-4.0f, -3.0f, -9.0f)), 
-                gfx::Vertex(vec3f(0.0f, 5.0f, -9.0f)), 
-                gfx::Vertex(vec3f(4.0f, -3.0f, -9.0f)),
-                std::make_shared<gfx::Metal>(gfx::Color::GREY)
             )
         );
         
@@ -220,19 +219,27 @@ namespace app {
                     drawable->MoveFor(VECTOR_FORWARD * 2.0f * dt);
                 }
                 
-                // if (dynamic_cast<gfx::Triangle*>(drawable) != nullptr) {
-                //     if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                //         _VertexShader(*dynamic_cast<gfx::Triangle*>(drawable), RotateX(Identity<mat4f>(), ToRadians(-25.0f * dt)), m_camera.GetView(), Identity<mat4f>());
-                //     } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                //         _VertexShader(*dynamic_cast<gfx::Triangle*>(drawable), RotateX(Identity<mat4f>(), ToRadians(25.0f * dt)), m_camera.GetView(), Identity<mat4f>());
-                //     }
+                if (dynamic_cast<gfx::Triangle*>(drawable) != nullptr) {
+                    if (m_window->IsKeyPressed(Key::UP_ARROW)) {
+                        _VertexShader(*dynamic_cast<gfx::Triangle*>(drawable), 
+                            Quaternion(cosf(MATH_PI / 360.0f), sinf(MATH_PI / 360.0f), 0.0f, 0.0f)
+                        );
+                    } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
+                        _VertexShader(*dynamic_cast<gfx::Triangle*>(drawable), 
+                            Quaternion(cosf(MATH_PI / 360.0f), sinf(-MATH_PI / 360.0f), 0.0f, 0.0f)
+                        );
+                    }
 
-                //     if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
-                //         _VertexShader(*dynamic_cast<gfx::Triangle*>(drawable), RotateY(Identity<mat4f>(), ToRadians(-25.0f * dt)), m_camera.GetView(), Identity<mat4f>());
-                //     } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
-                //         _VertexShader(*dynamic_cast<gfx::Triangle*>(drawable), RotateY(Identity<mat4f>(), ToRadians(25.0f * dt)), m_camera.GetView(), Identity<mat4f>());
-                //     }
-                // }
+                    if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
+                        _VertexShader(*dynamic_cast<gfx::Triangle*>(drawable), 
+                            Quaternion(cosf(MATH_PI / 360.0f), 0.0, sinf(-MATH_PI / 360.0f), 0.0f)
+                        );
+                    } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
+                        _VertexShader(*dynamic_cast<gfx::Triangle*>(drawable), 
+                            Quaternion(cosf(MATH_PI / 360.0f), 0.0f, sinf(MATH_PI / 360.0f), 0.0f)
+                        );
+                    }
+                }
             }
         }
     }

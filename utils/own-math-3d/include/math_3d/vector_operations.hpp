@@ -1,5 +1,6 @@
 #pragma once
 #include "vector.hpp"
+#include "quaternion.hpp"
 #include "matrix_operations.hpp"
 
 namespace math {
@@ -59,5 +60,11 @@ namespace math {
             temp_vec.x * mat[0][2] + temp_vec.y * mat[1][2] + temp_vec.z * mat[2][2] + temp_vec.w * mat[3][2],
             temp_vec.x * mat[0][3] + temp_vec.y * mat[1][3] + temp_vec.z * mat[2][3] + temp_vec.w * mat[3][3]
         );
+    }
+
+    template<typename Type>
+    inline vec3f operator*(const Vector<Type, 3>& vec, const Quaternion& q) noexcept {
+        const auto rotated = q * Quaternion(0, vec.x, vec.y, vec.z) * Conjugate(q);
+        return vec3f(rotated.x, rotated.y, rotated.z);
     }
 }
