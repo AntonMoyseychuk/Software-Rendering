@@ -14,16 +14,6 @@
 #include <iostream>
 #include <memory>
 
-// #ifdef _DEBUG
-//     #include <iostream>
-//     #define LOG_EXPR(expresion) std::cout << "{" << #expresion << "}: " << (expresion) << std::endl
-//     #define LOG(tag, expresion) std::cout << "{" << tag << "}: " << (expresion) << std::endl
-// #else 
-//     #define LOG_EXPR(expresion) (void)0
-//     #define LOG(tag, expresion) (void)0
-// #endif
-
-
 static void _VertexShader(gfx::Triangle& triangle, const math::Quaternion& q) noexcept {
     triangle[0].position = triangle[0].position * q;
     triangle[1].position = triangle[1].position * q;
