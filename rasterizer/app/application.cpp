@@ -17,7 +17,6 @@ namespace app {
         using namespace math;
 
         m_window->Init(title, width, height);
-        
     }
     
     void Application::Run() noexcept {
