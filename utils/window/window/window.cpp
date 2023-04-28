@@ -54,8 +54,7 @@ namespace win_framewrk {
             m_title(std::move(window.m_title)),
             m_width(window.m_width), 
             m_height(window.m_height), 
-            m_is_quit(window.m_is_quit), 
-            m_background_color(0)
+            m_is_quit(window.m_is_quit)
     {
         LOG_WIN_INFO(__FUNCTION__);
         memset(&window.m_event, 0, sizeof(window.m_event));
@@ -77,36 +76,8 @@ namespace win_framewrk {
         m_event = window.m_event;
         memset(&window.m_event, 0, sizeof(window.m_event));
 
-        m_background_color = window.m_background_color;
-
         return *this;
     }
-
-    // std::uint32_t Window::_ConvertToBigEndian(std::uint32_t color) noexcept {
-    //     #if defined(LOG_ALL)
-    //         LOG_WIN_INFO(__FUNCTION__);
-    //     #endif
-
-    //     #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-    //         return SDL_SwapBE32(color);
-    //     #else
-    //         return color;
-    //     #endif
-    // }
-        
-    // std::uint32_t Window::_MapRGBA(SDL_PixelFormat *format, std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) noexcept {
-    //     #if defined(LOG_ALL)
-    //         LOG_WIN_INFO(__FUNCTION__);
-    //     #endif
-
-    //     color = _ConvertToBigEndian(color);
-
-    //     std::uint8_t rgba[4];
-    //     for (std::size_t i = 0; i < 4; ++i) {
-    //         rgba[3 - i] = (color >> (8 * i)) & 0xFF;
-    //     }
-    //     return SDL_MapRGBA(format, rgba[0], rgba[1], rgba[2], rgba[3]);
-    // }
 
     bool Window::_InitializeSDL() {
         LOG_WIN_INFO(__FUNCTION__);
@@ -174,13 +145,10 @@ namespace win_framewrk {
         std::uint32_t x_end, std::uint32_t y_end,
         std::uint32_t* dist, const std::uint32_t* src
     ) const noexcept {
-        
         const std::uint32_t length = x_end - x0;
-        Color color;
         for (std::size_t y = y0; y < y_end; ++y) {
             for (std::size_t x = x0; x < x_end; ++x) {
-                color.rgba = SDL_SwapBE32(src[x + y * length]);
-                dist[x + y * length] = color.rgba;
+                dist[x + y * length] = SDL_SwapBE32(src[x + y * length]);
             }
         }
     }
@@ -194,15 +162,12 @@ namespace win_framewrk {
         int pitch = m_width * sizeof(std::uint32_t);
         LOG_SDL_ERROR(SDL_LockTexture(m_texture_ptr.get(), nullptr, (void**)&pixels, &pitch) == 0, SDL_GetError());
 
-        const SDL_Surface* surface = SDL_GetWindowSurface(m_window_ptr.get());
-
         for (std::uint32_t y = 0; y < m_height; ++y) {
             m_thread_pool.AddTask(&Window::_ThreadBufferFillingFunc, this, 0, y, m_width, y + 1, pixels, in_pixels.data());
         }
         m_thread_pool.WaitAll();
 
         SDL_UnlockTexture(m_texture_ptr.get());
-        LOG_SDL_ERROR(SDL_RenderCopy(m_renderer_ptr.get(), m_texture_ptr.get(), nullptr, nullptr) == 0, SDL_GetError());
     }
 
     void Window::PresentPixelBuffer() const noexcept {
@@ -210,8 +175,8 @@ namespace win_framewrk {
             LOG_WIN_INFO(__FUNCTION__);
         #endif
 
+        LOG_SDL_ERROR(SDL_RenderCopy(m_renderer_ptr.get(), m_texture_ptr.get(), nullptr, nullptr) == 0, SDL_GetError());
         SDL_RenderPresent(m_renderer_ptr.get());
-        // SDL_RenderClear(m_renderer_ptr.get());
     }
 
     void Window::PollEvent() noexcept {

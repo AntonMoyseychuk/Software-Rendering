@@ -36,13 +36,13 @@ namespace win_framewrk {
 
     class Window {
     private:
-        union Color {
-            Color() = default;
+        union _PixelColor {
+            _PixelColor() = default;
 
-            Color(std::uint8_t _r, std::uint8_t _g, std::uint8_t _b, std::uint8_t _a)
+            _PixelColor(std::uint8_t _r, std::uint8_t _g, std::uint8_t _b, std::uint8_t _a)
                 : r(_r), g(_g), b(_b), a(_a) {}
 
-            Color(std::uint32_t _rgba)
+            _PixelColor(std::uint32_t _rgba)
                 : rgba(_rgba) {}
             struct {
                 std::uint8_t r, g, b, a;
@@ -56,8 +56,10 @@ namespace win_framewrk {
         bool Init(const std::string& title, std::uint32_t width, std::uint32_t height);
         
         bool IsOpen() const noexcept;
+        
         void FillPixelBuffer(const std::vector<std::uint32_t>& pixels) const noexcept;
         void PresentPixelBuffer() const noexcept;
+        
         void PollEvent() noexcept;
 
         bool IsKeyPressed(Key key) const noexcept;
@@ -129,8 +131,6 @@ namespace win_framewrk {
         std::uint32_t m_width = 0;
         std::uint32_t m_height = 0;
         bool m_is_quit = false;
-
-        Color m_background_color = 0;
         
         mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
     };

@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB SRC_FILES 
     "${PROJECT_SOURCE_DIR}/app/*.cpp"
+    "${PROJECT_SOURCE_DIR}/graphics/*.cpp"
 
     "${MATH_DIR}/src/*.cpp"
     "${WINDOW_DIR}/window/*.cpp"
