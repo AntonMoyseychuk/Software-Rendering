@@ -60,6 +60,7 @@ namespace win_framewrk {
         void SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept;
        
         void SetBackgroundColor(std::uint32_t color) noexcept;
+        void SetBackgroundColor(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) noexcept;
         std::uint32_t GetBackgroundColor() const noexcept;
 
         void SetWidth(std::uint32_t width) noexcept;
@@ -95,7 +96,7 @@ namespace win_framewrk {
             void operator()(bool* is_initialized) const;
         };
 
-        struct WindowDeleter {
+        struct WindowDestroyer {
             void operator()(SDL_Window* window) const;
         };
 
@@ -103,7 +104,7 @@ namespace win_framewrk {
         static std::unique_ptr<bool, SDLDeinitializer> is_sdl_initialized_ptr;
 
     private:
-        std::unique_ptr<SDL_Window, WindowDeleter> m_window_ptr = nullptr;
+        std::unique_ptr<SDL_Window, WindowDestroyer> m_window_ptr = nullptr;
         mutable SDL_Surface* m_surface_ptr = nullptr;
         SDL_Event m_event;
 

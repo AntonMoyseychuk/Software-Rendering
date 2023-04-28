@@ -1,13 +1,7 @@
-#include "window/window.hpp"
+#include "application.hpp"
 
 int main(int argc, char* argv[]) {
-    auto window = win_framewrk::Window::Get();
-    window->Init("rasterization", 640, 480);
-
-    window->SetBackgroundColor(0xff00ffff);
-    while(window->IsOpen()) {
-        window->PollEvent();
-        window->PresentPixelBuffer();
-    }
+    std::unique_ptr<app::Application> app = std::make_unique<app::Application>("rasterizer", 540, 480);
+    app->Run();
     return 0;
 }

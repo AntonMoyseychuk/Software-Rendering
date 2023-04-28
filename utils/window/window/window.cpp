@@ -279,11 +279,19 @@ namespace win_framewrk {
         m_background_color = color;
     }
 
-    std::uint32_t Window::GetBackgroundColor() const noexcept {
+    void Window::SetBackgroundColor(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) noexcept {
         #if defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);
         #endif
 
+        m_background_color = std::uint32_t(r << 24 | g << 16 | b << 8 | a);
+    }
+
+    std::uint32_t Window::GetBackgroundColor() const noexcept {
+        #if defined(LOG_ALL)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
+        
         return m_background_color;
     }
 
@@ -350,12 +358,11 @@ namespace win_framewrk {
         }
     }
     
-    void Window::WindowDeleter::operator()(SDL_Window *window) const {
+    void Window::WindowDestroyer::operator()(SDL_Window *window) const {
         LOG_WIN_INFO(__FUNCTION__);
         
         if (window != nullptr) {
             SDL_DestroyWindow(window);
-            window = nullptr;
         }
     }
 }
