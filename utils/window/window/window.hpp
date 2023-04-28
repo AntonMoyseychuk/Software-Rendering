@@ -77,9 +77,6 @@ namespace win_framewrk {
 
         void SetHeight(std::uint32_t height) noexcept;
         std::uint32_t GetHeight() const noexcept;
-
-        const SDL_Surface* GetSDLSurfaceHandle() const noexcept;
-        SDL_Surface* GetSDLSurfaceHandle() noexcept;
     #pragma endregion getters-setters
 
     private:
@@ -87,8 +84,6 @@ namespace win_framewrk {
 
     private:
         Window() = default;
-        
-        bool _UpdateSurface() const noexcept;
 
     private:
         void _OnResize(std::uint32_t new_width, std::uint32_t new_height) noexcept;

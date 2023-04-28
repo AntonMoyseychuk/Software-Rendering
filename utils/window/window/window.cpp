@@ -120,6 +120,10 @@ namespace win_framewrk {
             
         m_width = new_width;
         m_height = new_height;
+
+        m_texture_ptr.reset(SDL_CreateTexture(m_renderer_ptr.get(), SDL_PIXELFORMAT_RGBA8888, 
+            SDL_TextureAccess::SDL_TEXTUREACCESS_STREAMING, m_width, m_height));
+        LOG_SDL_ERROR(m_texture_ptr != nullptr, SDL_GetError());
     }
 
     void Window::_OnQuit() noexcept {
