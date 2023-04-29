@@ -30,6 +30,7 @@ namespace app {
 
         m_window->Init(title, width, height);
 
+        m_renderer.SetBackgroundColor(gfx::Color::BLACK);
         m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::X2);
         m_renderer.SetReflectionDepth(3);
         m_renderer.SetBackgroundColor(gfx::Color::BLACK);

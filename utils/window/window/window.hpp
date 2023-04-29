@@ -36,14 +36,14 @@ namespace win_framewrk {
 
     class Window {
     private:
-        union _PixelColor {
-            _PixelColor() = default;
-
-            _PixelColor(std::uint8_t _r, std::uint8_t _g, std::uint8_t _b, std::uint8_t _a)
+        union _InternalColor {
+            _InternalColor() = default;
+            _InternalColor(std::uint8_t _r, std::uint8_t _g, std::uint8_t _b, std::uint8_t _a)
                 : r(_r), g(_g), b(_b), a(_a) {}
 
-            _PixelColor(std::uint32_t _rgba)
+            explicit _InternalColor(std::uint32_t _rgba)
                 : rgba(_rgba) {}
+
             struct {
                 std::uint8_t r, g, b, a;
             };
@@ -74,6 +74,23 @@ namespace win_framewrk {
         void SetTitle(const std::string_view title) noexcept;
         const std::string& GetTitle() const noexcept;
 
+        std::uint32_t GetPixelColor(std::size_t x, std::size_t y) noexcept;
+        
+        void SetPixelColor(
+            std::size_t x, 
+            std::size_t y, 
+            std::uint32_t color
+        ) noexcept;
+        
+        void SetPixelColor(
+            std::size_t x, 
+            std::size_t y,
+            std::uint8_t r, 
+            std::uint8_t g, 
+            std::uint8_t b, 
+            std::uint8_t a
+        ) noexcept;
+
         void SetWidth(std::uint32_t width) noexcept;
         std::uint32_t GetWidth() const noexcept;
 
@@ -82,6 +99,7 @@ namespace win_framewrk {
     #pragma endregion getters-setters
 
     private:
+        static std::uint32_t _MapRGBA(SDL_PixelFormat* format, _InternalColor color) noexcept;
         static bool _InitializeSDL();
 
     private:
@@ -92,11 +110,14 @@ namespace win_framewrk {
         void _OnQuit() noexcept;
 
     private:
-        void _ThreadBufferFillingFunc(
-            std::uint32_t x0, std::uint32_t y0, 
-            std::uint32_t x_end, std::uint32_t y_end,
-            std::uint32_t* dist, const std::uint32_t* src
-        ) const noexcept;
+        static void _ThreadBufferFillingFunc(
+            std::uint32_t x0, 
+            std::uint32_t y0, 
+            std::uint32_t x_end, 
+            std::uint32_t y_end, 
+            SDL_Surface* surface, 
+            const std::uint32_t* in_pixels
+        ) noexcept;
 
     private:
         struct SDLDeinitializer {
@@ -120,11 +141,7 @@ namespace win_framewrk {
 
     private:
         std::unique_ptr<SDL_Window, WindowDestroyer> m_window_ptr = nullptr;
-        std::unique_ptr<SDL_Renderer, RendererDestroyer> m_renderer_ptr = nullptr;
-        std::unique_ptr<SDL_Texture, TextureDestroyer> m_texture_ptr = nullptr;
-
-        SDL_PixelFormat* m_pixel_format_ptr = nullptr;
-
+        mutable SDL_Surface* m_surface_ptr = nullptr;
         SDL_Event m_event;
 
         std::string m_title = "";
