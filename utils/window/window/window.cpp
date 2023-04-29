@@ -120,7 +120,7 @@ namespace win_framewrk {
         }
 
         m_width = width;
-        m_height = height;
+        m_height = height;//
 
         m_window_ptr.reset(SDL_CreateWindow(title.data(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0));
         LOG_SDL_ERROR(m_window_ptr != nullptr, SDL_GetError());
