@@ -56,10 +56,8 @@ namespace win_framewrk {
         bool Init(const std::string& title, std::uint32_t width, std::uint32_t height);
         
         bool IsOpen() const noexcept;
-        
         void FillPixelBuffer(const std::vector<std::uint32_t>& pixels) const noexcept;
         void PresentPixelBuffer() const noexcept;
-        
         void PollEvent() noexcept;
 
         bool IsKeyPressed(Key key) const noexcept;
@@ -96,6 +94,9 @@ namespace win_framewrk {
 
         void SetHeight(std::uint32_t height) noexcept;
         std::uint32_t GetHeight() const noexcept;
+
+        const SDL_Surface* GetSDLSurfaceHandle() const noexcept;
+        SDL_Surface* GetSDLSurfaceHandle() noexcept;
     #pragma endregion getters-setters
 
     private:
@@ -104,6 +105,8 @@ namespace win_framewrk {
 
     private:
         Window() = default;
+        
+        bool _UpdateSurface() const noexcept;
 
     private:
         void _OnResize(std::uint32_t new_width, std::uint32_t new_height) noexcept;
@@ -126,14 +129,6 @@ namespace win_framewrk {
 
         struct WindowDestroyer {
             void operator()(SDL_Window* window) const;
-        };
-
-        struct RendererDestroyer {
-            void operator()(SDL_Renderer* renderer) const;
-        };
-
-        struct TextureDestroyer {
-            void operator()(SDL_Texture* texture) const;
         };
 
     private:
