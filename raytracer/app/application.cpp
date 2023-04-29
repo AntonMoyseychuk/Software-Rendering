@@ -39,8 +39,8 @@ namespace app {
         using namespace math;
 
         m_window->Init(title, width, height);
-        m_window->SetBackgroundColor(gfx::Color::BLACK.rgba);
 
+        m_renderer.SetBackgroundColor(gfx::Color::BLACK);
         m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::X2);
         m_renderer.SetReflectionDepth(3);
 
@@ -121,7 +121,6 @@ namespace app {
     }
     
     void Application::Run() noexcept {
-        m_renderer.SetBackgroundColor(gfx::UInt32ToColor(m_window->GetBackgroundColor()));
         math::vec2ui last_window_size;
 
         while (m_window->IsOpen()) {

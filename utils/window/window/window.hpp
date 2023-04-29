@@ -35,6 +35,22 @@ namespace win_framewrk {
     };
 
     class Window {
+    private:
+        union _InternalColor {
+            _InternalColor() = default;
+            _InternalColor(std::uint8_t _r, std::uint8_t _g, std::uint8_t _b, std::uint8_t _a)
+                : r(_r), g(_g), b(_b), a(_a) {}
+
+            explicit _InternalColor(std::uint32_t _rgba)
+                : rgba(_rgba) {}
+
+            struct {
+                std::uint8_t r, g, b, a;
+            };
+
+            std::uint32_t rgba;
+        };
+
     public:
         static Window* Get() noexcept;
         bool Init(const std::string& title, std::uint32_t width, std::uint32_t height);
@@ -57,10 +73,21 @@ namespace win_framewrk {
         const std::string& GetTitle() const noexcept;
 
         std::uint32_t GetPixelColor(std::size_t x, std::size_t y) noexcept;
-        void SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept;
-       
-        void SetBackgroundColor(std::uint32_t color) noexcept;
-        std::uint32_t GetBackgroundColor() const noexcept;
+        
+        void SetPixelColor(
+            std::size_t x, 
+            std::size_t y, 
+            std::uint32_t color
+        ) noexcept;
+        
+        void SetPixelColor(
+            std::size_t x, 
+            std::size_t y,
+            std::uint8_t r, 
+            std::uint8_t g, 
+            std::uint8_t b, 
+            std::uint8_t a
+        ) noexcept;
 
         void SetWidth(std::uint32_t width) noexcept;
         std::uint32_t GetWidth() const noexcept;
@@ -73,8 +100,7 @@ namespace win_framewrk {
     #pragma endregion getters-setters
 
     private:
-        static std::uint32_t _ConvertToBigEndian(std::uint32_t color) noexcept;
-        static std::uint32_t _MapRGBA(SDL_PixelFormat* format, std::uint32_t color) noexcept;
+        static std::uint32_t _MapRGBA(SDL_PixelFormat* format, _InternalColor color) noexcept;
         static bool _InitializeSDL();
 
     private:
@@ -87,15 +113,21 @@ namespace win_framewrk {
         void _OnQuit() noexcept;
 
     private:
-        static void _ThreadBufferFillingFunc(std::uint32_t x0, std::uint32_t y0, std::uint32_t x_end, std::uint32_t y_end, 
-            SDL_Surface* surface, const std::vector<std::uint32_t> &in_pixels) noexcept;
+        static void _ThreadBufferFillingFunc(
+            std::uint32_t x0, 
+            std::uint32_t y0, 
+            std::uint32_t x_end, 
+            std::uint32_t y_end, 
+            SDL_Surface* surface, 
+            const std::uint32_t* in_pixels
+        ) noexcept;
 
     private:
         struct SDLDeinitializer {
             void operator()(bool* is_initialized) const;
         };
 
-        struct WindowDeleter {
+        struct WindowDestroyer {
             void operator()(SDL_Window* window) const;
         };
 
@@ -103,7 +135,7 @@ namespace win_framewrk {
         static std::unique_ptr<bool, SDLDeinitializer> is_sdl_initialized_ptr;
 
     private:
-        std::unique_ptr<SDL_Window, WindowDeleter> m_window_ptr = nullptr;
+        std::unique_ptr<SDL_Window, WindowDestroyer> m_window_ptr = nullptr;
         mutable SDL_Surface* m_surface_ptr = nullptr;
         SDL_Event m_event;
 
@@ -111,8 +143,6 @@ namespace win_framewrk {
         std::uint32_t m_width = 0;
         std::uint32_t m_height = 0;
         bool m_is_quit = false;
-
-        std::uint32_t m_background_color = 0;
         
         mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
     };
