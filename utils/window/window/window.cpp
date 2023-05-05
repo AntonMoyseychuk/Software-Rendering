@@ -334,7 +334,15 @@ namespace win_framewrk {
 
         return m_surface_ptr;
     }
-    
+
+    const SDL_Window *Window::GetSDLWindowHandle() const noexcept {
+        return m_window_ptr.get();
+    }
+
+    SDL_Window *Window::GetSDLWindowHandle() noexcept {
+        return m_window_ptr.get();
+    }
+
     void Window::SDLDeinitializer::operator()(bool *is_sdl_initialized_ptr) const {
         LOG_WIN_INFO(__FUNCTION__);
         

@@ -97,6 +97,9 @@ namespace win_framewrk {
 
         const SDL_Surface* GetSDLSurfaceHandle() const noexcept;
         SDL_Surface* GetSDLSurfaceHandle() noexcept;
+
+        const SDL_Window* GetSDLWindowHandle() const noexcept;
+        SDL_Window* GetSDLWindowHandle() noexcept;
     #pragma endregion getters-setters
 
     private:

@@ -6,7 +6,7 @@
 #include <string>
 #include <chrono>
 
-namespace app {
+namespace raytracing {
     class Application {
     public:
         Application(const std::string& title, std::uint32_t width, std::uint32_t height);

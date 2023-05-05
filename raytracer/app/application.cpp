@@ -30,7 +30,7 @@ static void _VertexShader(gfx::Triangle& triangle, const math::Quaternion& q) no
     triangle[2].position = triangle[2].position * q;
 }
 
-namespace app {
+namespace raytracing {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height)
         : m_window(win_framewrk::Window::Get()), m_renderer(), m_scene(), 
             m_camera(math::vec3f(0.0f), math::vec3f(0.0f, 0.0f, -5.0f), math::VECTOR_UP, 90.0f, (float)width / height),

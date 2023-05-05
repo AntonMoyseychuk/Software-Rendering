@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 
 set(DEPENDENCIES_DIR "${CMAKE_SOURCE_DIR}/dependencies")
+
 set(SDL_DIR "${DEPENDENCIES_DIR}/SDL")
 
 set(UTILS_DIR "${CMAKE_SOURCE_DIR}/utils")
@@ -9,4 +10,4 @@ set(WINDOW_DIR "${UTILS_DIR}/window")
 set(THREAD_POOL_DIR "${UTILS_DIR}/thread_pool")
 
 add_subdirectory(rasterizer)
-add_subdirectory(raytracer)
+# add_subdirectory(raytracer)
