@@ -183,6 +183,7 @@ namespace win_framewrk {
 
         LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
         LOG_SDL_ERROR(SDL_UpdateWindowSurface(m_window_ptr.get()) == 0, SDL_GetError());
+        memset(m_surface_ptr->pixels, 0, sizeof(uint32_t) * m_surface_ptr->w * m_surface_ptr->h);
     }
 
     void Window::PollEvent() noexcept {

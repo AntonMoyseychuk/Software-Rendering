@@ -40,12 +40,21 @@ namespace math {
         }
     }
 
+    template<typename Type1, typename Type2>
+    inline constexpr bool IsTendsTo(Type1 value, Type2 limit) noexcept {
+        static_assert(std::is_arithmetic_v<Type1>, "template<typename Type1, typename Type2>"
+            "inline constexpr bool IsTendsTo(Type1 value, Type2 limit) noexcept: Type1 must be an arithmetic"
+        );
+        static_assert(std::is_arithmetic_v<Type2>, "template<typename Type1, typename Type2>"
+            "inline constexpr bool IsTendsTo(Type1 value, Type2 limit) noexcept: Type2 must be an arithmetic"
+        );
+
+        return Abs(limit - value) <= MATH_EPSILON;
+    }
+
     template<typename Type>
     inline constexpr bool IsTendsTo(Type value, Type limit) noexcept {
-        static_assert(std::is_arithmetic_v<Type>, "template<typename Type>"
-            "inline constexpr bool IsTendsTo(Type value, Type limit) noexcept: Type must be an arithmetic"
-        );
-        return Abs(limit - value) <= MATH_EPSILON;
+        return IsTendsTo(value, limit);
     }
 
     template <typename Type>
