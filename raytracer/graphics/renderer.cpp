@@ -41,11 +41,11 @@ namespace gfx {
         }
     }
 
-    const std::vector<std::uint32_t> &Renderer::Render(const gfx::Scene &scene, const Camera& camera) noexcept {
+    const std::vector<std::uint32_t> &Renderer::Render(const gfx::Scene &scene) noexcept {
         const auto antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
         m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y); // Must be here!!!
         
-        const auto& rays = camera.GenerateRays();
+        const auto& rays = scene.GetCamera()->GenerateRays();
         const auto step = static_cast<std::uint32_t>(m_antialiasing_level);
         for (std::uint32_t i = 0; i < antialiasing_frame_size.y; i += step) {
             m_thread_pool.AddTask(&Renderer::_TreadTileRenderFunc, this, 
@@ -107,18 +107,6 @@ namespace gfx {
         }
 
         return Color::BLACK;
-
-        // const auto local_color = closest_intersection->material.color * sum_intensity;
-        // 
-        // const auto& reflective_index = closest_intersection->material.reflective_index;
-        // if (recursion_depth == 0 || reflective_index < math::MATH_EPSILON) {
-        //     return local_color;
-        // }
-        // 
-        // const auto reflected_ray_dir = math::Reflect(closest_intersection->casted_ray.direction, closest_intersection->normal);
-        // const auto reflected_ray = Ray(closest_intersection->point, reflected_ray_dir);
-        // 
-        // return local_color * (1.0f - reflective_index) + _PixelShader(reflected_ray, scene, recursion_depth - 1) * reflective_index;
     }
 
     void Renderer::SetAntialiasingLevel(AntialiasingLevel level) noexcept {

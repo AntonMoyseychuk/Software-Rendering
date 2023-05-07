@@ -65,29 +65,6 @@ static void DrawWireframeTriangle(const math::vec2i& _v0, const math::vec2i& _v1
     DrawLine(_v2, _v0, color);
 }
 
-static void DrawFilledTriangle(const math::vec2i& _v0, const math::vec2i& _v1, const math::vec2i& _v2, const Color& color) noexcept {
-    auto v0 = _v0;
-    auto v1 = _v1;
-    auto v2 = _v2;
-
-    if (v0.y > v1.y) {
-        std::swap(v0, v1);
-    }
-    if (v0.y > v2.y) {
-        std::swap(v0, v2);
-    }
-    if (v1.y > v2.y) {
-        std::swap(v1, v2);
-    }
-
-    std::vector<int32_t> x01, x12, x02;
-    Interpolate(v0.y, v0.x, v1.y, v1.x, x01);
-    Interpolate(v1.y, v1.x, v2.y, v2.x, x12);
-    Interpolate(v0.y, v0.x, v2.y, v2.x, x02);
-
-    
-}
-
 namespace rasterization {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height, size_t fps_lock)
         : m_window(win_framewrk::Window::Get()), m_last_frame(std::chrono::steady_clock::now()), m_fps_lock(1.0f / (fps_lock > 0 ? fps_lock : 1))
@@ -120,8 +97,7 @@ namespace rasterization {
                 v2.y += 200 * dt;
             }
 
-            memset(m_window->GetSDLSurfaceHandle()->pixels, 255, m_window->GetHeight() * m_window->GetWidth() * sizeof(uint32_t));
-            DrawWireframeTriangle(v0, v1, v2, Color());
+            DrawWireframeTriangle(v0, v1, v2, Color{ 1.0f, 0.0f, 0.0f, 1.0f });
             
             m_window->PresentPixelBuffer();          
         }

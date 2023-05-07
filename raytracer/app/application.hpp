@@ -21,7 +21,6 @@ namespace raytracing {
         win_framewrk::Window* m_window;
         gfx::Renderer m_renderer;
         gfx::Scene m_scene;
-        gfx::Camera m_camera;
 
         std::chrono::steady_clock::time_point m_last_frame;
     };

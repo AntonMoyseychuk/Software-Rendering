@@ -1,6 +1,5 @@
 #pragma once
 #include "graphics/scene.hpp"
-#include "graphics/camera.hpp"
 
 #include "thread_pool/thread_pool.hpp"
 
@@ -14,7 +13,7 @@ namespace gfx {
     public:
         Renderer() = default;
 
-        const std::vector<std::uint32_t>& Render(const Scene& scene, const Camera& camera) noexcept;
+        const std::vector<std::uint32_t>& Render(const Scene& scene) noexcept;
 
     private:
         Color _PixelShader(const Ray& ray, const Scene& scene, std::size_t recursion_depth) const noexcept;

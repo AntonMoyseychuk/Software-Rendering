@@ -33,7 +33,7 @@ static void _VertexShader(gfx::Triangle& triangle, const math::Quaternion& q) no
 namespace raytracing {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height)
         : m_window(win_framewrk::Window::Get()), m_renderer(), m_scene(), 
-            m_camera(math::vec3f(0.0f), math::vec3f(0.0f, 0.0f, -5.0f), math::VECTOR_UP, 90.0f, (float)width / height),
+            // m_camera(math::vec3f(0.0f), math::vec3f(0.0f, 0.0f, -5.0f), math::VECTOR_UP, 90.0f, (float)width / height),
                 m_last_frame(std::chrono::steady_clock::now())
     {
         using namespace math;
@@ -44,48 +44,10 @@ namespace raytracing {
         m_renderer.SetAntialiasingLevel(gfx::AntialiasingLevel::X2);
         m_renderer.SetReflectionDepth(3);
 
-        m_camera.SetViewportSize(vec2ui(width, height) * static_cast<float>(m_renderer.GetAntialiasingLevel()));
+        auto camera = std::make_shared<gfx::Camera>(math::vec3f(0.0f), math::vec3f(0.0f, 0.0f, -5.0f), math::VECTOR_UP, 90.0f, (float)width / height);
+        camera->SetViewportSize(vec2ui(width, height) * static_cast<float>(m_renderer.GetAntialiasingLevel()));
 
-        // auto ground_material = std::make_shared<gfx::Diffuse>(gfx::Color(255 / 2.0f));
-        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, -1000.0f, 0.0f), 1000.0f, ground_material));
-        //
-        // for (int a = -11; a < 11; a++) {
-        //     for (int b = -11; b < 11; b++) {
-        //         auto choose_mat = math::Random(0.0f, 1.0f);
-        //         math::vec3f center(a + 0.9 * math::Random(0.0f, 1.0f), 0.2, b + 0.9 * math::Random(0.0f, 1.0f));
-        //
-        //         if ((center - math::vec3f(4.0f, 0.2f, 0.0f)).Length() > 0.9f) {
-        //             std::shared_ptr<gfx::IMaterial> sphere_material;
-        //
-        //             if (choose_mat < 0.8) {
-        //                 // diffuse
-        //                 auto albedo = gfx::Color(math::Random(0, 255), math::Random(0, 255), math::Random(0, 255)) *
-        //                     gfx::Color(math::Random(0, 255), math::Random(0, 255), math::Random(0, 255));
-        //                 sphere_material = std::make_shared<gfx::Diffuse>(albedo);
-        //                 m_scene.AddDrawble(std::make_shared<gfx::Sphere>(center, 0.2f, sphere_material));
-        //             } else if (choose_mat < 0.95) {
-        //                 // metal
-        //                 auto albedo = gfx::Color(math::Random(127, 255), math::Random(127, 255), math::Random(127, 255));
-        //                 auto fuzz = math::Random(0.0f, 0.5f);
-        //                 sphere_material = std::make_shared<gfx::Metal>(albedo, fuzz);
-        //                 m_scene.AddDrawble(std::make_shared<gfx::Sphere>(center, 0.2f, sphere_material));
-        //             } else {
-        //                 // glass
-        //                 sphere_material = std::make_shared<gfx::Dielectric>(1.5f);
-        //                 m_scene.AddDrawble(std::make_shared<gfx::Sphere>(center, 0.2f, sphere_material));
-        //             }
-        //         }
-        //     }
-        // }
-        //
-        // auto material1 = std::make_shared<gfx::Dielectric>(1.5f);
-        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(0.0f, 1.0f, 0.0f), 1.0f, material1));
-        //
-        // auto material2 = std::make_shared<gfx::Diffuse>(gfx::Color(102, 51, 25));
-        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(-2.0f, 1.0f, 0.0f), 1.0f, material2));
-        //
-        // auto material3 = std::make_shared<gfx::Metal>(gfx::Color(178, 153, 127), 0.0f);
-        // m_scene.AddDrawble(std::make_shared<gfx::Sphere>(math::vec3f(2.0f, 1.0f, 0.0f), 1.0f, material3));
+        m_scene.SetCamera(camera);
 
         m_scene.AddDrawble(std::make_shared<gfx::Triangle>(
                 gfx::Vertex(vec3f(-4.0f, -3.0f, -9.0f)), 
@@ -123,6 +85,8 @@ namespace raytracing {
     void Application::Run() noexcept {
         math::vec2ui last_window_size;
 
+        auto& camera = m_scene.GetCamera();
+
         while (m_window->IsOpen()) {
             const auto curr_frame = std::chrono::steady_clock::now();
             const auto dt = std::chrono::duration<float>(curr_frame - m_last_frame).count();
@@ -134,17 +98,17 @@ namespace raytracing {
             if (last_window_size != curr_window_size) {
                 m_renderer.SetOutputFrameSize(curr_window_size);
                 
-                m_camera.SetAspectRatio((float)curr_window_size.x / curr_window_size.y);
-                m_camera.SetViewportSize(curr_window_size * static_cast<float>(m_renderer.GetAntialiasingLevel()));
+                camera->SetAspectRatio((float)curr_window_size.x / curr_window_size.y);
+                camera->SetViewportSize(curr_window_size * static_cast<float>(m_renderer.GetAntialiasingLevel()));
 
                 last_window_size = curr_window_size;
             }
 
             // this->_UpdateLight(m_scene.GetLights().begin()->get(), dt);
             this->_UpdateDrawable(m_scene.GetDrawables().begin()->get(), dt);
-            this->_UpdateCamera(&m_camera, dt);
+            this->_UpdateCamera(camera.get(), dt);
             
-            const auto& frame = m_renderer.Render(m_scene, m_camera);
+            const auto& frame = m_renderer.Render(m_scene);
             m_window->FillPixelBuffer(frame);
             m_window->PresentPixelBuffer();          
             

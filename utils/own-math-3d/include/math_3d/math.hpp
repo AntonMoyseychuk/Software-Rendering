@@ -52,11 +52,6 @@ namespace math {
         return Abs(limit - value) <= MATH_EPSILON;
     }
 
-    template<typename Type>
-    inline constexpr bool IsTendsTo(Type value, Type limit) noexcept {
-        return IsTendsTo(value, limit);
-    }
-
     template <typename Type>
     inline constexpr Type Clamp(Type value, Type min, Type max) noexcept {
         static_assert(std::is_arithmetic_v<Type>, "template <typename Type>"

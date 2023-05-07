@@ -25,4 +25,16 @@ namespace gfx {
     std::list<std::shared_ptr<gfx::ILight>> &Scene::GetLights() noexcept {
         return m_lights;
     }
+    
+    void Scene::SetCamera(std::shared_ptr<Camera> camera) noexcept {
+        m_camera_ptr = camera;
+    }
+    
+    const std::shared_ptr<Camera>& Scene::GetCamera() const noexcept {
+        return m_camera_ptr;
+    }
+    
+    std::shared_ptr<Camera>& Scene::GetCamera() noexcept {
+        return m_camera_ptr;
+    }
 }
