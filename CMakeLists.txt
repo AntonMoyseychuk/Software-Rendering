@@ -9,5 +9,5 @@ set(MATH_DIR "${UTILS_DIR}/own-math-3d")
 set(WINDOW_DIR "${UTILS_DIR}/window")
 set(THREAD_POOL_DIR "${UTILS_DIR}/thread_pool")
 
-# add_subdirectory(rasterizer)
-add_subdirectory(raytracer)
+add_subdirectory(rasterizer)
+# add_subdirectory(raytracer)

@@ -14,15 +14,9 @@ namespace rasterization {
 
     private:
         float _LockFPS() const noexcept;
-    //     void _UpdateCamera(gfx::Camera* camera, float dt) noexcept;
-    //     void _UpdateDrawable(gfx::IDrawable* drawable, float dt) noexcept;
-    //     void _UpdateLight(gfx::ILight* light, float dt) noexcept;
 
     private:
         win_framewrk::Window* m_window;
-        // gfx::Renderer m_renderer;
-        // gfx::Scene m_scene;
-        // gfx::Camera m_camera;
 
         mutable std::chrono::steady_clock::time_point m_last_frame;
         mutable float m_fps_lock;
