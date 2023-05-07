@@ -3,7 +3,7 @@
 
 #include <memory>
 
-namespace gfx {
+namespace raytracing::gfx {
     struct Vertex {
         Vertex() = default;
         Vertex(const math::vec3f& _position)

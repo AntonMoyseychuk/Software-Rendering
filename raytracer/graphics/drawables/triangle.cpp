@@ -1,6 +1,6 @@
 #include "triangle.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     Triangle::Triangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, std::shared_ptr<IMaterial> material)
         : IDrawable(math::vec3f(), material), m_v0(v0), m_v1(v1), m_v2(v2)
     {

@@ -7,7 +7,7 @@
 #include <list>
 #include <memory>
 
-namespace gfx {
+namespace raytracing::gfx {
     class Scene {
     public:
         Scene() = default;

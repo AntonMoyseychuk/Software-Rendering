@@ -4,7 +4,7 @@
 
 #include <memory>
 
-namespace gfx {
+namespace raytracing::gfx {
     struct IntersectionData {
         IntersectionData() = default;
         IntersectionData(const math::vec3f& point, const math::vec3f& normal, float distance, const Ray& casted_ray, std::shared_ptr<IMaterial> material);

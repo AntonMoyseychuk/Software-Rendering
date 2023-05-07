@@ -1,7 +1,7 @@
 #include "sphere.hpp"
 #include "math_3d/math.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     Sphere::Sphere(const math::vec3f& position, float r, std::shared_ptr<IMaterial> material)
         : IDrawable(position, material), m_radius(r)
     {

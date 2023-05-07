@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-namespace gfx {
+namespace raytracing::gfx {
     void Renderer::_TreadTileRenderFunc(std::uint32_t x0, std::uint32_t y0, std::uint32_t x_end, std::uint32_t y_end, 
         const std::vector<gfx::Ray>& rays, const gfx::Scene& scene) noexcept {
         const auto length = x_end - x0;

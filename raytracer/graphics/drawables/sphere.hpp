@@ -1,7 +1,7 @@
 #pragma once
 #include "drawable.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     class Sphere : public IDrawable {
     public:
         Sphere() = default;

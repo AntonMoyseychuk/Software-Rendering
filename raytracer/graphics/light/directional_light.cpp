@@ -3,7 +3,7 @@
 
 #include "graphics/materials/glaring_material.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     DirectionalLigth::DirectionalLigth(const math::vec3f &direction, Color color, float intensity)
         : ILight(color, intensity), m_direction(math::Normalize(direction)) 
     {

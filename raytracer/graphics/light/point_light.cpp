@@ -4,7 +4,7 @@
 
 #include "graphics/materials/glaring_material.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     PointLigth::PointLigth(const math::vec3f& _position, Color _color, float _intensity)
         : ILight(_color, _intensity), position(_position)
     {

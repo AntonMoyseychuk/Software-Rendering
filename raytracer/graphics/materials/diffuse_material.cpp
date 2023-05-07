@@ -1,7 +1,7 @@
 #include "diffuse_material.hpp"
 #include "graphics/intersection_data.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     Diffuse::Diffuse(Color color)
         : IColoredMaterial(color)
     {

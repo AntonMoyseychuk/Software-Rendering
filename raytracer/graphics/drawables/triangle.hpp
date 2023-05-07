@@ -3,7 +3,7 @@
 #include "graphics/vertex.hpp"
 
 
-namespace gfx {
+namespace raytracing::gfx {
     class Triangle : public IDrawable {
     public:
         Triangle() = default;

@@ -2,7 +2,7 @@
 #include "light.hpp"
 #include "math_3d/matrix_operations.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     class DirectionalLigth : public ILight {
     public:
         DirectionalLigth() = default;

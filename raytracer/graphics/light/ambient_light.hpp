@@ -1,7 +1,7 @@
 #pragma once
 #include "light.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     class AmbientLight : public ILight {
     public:
         AmbientLight() = default;

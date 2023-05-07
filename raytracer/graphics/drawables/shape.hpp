@@ -1,7 +1,7 @@
 #pragma once
 #include "math_3d/vector.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     class IShape {
     public:
         IShape() = default;

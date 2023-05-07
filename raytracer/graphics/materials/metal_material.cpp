@@ -3,7 +3,7 @@
 #include "graphics/intersection_data.hpp"
 #include "math_3d/vector_operations.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     Metal::Metal(Color _color, float _reflection_index, float _specular_index)
         : IColoredMaterial(_color), IGlaringMaterial(_specular_index), reflection_index(_reflection_index < 1.0f ? _reflection_index : 1.0f)
     {

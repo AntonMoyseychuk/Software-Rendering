@@ -1,7 +1,7 @@
 #pragma once
 #include "material.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     struct Dielectric : public IMaterial {
         Dielectric() = default;
         Dielectric(float refraction_index);

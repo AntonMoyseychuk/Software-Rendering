@@ -3,7 +3,7 @@
 #include "graphics/color.hpp"
 #include "graphics/intersection_data.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     Dielectric::Dielectric(float _refraction_index)
         : IMaterial(), refraction_index(_refraction_index >= 0.0f ? _refraction_index : 0.0f)
     {

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace gfx {
+namespace raytracing::gfx {
     Camera::Camera(const math::vec3f &position, const math::vec3f &look_at, const math::vec3f &up, float fov_degrees, float aspect_ratio)
         : m_position(position),
             m_forward(math::Normalize(look_at - position)),

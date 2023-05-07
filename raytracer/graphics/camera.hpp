@@ -2,7 +2,7 @@
 #include "ray.hpp"
 #include "math_3d/math.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     class Camera {
     public:
         Camera(const math::vec3f& position, const math::vec3f& look_at, const math::vec3f& up, float fov_degrees, float aspect_ratio);

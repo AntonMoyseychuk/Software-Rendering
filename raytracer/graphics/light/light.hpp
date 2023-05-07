@@ -6,7 +6,7 @@
 #include <memory>
 #include <list>
 
-namespace gfx {
+namespace raytracing::gfx {
     struct ILight {
         ILight() = default;
         ILight(Color _color, float intensity) : color(_color), m_intensity(intensity < 0.0f ? 0.0f : intensity) {}

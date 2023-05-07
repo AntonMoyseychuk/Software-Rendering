@@ -1,7 +1,7 @@
 #pragma once
 #include "colored_material.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     struct Diffuse : public IColoredMaterial {
         Diffuse() = default;
         Diffuse(Color color);

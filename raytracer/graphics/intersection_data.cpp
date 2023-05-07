@@ -1,6 +1,6 @@
 #include "intersection_data.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     IntersectionData::IntersectionData(
         const math::vec3f& _point, 
         const math::vec3f& _normal, 

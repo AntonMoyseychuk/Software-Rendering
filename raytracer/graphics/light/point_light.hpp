@@ -1,7 +1,7 @@
 #pragma once
 #include "light.hpp"
 
-namespace gfx {
+namespace raytracing::gfx {
     class PointLigth : public ILight {
     public:
         PointLigth() = default;

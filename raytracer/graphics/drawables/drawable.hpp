@@ -11,7 +11,7 @@
 #include <vector>
 #include <memory>
 
-namespace gfx {
+namespace raytracing::gfx {
     class IDrawable : public IShape {
     public:
         IDrawable() = default;
