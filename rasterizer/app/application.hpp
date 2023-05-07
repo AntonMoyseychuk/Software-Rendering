@@ -1,5 +1,6 @@
 #pragma once
 #include "window/window.hpp"
+#include "graphics/rasterizer.hpp"
 
 #include <string>
 #include <chrono>
@@ -17,6 +18,7 @@ namespace rasterization {
 
     private:
         win_framewrk::Window* m_window;
+        gfx::Rasterizer m_rasterizer;
 
         mutable std::chrono::steady_clock::time_point m_last_frame;
         mutable float m_fps_lock;

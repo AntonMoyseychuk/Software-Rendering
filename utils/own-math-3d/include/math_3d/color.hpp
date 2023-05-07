@@ -1,7 +1,7 @@
 #pragma once
-#include "math_3d/math.hpp"
+#include "math.hpp"
 
-namespace raytracing::gfx {
+namespace math {
     struct Color {
         Color() = default;
         explicit Color(std::uint8_t value, std::uint8_t a = 255u);

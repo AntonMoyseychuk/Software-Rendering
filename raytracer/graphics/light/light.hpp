@@ -1,5 +1,5 @@
 #pragma once
-#include "graphics/color.hpp"
+#include "math_3d/color.hpp"
 #include "graphics/drawables/drawable.hpp"
 #include "graphics/intersection_data.hpp"
 
@@ -9,7 +9,7 @@
 namespace raytracing::gfx {
     struct ILight {
         ILight() = default;
-        ILight(Color _color, float intensity) : color(_color), m_intensity(intensity < 0.0f ? 0.0f : intensity) {}
+        ILight(math::Color _color, float intensity) : color(_color), m_intensity(intensity < 0.0f ? 0.0f : intensity) {}
         virtual ~ILight() {}
 
         virtual bool ComputeIllumination(const IntersectionData& int_data, const std::list<std::shared_ptr<IDrawable>>& drawables,
@@ -25,6 +25,6 @@ namespace raytracing::gfx {
         float m_intensity;
     
     public:
-        Color color;
+        math::Color color;
     };
 }

@@ -6,7 +6,7 @@ namespace raytracing::gfx {
         Dielectric() = default;
         Dielectric(float refraction_index);
 
-        bool Scatter(const IntersectionData& int_data, Color& attenuation, Ray& scattered_ray) const noexcept override;
+        bool Scatter(const IntersectionData& int_data, math::Color& attenuation, Ray& scattered_ray) const noexcept override;
 
     protected:
         static float _Reflectance(float cosine, float refraction_ratio) noexcept;

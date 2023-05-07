@@ -9,6 +9,8 @@ namespace rasterization::gfx {
         Model(const char* filepath);
 
         const std::vector<math::vec3f>& GetVertexes() const noexcept { return m_verts; };
+        std::vector<math::vec3f>& GetVertexes() noexcept { return m_verts; };
+        
         const std::vector<size_t>& GetIndexes() const noexcept { return m_indexes; };
 
     private:

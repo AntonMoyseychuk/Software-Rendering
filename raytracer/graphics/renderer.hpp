@@ -16,7 +16,7 @@ namespace raytracing::gfx {
         const std::vector<std::uint32_t>& Render(const Scene& scene) noexcept;
 
     private:
-        Color _PixelShader(const Ray& ray, const Scene& scene, std::size_t recursion_depth) const noexcept;
+        math::Color _PixelShader(const Ray& ray, const Scene& scene, std::size_t recursion_depth) const noexcept;
 
     private:
         void _TreadTileRenderFunc(
@@ -39,8 +39,8 @@ namespace raytracing::gfx {
         void SetOutputFrameSize(const math::vec2ui& size) noexcept;
         const math::vec2ui& GetOutputFrameSize() const noexcept;
 
-        void SetBackgroundColor(Color color) noexcept;
-        Color GetBackgroundColor() const noexcept;
+        void SetBackgroundColor(math::Color color) noexcept;
+        math::Color GetBackgroundColor() const noexcept;
 
         void SetReflectionDepth(std::size_t depth) noexcept;
         std::size_t GetReflectionDepth() const noexcept;
@@ -53,7 +53,7 @@ namespace raytracing::gfx {
         AntialiasingLevel m_antialiasing_level = AntialiasingLevel::NONE;
         std::size_t m_reflection_depth = 0;
         
-        Color m_background = Color::BLACK;
+        math::Color m_background = math::Color::BLACK;
 
         util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
     };

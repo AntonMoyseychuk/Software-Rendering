@@ -1,8 +1,8 @@
-#include "color.hpp"
+#include "../include/math_3d/color.hpp"
 
 #include <algorithm>
 
-namespace raytracing::gfx {
+namespace math {
     const Color Color::RED(255u, 0u, 0u);
     const Color Color::GREEN(0u, 128u, 0u);
     const Color Color::BLUE(0u, 0u, 255u);

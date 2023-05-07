@@ -1,6 +1,6 @@
 #include "dielectric_material.hpp"
 
-#include "graphics/color.hpp"
+#include "math_3d/color.hpp"
 #include "graphics/intersection_data.hpp"
 
 namespace raytracing::gfx {
@@ -9,7 +9,7 @@ namespace raytracing::gfx {
     {
     }
     
-    bool Dielectric::Scatter(const IntersectionData &int_data, Color &attenuation, Ray &scattered_ray) const noexcept {
+    bool Dielectric::Scatter(const IntersectionData &int_data, math::Color &attenuation, Ray &scattered_ray) const noexcept {
         const float refraction_ratio = int_data.is_front_face ? (1.0f / refraction_index) : refraction_index;
 
         float cos_theta = std::fmin(math::Dot(-int_data.casted_ray.direction, int_data.normal), 1.0f);
@@ -21,7 +21,7 @@ namespace raytracing::gfx {
             math::Refract(int_data.casted_ray.direction, int_data.normal, refraction_ratio);
 
         scattered_ray = Ray(int_data.point, direction);
-        attenuation = Color::WHITE;
+        attenuation = math::Color::WHITE;
         return true;
     }
     

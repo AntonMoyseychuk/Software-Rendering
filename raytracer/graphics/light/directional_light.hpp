@@ -6,7 +6,7 @@ namespace raytracing::gfx {
     class DirectionalLigth : public ILight {
     public:
         DirectionalLigth() = default;
-        DirectionalLigth(const math::vec3f& direction, Color color, float intensity);
+        DirectionalLigth(const math::vec3f& direction, math::Color color, float intensity);
 
         bool ComputeIllumination(const IntersectionData& int_data, const std::list<std::shared_ptr<IDrawable>>& drawables,
             float& out_intensity) const noexcept override;

@@ -1,7 +1,7 @@
 #include "renderer.hpp"
-#include "color.hpp"
 
 #include "math_3d/math.hpp"
+#include "math_3d/color.hpp"
 
 #include "graphics/materials/colored_material.hpp"
 
@@ -30,14 +30,14 @@ namespace raytracing::gfx {
             math::vec4f final_color(0.0f);
             for (std::size_t y = 0; y < tile_size; ++y) {
                 for (std::size_t x = 0; x < tile_size; ++x) {
-                    final_color += gfx::ColorToVector<float>(
-                        gfx::UInt32ToColor(m_frame[(raw_left_up_y + y) * raw_size + (tile_start + x)])
+                    final_color += math::ColorToVector<float>(
+                        math::UInt32ToColor(m_frame[(raw_left_up_y + y) * raw_size + (tile_start + x)])
                     );
                 }
             }
 
             m_frame[(tile_start / tile_size) + (raw_left_up_y / tile_size * m_frame_size.x)] = 
-                    gfx::VectorToColor(final_color / tile_pixel_num).rgba;
+                    math::VectorToColor(final_color / tile_pixel_num).rgba;
         }
     }
 
@@ -70,7 +70,7 @@ namespace raytracing::gfx {
         return m_frame;
     }
     
-    Color Renderer::_PixelShader(const Ray &ray, const Scene &scene, std::size_t recursion_depth) const noexcept {
+    math::Color Renderer::_PixelShader(const Ray &ray, const Scene &scene, std::size_t recursion_depth) const noexcept {
         std::optional<IntersectionData> closest_intersection;
         std::optional<IntersectionData> curr_intersection;
             
@@ -89,7 +89,7 @@ namespace raytracing::gfx {
         }
         
         Ray scattered;
-        Color attenuation;
+        math::Color attenuation;
         if (dynamic_cast<IColoredMaterial*>(closest_intersection->material.get())) {
             float sum_intensity = 0.0f;
             for (const auto& light : scene.GetLights()) {
@@ -106,7 +106,7 @@ namespace raytracing::gfx {
             }
         }
 
-        return Color::BLACK;
+        return math::Color::BLACK;
     }
 
     void Renderer::SetAntialiasingLevel(AntialiasingLevel level) noexcept {
@@ -133,11 +133,11 @@ namespace raytracing::gfx {
         return m_frame_size;
     }
 
-    void Renderer::SetBackgroundColor(Color color) noexcept {
+    void Renderer::SetBackgroundColor(math::Color color) noexcept {
         m_background = color;
     }
 
-    Color Renderer::GetBackgroundColor() const noexcept {
+    math::Color Renderer::GetBackgroundColor() const noexcept {
         return m_background;
     }
 

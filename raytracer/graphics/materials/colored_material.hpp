@@ -4,8 +4,8 @@
 namespace raytracing::gfx {
     struct IColoredMaterial : virtual public IMaterial {
         IColoredMaterial() = default;
-        IColoredMaterial(Color _color) : color(_color) {}
+        IColoredMaterial(math::Color _color) : color(_color) {}
 
-        Color color;
+        math::Color color;
     };
 }
