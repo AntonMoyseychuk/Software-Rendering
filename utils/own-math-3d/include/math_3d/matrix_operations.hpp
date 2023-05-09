@@ -7,11 +7,11 @@
 namespace math {
     template <typename Type, std::size_t Dimension>
     Mat<Type, Dimension> Transpose(const Mat<Type, Dimension>& mat) noexcept {
-        auto temp = mat;
+        Mat<Type, Dimension> temp;
 
         for (std::size_t i = 0; i < temp.dimension; ++i) {
-            for (std::size_t j = i; j < temp.dimension; ++j) {
-                if (i != j) std::swap(temp[j][i], temp[i][j]);
+            for (std::size_t j = 0; j < temp.dimension; ++j) {
+                temp[j][i] = mat[i][j];
             }
         }
 

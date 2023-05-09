@@ -22,6 +22,11 @@ namespace rasterization {
         using namespace win_framewrk;
 
         gfx::Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
+        auto& model_verts = model.GetVertexes();
+
+        for (size_t i = 0; i < model_verts.size(); ++i) {
+            model_verts[i] = model_verts[i] * Scale(Identity<mat4f>(), vec3f(0.75f));
+        }
 
         while (m_window->IsOpen()) {
             m_window->PollEvent();
@@ -29,21 +34,29 @@ namespace rasterization {
             const auto dt = _LockFPS();
             std::cout << "FPS: " << std::to_string(1.0f / dt) << std::endl;
 
-            const static float angle = ToRadians(dt);
+            const float angle = ToRadians(dt) * 10.0f;
 
             if (m_window->IsKeyPressed(Key::D)) {
-                static math::Quaternion q_right(cosf(angle), 0.0f, sinf(angle), 0.0f);
-                for (auto& vert : model.GetVertexes()) {
-                    vert = vert * q_right;
+                for (size_t i = 0; i < model_verts.size(); ++i) {
+                    model_verts[i] = model_verts[i] * Quaternion(cosf(angle), 0.0f, sinf(angle), 0.0f);
                 }
             } else if (m_window->IsKeyPressed(Key::A)) {
-                static math::Quaternion q_left(cosf(-angle), 0.0f, sinf(-angle), 0.0f);
-                for (auto& vert : model.GetVertexes()) {
-                    vert = vert * q_left;
+                for (size_t i = 0; i < model_verts.size(); ++i) {
+                    model_verts[i] = model_verts[i] * Quaternion(cosf(-angle), 0.0f, sinf(-angle), 0.0f);
                 }
             }
 
-            m_rasterizer.Render(gfx::RenderMode::LINES, model, math::Color::RED);
+            if (m_window->IsKeyPressed(Key::W)) {
+                for (size_t i = 0; i < model_verts.size(); ++i) {
+                    model_verts[i] = model_verts[i] * Quaternion(cosf(-angle), sinf(-angle), 0.0f, 0.0f);
+                }
+            } else if (m_window->IsKeyPressed(Key::S)) {
+                for (size_t i = 0; i < model_verts.size(); ++i) {
+                    model_verts[i] = model_verts[i] * Quaternion(cosf(angle), sinf(angle), 0.0f, 0.0f);
+                }
+            }
+
+            m_rasterizer.Render(gfx::RenderMode::LINES, model, math::Color::WHITE);
 
             m_window->PresentPixelBuffer();          
         }

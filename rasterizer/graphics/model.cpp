@@ -42,7 +42,5 @@ namespace rasterization::gfx {
                 }
             }
         }
-
-        std::cout << filepath << ":\nv: " << m_verts.size() << " idx: " << m_indexes.size() << '\n';
     }
 }
