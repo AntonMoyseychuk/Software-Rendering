@@ -92,13 +92,13 @@ namespace math {
         }
 
         Mat operator*(const Mat &m) const noexcept {
-            Mat temp, transpoced = Transpose(m);
+            Mat temp, transposed = Transpose(m);
 
             for (std::size_t i = 0; i < dimension; ++i) {
                 for (std::size_t j = 0; j < dimension; ++j) {
                     temp[i][j] = 0.0f;
                     for (std::size_t k = 0; k < dimension; ++k) {
-                        temp[i][j] += m_solid_array[i][k] * transpoced.m_solid_array[k][j];
+                        temp[i][j] += m_solid_array[i][k] * transposed.m_solid_array[k][j];
                     }
                 }
             }
@@ -241,13 +241,13 @@ namespace math {
         }
 
         Mat operator*(const Mat &m) const noexcept {
-            Mat temp, transpoced = Transpose(m);
+            Mat temp, transposed = Transpose(m);
 
             for (std::size_t i = 0; i < dimension; ++i) {
                 for (std::size_t j = 0; j < dimension; ++j) {
                     temp[i][j] = 0.0f;
                     for (std::size_t k = 0; k < dimension; ++k) {
-                        temp[i][j] += m_solid_array[i][k] * transpoced.m_solid_array[k][j];
+                        temp[i][j] += m_solid_array[i][k] * transposed.m_solid_array[k][j];
                     }
                 }
             }
