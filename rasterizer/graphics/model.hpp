@@ -3,18 +3,13 @@
 #include <vector>
 
 namespace rasterization::gfx {
-    class Model {
-    public:
+    struct Model {
         Model() = default;
         Model(const char* filepath);
 
-        const std::vector<math::vec3f>& GetVertexes() const noexcept { return m_verts; };
-        std::vector<math::vec3f>& GetVertexes() noexcept { return m_verts; };
-        
-        const std::vector<size_t>& GetIndexes() const noexcept { return m_indexes; };
+        void Load(const char* filepath) noexcept;
 
-    private:
-        std::vector<math::vec3f> m_verts;
-        std::vector<size_t> m_indexes;
+        std::vector<math::vec3f> vertexes;
+        std::vector<size_t> indexes;
     };
 }

@@ -147,8 +147,8 @@ namespace rasterization::gfx {
         auto indexes = m_ibos.at(ibo_id);
 
         // Vertex Shader
-        for (auto& vert : verts) {
-            vert = vert * math::Scale(math::Identity<math::mat4f>(), math::vec3f(0.75f));
+        for (size_t i = 0; i < verts.size(); ++i) {
+            verts[i] = verts[i] * math::Scale(math::Identity<math::mat4f>(), math::vec3f(0.75f));
         }
 
         // Pixel Shader

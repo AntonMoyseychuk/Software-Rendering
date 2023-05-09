@@ -25,11 +25,9 @@ namespace rasterization {
         size_t vbo, ibo;
         {
             Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
-            const auto& verts = model.GetVertexes();
-            const auto& inds = model.GetVertexes();
 
-            vbo = m_rasterizer.CreateBuffer(BufferType::VERTEX, verts.data(), verts.size() * sizeof(verts[0]));
-            ibo = m_rasterizer.CreateBuffer(BufferType::INDEX, inds.data(), inds.size() * sizeof(inds[0]));
+            vbo = m_rasterizer.CreateBuffer(BufferType::VERTEX, model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0]));
+            ibo = m_rasterizer.CreateBuffer(BufferType::INDEX, model.indexes.data(), model.indexes.size() * sizeof(model.indexes[0]));
         }
 
         while (m_window->IsOpen()) {

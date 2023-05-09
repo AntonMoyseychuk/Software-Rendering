@@ -8,6 +8,10 @@
 
 namespace rasterization::gfx {
     Model::Model(const char *filepath) {
+        Load(filepath);
+    }
+    
+    void Model::Load(const char *filepath) noexcept {
         std::ifstream file(filepath);
 
         if (!file.is_open()) {
@@ -28,7 +32,7 @@ namespace rasterization::gfx {
                 math::vec3f v;
 
                 ss >> key >> v.x >> v.y >> v.z;
-                m_verts.emplace_back(v);
+                vertexes.emplace_back(v);
             } else if (!str.compare(0, 2, "f ")) {
                 size_t index;
                 char slash;
@@ -37,7 +41,7 @@ namespace rasterization::gfx {
 
                 for (size_t i = 0; i < 3; ++i) {
                     ss >> index;
-                    m_indexes.emplace_back(index - 1);
+                    indexes.emplace_back(index - 1);
                     ss >> slash >> index >> slash >> index;
                 }
             }
