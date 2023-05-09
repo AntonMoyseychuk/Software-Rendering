@@ -103,7 +103,7 @@ namespace win_framewrk {
 
     void Window::_OnResize(std::uint32_t new_width, std::uint32_t new_height) noexcept {
         LOG_WIN_EVENT("SDL_WINDOWEVENT_RESIZED", 
-            "New size -> [" + std::to_string(new_width) + ", " + std::to_string(new_width) + "]");
+            "New size -> [" + std::to_string(new_width) + ", " + std::to_string(new_height) + "]");
             
         m_width = new_width;
         m_height = new_height;

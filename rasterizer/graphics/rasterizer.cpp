@@ -17,62 +17,55 @@ namespace rasterization::gfx {
         return m_window_ptr;
     }
 
-    size_t Rasterizer::AddVertexBuffer(const std::vector<math::vec3f> &vbo) noexcept {
-        size_t id;
-        do {
-            id = math::Random((size_t)0, SIZE_MAX);
-        } while (m_vbos.count(id) != 0);
-        
-        m_vbos[id] = vbo;
-        return id;
+    size_t Rasterizer::CreateBuffer(BufferType type, const void* buffer, size_t size) noexcept {
+        if (type == BufferType::VERTEX) {
+            return _CreateVertexBuffer(buffer, size);
+        } else if (type == BufferType::INDEX) {
+            return _CreateIndexBuffer(buffer, size / sizeof(size_t));
+        } else {
+            assert(false && "Invalid Buffer Type");
+        }
+
+        return 0;
     }
 
-    size_t Rasterizer::AddIndexBuffer(const std::vector<size_t> &ibo) noexcept {
-        size_t id;
-        do {
-            id = math::Random((size_t)0, SIZE_MAX);
-        } while (m_vbos.count(id) != 0);
-        
-        m_ibos[id] = ibo;
-        return id;
-    }
-
-    std::vector<math::vec3f>* Rasterizer::GetVertexBuffer(size_t id) noexcept {
-        return m_vbos.count(id) == 0 ? nullptr : &m_vbos[id];        
+    std::vector<math::vec3f>& Rasterizer::GetVertexBuffer(size_t id) noexcept {
+        return m_vbos.at(id);
     }
 
     void Rasterizer::_RenderPoint(const math::vec2i &_point, math::Color _color) const noexcept {
         m_window_ptr->SetPixelColor(_point.x, _point.y, _color.rgba);
     }
 
-    void Rasterizer::_Interpolate(int32_t i0, int32_t d0, int32_t i1, int32_t d1, std::vector<int32_t> &values) noexcept
-    {
-        if (i0 == i1) {
-            values.resize(1);
-            values[0] = d0;
-            return;
+    std::vector<int32_t> &Rasterizer::_Interpolate(int32_t _i0, int32_t _d0, int32_t _i1, int32_t _d1, std::vector<int32_t> &_values) noexcept {
+        if (_i0 == _i1) {
+            _values.resize(1);
+            _values[0] = _d0;
+            return _values;
         }
 
-        values.resize(i1 - i0 + 1);
+        _values.resize(_i1 - _i0 + 1);
         
-        const float a = static_cast<float>(d1 - d0) / (i1 - i0);
-        float d = d0;
-        for (int32_t i = 0; i <= i1 - i0; ++i, d += a) {
-            values[i] = d;
+        const float a = static_cast<float>(_d1 - _d0) / (_i1 - _i0);
+        for (int32_t i = 0; i <= _i1 - _i0; ++i) {
+            _values[i] = static_cast<int32_t>(_d0);
+            _d0 += a;
         }
+
+        return _values;
     }
 
-    void Rasterizer::_RenderLine(const math::vec2i &_v0, const math::vec2i &_v1, math::Color color) const noexcept {
+    void Rasterizer::_RenderLine(const math::vec3i &_v0, const math::vec3i &_v1, math::Color color) const noexcept {
         auto v0 = _v0;
         auto v1 = _v1;
 
         const float dx = static_cast<float>(v1.x - v0.x);
         const float dy = static_cast<float>(v1.y - v0.y);
 
-        static std::vector<int32_t> values;
-
         const int32_t width = m_window_ptr->GetWidth();
         const int32_t height = m_window_ptr->GetHeight();
+
+        static std::vector<int32_t> values;
 
         if (math::Abs(dx) > math::Abs(dy)) {
             if (v0.x > v1.x) {
@@ -96,9 +89,9 @@ namespace rasterization::gfx {
     }
 
     void Rasterizer::_RenderTriangle(
-        const math::vec2i &_v0, 
-        const math::vec2i &_v1, 
-        const math::vec2i &_v2, 
+        const math::vec3i &_v0, 
+        const math::vec3i &_v1, 
+        const math::vec3i &_v2, 
         math::Color color
     ) const noexcept {
         auto v0 = _v0, v1 = _v1, v2 = _v2;
@@ -107,31 +100,58 @@ namespace rasterization::gfx {
         if (v1.y > v2.y) { std::swap(v1, v2); }
 
         int32_t total_height = v2.y - v0.y;
-        for (size_t i = 0; i < total_height; ++i) {
+        for (int32_t i = 0; i < total_height; ++i) {
             bool second_half = i > v1.y - v0.y || v1.y == v0.y;
             int segment_height = second_half ? v2.y - v1.y : v1.y - v0.y;
+            
             float alpha = (float)i / total_height;
             float beta  = (float)(i - (second_half ? v1.y - v0.y : 0)) / segment_height;
-            math::vec2i A = v0 + (v2 - v0) * alpha;
-            math::vec2i B = second_half ? v1 + (v2 - v1) * beta : v0 + (v1 - v0) * beta;
-            if (A.x > B.x) std::swap(A, B);
+            
+            math::vec3i A = v0 + (v2 - v0) * alpha;
+            math::vec3i B = second_half ? v1 + (v2 - v1) * beta : v0 + (v1 - v0) * beta;
+            if (A.x > B.x) { std::swap(A, B); } 
+            
             for (int32_t j = A.x; j <= B.x; ++j) {
                 _RenderPoint(math::vec2i(j, v0.y + i), color);
             }
         }
     }
 
+    size_t Rasterizer::_CreateVertexBuffer(const void *buffer, size_t size) noexcept {
+        size_t id;
+        do {
+            id = math::Random((size_t)0, SIZE_MAX) + 1;
+        } while (m_vbos.count(id) != 0);
+
+        m_vbos[id] = std::vector<math::vec3f>((math::vec3f*)buffer, (math::vec3f*)buffer + size / sizeof(math::vec3f));
+    
+        return id;
+    }
+
+    size_t Rasterizer::_CreateIndexBuffer(const void *buffer, size_t count) noexcept {
+        size_t id;
+        do {
+            id = math::Random((size_t)0, SIZE_MAX) + 1;
+        } while (m_ibos.count(id) != 0);
+
+        m_ibos[id] = std::vector<size_t>((size_t*)buffer, (size_t*)buffer + count);
+
+        return id;
+    }
+
     void Rasterizer::Render(RenderMode mode, size_t vbo_id, size_t ibo_id, math::Color color) const noexcept {
-        assert(m_vbos.count(vbo_id) == 1);
-        assert(m_ibos.count(ibo_id) == 1);
+        const float dx = m_window_ptr->GetWidth() / 2.0f;
+        const float dy = m_window_ptr->GetHeight() / 2.0f;
         
-        const auto& verts = m_vbos.at(vbo_id);
-        const auto& indexes = m_ibos.at(ibo_id);
+        auto verts = m_vbos.at(vbo_id);
+        auto indexes = m_ibos.at(ibo_id);
 
-        static win_framewrk::Window* window = win_framewrk::Window::Get();
-        const float dx = window->GetWidth() / 2.0f;
-        const float dy = window->GetHeight() / 2.0f;
+        // Vertex Shader
+        for (auto& vert : verts) {
+            vert = vert * math::Scale(math::Identity<math::mat4f>(), math::vec3f(0.75f));
+        }
 
+        // Pixel Shader
         switch (mode) {
         case RenderMode::POINTS:
             for (size_t i = 0; i < indexes.size(); ++i) {

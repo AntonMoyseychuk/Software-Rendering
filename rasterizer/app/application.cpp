@@ -18,16 +18,19 @@ namespace rasterization {
     }
 
     void Application::Run() noexcept {
+        using namespace gfx;
         using namespace math;
         using namespace win_framewrk;
 
-        gfx::Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
-        for (auto& vert : model.GetVertexes()) {
-            vert = vert * Scale(Identity<mat4f>(), vec3f(0.75f));
-        }
+        size_t vbo, ibo;
+        {
+            Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
+            const auto& verts = model.GetVertexes();
+            const auto& inds = model.GetVertexes();
 
-        auto vbo = m_rasterizer.AddVertexBuffer(model.GetVertexes());
-        auto ibo = m_rasterizer.AddIndexBuffer(model.GetIndexes());
+            vbo = m_rasterizer.CreateBuffer(BufferType::VERTEX, verts.data(), verts.size() * sizeof(verts[0]));
+            ibo = m_rasterizer.CreateBuffer(BufferType::INDEX, inds.data(), inds.size() * sizeof(inds[0]));
+        }
 
         while (m_window->IsOpen()) {
             m_window->PollEvent();
@@ -37,28 +40,30 @@ namespace rasterization {
 
             const float angle = ToRadians(dt) * 10.0f;
 
+        #pragma region input
+            auto& internal_buff = m_rasterizer.GetVertexBuffer(vbo);
             if (m_window->IsKeyPressed(Key::D)) {
-                for (auto& vert : *m_rasterizer.GetVertexBuffer(vbo)) {
+                for (auto& vert : internal_buff) {
                     vert = vert * Quaternion(cosf(angle), 0.0f, sinf(angle), 0.0f);
                 }
             } else if (m_window->IsKeyPressed(Key::A)) {
-                for (auto& vert : *m_rasterizer.GetVertexBuffer(vbo)) {
+                for (auto& vert : internal_buff) {
                     vert = vert * Quaternion(cosf(-angle), 0.0f, sinf(-angle), 0.0f);
                 }
             }
 
             if (m_window->IsKeyPressed(Key::W)) {
-                for (auto& vert : *m_rasterizer.GetVertexBuffer(vbo)) {
+                for (auto& vert : internal_buff) {
                     vert = vert * Quaternion(cosf(-angle), sinf(-angle), 0.0f, 0.0f);
                 }
             } else if (m_window->IsKeyPressed(Key::S)) {
-                for (auto& vert : *m_rasterizer.GetVertexBuffer(vbo)) {
+                for (auto& vert : internal_buff) {
                     vert = vert * Quaternion(cosf(angle), sinf(angle), 0.0f, 0.0f);
                 }
             }
+        #pragma endregion input
 
-            m_rasterizer.Render(gfx::RenderMode::TRIANGLES, vbo, ibo, math::Color::YELLOW);
-
+            m_rasterizer.Render(RenderMode::TRIANGLES, vbo, ibo, Color::GOLDEN);
             m_window->PresentPixelBuffer();   
         }
     }
