@@ -181,8 +181,8 @@ namespace math {
             return !(*this == vec);
         }
 
-        template <typename RightType, std::size_t Dimension>
-        Vector& operator=(const Vector<RightType, Dimension> &vec) noexcept {
+        template <typename RightType>
+        Vector& operator=(const Vector<RightType, 4> &vec) noexcept {
             x = static_cast<type>(vec.x);
             y = static_cast<type>(vec.y);
             z = static_cast<type>(vec.z);

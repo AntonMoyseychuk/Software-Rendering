@@ -9,8 +9,15 @@ namespace rasterization::gfx {
         BindWindow(window);
     }
     
-    void Rasterizer::BindWindow(win_framewrk::Window* window) noexcept {
+    bool Rasterizer::BindWindow(win_framewrk::Window* window) noexcept {
+        if (window == nullptr) {
+            return false;
+        }
+
         m_window_ptr = window;
+        _ResizeZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
+
+        return true;
     }
     
     const win_framewrk::Window *Rasterizer::IsWindowBinded() const noexcept {
@@ -54,7 +61,7 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_RenderPoint(const math::vec2i &_point, math::Color _color) const noexcept {
+    void Rasterizer::_RenderPoint(const math::vec3i &_point, math::Color _color) const noexcept {
         m_window_ptr->SetPixelColor(_point.x, _point.y, _color.rgba);
     }
 
@@ -76,7 +83,7 @@ namespace rasterization::gfx {
         return _values;
     }
 
-    void Rasterizer::_RenderLine(const math::vec2i &_v0, const math::vec2i &_v1, math::Color color) const noexcept {
+    void Rasterizer::_RenderLine(const math::vec3i &_v0, const math::vec3i &_v1, math::Color color) const noexcept {
         auto v0 = _v0;
         auto v1 = _v1;
 
@@ -110,9 +117,9 @@ namespace rasterization::gfx {
     }
 
     void Rasterizer::_RenderTriangle(
-        const math::vec2i &_v0, 
-        const math::vec2i &_v1, 
-        const math::vec2i &_v2, 
+        const math::vec3i &_v0, 
+        const math::vec3i &_v1, 
+        const math::vec3i &_v2, 
         math::Color color
     ) const noexcept {
         auto v0 = _v0, v1 = _v1, v2 = _v2;
@@ -160,9 +167,16 @@ namespace rasterization::gfx {
         return id;
     }
 
+    void Rasterizer::_ResizeZBuffer(uint32_t width, uint32_t height) const noexcept {
+        m_z_buffer.resize(width, height);
+        std::fill(m_z_buffer.begin(), m_z_buffer.end(), INT32_MIN);
+    }
+
     void Rasterizer::Render(RenderMode mode, size_t vbo_id, size_t ibo_id, math::Color color) const noexcept {
         const auto& verts = m_vbos.at(vbo_id);
         const auto& indexes = m_ibos.at(ibo_id);
+
+        _ResizeZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
 
         // Vertex Shader
         static std::vector<math::vec3i> screen_coords;

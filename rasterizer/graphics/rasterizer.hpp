@@ -15,7 +15,7 @@ namespace rasterization::gfx {
         Rasterizer() = default;
         Rasterizer(win_framewrk::Window* window);
         
-        void BindWindow(win_framewrk::Window* window) noexcept;
+        bool BindWindow(win_framewrk::Window* window) noexcept;
         const win_framewrk::Window* IsWindowBinded() const noexcept;
 
         void Render(RenderMode mode, size_t vbo_id, size_t ibo_id, math::Color color) const noexcept;
@@ -30,20 +30,24 @@ namespace rasterization::gfx {
         void _VertexShader(std::vector<math::vec3i> &out_coords, size_t vbo_id, std::shared_ptr<math::mat4f> mvp = nullptr) const noexcept;
 
     private:
-        void _RenderPoint(const math::vec2i& _point, math::Color _color) const noexcept;
+        void _RenderPoint(const math::vec3i& _point, math::Color _color) const noexcept;
 
         static std::vector<int32_t>& _Interpolate(int32_t _i0, int32_t _d0, int32_t _i1, int32_t _d1, std::vector<int32_t>& _values) noexcept;
-        void _RenderLine(const math::vec2i& _v0, const math::vec2i& _v1, math::Color _color) const noexcept;
+        void _RenderLine(const math::vec3i& _v0, const math::vec3i& _v1, math::Color _color) const noexcept;
         
-        void _RenderTriangle(const math::vec2i& _v0, const math::vec2i& _v1, const math::vec2i& _v2, 
+        void _RenderTriangle(const math::vec3i& _v0, const math::vec3i& _v1, const math::vec3i& _v2, 
             math::Color color) const noexcept;
 
     private:
         size_t _CreateVertexBuffer(const void* buffer, size_t size) noexcept;
         size_t _CreateIndexBuffer(const void* buffer, size_t count) noexcept;
 
+        void _ResizeZBuffer(uint32_t width, uint32_t height) const noexcept; 
+
     private:
         win_framewrk::Window* m_window_ptr = nullptr;
+
+        mutable std::vector<int32_t> m_z_buffer;
 
         std::unordered_map<size_t, std::vector<math::vec3f>> m_vbos;
         std::unordered_map<size_t, std::vector<size_t>> m_ibos;
