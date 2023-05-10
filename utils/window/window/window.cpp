@@ -152,7 +152,7 @@ namespace win_framewrk {
         SDL_Surface* surface, 
         const std::uint32_t* in_pixels
     ) noexcept {
-        
+
         const auto lenght = x_end - x0;
         auto buffer = static_cast<std::uint32_t*>(surface->pixels);
 
@@ -174,6 +174,16 @@ namespace win_framewrk {
         }
 
         m_thread_pool.WaitAll();
+    }
+
+    void Window::FillPixelBuffer(std::uint32_t color) const noexcept {
+        #if defined(LOG_ALL)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
+
+        const auto maped_color = _MapRGBA(m_surface_ptr->format, _InternalColor(color));
+        auto buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
+        std::fill_n(buffer, m_width * m_height, maped_color);
     }
 
     void Window::PresentPixelBuffer() const noexcept {

@@ -12,8 +12,8 @@ namespace rasterization {
         : m_window(win_framewrk::Window::Get()), m_last_frame(std::chrono::steady_clock::now()), m_fps_lock(1.0f / (fps_lock > 0 ? fps_lock : 1))
     {
         m_window->Init(title, width, height);
-        m_rasterizer.BindWindow(m_window);
 
+        m_rasterizer.BindWindow(m_window);
         assert(m_rasterizer.IsWindowBinded() != nullptr);
     }
 

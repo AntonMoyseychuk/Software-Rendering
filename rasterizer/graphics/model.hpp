@@ -7,7 +7,7 @@ namespace rasterization::gfx {
         Model() = default;
         Model(const char* filepath);
 
-        void Load(const char* filepath) noexcept;
+        bool Load(const char* filepath) noexcept;
 
         std::vector<math::vec3f> vertexes;
         std::vector<size_t> indexes;

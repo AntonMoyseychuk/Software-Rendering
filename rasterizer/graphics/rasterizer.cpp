@@ -8,36 +8,53 @@ namespace rasterization::gfx {
     {
         BindWindow(window);
     }
-    
-    bool Rasterizer::BindWindow(win_framewrk::Window* window) noexcept {
-        if (window == nullptr) {
-            return false;
+
+    void Rasterizer::Render(RenderMode mode, size_t vbo_id, size_t ibo_id, math::Color color) const noexcept {
+        const auto& verts = m_vbos.at(vbo_id);
+        const auto& indexes = m_ibos.at(ibo_id);
+
+        // Vertex Shader
+        static const auto mvp = std::make_shared<math::mat4f>(math::Scale(math::Identity<math::mat4f>(), math::vec3f(0.75f)));
+
+        static std::vector<math::vec3i> screen_coords;
+        _VertexShader(screen_coords, vbo_id, mvp);
+
+        // Pixel Shader
+        m_window_ptr->FillPixelBuffer(m_background_color.rgba);
+
+        switch (mode) {
+        case RenderMode::POINTS:
+            for (size_t i = 0; i < indexes.size(); ++i) {
+                _RenderPoint(screen_coords[indexes[i]], color);
+            }    
+            break;
+
+        case RenderMode::LINES:
+            for (size_t i = 0; i < indexes.size(); i += 2) {
+                _RenderLine(screen_coords[indexes[i]], screen_coords[indexes[i + 1]], color);
+            }
+            break;
+
+        case RenderMode::TRIANGLES:
+            for (size_t i = 0; i < indexes.size(); i += 3) {
+                const math::vec3f normal(math::Cross(
+                    math::Normalize(verts[indexes[i + 2]] - verts[indexes[i]]),
+                    math::Normalize(verts[indexes[i + 1]] - verts[indexes[i]]))
+                );
+
+                const float intensity = math::Dot(normal, math::Normalize(math::VECTOR_LEFT + math::VECTOR_BACKWARD));
+
+                if (intensity > 0.0f) {
+                    _RenderTriangle(
+                        screen_coords[indexes[i]], 
+                        screen_coords[indexes[i + 1]], 
+                        screen_coords[indexes[i + 2]], 
+                        color * (intensity + 0.1f)
+                    );
+                }
+            }
+            break;
         }
-
-        m_window_ptr = window;
-        _ResizeZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
-
-        return true;
-    }
-    
-    const win_framewrk::Window *Rasterizer::IsWindowBinded() const noexcept {
-        return m_window_ptr;
-    }
-
-    size_t Rasterizer::CreateBuffer(BufferType type, const void* buffer, size_t size) noexcept {
-        if (type == BufferType::VERTEX) {
-            return _CreateVertexBuffer(buffer, size);
-        } else if (type == BufferType::INDEX) {
-            return _CreateIndexBuffer(buffer, size / sizeof(size_t));
-        } else {
-            assert(false && "Invalid Buffer Type");
-        }
-
-        return 0;
-    }
-
-    std::vector<math::vec3f>& Rasterizer::GetVertexBuffer(size_t id) noexcept {
-        return m_vbos.at(id);
     }
 
     void Rasterizer::_VertexShader(std::vector<math::vec3i> &out_coords, size_t vbo_id, std::shared_ptr<math::mat4f> mvp) const noexcept {
@@ -61,26 +78,26 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_RenderPoint(const math::vec3i &_point, math::Color _color) const noexcept {
-        m_window_ptr->SetPixelColor(_point.x, _point.y, _color.rgba);
+    std::vector<int32_t> &Rasterizer::_Interpolate(int32_t i0, int32_t d0, int32_t i1, int32_t d1, std::vector<int32_t> &values) noexcept {
+        if (i0 == i1) {
+            values.resize(1);
+            values[0] = d0;
+            return values;
+        }
+
+        values.resize(i1 - i0 + 1);
+        
+        const float a = static_cast<float>(d1 - d0) / (i1 - i0);
+        for (int32_t i = 0; i <= i1 - i0; ++i) {
+            values[i] = static_cast<int32_t>(d0);
+            d0 += a;
+        }
+
+        return values;
     }
 
-    std::vector<int32_t> &Rasterizer::_Interpolate(int32_t _i0, int32_t _d0, int32_t _i1, int32_t _d1, std::vector<int32_t> &_values) noexcept {
-        if (_i0 == _i1) {
-            _values.resize(1);
-            _values[0] = _d0;
-            return _values;
-        }
-
-        _values.resize(_i1 - _i0 + 1);
-        
-        const float a = static_cast<float>(_d1 - _d0) / (_i1 - _i0);
-        for (int32_t i = 0; i <= _i1 - _i0; ++i) {
-            _values[i] = static_cast<int32_t>(_d0);
-            _d0 += a;
-        }
-
-        return _values;
+    void Rasterizer::_RenderPoint(const math::vec3i &point, math::Color color) const noexcept {
+        m_window_ptr->SetPixelColor(point.x, point.y, color.rgba);
     }
 
     void Rasterizer::_RenderLine(const math::vec3i &_v0, const math::vec3i &_v1, math::Color color) const noexcept {
@@ -116,12 +133,7 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_RenderTriangle(
-        const math::vec3i &_v0, 
-        const math::vec3i &_v1, 
-        const math::vec3i &_v2, 
-        math::Color color
-    ) const noexcept {
+    void Rasterizer::_RenderTriangle(const math::vec3i &_v0, const math::vec3i &_v1, const math::vec3i &_v2, math::Color color) const noexcept {
         auto v0 = _v0, v1 = _v1, v2 = _v2;
         if (v0.y > v1.y) { std::swap(v0, v1); }
         if (v0.y > v2.y) { std::swap(v0, v2); }
@@ -143,6 +155,18 @@ namespace rasterization::gfx {
                 _RenderPoint(math::vec2i(j, v0.y + i), color);
             }
         } 
+    }
+
+    size_t Rasterizer::CreateBuffer(BufferType type, const void* buffer, size_t size) noexcept {
+        if (type == BufferType::VERTEX) {
+            return _CreateVertexBuffer(buffer, size);
+        } else if (type == BufferType::INDEX) {
+            return _CreateIndexBuffer(buffer, size / sizeof(size_t));
+        } else {
+            assert(false && "Invalid Buffer Type");
+        }
+
+        return 0;
     }
 
     size_t Rasterizer::_CreateVertexBuffer(const void *buffer, size_t size) noexcept {
@@ -167,60 +191,32 @@ namespace rasterization::gfx {
         return id;
     }
 
-    void Rasterizer::_ResizeZBuffer(uint32_t width, uint32_t height) const noexcept {
-        m_z_buffer.resize(width, height);
-        std::fill(m_z_buffer.begin(), m_z_buffer.end(), INT32_MIN);
+    std::vector<math::vec3f>& Rasterizer::GetVertexBuffer(size_t id) noexcept {
+        return m_vbos.at(id);
     }
 
-    void Rasterizer::Render(RenderMode mode, size_t vbo_id, size_t ibo_id, math::Color color) const noexcept {
-        const auto& verts = m_vbos.at(vbo_id);
-        const auto& indexes = m_ibos.at(ibo_id);
-
-        _ResizeZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
-
-        // Vertex Shader
-        static std::vector<math::vec3i> screen_coords;
-        static const auto mvp = std::make_shared<math::mat4f>(math::Scale(math::Identity<math::mat4f>(), math::vec3f(0.75f)));
-
-        _VertexShader(screen_coords, vbo_id, mvp);
-
-        // Pixel Shader
-        switch (mode) {
-        case RenderMode::POINTS:
-            for (size_t i = 0; i < indexes.size(); ++i) {
-                _RenderPoint(screen_coords[indexes[i]], color);
-            }    
-            break;
-
-        case RenderMode::LINES:
-            for (size_t i = 0; i < indexes.size(); i += 2) {
-                _RenderLine(screen_coords[indexes[i]], screen_coords[indexes[i + 1]], color);
-            }
-            break;
-
-        case RenderMode::TRIANGLES:
-            for (size_t i = 0; i < indexes.size(); i += 3) {
-                const math::vec3f normal(math::Cross(
-                    math::Normalize(verts[indexes[i + 2]] - verts[indexes[i]]),
-                    math::Normalize(verts[indexes[i + 1]] - verts[indexes[i]]))
-                );
-
-                const float intensity = math::Dot(normal, math::Normalize(math::VECTOR_LEFT + math::VECTOR_BACKWARD));
-
-                if (intensity > 0.0f) {
-                    _RenderTriangle(
-                        screen_coords[indexes[i]], 
-                        screen_coords[indexes[i + 1]], 
-                        screen_coords[indexes[i + 2]], 
-                        color * (intensity + 0.1f)
-                    );
-                }
-            }
-            break;
+    bool Rasterizer::BindWindow(win_framewrk::Window* window) noexcept {
+        if (window == nullptr) {
+            return false;
         }
+
+        m_window_ptr = window;
+        return true;
     }
     
+    const win_framewrk::Window *Rasterizer::IsWindowBinded() const noexcept {
+        return m_window_ptr;
+    }
+
     void Rasterizer::SwapBuffers() const noexcept {
         m_window_ptr->PresentPixelBuffer();
+    }
+    
+    void Rasterizer::SetBackgroundColor(math::Color color) noexcept {
+        m_background_color = color;
+    }
+    
+    math::Color Rasterizer::GetBackgroundColor() const noexcept {
+        return m_background_color;
     }
 }

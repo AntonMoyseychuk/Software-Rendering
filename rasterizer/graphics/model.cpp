@@ -8,14 +8,16 @@
 
 namespace rasterization::gfx {
     Model::Model(const char *filepath) {
-        Load(filepath);
+        if (!Load(filepath)) {
+            throw std::invalid_argument(std::string("Invalid filepath: ") + filepath);
+        }
     }
     
-    void Model::Load(const char *filepath) noexcept {
+    bool Model::Load(const char *filepath) noexcept {
         std::ifstream file(filepath);
 
         if (!file.is_open()) {
-            throw std::invalid_argument(std::string("Invalid file path: ") + filepath);
+            return false;
         }
 
         std::string str;
@@ -46,5 +48,7 @@ namespace rasterization::gfx {
                 }
             }
         }
+
+        return true;
     }
 }
