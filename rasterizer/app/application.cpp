@@ -62,7 +62,7 @@ namespace rasterization {
         #pragma endregion input
 
             m_rasterizer.Render(RenderMode::TRIANGLES, vbo, ibo, Color::GOLDEN);
-            m_window->PresentPixelBuffer();   
+            m_rasterizer.SwapBuffers(); 
         }
     }
     
