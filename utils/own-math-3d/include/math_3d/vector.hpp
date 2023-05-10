@@ -24,11 +24,9 @@ namespace math {
             : x(_x), y(_y), z(_z), w(_w) { }
         explicit Vector(Type value) 
             : x(value), y(value), z(value), w(value) { }
-        template <typename RightType>
-        Vector(const Vector<RightType, 3>& vec, RightType _w = RightType(0)) 
+        Vector(const Vector<Type, 3>& vec, Type _w = Type(0)) 
             : x(vec.x), y(vec.y), z(vec.z), w(_w) { }
-        template <typename RightType>
-        Vector(const Vector<RightType, 2>& vec, RightType _z = RightType(0), RightType _w = RightType(0)) 
+        Vector(const Vector<Type, 2>& vec, Type _z = Type(0), Type _w = Type(0)) 
             : x(vec.x), y(vec.y), z(_z), w(_w) { }
 
         float Length() const noexcept {
@@ -46,8 +44,7 @@ namespace math {
             return !(*this == vec);
         }
 
-        template <typename RightType>
-        Vector& operator=(const Vector<RightType, 4> &vec) noexcept {
+        Vector& operator=(const Vector<Type, 4> &vec) noexcept {
             x = static_cast<type>(vec.x);
             y = static_cast<type>(vec.y);
             z = static_cast<type>(vec.z);
@@ -55,8 +52,7 @@ namespace math {
             return *this;
         }
 
-        template <typename RightType>
-        Vector& operator=(const Vector<RightType, 3> &vec) noexcept {
+        Vector& operator=(const Vector<Type, 3> &vec) noexcept {
             x = static_cast<type>(vec.x);
             y = static_cast<type>(vec.y);
             z = static_cast<type>(vec.z);
@@ -64,8 +60,7 @@ namespace math {
             return *this;
         }
 
-        template <typename RightType>
-        Vector& operator=(const Vector<RightType, 2> &vec) noexcept {
+        Vector& operator=(const Vector<Type, 2> &vec) noexcept {
             x = static_cast<type>(vec.x);
             y = static_cast<type>(vec.y);
             z = 0.0f;
@@ -169,16 +164,13 @@ namespace math {
         explicit Vector(Type value) 
             : x(value), y(value), z(value) { }
 
-        template <typename RightType>
-        Vector(const Vector<RightType, 4>& vec) 
+        Vector(const Vector<Type, 4>& vec) 
             : x(vec.x), y(vec.y), z(vec.z) { }
 
-        template <typename RightType>
-        Vector(const Vector<RightType, 3>& vec) 
+        Vector(const Vector<Type, 3>& vec) 
             : x(vec.x), y(vec.y), z(vec.z) { }
 
-        template <typename RightType>
-        Vector(const Vector<RightType, 2>& vec, RightType _z = RightType(0)) 
+        Vector(const Vector<Type, 2>& vec, Type _z = Type(0)) 
             : x(vec.x), y(vec.y), z(_z) { }
 
         float Length() const noexcept {
@@ -193,24 +185,21 @@ namespace math {
             return !(*this == vec);
         }
 
-        template <typename RightType>
-        Vector& operator=(const Vector<RightType, 4> &vec) noexcept {
+        Vector& operator=(const Vector<Type, 4> &vec) noexcept {
             x = static_cast<type>(vec.x);
             y = static_cast<type>(vec.y);
             z = static_cast<type>(vec.z);
             return *this;
         }
 
-        template <typename RightType>
-        Vector& operator=(const Vector<RightType, 3> &vec) noexcept {
+        Vector& operator=(const Vector<Type, 3> &vec) noexcept {
             x = static_cast<type>(vec.x);
             y = static_cast<type>(vec.y);
             z = static_cast<type>(vec.z);
             return *this;
         }
 
-        template <typename RightType>
-        Vector& operator=(const Vector<RightType, 2> &vec) noexcept {
+        Vector& operator=(const Vector<Type, 2> &vec) noexcept {
             x = static_cast<type>(vec.x);
             y = static_cast<type>(vec.y);
             z = 0.0f;
@@ -305,11 +294,11 @@ namespace math {
             : x(_x), y(_y) { }
         explicit Vector(Type value) 
             : x(value), y(value) { }
-        template <typename RightType>
-        Vector(const Vector<RightType, 4>& vec) 
+
+        Vector(const Vector<Type, 4>& vec) 
             : x(vec.x), y(vec.y) { }
-        template <typename RightType>
-        Vector(const Vector<RightType, 3>& vec) 
+            
+        Vector(const Vector<Type, 3>& vec) 
             : x(vec.x), y(vec.y) { }
 
         float Length() const noexcept {
@@ -324,8 +313,8 @@ namespace math {
             return !(*this == vec);
         }
 
-        template <typename RightType, std::size_t Dimension>
-        Vector& operator=(const Vector<RightType, Dimension>& vec) noexcept {
+        template <std::size_t Dimension>
+        Vector& operator=(const Vector<Type, Dimension>& vec) noexcept {
             x = static_cast<type>(vec.x);
             y = static_cast<type>(vec.y);
             return *this;
