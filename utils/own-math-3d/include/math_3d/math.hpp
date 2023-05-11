@@ -18,7 +18,7 @@ namespace math {
 
     template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
     inline constexpr Type Abs(Type value) noexcept {
-        return value > Type(0) ? value : -value;
+        return value >= Type(0) ? value : -value;
     }
 
     template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
