@@ -78,23 +78,23 @@ namespace rasterization::gfx {
         }
     }
 
-    std::vector<int32_t> &Rasterizer::_Interpolate(int32_t i0, int32_t d0, int32_t i1, int32_t d1, std::vector<int32_t> &values) noexcept {
-        if (i0 == i1) {
-            values.resize(1);
-            values[0] = d0;
-            return values;
-        }
+    // std::vector<int32_t> &Rasterizer::_Interpolate(int32_t i0, int32_t d0, int32_t i1, int32_t d1, std::vector<int32_t> &values) noexcept {
+    //     if (i0 == i1) {
+    //         values.resize(1);
+    //         values[0] = d0;
+    //         return values;
+    //     }
 
-        values.resize(i1 - i0 + 1);
+    //     values.resize(i1 - i0 + 1);
         
-        const float a = static_cast<float>(d1 - d0) / (i1 - i0);
-        for (int32_t i = 0; i <= i1 - i0; ++i) {
-            values[i] = static_cast<int32_t>(d0);
-            d0 += a;
-        }
+    //     const float a = static_cast<float>(d1 - d0) / (i1 - i0);
+    //     for (int32_t i = 0; i <= i1 - i0; ++i) {
+    //         values[i] = static_cast<int32_t>(d0);
+    //         d0 += a;
+    //     }
 
-        return values;
-    }
+    //     return values;
+    // }
 
     void Rasterizer::_RenderPoint(const math::vec3i &point, math::Color color) const noexcept {
         m_window_ptr->SetPixelColor(point.x, point.y, color.rgba);
@@ -117,7 +117,7 @@ namespace rasterization::gfx {
                 std::swap(v0, v1);
             }
 
-            _Interpolate(v0.x, v0.y, v1.x, v1.y, values);
+            math::Interpolate<int32_t>(v0.x, v0.y, v1.x, v1.y, values);
             for (int32_t x = v0.x; x <= v1.x; ++x) {
                 m_window_ptr->SetPixelColor(x, values[x - v0.x], color.r, color.g, color.b, color.a);
             }
@@ -126,7 +126,7 @@ namespace rasterization::gfx {
                 std::swap(v0, v1);
             }
             
-            _Interpolate(v0.y, v0.x, v1.y, v1.x, values);
+            math::Interpolate<int32_t>(v0.y, v0.x, v1.y, v1.x, values);
             for (int32_t y = v0.y; y <= v1.y; ++y) {
                 m_window_ptr->SetPixelColor(values[y - v0.y], y, color.r, color.g, color.b, color.a);
             }

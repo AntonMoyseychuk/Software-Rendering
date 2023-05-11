@@ -16,20 +16,13 @@ namespace math {
         return degrees * (MATH_PI / 180.0f);
     }
 
-    template <typename Type>
+    template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
     inline constexpr Type Abs(Type value) noexcept {
-        static_assert(std::is_arithmetic_v<Type>, "template <typename Type>"
-            "inline constexpr Type Abs(Type value) noexcept: Type must be an arithmetic"
-        );
         return value > Type(0) ? value : -value;
     }
 
-    template <typename Type>
-    Type Random(Type min, Type max) noexcept {
-        static_assert(std::is_arithmetic_v<Type>, "template <typename Type>"
-            "Type Random(Type min, Type max) noexcept: Type must be an arithmetic"
-        );
-        
+    template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
+    Type Random(Type min, Type max) noexcept {       
         static std::random_device _rd;
         static std::mt19937 gen(_rd());
 
@@ -40,23 +33,32 @@ namespace math {
         }
     }
 
-    template<typename Type1, typename Type2>
+    template<typename Type1, typename Type2, typename = std::enable_if_t<std::is_arithmetic_v<Type1>>, typename = std::enable_if_t<std::is_arithmetic_v<Type2>>>
     inline constexpr bool IsTendsTo(Type1 value, Type2 limit) noexcept {
-        static_assert(std::is_arithmetic_v<Type1>, "template<typename Type1, typename Type2>"
-            "inline constexpr bool IsTendsTo(Type1 value, Type2 limit) noexcept: Type1 must be an arithmetic"
-        );
-        static_assert(std::is_arithmetic_v<Type2>, "template<typename Type1, typename Type2>"
-            "inline constexpr bool IsTendsTo(Type1 value, Type2 limit) noexcept: Type2 must be an arithmetic"
-        );
-
         return Abs(limit - value) <= MATH_EPSILON;
     }
 
-    template <typename Type>
+    template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
     inline constexpr Type Clamp(Type value, Type min, Type max) noexcept {
-        static_assert(std::is_arithmetic_v<Type>, "template <typename Type>"
-            "inline constexpr Type Clamp(Type value, Type min, Type max) noexcept: Type must be an arithmetic"
-        );
         return (value > max) ? max : (value < min) ? min : value;
+    }
+
+    template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
+    inline std::vector<Type>& Interpolate(Type i0, Type d0, Type i1, Type d1, std::vector<Type>& values) noexcept {
+        if (i0 == i1) {
+            values.resize(1);
+            values[0] = d0;
+            return values;
+        }
+
+        values.resize(i1 - i0 + 1);
+        
+        const float a = static_cast<float>(d1 - d0) / (i1 - i0);
+        for (size_t i = 0; i <= size_t(i1 - i0); ++i) {
+            values[i] = static_cast<Type>(d0);
+            d0 += a;
+        }
+
+        return values;
     }
 }

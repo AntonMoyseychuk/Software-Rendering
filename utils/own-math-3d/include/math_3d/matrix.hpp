@@ -2,16 +2,11 @@
 #include "vector.hpp"
 
 namespace math {
-    template <typename Type, std::size_t Dimension>
-    struct Mat {
-        static_assert(std::is_arithmetic_v<Type>, "template <typename Type, std::size_t Dimension> struct Mat: Type must be an arithmetic");
-        static_assert(Dimension >= 3 && Dimension <= 4, "template <typename Type, std::size_t Dimension> struct Mat: Dimension must be 3 <= Dimension <= 4");
-    };
+    template <typename Type, std::size_t Dimension, typename = std::enable_if_t<std::is_arithmetic_v<Type> && Dimension >= 3 && Dimension <= 4>>
+    struct Mat { };
 
     template <typename Type>
     struct Mat<Type, 4> {
-        static_assert(std::is_arithmetic_v<Type>, "template <typename Type, std::size_t Dimension> struct Mat: Type must be an arithmetic");
-
         using type = typename Type;
         static constexpr std::size_t dimension = 4;
 
@@ -179,8 +174,6 @@ namespace math {
 
     template <typename Type>
     struct Mat<Type, 3> {
-        static_assert(std::is_arithmetic_v<Type>, "template <typename Type, std::size_t Dimension> struct Mat: Type must be an arithmetic");
-
         using type = typename Type;
         static constexpr std::size_t dimension = 3;
 

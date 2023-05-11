@@ -48,11 +48,8 @@ namespace math {
         return vec2f(vec.x / length, vec.y / length);
     }
 
-    template<typename Vec, typename MatrixType>
+    template<typename Vec, typename MatrixType, typename = Vector<Vec::type, Vec::dimension>>
     inline vec4f operator*(const Vec& vec, const Mat<MatrixType, 4>& mat) noexcept {
-        static_assert(std::is_arithmetic_v<typename Vec::type> && (Vec::dimension >= 2 && Vec::dimension <= 4), 
-            "template<typename Vec, typename MatrixType> inline vec4f operator*(const Vec& vec, const Mat<MatrixType, 4>& mat): Invalid Vec type");
-
         const vec4f temp_vec(vec);
         return vec4f(
             temp_vec.x * mat[0][0] + temp_vec.y * mat[1][0] + temp_vec.z * mat[2][0] + temp_vec.w * mat[3][0],

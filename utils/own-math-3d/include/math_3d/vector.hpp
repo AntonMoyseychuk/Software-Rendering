@@ -4,16 +4,11 @@
 #include <utility>
 
 namespace math {
-    template <typename Type, std::size_t Dimension>
-    struct Vector {
-        static_assert(std::is_arithmetic_v<Type>, "template <typename Type, std::size_t Dimension> struct Vector: Type must be an arithmetic");
-        static_assert(Dimension >= 2 && Dimension <= 4, "template <typename Type, std::size_t Dimension> struct Vector: Dimension must be between 2 and 4");
-    };
+    template <typename Type, std::size_t Dimension, typename = std::enable_if_t<std::is_arithmetic_v<Type> && Dimension >= 2 && Dimension <= 4>>
+    struct Vector { };
 
     template <typename Type>
     struct Vector<Type, 4> {
-        static_assert(std::is_arithmetic_v<Type>, "template <typename Type, std::size_t Dimension> struct Vector: Type must be an arithmetic");
-        
         using type = typename Type;
         static constexpr std::size_t dimension = 4;
     
@@ -149,8 +144,6 @@ namespace math {
 
     template <typename Type>
     struct Vector<Type, 3> {
-        static_assert(std::is_arithmetic_v<Type>, "template <typename Type, std::size_t Dimension> struct Vector: Type must be an arithmetic");
-
         using type = typename Type;
         static constexpr std::size_t dimension = 3;
     
@@ -282,8 +275,6 @@ namespace math {
 
     template <typename Type>
     struct Vector<Type, 2> {
-        static_assert(std::is_arithmetic_v<Type>, "template <typename Type, std::size_t Dimension> struct Vector: Type must be an arithmetic");
-
         using type = typename Type;
         static constexpr std::size_t dimension = 2;
     
