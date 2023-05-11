@@ -13,11 +13,14 @@ namespace rasterization::gfx {
         const auto& verts = m_vbos.at(vbo_id);
         const auto& indexes = m_ibos.at(ibo_id);
 
-        // Vertex Shader
-        static const auto mvp = std::make_shared<math::mat4f>(math::Scale(math::Identity<math::mat4f>(), math::vec3f(0.75f)));
-
         static std::vector<math::vec3i> screen_coords;
-        _VertexShader(screen_coords, vbo_id, mvp);
+        static std::vector<math::vec3f> transform_coords;
+
+        // Vertex Shader
+        _VertexShader(transform_coords, vbo_id);
+
+        // Rasterization
+        _Rasterize(transform_coords, screen_coords);
 
         // Pixel Shader
         m_window_ptr->FillPixelBuffer(m_background_color.rgba);
@@ -57,24 +60,31 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_VertexShader(std::vector<math::vec3i> &out_coords, size_t vbo_id, std::shared_ptr<math::mat4f> mvp) const noexcept {
+    void Rasterizer::_VertexShader(std::vector<math::vec3f> &transformed_coords, size_t vbo_id) const noexcept {
         using namespace math;
+
+        static const auto mvp = math::Scale(math::Identity<math::mat4f>(), math::vec3f(0.75f));
         
         const auto& vbo = m_vbos.at(vbo_id);
-        
-        if (vbo.size() != out_coords.size()) {
-            out_coords.resize(vbo.size());
+        transformed_coords.resize(vbo.size());
+
+        for (size_t i = 0; i < vbo.size(); ++i) {
+            transformed_coords[i] = vbo[i] * mvp;
         }
+    }
+
+    void Rasterizer::_Rasterize(const std::vector<math::vec3f> &transformed_coords, std::vector<math::vec3i> &screen_coords) const noexcept {
+        screen_coords.resize(transformed_coords.size());
 
         const float dx = m_window_ptr->GetWidth() / 2.0f;
         const float dy = m_window_ptr->GetHeight() / 2.0f;
 
-        for (std::size_t i = 0; i < vbo.size(); ++i) {
-            vec3f pos = vbo[i];
-            if (mvp != nullptr) {
-                pos = pos * (*mvp);
-            }
-            out_coords[i] = math::vec3i((1.0f + pos.x) * dx, (1.0f - pos.y) * dy, pos.z * 100);
+        for (size_t i = 0; i < transformed_coords.size(); ++i) {
+            screen_coords[i] = math::vec3i(
+                (1.0f + transformed_coords[i].x) * dx, 
+                (1.0f - transformed_coords[i].y) * dy, 
+                transformed_coords[i].z * 100.0f
+            );
         }
     }
 

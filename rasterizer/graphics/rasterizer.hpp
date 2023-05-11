@@ -29,7 +29,9 @@ namespace rasterization::gfx {
         std::vector<math::vec3f>& GetVertexBuffer(size_t id) noexcept;
 
     private:
-        void _VertexShader(std::vector<math::vec3i> &out_coords, size_t vbo_id, std::shared_ptr<math::mat4f> mvp = nullptr) const noexcept;
+        void _VertexShader(std::vector<math::vec3f> &transformed_coords, size_t vbo_id) const noexcept;
+        void _Rasterize(const std::vector<math::vec3f> &transformed_coords, std::vector<math::vec3i> &screen_coords) const noexcept;
+        // void _PixelShader() const noexcept;
 
     private:
         void _RenderPoint(const math::vec3i& point, math::Color color) const noexcept;
