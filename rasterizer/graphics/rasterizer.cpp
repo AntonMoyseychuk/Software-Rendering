@@ -78,24 +78,6 @@ namespace rasterization::gfx {
         }
     }
 
-    // std::vector<int32_t> &Rasterizer::_Interpolate(int32_t i0, int32_t d0, int32_t i1, int32_t d1, std::vector<int32_t> &values) noexcept {
-    //     if (i0 == i1) {
-    //         values.resize(1);
-    //         values[0] = d0;
-    //         return values;
-    //     }
-
-    //     values.resize(i1 - i0 + 1);
-        
-    //     const float a = static_cast<float>(d1 - d0) / (i1 - i0);
-    //     for (int32_t i = 0; i <= i1 - i0; ++i) {
-    //         values[i] = static_cast<int32_t>(d0);
-    //         d0 += a;
-    //     }
-
-    //     return values;
-    // }
-
     void Rasterizer::_RenderPoint(const math::vec3i &point, math::Color color) const noexcept {
         m_window_ptr->SetPixelColor(point.x, point.y, color.rgba);
     }

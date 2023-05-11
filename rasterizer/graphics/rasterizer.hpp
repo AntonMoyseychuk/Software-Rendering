@@ -33,10 +33,7 @@ namespace rasterization::gfx {
 
     private:
         void _RenderPoint(const math::vec3i& point, math::Color color) const noexcept;
-
-        // static std::vector<int32_t>& _Interpolate(int32_t i0, int32_t d0, int32_t i1, int32_t d1, std::vector<int32_t>& values) noexcept;
         void _RenderLine(const math::vec3i& v0, const math::vec3i& v1, math::Color color) const noexcept;
-        
         void _RenderTriangle(const math::vec3i& v0, const math::vec3i& v1, const math::vec3i& v2, 
             math::Color color) const noexcept;
 
