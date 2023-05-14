@@ -46,8 +46,7 @@ namespace math {
     template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
     inline std::vector<Type>& Interpolate(Type i0, Type d0, Type i1, Type d1, std::vector<Type>& values) noexcept {
         if (i0 == i1) {
-            values.resize(1);
-            values[0] = d0;
+            values.resize(1, d0);
             return values;
         }
 

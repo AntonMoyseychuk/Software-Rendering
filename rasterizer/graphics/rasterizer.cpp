@@ -10,22 +10,32 @@ namespace rasterization::gfx {
     }
 
     void Rasterizer::Render(RenderMode mode, size_t vbo_id, size_t ibo_id, math::Color color) const noexcept {
-        const auto& verts = m_vbos.at(vbo_id);
+        const auto& local_coords = m_vbos.at(vbo_id);
         const auto& indexes = m_ibos.at(ibo_id);
 
-        static std::vector<math::vec3i> screen_coords;
-        static std::vector<math::vec3f> transform_coords;
+        const size_t vertex_count = local_coords.size();
 
-        _ResizeZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
+        static std::vector<math::vec3f> transform_coords;
+        static std::vector<math::vec3i> screen_coords;
+
+    #pragma region resizing-buffers
+            screen_coords.resize(vertex_count);
+            transform_coords.resize(vertex_count);
+            _ResizeAndClearZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
+    #pragma endregion resizing-buffers
 
         // Vertex Shader
-        _VertexShader(transform_coords, vbo_id);
+        for (size_t i = 0; i < vertex_count; ++i) {
+            _VertexShader(local_coords[i], transform_coords[i]);
+        }
 
         // Rasterization
         _Rasterize(transform_coords, screen_coords);
 
         // Pixel Shader
         m_window_ptr->FillPixelBuffer(m_background_color.rgba);
+
+        const static math::vec3f light_dir = math::Normalize(math::VECTOR_BACKWARD + math::VECTOR_LEFT);
 
         switch (mode) {
         case RenderMode::POINTS:
@@ -43,36 +53,28 @@ namespace rasterization::gfx {
         case RenderMode::TRIANGLES:
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 _TrianglePixelShader(
-                    verts[indexes[i]], 
-                    verts[indexes[i + 1]], 
-                    verts[indexes[i + 2]], 
+                    local_coords[indexes[i]], 
+                    local_coords[indexes[i + 1]], 
+                    local_coords[indexes[i + 2]], 
                     screen_coords[indexes[i]], 
                     screen_coords[indexes[i + 1]], 
                     screen_coords[indexes[i + 2]],
                     color,
-                    math::Normalize(math::VECTOR_BACKWARD + math::VECTOR_LEFT)
+                    light_dir
                 );
             }
             break;
         }
     }
 
-    void Rasterizer::_VertexShader(std::vector<math::vec3f> &transformed_coords, size_t vbo_id) const noexcept {
+    void Rasterizer::_VertexShader(const math::vec3f& local_coord, math::vec3f& transformed_coord) const noexcept {
         using namespace math;
 
         static const auto mvp = Scale(Identity<mat4f>(), vec3f(0.75f));
-        
-        const auto& vbo = m_vbos.at(vbo_id);
-        transformed_coords.resize(vbo.size());
-
-        for (size_t i = 0; i < vbo.size(); ++i) {
-            transformed_coords[i] = vbo[i] * mvp;
-        }
+        transformed_coord = local_coord * mvp;
     }
 
     void Rasterizer::_Rasterize(const std::vector<math::vec3f> &transformed_coords, std::vector<math::vec3i> &screen_coords) const noexcept {
-        screen_coords.resize(transformed_coords.size());
-
         const float dx = m_window_ptr->GetWidth() / 2.0f;
         const float dy = m_window_ptr->GetHeight() / 2.0f;
 
@@ -139,7 +141,7 @@ namespace rasterization::gfx {
             Normalize(local_coord1 - local_coord0))
         );
 
-        const float intensity = Dot(normal, light_direction);
+        const float intensity = Dot(normal, light_direction) + 0.1f;
 
         auto v0 = screen_coords0, v1 = screen_coords1, v2 = screen_coords2;
         if (v0.y > v1.y) { std::swap(v0, v1); }
@@ -168,7 +170,7 @@ namespace rasterization::gfx {
         } 
     }
 
-    void Rasterizer::_ResizeZBuffer(uint32_t width, uint32_t height) const noexcept {
+    void Rasterizer::_ResizeAndClearZBuffer(uint32_t width, uint32_t height) const noexcept {
         m_z_buffer.resize(width * height, INT32_MIN);
     }
 
@@ -216,7 +218,7 @@ namespace rasterization::gfx {
         }
 
         m_window_ptr = window;
-        _ResizeZBuffer(window->GetWidth(), window->GetHeight());
+        _ResizeAndClearZBuffer(window->GetWidth(), window->GetHeight());
         return true;
     }
     

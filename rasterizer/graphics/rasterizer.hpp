@@ -3,6 +3,7 @@
 #include "math_3d/color.hpp"
 
 #include "model.hpp"
+#include "thread_pool/thread_pool.hpp"
 
 #include <vector>
 
@@ -30,7 +31,7 @@ namespace rasterization::gfx {
         std::vector<math::vec3f>& GetVertexBuffer(size_t id) noexcept;
 
     private:
-        void _VertexShader(std::vector<math::vec3f> &transformed_coords, size_t vbo_id) const noexcept;
+        void _VertexShader(const math::vec3f& local_coord, math::vec3f& transformed_coord) const noexcept;
         void _Rasterize(const std::vector<math::vec3f> &transformed_coords, std::vector<math::vec3i> &screen_coords) const noexcept;
         
 
@@ -48,7 +49,7 @@ namespace rasterization::gfx {
         ) const noexcept;
 
     private:
-        void _ResizeZBuffer(uint32_t width, uint32_t height) const noexcept;
+        void _ResizeAndClearZBuffer(uint32_t width, uint32_t height) const noexcept;
 
     private:
         size_t _CreateVertexBuffer(const void* buffer, size_t size) noexcept;
