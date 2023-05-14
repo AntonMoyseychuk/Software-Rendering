@@ -48,10 +48,7 @@ namespace rasterization::gfx {
         ) const noexcept;
 
     private:
-        // void _RenderPoint(const math::vec3i& point, math::Color color) const noexcept;
-        void _RenderLine(const math::vec3i& v0, const math::vec3i& v1, math::Color color) const noexcept;
-        // void _RenderTriangle(const math::vec3i& v0, const math::vec3i& v1, const math::vec3i& v2, 
-        //     math::Color color) const noexcept;
+        void _ResizeZBuffer(uint32_t width, uint32_t height) const noexcept;
 
     private:
         size_t _CreateVertexBuffer(const void* buffer, size_t size) noexcept;

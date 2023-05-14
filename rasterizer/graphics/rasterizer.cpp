@@ -16,6 +16,8 @@ namespace rasterization::gfx {
         static std::vector<math::vec3i> screen_coords;
         static std::vector<math::vec3f> transform_coords;
 
+        _ResizeZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
+
         // Vertex Shader
         _VertexShader(transform_coords, vbo_id);
 
@@ -166,6 +168,10 @@ namespace rasterization::gfx {
         } 
     }
 
+    void Rasterizer::_ResizeZBuffer(uint32_t width, uint32_t height) const noexcept {
+        m_z_buffer.resize(width * height, INT32_MIN);
+    }
+
     size_t Rasterizer::CreateBuffer(BufferType type, const void* buffer, size_t size) noexcept {
         if (type == BufferType::VERTEX) {
             return _CreateVertexBuffer(buffer, size);
@@ -210,8 +216,7 @@ namespace rasterization::gfx {
         }
 
         m_window_ptr = window;
-
-        m_z_buffer.resize(window->GetWidth() * window->GetHeight(), INT32_MIN);
+        _ResizeZBuffer(window->GetWidth(), window->GetHeight());
         return true;
     }
     
