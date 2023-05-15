@@ -388,24 +388,27 @@ namespace math {
 
     using vec4f = Vector<float, 4>;
     using vec4d = Vector<double, 4>;
-    using vec4b = Vector<std::int8_t, 4>;
-    using vec4ub = Vector<std::uint8_t, 4>;
-    using vec4i = Vector<std::int32_t, 4>;
-    using vec4ui = Vector<std::uint32_t, 4>;
+    using vec4b = Vector<int8_t, 4>;
+    using vec4ub = Vector<uint8_t, 4>;
+    using vec4i = Vector<int32_t, 4>;
+    using vec4ui = Vector<uint32_t, 4>;
+    using vec4ul = Vector<uint64_t, 4>;
 
     using vec3f = Vector<float, 3>;
     using vec3d = Vector<double, 3>;
-    using vec3b = Vector<std::int8_t, 3>;
-    using vec3ub = Vector<std::uint8_t, 3>;
-    using vec3i = Vector<std::int32_t, 3>;
-    using vec3ui = Vector<std::uint32_t, 3>;
+    using vec3b = Vector<int8_t, 3>;
+    using vec3ub = Vector<uint8_t, 3>;
+    using vec3i = Vector<int32_t, 3>;
+    using vec3ui = Vector<uint32_t, 3>;
+    using vec3ul = Vector<uint64_t, 3>;
 
     using vec2f = Vector<float, 2>;
     using vec2d = Vector<double, 2>;
-    using vec2b = Vector<std::int8_t, 2>;
-    using vec2ub = Vector<std::uint8_t, 2>;
-    using vec2i = Vector<std::int32_t, 2>;
-    using vec2ui = Vector<std::uint32_t, 2>;
+    using vec2b = Vector<int8_t, 2>;
+    using vec2ub = Vector<uint8_t, 2>;
+    using vec2i = Vector<int32_t, 2>;
+    using vec2ui = Vector<uint32_t, 2>;
+    using vec2ul = Vector<uint64_t, 2>;
 
     const vec3f VECTOR_ZERO(0.0f);
     const vec3f VECTOR_RIGHT(1.0f, 0.0f, 0.0f);

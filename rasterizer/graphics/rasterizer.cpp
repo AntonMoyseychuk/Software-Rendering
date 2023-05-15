@@ -40,25 +40,25 @@ namespace rasterization::gfx {
         switch (mode) {
         case RenderMode::POINTS:
             for (size_t i = 0; i < indexes.size(); ++i) {
-                _PointPixelShader(screen_coords[indexes[i]], color);
+                _PointPixelShader(screen_coords[indexes[i][0]], color);
             }    
             break;
 
         case RenderMode::LINES:
             for (size_t i = 0; i < indexes.size(); i += 2) {
-                _LinePixelShader(screen_coords[indexes[i]], screen_coords[indexes[i + 1]], color);
+                _LinePixelShader(screen_coords[indexes[i][0]], screen_coords[indexes[i + 1][0]], color);
             }
             break;
 
         case RenderMode::TRIANGLES:
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 _TrianglePixelShader(
-                    local_coords[indexes[i]], 
-                    local_coords[indexes[i + 1]], 
-                    local_coords[indexes[i + 2]], 
-                    screen_coords[indexes[i]], 
-                    screen_coords[indexes[i + 1]], 
-                    screen_coords[indexes[i + 2]],
+                    local_coords[indexes[i][0]], 
+                    local_coords[indexes[i + 1][0]], 
+                    local_coords[indexes[i + 2][0]], 
+                    screen_coords[indexes[i][0]], 
+                    screen_coords[indexes[i + 1][0]], 
+                    screen_coords[indexes[i + 2][0]],
                     color,
                     light_dir
                 );
@@ -141,10 +141,7 @@ namespace rasterization::gfx {
     ) const noexcept {
         using namespace math;
 
-        const vec3f normal(Cross(
-            Normalize(local_coord2 - local_coord0),
-            Normalize(local_coord1 - local_coord0))
-        );
+        const vec3f normal = Normalize(Cross(local_coord2 - local_coord0, local_coord1 - local_coord0));
 
         const float intensity = Dot(normal, light_direction) + 0.1f;
 
@@ -176,14 +173,14 @@ namespace rasterization::gfx {
     }
 
     void Rasterizer::_ResizeZBuffer(uint32_t width, uint32_t height) const noexcept {
-        m_z_buffer.resize(width * height, FLT_MIN);
+        m_z_buffer.resize(width * height, -std::numeric_limits<float>::max());
     }
 
     size_t Rasterizer::CreateBuffer(BufferType type, const void* buffer, size_t size) noexcept {
         if (type == BufferType::VERTEX) {
-            return _CreateVertexBuffer(buffer, size);
+            return _CreateVertexBuffer((const math::vec3f*)buffer, size / sizeof(math::vec3f));
         } else if (type == BufferType::INDEX) {
-            return _CreateIndexBuffer(buffer, size / sizeof(size_t));
+            return _CreateIndexBuffer((const math::vec3ul*)buffer, size / sizeof(math::vec3ul));
         } else {
             assert(false && "Invalid Buffer Type");
         }
@@ -191,24 +188,24 @@ namespace rasterization::gfx {
         return 0;
     }
 
-    size_t Rasterizer::_CreateVertexBuffer(const void *buffer, size_t size) noexcept {
+    size_t Rasterizer::_CreateVertexBuffer(const math::vec3f *buffer, size_t count) noexcept {
         size_t id;
         do {
             id = math::Random((size_t)0, SIZE_MAX) + 1;
         } while (m_vbos.count(id) != 0);
 
-        m_vbos[id] = std::vector<math::vec3f>((math::vec3f*)buffer, (math::vec3f*)buffer + size / sizeof(math::vec3f));
+        m_vbos[id] = std::vector<math::vec3f>(buffer, buffer + count);
     
         return id;
     }
 
-    size_t Rasterizer::_CreateIndexBuffer(const void *buffer, size_t count) noexcept {
+    size_t Rasterizer::_CreateIndexBuffer(const math::vec3ul *buffer, size_t count) noexcept {
         size_t id;
         do {
             id = math::Random((size_t)0, SIZE_MAX) + 1;
         } while (m_ibos.count(id) != 0);
 
-        m_ibos[id] = std::vector<size_t>((size_t*)buffer, (size_t*)buffer + count);
+        m_ibos[id] = std::vector<math::vec3ul>(buffer, buffer + count);
 
         return id;
     }
@@ -236,7 +233,7 @@ namespace rasterization::gfx {
     }
 
     void Rasterizer::ClearBackBuffer() const noexcept {
-        std::fill(m_z_buffer.begin(), m_z_buffer.end(), INT32_MIN);
+        std::fill(m_z_buffer.begin(), m_z_buffer.end(), -std::numeric_limits<float>::max());
     }
 
     void Rasterizer::SetBackgroundColor(math::Color color) noexcept {

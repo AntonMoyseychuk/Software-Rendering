@@ -32,8 +32,8 @@ namespace rasterization::gfx {
 
     private:
         void _ResizeZBuffer(uint32_t width, uint32_t height) const noexcept;
-        size_t _CreateVertexBuffer(const void* buffer, size_t size) noexcept;
-        size_t _CreateIndexBuffer(const void* buffer, size_t count) noexcept;
+        size_t _CreateVertexBuffer(const math::vec3f* buffer, size_t count) noexcept;
+        size_t _CreateIndexBuffer(const math::vec3ul* buffer, size_t count) noexcept;
 
     private:
         void _VertexShader(const math::vec3f& local_coord, math::vec3f& transformed_coord) const noexcept;
@@ -56,7 +56,7 @@ namespace rasterization::gfx {
         mutable std::vector<float> m_z_buffer;
 
         std::unordered_map<size_t, std::vector<math::vec3f>> m_vbos;
-        std::unordered_map<size_t, std::vector<size_t>> m_ibos;
+        std::unordered_map<size_t, std::vector<math::vec3ul>> m_ibos;
 
         // mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 

@@ -35,16 +35,25 @@ namespace rasterization::gfx {
 
                 ss >> key >> v.x >> v.y >> v.z;
                 vertexes.emplace_back(v);
+            } else if (!str.compare(0, 3, "vn ")) {
+                math::vec3f n;
+
+                ss >> key >> key >> n.x >> n.y >> n.z;
+                normals.emplace_back(n);
+            } else if (!str.compare(0, 3, "vt ")) {
+                math::vec2f uv;
+
+                ss >> key >> key >> uv.x >> uv.y;
+                texture_coords.emplace_back(uv);
             } else if (!str.compare(0, 2, "f ")) {
-                size_t index;
+                math::vec3ul vertex_indexes;
                 char slash;
 
                 ss >> key;
 
                 for (size_t i = 0; i < 3; ++i) {
-                    ss >> index;
-                    indexes.emplace_back(index - 1);
-                    ss >> slash >> index >> slash >> index;
+                    ss >> vertex_indexes[0] >> slash >> vertex_indexes[1] >> slash >> vertex_indexes[2];
+                    indexes.emplace_back(vertex_indexes - math::vec3ul(1));
                 }
             }
         }

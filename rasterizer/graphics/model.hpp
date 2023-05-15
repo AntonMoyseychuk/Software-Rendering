@@ -10,6 +10,8 @@ namespace rasterization::gfx {
         bool Load(const char* filepath) noexcept;
 
         std::vector<math::vec3f> vertexes;
-        std::vector<size_t> indexes;
+        std::vector<math::vec3f> normals;
+        std::vector<math::vec2f> texture_coords;
+        std::vector<math::vec3ul> indexes;
     };
 }
