@@ -10,13 +10,15 @@ namespace rasterization::gfx {
     }
 
     void Rasterizer::Render(RenderMode mode, size_t vbo_id, size_t ibo_id, math::Color color) const noexcept {
+        using namespace math;
+        
         const auto& local_coords = m_vbos.at(vbo_id);
         const auto& indexes = m_ibos.at(ibo_id);
 
         const size_t vertex_count = local_coords.size();
 
-        static std::vector<math::vec3f> transform_coords;
-        static std::vector<math::vec3f> screen_coords;
+        static std::vector<vec3f> transform_coords;
+        static std::vector<vec3f> screen_coords;
 
     #pragma region resizing-buffers
             screen_coords.resize(vertex_count);
@@ -35,7 +37,7 @@ namespace rasterization::gfx {
         // Pixel Shader
         m_window_ptr->FillPixelBuffer(m_background_color.rgba);
 
-        const static math::vec3f light_dir = math::Normalize(math::VECTOR_BACKWARD + math::VECTOR_LEFT);
+        const static vec3f light_dir = Normalize(VECTOR_BACKWARD + VECTOR_LEFT);
 
         switch (mode) {
         case RenderMode::POINTS:
@@ -52,15 +54,17 @@ namespace rasterization::gfx {
 
         case RenderMode::TRIANGLES:
             for (size_t i = 0; i < indexes.size(); i += 3) {
+                const vec3f normal = Normalize(Cross(
+                    local_coords[indexes[i + 2][0]] - local_coords[indexes[i][0]], 
+                    local_coords[indexes[i + 1][0]] - local_coords[indexes[i][0]]
+                ));
+                const float light_intensity = Dot(normal, light_dir) + 0.1f;
+
                 _TrianglePixelShader(
-                    local_coords[indexes[i][0]], 
-                    local_coords[indexes[i + 1][0]], 
-                    local_coords[indexes[i + 2][0]], 
                     screen_coords[indexes[i][0]], 
                     screen_coords[indexes[i + 1][0]], 
                     screen_coords[indexes[i + 2][0]],
-                    color,
-                    light_dir
+                    color * light_intensity
                 );
             }
             break;
@@ -129,21 +133,13 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_TrianglePixelShader(
-        const math::vec3f &local_coord0, 
-        const math::vec3f &local_coord1, 
-        const math::vec3f &local_coord2, 
+    void Rasterizer::_TrianglePixelShader( 
         const math::vec3f &screen_coords0, 
         const math::vec3f &screen_coords1, 
         const math::vec3f &screen_coords2, 
-        math::Color color, 
-        const math::vec3f &light_direction
+        math::Color triangle_color
     ) const noexcept {
         using namespace math;
-
-        const vec3f normal = Normalize(Cross(local_coord2 - local_coord0, local_coord1 - local_coord0));
-
-        const float intensity = Dot(normal, light_direction) + 0.1f;
 
         auto v0 = screen_coords0, v1 = screen_coords1, v2 = screen_coords2;
         if (v0.y > v1.y) { std::swap(v0, v1); }
@@ -167,7 +163,7 @@ namespace rasterization::gfx {
             Interpolate<float>(left.x, left.z, right.x, right.z, z_values);
 
             for (int32_t j = left.x; j <= right.x; ++j) {
-                _PointPixelShader(vec3f(j, v0.y + i, z_values[j - left.x]), color * intensity);
+                _PointPixelShader(vec3f(j, v0.y + i, z_values[j - left.x]), triangle_color);
             }
         } 
     }

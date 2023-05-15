@@ -42,14 +42,10 @@ namespace rasterization::gfx {
         void _PointPixelShader(const math::vec3f& screen_coord, math::Color color) const noexcept;
         void _LinePixelShader(const math::vec3f& screen_coord_v0, const math::vec3f& screen_coord_v1, math::Color color) const noexcept;
         void _TrianglePixelShader(
-            const math::vec3f& local_coord0, 
-            const math::vec3f& local_coord1, 
-            const math::vec3f& local_coord2, 
-            const math::vec3f& screen_coords0, 
-            const math::vec3f& screen_coords1, 
-            const math::vec3f& screen_coords2, 
-            math::Color color,
-            const math::vec3f& light_direction
+            const math::vec3f &screen_coords0, 
+            const math::vec3f &screen_coords1, 
+            const math::vec3f &screen_coords2, 
+            math::Color triangle_color
         ) const noexcept;
 
     private:

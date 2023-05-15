@@ -10,7 +10,7 @@ file(GLOB SRC_FILES
     "${PROJECT_SOURCE_DIR}/graphics/light/*.cpp"
     "${PROJECT_SOURCE_DIR}/graphics/materials/*.cpp"
 
-    "${MATH_DIR}/src/*.cpp"
+    "${MATH_DIR}/math_3d/*.cpp"
     "${WINDOW_DIR}/window/*.cpp"
     "${THREAD_POOL_DIR}/thread_pool/*.cpp"
 )
@@ -24,7 +24,7 @@ target_include_directories(${PROJECT_NAME}
     
     PUBLIC "${WINDOW_DIR}"
     PUBLIC "${THREAD_POOL_DIR}"
-    PUBLIC "${MATH_DIR}/include" 
+    PUBLIC "${MATH_DIR}" 
 )
 
 target_link_directories(${PROJECT_NAME} 

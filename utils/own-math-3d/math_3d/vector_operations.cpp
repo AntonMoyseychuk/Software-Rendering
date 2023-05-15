@@ -1,4 +1,4 @@
-#include "../include/math_3d/vector_operations.hpp"
+#include "vector_operations.hpp"
 
 namespace math {
     vec3f RandomUnitVector() noexcept {

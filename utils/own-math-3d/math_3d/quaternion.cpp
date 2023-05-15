@@ -1,4 +1,4 @@
-#include "../include/math_3d/quaternion.hpp"
+#include "quaternion.hpp"
 
 #include <cmath>
 

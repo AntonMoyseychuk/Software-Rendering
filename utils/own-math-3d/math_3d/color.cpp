@@ -1,4 +1,4 @@
-#include "../include/math_3d/color.hpp"
+#include "color.hpp"
 
 #include <algorithm>
 

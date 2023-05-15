@@ -1,4 +1,4 @@
-#include "../include/math_3d/matrix_operations.hpp"
+#include "matrix_operations.hpp"
 
 namespace math {
     mat3f math::Inverse(const mat3f &mat) noexcept {
