@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.3)
 set(DEPENDENCIES_DIR "${CMAKE_SOURCE_DIR}/dependencies")
 
 set(SDL_DIR "${DEPENDENCIES_DIR}/SDL")
+set(STB_DIR "${DEPENDENCIES_DIR}/vendor")
 
 set(UTILS_DIR "${CMAKE_SOURCE_DIR}/utils")
 set(MATH_DIR "${UTILS_DIR}/own-math-3d")

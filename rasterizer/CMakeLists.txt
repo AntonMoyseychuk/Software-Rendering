@@ -19,6 +19,7 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC "${PROJECT_SOURCE_DIR}"
     
     PUBLIC "${SDL_DIR}/include"
+    PUBLIC "${STB_DIR}"
     
     PUBLIC "${WINDOW_DIR}"
     PUBLIC "${THREAD_POOL_DIR}"

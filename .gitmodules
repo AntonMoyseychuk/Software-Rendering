@@ -5,3 +5,6 @@
 [submodule "dependencies/vendor/imgui"]
 	path = dependencies/vendor/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "dependencies/vendor/stb"]
+	path = dependencies/vendor/stb
+	url = https://github.com/nothings/stb.git
