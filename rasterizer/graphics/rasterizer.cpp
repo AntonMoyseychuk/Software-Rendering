@@ -21,9 +21,9 @@ namespace rasterization::gfx {
         static std::vector<vec3f> screen_coords;
 
     #pragma region resizing-buffers
-            screen_coords.resize(vertex_count);
-            transform_coords.resize(vertex_count);
-            _ResizeZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
+        screen_coords.resize(vertex_count);
+        transform_coords.resize(vertex_count);
+        _ResizeZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
 
         // Vertex Shader

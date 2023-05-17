@@ -22,13 +22,11 @@ namespace rasterization {
         using namespace math;
         using namespace win_framewrk;
 
-        size_t vbo, ibo;
-        {
-            Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
-
-            vbo = m_rasterizer.CreateBuffer(BufferType::VERTEX, model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0]));
-            ibo = m_rasterizer.CreateBuffer(BufferType::INDEX, model.indexes.data(), model.indexes.size() * sizeof(model.indexes[0]));
-        }
+        Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
+        
+        size_t vbo = m_rasterizer.CreateBuffer(BufferType::VERTEX, model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0]));
+        size_t ibo = m_rasterizer.CreateBuffer(BufferType::INDEX, model.indexes.data(), model.indexes.size() * sizeof(model.indexes[0]));
+        model.Free();
 
         while (m_window->IsOpen()) {
             m_window->PollEvent();

@@ -3,15 +3,17 @@
 #include <vector>
 
 namespace rasterization::gfx {
+    
     struct Model {
         Model() = default;
         Model(const char* filepath);
 
-        bool Load(const char* filepath) noexcept;
+        bool Load(const char* filepath) const noexcept;
+        void Free() const noexcept;
 
-        std::vector<math::vec3f> vertexes;
-        std::vector<math::vec3f> normals;
-        std::vector<math::vec2f> texture_coords;
-        std::vector<math::vec3ul> indexes;
+        mutable std::vector<math::vec3f> vertexes;
+        mutable std::vector<math::vec3f> normals;
+        mutable std::vector<math::vec2f> texture_coords;
+        mutable std::vector<math::vec3ul> indexes;
     };
 }
