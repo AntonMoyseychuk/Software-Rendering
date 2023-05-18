@@ -57,6 +57,7 @@ namespace win_framewrk {
         
         bool IsOpen() const noexcept;
         void FillPixelBuffer(const std::vector<std::uint32_t>& pixels) const noexcept;
+        void FillPixelBuffer(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) const noexcept;
         void FillPixelBuffer(std::uint32_t color) const noexcept;
         void PresentPixelBuffer() const noexcept;
         void PollEvent() noexcept;

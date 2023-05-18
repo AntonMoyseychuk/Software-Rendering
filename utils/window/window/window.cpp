@@ -176,6 +176,14 @@ namespace win_framewrk {
         m_thread_pool.WaitAll();
     }
 
+    void Window::FillPixelBuffer(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) const noexcept {
+        #if defined(LOG_ALL)
+            LOG_WIN_INFO(__FUNCTION__);
+        #endif
+
+        FillPixelBuffer(_InternalColor(r, g, b, a).rgba);
+    }
+
     void Window::FillPixelBuffer(std::uint32_t color) const noexcept {
         #if defined(LOG_ALL)
             LOG_WIN_INFO(__FUNCTION__);

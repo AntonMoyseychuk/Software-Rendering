@@ -1,10 +1,11 @@
 #include "mat4.hpp"
 #include "math.hpp"
+#include "vec_op.hpp"
 
 #include <cassert>
 
 namespace math {
-    const mat4 identity(
+    const mat4 mat4::IDENTITY(
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
@@ -225,6 +226,16 @@ namespace math {
 
     mat4 operator*(float value, const mat4 mat) noexcept {
         return mat * value;
+    }
+
+    vec4 operator*(const vec4 &vec, const mat4 mat) noexcept {
+        const mat4 transposed = transpose(mat);
+        return vec4(
+            dot(vec, transposed.vec_row0), 
+            dot(vec, transposed.vec_row1),
+            dot(vec, transposed.vec_row2),  
+            dot(vec, transposed.vec_row3)  
+        );
     }
 
     mat4 inverse(const mat4 &mat) noexcept

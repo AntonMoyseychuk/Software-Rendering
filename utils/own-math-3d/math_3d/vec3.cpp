@@ -7,12 +7,12 @@
 #include <cmath>
 
 namespace math {
-    const vec3 vec3::left(-1.0f, 0.0f, 0.0f); 
-    const vec3 vec3::up(0.0f, 1.0f, 0.0f); 
-    const vec3 vec3::right(1.0f, 0.0f, 0.0f); 
-    const vec3 vec3::down(0.0f, -1.0f, 0.0f); 
-    const vec3 vec3::forward(0.0f, 0.0f, 1.0f); 
-    const vec3 vec3::backward(0.0f, 0.0f, -1.0f);
+    const vec3 vec3::LEFT(-1.0f, 0.0f, 0.0f); 
+    const vec3 vec3::UP(0.0f, 1.0f, 0.0f); 
+    const vec3 vec3::RIGHT(1.0f, 0.0f, 0.0f); 
+    const vec3 vec3::DOWN(0.0f, -1.0f, 0.0f); 
+    const vec3 vec3::FORWARD(0.0f, 0.0f, 1.0f); 
+    const vec3 vec3::BACKWARD(0.0f, 0.0f, -1.0f);
 
 
     vec3::vec3(float value) noexcept
@@ -41,7 +41,7 @@ namespace math {
     }
 
     vec3::vec3(const vec4 &vec) noexcept
-        : x(vec.x), y(vec.y)
+        : x(vec.x), y(vec.y), z(vec.z)
     {
     }
     

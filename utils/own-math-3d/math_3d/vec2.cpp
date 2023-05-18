@@ -8,10 +8,10 @@
 #include <cmath>
 
 namespace math {
-    const vec2 vec2::left(-1.0f, 0.0f); 
-    const vec2 vec2::up(0.0f, 1.0f); 
-    const vec2 vec2::right(1.0f, 0.0f); 
-    const vec2 vec2::down(0.0f, -1.0f); 
+    const vec2 vec2::LEFT(-1.0f, 0.0f); 
+    const vec2 vec2::UP(0.0f, 1.0f); 
+    const vec2 vec2::RIGHT(1.0f, 0.0f); 
+    const vec2 vec2::DOWN(0.0f, -1.0f); 
 
     vec2::vec2(float value) noexcept
         : x(value), y(value)

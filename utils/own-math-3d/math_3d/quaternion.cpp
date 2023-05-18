@@ -1,4 +1,5 @@
 #include "quaternion.hpp"
+#include "vec4.hpp"
 
 #include <cmath>
 
@@ -24,5 +25,10 @@ namespace math {
     
     quaternion conjugate(const quaternion &q) noexcept {
         return quaternion(q.w, -q.x, -q.y, -q.z);
+    }
+    
+    vec4 operator*(const vec4 &vec, const quaternion &q) noexcept {
+        const auto rotated = q * quaternion(0, vec.x, vec.y, vec.z) * conjugate(q);
+        return vec4(rotated.x, rotated.y, rotated.z, 0.0f);
     }
 }

@@ -1,4 +1,5 @@
 #include "model.hpp"
+
 #include "obj/obj_parser.hpp"
 
 #include <string>

@@ -38,10 +38,10 @@ namespace math {
 
         static vec2 get_random_in_range(float min, float max) noexcept;
 
-        static const vec2 left; 
-        static const vec2 up; 
-        static const vec2 right; 
-        static const vec2 down; 
+        static const vec2 LEFT; 
+        static const vec2 UP; 
+        static const vec2 RIGHT; 
+        static const vec2 DOWN; 
 
 
         struct {

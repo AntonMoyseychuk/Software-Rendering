@@ -40,12 +40,12 @@ namespace math {
 
         static vec3 get_random_in_range(float min, float max) noexcept;
 
-        static const vec3 left; 
-        static const vec3 up; 
-        static const vec3 right; 
-        static const vec3 down; 
-        static const vec3 forward; 
-        static const vec3 backward; 
+        static const vec3 LEFT; 
+        static const vec3 UP; 
+        static const vec3 RIGHT; 
+        static const vec3 DOWN; 
+        static const vec3 FORWARD; 
+        static const vec3 BACKWARD; 
 
         struct {
             float x, y, z;

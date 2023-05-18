@@ -7,28 +7,28 @@
 #include <cassert>
 
 namespace math {
-    const vec4 vec4::left(-1.0f, 0.0f, 0.0f, 0.0f); 
-    const vec4 vec4::up(0.0f, 1.0f, 0.0f, 0.0f); 
-    const vec4 vec4::right(1.0f, 0.0f, 0.0f, 0.0f); 
-    const vec4 vec4::down(0.0f, -1.0f, 0.0f, 0.0f); 
-    const vec4 vec4::forward(0.0f, 0.0f, 1.0f, 0.0f); 
-    const vec4 vec4::backward(0.0f, 0.0f, -1.0f, 0.0f);
+    const vec4 vec4::LEFT(-1.0f, 0.0f, 0.0f, 0.0f); 
+    const vec4 vec4::UP(0.0f, 1.0f, 0.0f, 0.0f); 
+    const vec4 vec4::RIGHT(1.0f, 0.0f, 0.0f, 0.0f); 
+    const vec4 vec4::DOWN(0.0f, -1.0f, 0.0f, 0.0f); 
+    const vec4 vec4::FORWARD(0.0f, 0.0f, 1.0f, 0.0f); 
+    const vec4 vec4::BACKWARD(0.0f, 0.0f, -1.0f, 0.0f);
 
-    const color color::red(1.0f, 0.0f, 0.0f, 1.0f);
-    const color color::green(0.0f, 0.5f, 0.0f, 1.0f);
-    const color color::blue(0.0f, 0.0f, 1.0f, 1.0f);
-    const color color::yellow(1.0f, 1.0f, 0.0f, 1.0f);
-    const color color::magenta(1.0f, 0.0f, 1.0f, 1.0f);
-    const color color::cyan(0.0f, 1.0f, 1.0f, 0.0f);
-    const color color::orange(1.0f, 0.4f, 0.0, 1.0f);
-    const color color::lime(0.0f, 1.0f, 0.0f, 1.0f);
-    const color color::purple(0.5f, 0.0f, 0.5f, 1.0f);
-    const color color::indigo(75.0f / 255.0f, 0.0f, 130.0f / 255.0f, 1.0f);
-    const color color::golden(218.0f / 255.0f, 165.0f / 255.0f, 32.0f / 255.0f, 1.0f);
-    const color color::sky_blue(135.0f / 255.0f, 206.0f / 255.0f, 235.0f / 255.0f, 1.0f);
-    const color color::white(1.0f);
-    const color color::black(0.0f, 0.0f, 0.0f, 1.0f);
-    const color color::grey(0.5f, 0.5f, 0.5f, 1.0f);
+    const color color::RED(1.0f, 0.0f, 0.0f, 1.0f);
+    const color color::GREEN(0.0f, 0.5f, 0.0f, 1.0f);
+    const color color::BLUE(0.0f, 0.0f, 1.0f, 1.0f);
+    const color color::YELLOW(1.0f, 1.0f, 0.0f, 1.0f);
+    const color color::MAGENTA(1.0f, 0.0f, 1.0f, 1.0f);
+    const color color::CYAN(0.0f, 1.0f, 1.0f, 0.0f);
+    const color color::ORANGE(1.0f, 0.4f, 0.0, 1.0f);
+    const color color::LIME(0.0f, 1.0f, 0.0f, 1.0f);
+    const color color::PURPLE(0.5f, 0.0f, 0.5f, 1.0f);
+    const color color::INDIGO(75.0f / 255.0f, 0.0f, 130.0f / 255.0f, 1.0f);
+    const color color::GOLDEN(218.0f / 255.0f, 165.0f / 255.0f, 32.0f / 255.0f, 1.0f);
+    const color color::SKY_BLUE(135.0f / 255.0f, 206.0f / 255.0f, 235.0f / 255.0f, 1.0f);
+    const color color::WHITE(1.0f);
+    const color color::BLACK(0.0f, 0.0f, 0.0f, 0.0f);
+    const color color::GREY(0.5f, 0.5f, 0.5f, 1.0f);
 
 
     vec4::vec4(float value) noexcept
@@ -144,7 +144,7 @@ namespace math {
     }
 
     vec4 &vec4::operator*=(const quaternion &q) noexcept {
-        *this = *this * q;
+        *this = this->operator*(q);
 
         return *this;
     }

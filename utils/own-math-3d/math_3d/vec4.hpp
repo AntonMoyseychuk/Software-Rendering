@@ -54,28 +54,28 @@ namespace math {
 
         static vec4 get_random_in_range(float min, float max) noexcept;
 
-        static const vec4 left; 
-        static const vec4 up; 
-        static const vec4 right; 
-        static const vec4 down; 
-        static const vec4 forward; 
-        static const vec4 backward;
+        static const vec4 LEFT; 
+        static const vec4 UP; 
+        static const vec4 RIGHT; 
+        static const vec4 DOWN; 
+        static const vec4 FORWARD; 
+        static const vec4 BACKWARD;
 
-        static const color red;
-        static const color green;
-        static const color blue;
-        static const color yellow;
-        static const color magenta;
-        static const color cyan;
-        static const color orange;
-        static const color lime;
-        static const color purple;
-        static const color indigo;
-        static const color golden;
-        static const color sky_blue;
-        static const color white;
-        static const color black;
-        static const color grey;
+        static const color RED;
+        static const color GREEN;
+        static const color BLUE;
+        static const color YELLOW;
+        static const color MAGENTA;
+        static const color CYAN;
+        static const color ORANGE;
+        static const color LIME;
+        static const color PURPLE;
+        static const color INDIGO;
+        static const color GOLDEN;
+        static const color SKY_BLUE;
+        static const color WHITE;
+        static const color BLACK;
+        static const color GREY;
 
         struct {
             float x, y, z, w;
@@ -150,11 +150,9 @@ namespace math {
 
     vec4 normalize(const vec4& vec) noexcept;
 
-    #define TO_UINT32(color)                                \
-    (                                                       \
-        (0xff << 24) & (uint32_t((color.r) * 255) << 24) |  \
-        (0xff << 16) & (uint32_t((color.g) * 255) << 16) |  \
-        (0xff << 8) & (uint32_t((color.b) * 255) << 8) |    \
-        (0xff) & uint32_t((color.a) * 255)                  \
-    )                                       
+    #define R_G_B_A(color) \
+        static_cast<uint8_t>(math::Clamp(color.r * 255, 0.0f, 255.0f)), \
+        static_cast<uint8_t>(math::Clamp(color.g * 255, 0.0f, 255.0f)), \
+        static_cast<uint8_t>(math::Clamp(color.b * 255, 0.0f, 255.0f)), \
+        static_cast<uint8_t>(math::Clamp(color.a * 255, 0.0f, 255.0f))                                
 }

@@ -35,7 +35,7 @@ namespace math {
         const inline static size_t raw_count = 4;
         const inline static size_t column_count = 4;
 
-        static const mat4 identity;
+        static const mat4 IDENTITY;
 
         struct {
             float v00, v01, v02, v03;
@@ -64,6 +64,7 @@ namespace math {
     };
 
     mat4 operator*(float value, const mat4 mat) noexcept;
+    vec4 operator*(const vec4& vec, const mat4 mat) noexcept;
 
     mat4 inverse(const mat4& mat) noexcept;
     mat4 transpose(const mat4& mat) noexcept;

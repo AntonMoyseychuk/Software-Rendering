@@ -1,6 +1,10 @@
 #include "application.hpp"
 #include "math_3d/math.hpp"
 
+#include "math_3d/quaternion.hpp"
+#include "math_3d/vec4.hpp"
+#include "math_3d/vec3.hpp"
+
 #include "graphics/model.hpp"
 
 #include <iostream>
@@ -59,7 +63,7 @@ namespace rasterization {
             }
         #pragma endregion input
 
-            m_rasterizer.Render(RenderMode::TRIANGLES, vbo, ibo, Color::GOLDEN);
+            m_rasterizer.Render(RenderMode::TRIANGLES, vbo, ibo, color::GOLDEN);
             m_rasterizer.SwapBuffers(); 
             m_rasterizer.ClearBackBuffer();
         }
