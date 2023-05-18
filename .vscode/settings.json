@@ -86,6 +86,7 @@
         "future": "cpp",
         "unordered_set": "cpp",
         "any": "cpp",
-        "resumable": "cpp"
+        "resumable": "cpp",
+        "cassert": "cpp"
     }
 }

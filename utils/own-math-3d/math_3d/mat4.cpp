@@ -1,6 +1,6 @@
 #include "mat4.hpp"
 #include "math.hpp"
-#include "vec_op.hpp"
+#include "vec_operations.hpp"
 
 #include <cassert>
 
@@ -12,7 +12,8 @@ namespace math {
         0.0f, 0.0f, 0.0f, 1.0f
     );
 
-    mat4::mat4(float v00, float v01, float v02, float v03, 
+    mat4::mat4(
+        float v00, float v01, float v02, float v03, 
         float v04, float v05, float v06, float v07,
         float v08, float v09, float v10, float v11, 
         float v12, float v13, float v14, float v15

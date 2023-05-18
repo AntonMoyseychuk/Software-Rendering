@@ -7,7 +7,7 @@
 
 #include "math_3d/math.hpp"
 
-#include <iostream>
+#include <cassert>
 
 namespace rasterization::gfx {
     Rasterizer::Rasterizer(win_framewrk::Window *window)
@@ -181,9 +181,9 @@ namespace rasterization::gfx {
 
     size_t Rasterizer::CreateBuffer(BufferType type, const void* buffer, size_t size) noexcept {
         if (type == BufferType::VERTEX) {
-            return _CreateVertexBuffer((const math::vec3*)buffer, size / sizeof(math::vec3f));
+            return _CreateVertexBuffer((const math::vec3*)buffer, size / sizeof(math::vec3));
         } else if (type == BufferType::INDEX) {
-            return _CreateIndexBuffer((const math::vec3*)buffer, size / sizeof(math::vec3ul));
+            return _CreateIndexBuffer((const math::vec3*)buffer, size / sizeof(math::vec3));
         } else {
             assert(false && "Invalid Buffer Type");
         }

@@ -1,7 +1,4 @@
 #pragma once
-#include "matrix_operations.hpp"
-#include "vector_operations.hpp"
-
 #include "const.hpp"
 
 #include <cmath>
