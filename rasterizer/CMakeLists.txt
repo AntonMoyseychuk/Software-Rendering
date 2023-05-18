@@ -10,7 +10,6 @@ file(GLOB SRC_FILES
     "${WINDOW_DIR}/window/*.cpp"
     "${THREAD_POOL_DIR}/thread_pool/*.cpp"
     "${PARSERS_DIR}/obj/*.cpp"
-    "${PARSERS_DIR}/tga/*.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})

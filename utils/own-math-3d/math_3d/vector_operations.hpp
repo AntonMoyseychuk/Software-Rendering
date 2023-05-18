@@ -60,8 +60,8 @@ namespace math {
     }
 
     template<typename Type>
-    inline vec3f operator*(const Vector<Type, 3>& vec, const Quaternion& q) noexcept {
-        const auto rotated = q * Quaternion(0, vec.x, vec.y, vec.z) * Conjugate(q);
+    inline vec3f operator*(const Vector<Type, 3>& vec, const quaternion& q) noexcept {
+        const auto rotated = q * quaternion(0, vec.x, vec.y, vec.z) * conjugate(q);
         return vec3f(rotated.x, rotated.y, rotated.z);
     }
 }
