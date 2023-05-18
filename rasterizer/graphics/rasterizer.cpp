@@ -1,9 +1,9 @@
 #include "rasterizer.hpp"
 
 #include "math_3d/vec4.hpp"
-#include "math_3d/vec_op.hpp"
+#include "math_3d/vec_operations.hpp"
 #include "math_3d/mat4.hpp"
-#include "math_3d/mat_op.hpp"
+#include "math_3d/mat_operations.hpp"
 
 #include "math_3d/math.hpp"
 
