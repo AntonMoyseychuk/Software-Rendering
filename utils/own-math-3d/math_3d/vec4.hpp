@@ -34,6 +34,9 @@ namespace math {
         vec4& operator+=(const vec4& vec) noexcept;
         vec4& operator-=(const vec4& vec) noexcept;
 
+        vec4 operator*(const vec4& vec) const noexcept;
+        vec4& operator*=(const vec4& vec) noexcept;
+
         vec4 operator*(float value) const noexcept;
         vec4& operator*=(float value) noexcept;
         vec4 operator/(float value) const noexcept;
@@ -49,6 +52,7 @@ namespace math {
 
         static vec4 get_random_in_range(float min, float max) noexcept;
 
+        static const vec4 ZERO; 
         static const vec4 LEFT; 
         static const vec4 UP; 
         static const vec4 RIGHT; 
@@ -146,8 +150,8 @@ namespace math {
     vec4 normalize(const vec4& vec) noexcept;
 
     #define R_G_B_A(color) \
-        static_cast<uint8_t>(math::Clamp(color.r * 255, 0.0f, 255.0f)), \
-        static_cast<uint8_t>(math::Clamp(color.g * 255, 0.0f, 255.0f)), \
-        static_cast<uint8_t>(math::Clamp(color.b * 255, 0.0f, 255.0f)), \
-        static_cast<uint8_t>(math::Clamp(color.a * 255, 0.0f, 255.0f))                                
+        static_cast<uint8_t>(math::Clamp((color).r * 255, 0.0f, 255.0f)), \
+        static_cast<uint8_t>(math::Clamp((color).g * 255, 0.0f, 255.0f)), \
+        static_cast<uint8_t>(math::Clamp((color).b * 255, 0.0f, 255.0f)), \
+        static_cast<uint8_t>(math::Clamp((color).a * 255, 0.0f, 255.0f))                                
 }

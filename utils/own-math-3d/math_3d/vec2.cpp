@@ -8,6 +8,7 @@
 #include <cmath>
 
 namespace math {
+    const vec2 vec2::ZERO(0.0f); 
     const vec2 vec2::LEFT(-1.0f, 0.0f); 
     const vec2 vec2::UP(0.0f, 1.0f); 
     const vec2 vec2::RIGHT(1.0f, 0.0f); 
@@ -72,7 +73,18 @@ namespace math {
 
         return *this;
     }
-    
+
+    vec2 vec2::operator*(const vec2 &vec) const noexcept {
+        return vec2(x * vec.x, y * vec.y);
+    }
+
+    vec2 &vec2::operator*=(const vec2 &vec) noexcept {
+        x *= vec.x;
+        y *= vec.y;
+
+        return *this;
+    }
+
     vec2 vec2::operator*(float value) const noexcept {
         return vec2(x * value, y * value);
     }

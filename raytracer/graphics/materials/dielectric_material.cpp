@@ -1,6 +1,7 @@
 #include "dielectric_material.hpp"
 
-#include "math_3d/color.hpp"
+#include "math_3d/math.hpp"
+
 #include "graphics/intersection_data.hpp"
 
 namespace raytracing::gfx {
@@ -9,19 +10,19 @@ namespace raytracing::gfx {
     {
     }
     
-    bool Dielectric::Scatter(const IntersectionData &int_data, math::Color &attenuation, Ray &scattered_ray) const noexcept {
+    bool Dielectric::Scatter(const IntersectionData &int_data, math::color &attenuation, Ray &scattered_ray) const noexcept {
         const float refraction_ratio = int_data.is_front_face ? (1.0f / refraction_index) : refraction_index;
 
-        float cos_theta = std::fmin(math::Dot(-int_data.casted_ray.direction, int_data.normal), 1.0f);
+        float cos_theta = std::fmin(math::dot(-int_data.casted_ray.direction, int_data.normal), 1.0f);
         float sin_theta = std::sqrt(1.0f - cos_theta * cos_theta);
 
         bool cannot_refract = refraction_ratio * sin_theta > 1.0f;
-        math::vec3f direction = (cannot_refract || _Reflectance(cos_theta, refraction_ratio) > math::Random(0.0f, 1.0f)) ? 
-            math::Reflect(int_data.casted_ray.direction, int_data.normal) : 
-            math::Refract(int_data.casted_ray.direction, int_data.normal, refraction_ratio);
+        math::vec3 direction = (cannot_refract || _Reflectance(cos_theta, refraction_ratio) > math::Random(0.0f, 1.0f)) ? 
+            math::reflect(int_data.casted_ray.direction, int_data.normal) : 
+            math::refract(int_data.casted_ray.direction, int_data.normal, refraction_ratio);
 
         scattered_ray = Ray(int_data.point, direction);
-        attenuation = math::Color::WHITE;
+        attenuation = math::color::WHITE;
         return true;
     }
     

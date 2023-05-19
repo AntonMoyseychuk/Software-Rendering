@@ -6,6 +6,7 @@
 #include <cassert>
 
 namespace math {
+    const vec4 vec4::ZERO(0.0f); 
     const vec4 vec4::LEFT(-1.0f, 0.0f, 0.0f, 0.0f); 
     const vec4 vec4::UP(0.0f, 1.0f, 0.0f, 0.0f); 
     const vec4 vec4::RIGHT(1.0f, 0.0f, 0.0f, 0.0f); 
@@ -116,6 +117,15 @@ namespace math {
 
     vec4 &vec4::operator-=(const vec4 &vec) noexcept {
         mm_128 = _mm_sub_ps(mm_128, vec.mm_128);
+        return *this;
+    }
+
+    vec4 vec4::operator*(const vec4 &vec) const noexcept {
+        return vec4(_mm_mul_ps(mm_128, vec.mm_128));
+    }
+
+    vec4 &vec4::operator*=(const vec4 &vec) noexcept {
+        mm_128 = _mm_mul_ps(mm_128, vec.mm_128);
         return *this;
     }
 

@@ -38,27 +38,27 @@ namespace win_framewrk {
     private:
         union _InternalColor {
             _InternalColor() = default;
-            _InternalColor(std::uint8_t _r, std::uint8_t _g, std::uint8_t _b, std::uint8_t _a)
+            _InternalColor(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a)
                 : r(_r), g(_g), b(_b), a(_a) {}
 
-            explicit _InternalColor(std::uint32_t _rgba)
+            explicit _InternalColor(uint32_t _rgba)
                 : rgba(_rgba) {}
 
             struct {
-                std::uint8_t r, g, b, a;
+                uint8_t r, g, b, a;
             };
 
-            std::uint32_t rgba;
+            uint32_t rgba;
         };
 
     public:
         static Window* Get() noexcept;
-        bool Init(const std::string& title, std::uint32_t width, std::uint32_t height);
+        bool Init(const std::string& title, uint32_t width, uint32_t height);
         
         bool IsOpen() const noexcept;
         void FillPixelBuffer(const std::vector<std::uint32_t>& pixels) const noexcept;
-        void FillPixelBuffer(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) const noexcept;
-        void FillPixelBuffer(std::uint32_t color) const noexcept;
+        void FillPixelBuffer(uint8_t r, uint8_t g, uint8_t b, uint8_t a) const noexcept;
+        void FillPixelBuffer(uint32_t color) const noexcept;
         void PresentPixelBuffer() const noexcept;
         void PollEvent() noexcept;
 
@@ -74,28 +74,16 @@ namespace win_framewrk {
         void SetTitle(const std::string_view title) noexcept;
         const std::string& GetTitle() const noexcept;
 
-        std::uint32_t GetPixelColor(std::size_t x, std::size_t y) noexcept;
+        uint32_t GetPixelColor(size_t x, size_t y) noexcept;
         
-        void SetPixelColor(
-            std::size_t x, 
-            std::size_t y, 
-            std::uint32_t color
-        ) noexcept;
-        
-        void SetPixelColor(
-            std::size_t x, 
-            std::size_t y,
-            std::uint8_t r, 
-            std::uint8_t g, 
-            std::uint8_t b, 
-            std::uint8_t a
-        ) noexcept;
+        void SetPixelColor(size_t x, size_t y, uint32_t color) noexcept;
+        void SetPixelColor(size_t x, size_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) noexcept;
 
-        void SetWidth(std::uint32_t width) noexcept;
-        std::uint32_t GetWidth() const noexcept;
+        void SetWidth(uint32_t width) noexcept;
+        uint32_t GetWidth() const noexcept;
 
-        void SetHeight(std::uint32_t height) noexcept;
-        std::uint32_t GetHeight() const noexcept;
+        void SetHeight(uint32_t height) noexcept;
+        uint32_t GetHeight() const noexcept;
 
         const SDL_Surface* GetSDLSurfaceHandle() const noexcept;
         SDL_Surface* GetSDLSurfaceHandle() noexcept;
@@ -105,7 +93,7 @@ namespace win_framewrk {
     #pragma endregion getters-setters
 
     private:
-        static std::uint32_t _MapRGBA(SDL_PixelFormat* format, _InternalColor color) noexcept;
+        static uint32_t _MapRGBA(SDL_PixelFormat* format, _InternalColor color) noexcept;
         static bool _InitializeSDL();
 
     private:
@@ -114,18 +102,12 @@ namespace win_framewrk {
         bool _UpdateSurface() const noexcept;
 
     private:
-        void _OnResize(std::uint32_t new_width, std::uint32_t new_height) noexcept;
+        void _OnResize(uint32_t new_width, uint32_t new_height) noexcept;
         void _OnQuit() noexcept;
 
     private:
-        static void _ThreadBufferFillingFunc(
-            std::uint32_t x0, 
-            std::uint32_t y0, 
-            std::uint32_t x_end, 
-            std::uint32_t y_end, 
-            SDL_Surface* surface, 
-            const std::uint32_t* in_pixels
-        ) noexcept;
+        static void _ThreadBufferFillingFunc(uint32_t x0, uint32_t y0, uint32_t x_end, uint32_t y_end, 
+            SDL_Surface* surface, const uint32_t* in_pixels) noexcept;
 
     private:
         struct SDLDeinitializer {
@@ -145,8 +127,8 @@ namespace win_framewrk {
         SDL_Event m_event;
 
         std::string m_title = "";
-        std::uint32_t m_width = 0;
-        std::uint32_t m_height = 0;
+        uint32_t m_width = 0;
+        uint32_t m_height = 0;
         bool m_is_quit = false;
         
         mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };

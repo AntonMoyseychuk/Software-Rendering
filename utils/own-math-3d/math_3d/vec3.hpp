@@ -25,6 +25,9 @@ namespace math {
         vec3& operator+=(const vec3& vec) noexcept;
         vec3& operator-=(const vec3& vec) noexcept;
 
+        vec3 operator*(const vec3& vec) const noexcept;
+        vec3& operator*=(const vec3& vec) noexcept;
+
         vec3 operator*(float value) const noexcept;
         vec3& operator*=(float value) noexcept;
         vec3 operator/(float value) const noexcept;
@@ -40,6 +43,7 @@ namespace math {
 
         static vec3 get_random_in_range(float min, float max) noexcept;
 
+        static const vec3 ZERO; 
         static const vec3 LEFT; 
         static const vec3 UP; 
         static const vec3 RIGHT; 

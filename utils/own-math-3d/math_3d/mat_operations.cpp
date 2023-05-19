@@ -1,5 +1,4 @@
 #include "mat_operations.hpp"
-#include "mat4.hpp"
 
 #include "vec4.hpp"
 #include "vec_operations.hpp"

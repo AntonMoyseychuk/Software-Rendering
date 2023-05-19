@@ -1,7 +1,7 @@
 #include "ambient_light.hpp"
 
 namespace raytracing::gfx {
-    AmbientLight::AmbientLight(math::Color color, float intensity)
+    AmbientLight::AmbientLight(const math::color& color, float intensity)
         : ILight(color, intensity)
     {
     }

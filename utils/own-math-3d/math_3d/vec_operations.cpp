@@ -1,7 +1,5 @@
 #include "vec_operations.hpp"
 
-#include "vec4.hpp"
-
 #include <cmath>
 
 namespace math {

@@ -1,7 +1,7 @@
 #pragma once
+#include "mat4.hpp"
 
 namespace math {
-    union mat4;
     union vec4;
 
     mat4 scale(const mat4& mat, const vec4& scale) noexcept;

@@ -7,6 +7,7 @@
 #include <cmath>
 
 namespace math {
+    const vec3 vec3::ZERO(0.0f); 
     const vec3 vec3::LEFT(-1.0f, 0.0f, 0.0f); 
     const vec3 vec3::UP(0.0f, 1.0f, 0.0f); 
     const vec3 vec3::RIGHT(1.0f, 0.0f, 0.0f); 

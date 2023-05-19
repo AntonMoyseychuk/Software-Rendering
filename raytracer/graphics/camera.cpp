@@ -1,16 +1,16 @@
 #include "camera.hpp"
+#include "math_3d/math.hpp"
 
-#include <iostream>
 
 namespace raytracing::gfx {
-    Camera::Camera(const math::vec3f &position, const math::vec3f &look_at, const math::vec3f &up, float fov_degrees, float aspect_ratio)
+    Camera::Camera(const math::vec3 &position, const math::vec3 &look_at, const math::vec3 &up, float fov_degrees, float aspect_ratio)
         : m_position(position),
-            m_forward(math::Normalize(look_at - position)),
-            m_right(math::Normalize(math::Cross(up, -m_forward))),
-            m_up(math::Cross(-m_forward, m_right)),
+            m_forward(math::normalize(look_at - position)),
+            m_right(math::normalize(math::cross(up, -m_forward))),
+            m_up(math::cross(-m_forward, m_right)),
             m_radius(1.0f),
-            m_thi_radians(math::Angle(math::Normalize(math::vec3f(m_forward.x, 0.0f, m_forward.z)), math::VECTOR_FORWARD)),
-            m_theta_radians(math::Angle(math::Normalize(math::vec3f(m_forward.x, m_forward.y, 0.0f)), math::VECTOR_UP)),
+            m_thi_radians(math::angle(math::normalize(math::vec3(m_forward.x, 0.0f, m_forward.z)), math::vec4::FORWARD)),
+            m_theta_radians(math::angle(math::normalize(math::vec3(m_forward.x, m_forward.y, 0.0f)), math::vec4::UP)),
             m_tan_fov_div2(tanf(math::ToRadians(fov_degrees) / 2.0f)), 
             m_aspect_ratio(aspect_ratio)
     {
@@ -20,7 +20,7 @@ namespace raytracing::gfx {
         return m_ray_cache;
     }
     
-    void Camera::Rotate(float angle_radians, const math::vec2f& axis) noexcept {
+    void Camera::Rotate(float angle_radians, const math::vec2& axis) noexcept {
         if (!math::IsTendsTo(angle_radians, 0.0f)) {
             using namespace math;
 
@@ -30,20 +30,20 @@ namespace raytracing::gfx {
             const auto forward_x = m_radius * std::sinf(m_theta_radians) * std::sinf(m_thi_radians);
             const auto forward_y = m_radius * std::cosf(m_theta_radians);
             const auto forward_z = m_radius * std::sinf(m_theta_radians) * std::cosf(m_thi_radians);
-            m_forward = Normalize(vec3f(
+            m_forward = normalize(vec3(
                 IsTendsTo(forward_x, 0.0f) ? 0.0f : forward_x,
                 IsTendsTo(forward_y, 0.0f) ? 0.0f : forward_y,
                 IsTendsTo(forward_z, 0.0f) ? 0.0f : forward_z
             ));
-            m_right = Cross(VECTOR_UP, -m_forward);
-            m_up = Cross(-m_forward, m_right);
+            m_right = cross(vec4::UP, -m_forward);
+            m_up = cross(-m_forward, m_right);
 
             this->_RecalculateRays();
         }
     }
 
-    void Camera::MoveFor(const math::vec3f& offset) noexcept {
-        if (offset != math::vec3f(0.0f)) {
+    void Camera::MoveFor(const math::vec3& offset) noexcept {
+        if (offset != math::vec3(0.0f)) {
             m_position += offset;
             
             this->_RecalculateRays();
@@ -62,28 +62,28 @@ namespace raytracing::gfx {
         return m_aspect_ratio;
     }
 
-    void Camera::SetViewportSize(const math::vec2ui &new_size) const noexcept {
+    void Camera::SetViewportSize(const math::vec2& new_size) const noexcept {
         if (m_ray_cache_size != new_size) {
             m_ray_cache_size = new_size;
-            m_ray_cache.resize(new_size.x * new_size.y);
+            m_ray_cache.resize(uint32_t(new_size.x) * uint32_t(new_size.y));
             
             this->_RecalculateRays();
         }
     }
 
-    const math::vec3f &Camera::GetPosition() const noexcept {
+    const math::vec3 &Camera::GetPosition() const noexcept {
         return m_position;
     }
 
-    const math::vec3f &Camera::GetForward() const noexcept {
+    const math::vec3 &Camera::GetForward() const noexcept {
         return m_forward;
     }
 
-    const math::vec3f &Camera::GetRight() const noexcept {
+    const math::vec3 &Camera::GetRight() const noexcept {
         return m_right;
     }
 
-    const math::vec3f &Camera::GetUp() const noexcept {
+    const math::vec3 &Camera::GetUp() const noexcept {
         return m_up;
     }
 
@@ -100,7 +100,7 @@ namespace raytracing::gfx {
                 const float pixel_x = m_forward.x + (-1.0f + (x * dx)) * m_aspect_ratio * m_tan_fov_div2;
                 const float pixel_y = m_forward.y + (1.0f - (y * dy)) * m_tan_fov_div2;
 
-                const auto ray_dir = math::Normalize(m_forward + m_right * pixel_x + m_up * pixel_y);
+                const auto ray_dir = math::normalize(m_forward + m_right * pixel_x + m_up * pixel_y);
 
                 m_ray_cache[x + y * m_ray_cache_size.x] = Ray(m_position, ray_dir);
             }
