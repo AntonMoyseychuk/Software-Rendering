@@ -1,9 +1,9 @@
 #pragma once
 #include <type_traits>
 
-#include "vec4.hpp"
-
 namespace math {
+    union vec4;
+
     vec4 cross(const vec4& a, const vec4& b) noexcept;
     float dot(const vec4& a, const vec4& b) noexcept;
 
