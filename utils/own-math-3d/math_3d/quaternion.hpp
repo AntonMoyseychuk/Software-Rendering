@@ -2,6 +2,8 @@
 
 namespace math {
     union vec4;
+    union vec3;
+    union vec2;
 
     struct quaternion {
         quaternion() = default;
@@ -16,4 +18,11 @@ namespace math {
     quaternion conjugate(const quaternion& q) noexcept;
 
     vec4 operator*(const vec4& vec, const quaternion& q) noexcept;
+    vec4& operator*=(vec4& vec, const quaternion& q) noexcept;
+
+    vec3 operator*(const vec3& vec, const quaternion& q) noexcept;
+    vec3& operator*=(vec3& vec, const quaternion& q) noexcept;
+
+    vec2 operator*(const vec2& vec, const quaternion& q) noexcept;
+    vec2& operator*=(vec2& vec, const quaternion& q) noexcept;
 }

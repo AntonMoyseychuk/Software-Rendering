@@ -1,5 +1,7 @@
 #include "quaternion.hpp"
 #include "vec4.hpp"
+#include "vec3.hpp"
+#include "vec2.hpp"
 
 #include <cmath>
 
@@ -28,7 +30,32 @@ namespace math {
     }
     
     vec4 operator*(const vec4 &vec, const quaternion &q) noexcept {
-        const auto rotated = q * quaternion(0, vec.x, vec.y, vec.z) * conjugate(q);
+        const quaternion rotated = q * quaternion(0.0f, vec.x, vec.y, vec.z) * conjugate(q);
         return vec4(rotated.x, rotated.y, rotated.z, 0.0f);
+    }
+    
+    vec4& operator*=(vec4 &vec, const quaternion &q) noexcept {
+        vec = vec * q;
+        return vec;
+    }
+    
+    vec3 operator*(const vec3 &vec, const quaternion &q) noexcept {
+        const quaternion rotated = q * quaternion(0.0f, vec.x, vec.y, vec.z) * conjugate(q);
+        return vec3(rotated.x, rotated.y, rotated.z);
+    }
+    
+    vec3 &operator*=(vec3 &vec, const quaternion &q) noexcept {
+        vec = vec * q;
+        return vec;
+    }
+    
+    vec2 operator*(const vec2 &vec, const quaternion &q) noexcept {
+        const quaternion rotated = q * quaternion(0.0f, vec.x, vec.y, 0.0f) * conjugate(q);
+        return vec2(rotated.x, rotated.y);
+    }
+    
+    vec2 &operator*=(vec2 &vec, const quaternion &q) noexcept {
+        vec = vec * q;
+        return vec;
     }
 }

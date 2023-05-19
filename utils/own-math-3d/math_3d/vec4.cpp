@@ -1,5 +1,4 @@
 #include "vec4.hpp"
-#include "quaternion.hpp"
 
 #include "math.hpp"
 
@@ -135,17 +134,6 @@ namespace math {
 
     vec4 &vec4::operator/=(float value) noexcept{
         mm_128 = _mm_div_ps(mm_128, _mm_set_ps1(value));
-        return *this;
-    }
-
-    vec4 vec4::operator*(const quaternion &q) const noexcept {
-        const auto rotated = q * quaternion(0, x, y, z) * conjugate(q);
-        return vec4(rotated.x, rotated.y, rotated.z, 0.0f);
-    }
-
-    vec4 &vec4::operator*=(const quaternion &q) noexcept {
-        *this = this->operator*(q);
-
         return *this;
     }
 

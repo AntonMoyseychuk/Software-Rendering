@@ -5,8 +5,6 @@
 #include <immintrin.h>
 
 namespace math {
-    struct quaternion;
-
     union vec4;
     using color = vec4;
 
@@ -40,9 +38,6 @@ namespace math {
         vec4& operator*=(float value) noexcept;
         vec4 operator/(float value) const noexcept;
         vec4& operator/=(float value) noexcept;
-
-        vec4 operator*(const quaternion& q) const noexcept;
-        vec4& operator*=(const quaternion& q) noexcept;
 
         bool operator==(const vec4& vec) const noexcept;
         bool operator!=(const vec4& vec) const noexcept;

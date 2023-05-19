@@ -45,21 +45,21 @@ namespace rasterization {
             auto& internal_buff = m_rasterizer.GetVertexBuffer(vbo);
             if (m_window->IsKeyPressed(Key::D)) {
                 for (auto& vert : internal_buff) {
-                    vert = vert * quaternion(cosf(angle), 0.0f, sinf(angle), 0.0f);
+                    vert *= quaternion(cosf(angle), 0.0f, sinf(angle), 0.0f);
                 }
             } else if (m_window->IsKeyPressed(Key::A)) {
                 for (auto& vert : internal_buff) {
-                    vert = vert * quaternion(cosf(-angle), 0.0f, sinf(-angle), 0.0f);
+                    vert *= quaternion(cosf(-angle), 0.0f, sinf(-angle), 0.0f);
                 }
             }
 
             if (m_window->IsKeyPressed(Key::W)) {
                 for (auto& vert : internal_buff) {
-                    vert = vert * quaternion(cosf(-angle), sinf(-angle), 0.0f, 0.0f);
+                    vert *= quaternion(cosf(-angle), sinf(-angle), 0.0f, 0.0f);
                 }
             } else if (m_window->IsKeyPressed(Key::S)) {
                 for (auto& vert : internal_buff) {
-                    vert = vert * quaternion(cosf(angle), sinf(angle), 0.0f, 0.0f);
+                    vert *= quaternion(cosf(angle), sinf(angle), 0.0f, 0.0f);
                 }
             }
         #pragma endregion input
