@@ -117,13 +117,13 @@ namespace rasterization::gfx {
         static std::vector<int32_t> values;
         static std::vector<float> z_values;
 
-        if (Abs(v1.x - v0.x) > Abs(v1.y - v0.y)) {
+        if (abs(v1.x - v0.x) > abs(v1.y - v0.y)) {
             if (v0.x > v1.x) {
                 std::swap(v0, v1);
             }
 
-            Interpolate<int32_t>(v0.x, v0.y, v1.x, v1.y, values);
-            Interpolate<float>(v0.x, v0.z, v1.x, v1.z, z_values);
+            interpolate<int32_t>(v0.x, v0.y, v1.x, v1.y, values);
+            interpolate<float>(v0.x, v0.z, v1.x, v1.z, z_values);
             for (int32_t x = v0.x; x <= v1.x; ++x) {
                 _PointPixelShader(vec3(x, values[x - v0.x], z_values[x - v0.x]), color);
             }
@@ -132,8 +132,8 @@ namespace rasterization::gfx {
                 std::swap(v0, v1);
             }
             
-            Interpolate<int32_t>(v0.y, v0.x, v1.y, v1.x, values);
-            Interpolate<float>(v0.y, v0.z, v1.y, v1.z, z_values);
+            interpolate<int32_t>(v0.y, v0.x, v1.y, v1.x, values);
+            interpolate<float>(v0.y, v0.z, v1.y, v1.z, z_values);
             for (int32_t y = v0.y; y <= v1.y; ++y) {
                 _PointPixelShader(vec3(values[y - v0.y], y, z_values[y - v0.y]), color);
             }
@@ -167,7 +167,7 @@ namespace rasterization::gfx {
             vec3 right = is_second_half ? v1 + (v2 - v1) * beta : v0 + (v1 - v0) * beta;
             if (left.x > right.x) { std::swap(left, right); }
             
-            Interpolate<float>(left.x, left.z, right.x, right.z, z_values);
+            interpolate<float>(left.x, left.z, right.x, right.z, z_values);
 
             for (int32_t j = left.x; j <= right.x; ++j) {
                 _PointPixelShader(vec3(j, v0.y + i, z_values[j - left.x]), triangle_color);
@@ -194,7 +194,7 @@ namespace rasterization::gfx {
     size_t Rasterizer::_CreateVertexBuffer(const math::vec3 *buffer, size_t count) noexcept {
         size_t id;
         do {
-            id = math::Random((size_t)0, SIZE_MAX) + 1;
+            id = math::random((size_t)0, SIZE_MAX) + 1;
         } while (m_vbos.count(id) != 0);
 
         m_vbos[id] = std::vector<math::vec3>(buffer, buffer + count);
@@ -205,7 +205,7 @@ namespace rasterization::gfx {
     size_t Rasterizer::_CreateIndexBuffer(const math::vec3 *buffer, size_t count) noexcept {
         size_t id;
         do {
-            id = math::Random((size_t)0, SIZE_MAX) + 1;
+            id = math::random((size_t)0, SIZE_MAX) + 1;
         } while (m_ibos.count(id) != 0);
 
         m_ibos[id] = std::vector<math::vec3>(buffer, buffer + count);

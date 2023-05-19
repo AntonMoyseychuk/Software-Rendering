@@ -12,6 +12,9 @@ namespace math {
         ) noexcept;
         mat4(const vec4& vec_row0, const vec4& vec_row1, const vec4& vec_row2, const vec4& vec_row3) noexcept;
         mat4(const __m128& row0, const __m128& row1, const __m128& row2, const __m128& row3) noexcept;
+        mat4(const mat4& mat) noexcept;
+
+        mat4& operator=(const mat4& mat) noexcept;
 
         mat4 operator-() const noexcept;
 

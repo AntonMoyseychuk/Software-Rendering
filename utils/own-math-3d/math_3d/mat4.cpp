@@ -31,6 +31,20 @@ namespace math {
     {
     }
 
+    mat4::mat4(const mat4 &mat) noexcept
+        : mm_row0(mat.mm_row0), mm_row1(mat.mm_row1), mm_row2(mat.mm_row2), mm_row3(mat.mm_row3)
+    {
+    }
+
+    mat4 &mat4::operator=(const mat4 &mat) noexcept {
+        mm_row0 = mat.mm_row0; 
+        mm_row1 = mat.mm_row1; 
+        mm_row2 = mat.mm_row2; 
+        mm_row3 = mat.mm_row3;
+
+        return *this;
+    }
+
     mat4 mat4::operator-() const noexcept {
         return mat4(-vec_row0, -vec_row1, -vec_row2, -vec_row3);
     }
@@ -245,7 +259,7 @@ namespace math {
 
     mat4 inverse(const mat4 &mat) noexcept
     {
-        assert(IsTendsTo(mat.determinant(), 0.0f) == false);
+        assert(is_tends_to(mat.determinant(), 0.0f) == false);
 
         mat4 out;
 

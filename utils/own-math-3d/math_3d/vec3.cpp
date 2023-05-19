@@ -30,7 +30,7 @@ namespace math {
         : x(x), y(y), z(z)
     {
     }
-    
+
     vec3::vec3(const vec2 &vec) noexcept
         : x(vec.x), y(vec.y)
     {
@@ -142,7 +142,7 @@ namespace math {
     }
 
     vec3 vec3::get_random_in_range(float min, float max) noexcept {
-        return vec3(Random(min, max), Random(min, max), Random(min, max));
+        return vec3(random(min, max), random(min, max), random(min, max));
     }
 
     vec3 operator*(float value, const vec3 &vec) noexcept {

@@ -135,7 +135,7 @@ namespace math {
     }
 
     vec2 vec2::get_random_in_range(float min, float max) noexcept {
-        return vec2(Random(min, max), Random(min, max));
+        return vec2(random(min, max), random(min, max));
     }
 
     vec2 operator*(float value, const vec2 &vec) noexcept {

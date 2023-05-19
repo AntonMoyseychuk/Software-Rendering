@@ -39,7 +39,7 @@ namespace rasterization {
             const auto dt = _LockFPS();
             std::cout << "FPS: " << std::to_string(1.0f / dt) << std::endl;
 
-            const float angle = ToRadians(dt) * 10.0f;
+            const float angle = to_radians(dt) * 10.0f;
 
         #pragma region input
             auto& internal_buff = m_rasterizer.GetVertexBuffer(vbo);

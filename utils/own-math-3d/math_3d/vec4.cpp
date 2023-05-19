@@ -50,7 +50,12 @@ namespace math {
         : mm_128(_mm_set_ps(w, z, y, x))
     {
     }
-    
+
+    vec4::vec4(const vec4 &vec) noexcept
+        : mm_128(vec.mm_128)
+    {
+    }
+
     vec4::vec4(const vec2 &vec) noexcept
         : mm_128(_mm_set_ps(0.0f, 0.0f, vec.y, vec.x)) 
     {
@@ -99,6 +104,12 @@ namespace math {
 
     vec4 &vec4::operator=(const vec3 &vec) noexcept {
         mm_128 = _mm_set_ps(0.0f, vec.z, vec.y, vec.x);
+
+        return *this;
+    }
+
+    vec4 &vec4::operator=(const vec4 &vec) noexcept {
+        mm_128 = vec.mm_128;
 
         return *this;
     }
@@ -175,7 +186,7 @@ namespace math {
     }
 
     vec4 vec4::get_random_in_range(float min, float max) noexcept {
-        return vec4(Random(min, max), Random(min, max), Random(min, max), Random(min, max));
+        return vec4(random(min, max), random(min, max), random(min, max), random(min, max));
     }
 
     vec4 operator*(float value, const vec4 &vec) noexcept {

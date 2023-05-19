@@ -73,7 +73,7 @@ namespace math {
 
     mat4 perspective(float fovy_radians, float aspect, float z_near, float z_far) noexcept {
         assert(aspect > 0.0f && "aspect must be greater than 0");
-		assert(IsTendsTo(z_near, z_far) == false && "z_near must not to tend to z_far");
+		assert(is_tends_to(z_near, z_far) == false && "z_near must not to tend to z_far");
 
 		const auto tan_half_fovy = tanf(fovy_radians / 2.0f);
 

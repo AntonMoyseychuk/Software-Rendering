@@ -14,6 +14,7 @@ namespace math {
         explicit vec4(const __m128& mm_128) noexcept;
         explicit vec4(const float* arr) noexcept;
         vec4(float x, float y, float z, float w) noexcept;
+        vec4(const vec4& vec) noexcept;
 
         explicit vec4(const vec2& vec) noexcept;
         vec4(const vec2& xy, const vec2& zw) noexcept;
@@ -27,6 +28,7 @@ namespace math {
 
         vec4& operator=(const vec2& vec) noexcept;
         vec4& operator=(const vec3& vec) noexcept;
+        vec4& operator=(const vec4& vec) noexcept;
 
         vec4 operator-() const noexcept;
 
@@ -151,8 +153,8 @@ namespace math {
     vec4 normalize(const vec4& vec) noexcept;
 
     #define R_G_B_A(color) \
-        static_cast<uint8_t>(math::Clamp((color).r * 255, 0.0f, 255.0f)), \
-        static_cast<uint8_t>(math::Clamp((color).g * 255, 0.0f, 255.0f)), \
-        static_cast<uint8_t>(math::Clamp((color).b * 255, 0.0f, 255.0f)), \
-        static_cast<uint8_t>(math::Clamp((color).a * 255, 0.0f, 255.0f))                                
+        static_cast<uint8_t>(math::clamp((color).r * 255, 0.0f, 255.0f)), \
+        static_cast<uint8_t>(math::clamp((color).g * 255, 0.0f, 255.0f)), \
+        static_cast<uint8_t>(math::clamp((color).b * 255, 0.0f, 255.0f)), \
+        static_cast<uint8_t>(math::clamp((color).a * 255, 0.0f, 255.0f))                                
 }

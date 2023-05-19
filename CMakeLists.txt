@@ -11,5 +11,5 @@ set(WINDOW_DIR "${UTILS_DIR}/window")
 set(THREAD_POOL_DIR "${UTILS_DIR}/thread_pool")
 set(PARSERS_DIR "${UTILS_DIR}/parsers")
 
-# add_subdirectory(rasterizer)
-add_subdirectory(raytracer)
+add_subdirectory(rasterizer)
+# add_subdirectory(raytracer)
