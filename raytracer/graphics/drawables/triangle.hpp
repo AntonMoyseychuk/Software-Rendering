@@ -16,8 +16,8 @@ namespace raytracing::gfx {
         Vertex& operator[](const size_t index) noexcept;
 
     private:
-        Vertex m_v0 = { math::vec4::LEFT };
-        Vertex m_v1 = { math::vec4::UP };
-        Vertex m_v2 = { math::vec4::RIGHT };
+        Vertex m_v0 = { math::vec3::LEFT };
+        Vertex m_v1 = { math::vec3::UP };
+        Vertex m_v2 = { math::vec3::RIGHT };
     };
 }

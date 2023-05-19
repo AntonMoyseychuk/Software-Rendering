@@ -42,7 +42,7 @@ namespace raytracing::app {
         m_window->Init(title, width, height);
 
         m_renderer.SetBackgroundColor(color::BLACK);
-        m_renderer.SetAntialiasingLevel(AntialiasingLevel::X2);
+        m_renderer.SetAntialiasingLevel(AntialiasingLevel::X4);
         m_renderer.SetReflectionDepth(3);
 
         auto camera = std::make_shared<Camera>(vec3(0.0f), vec3(0.0f, 0.0f, -5.0f), vec3::UP, 90.0f, (float)width / height);

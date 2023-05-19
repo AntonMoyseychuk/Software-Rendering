@@ -81,7 +81,7 @@ namespace rasterization::gfx {
     void Rasterizer::_VertexShader(const math::vec3& local_coord, math::vec3& transformed_coord) const noexcept {
         using namespace math;
 
-        static const mat4 mvp = scale(mat4::IDENTITY, vec3(0.75f));
+        static const mat4 mvp = scale(mat4::IDENTITY, vec4(0.5f));
         transformed_coord = local_coord * mvp;
     }
 

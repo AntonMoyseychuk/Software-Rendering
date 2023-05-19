@@ -18,7 +18,12 @@ namespace math {
         : x(value), y(value)
     {
     }
-    
+
+    vec2::vec2(const float *arr) noexcept
+        : x(arr[0]), y(arr[1])
+    {
+    }
+
     vec2::vec2(float x, float y) noexcept
         : x(x), y(y)
     {

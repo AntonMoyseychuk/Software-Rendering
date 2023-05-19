@@ -7,11 +7,12 @@ namespace math {
     union vec2 {
     public:
         vec2() noexcept = default;
-        vec2(float value) noexcept;
+        explicit vec2(float value) noexcept;
+        explicit vec2(const float* arr) noexcept;
         vec2(float x, float y) noexcept;
 
-        vec2(const vec3& vec) noexcept;
-        vec2(const vec4& vec) noexcept;
+        explicit vec2(const vec3& vec) noexcept;
+        explicit vec2(const vec4& vec) noexcept;
 
         vec2& operator=(const vec3& vec) noexcept;
         vec2& operator=(const vec4& vec) noexcept;

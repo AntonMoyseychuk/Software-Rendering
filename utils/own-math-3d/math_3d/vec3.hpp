@@ -6,14 +6,15 @@ namespace math {
 
     union vec3 {
         vec3() noexcept = default;
-        vec3(float value) noexcept;
+        explicit vec3(float value) noexcept;
+        explicit vec3(const float* arr) noexcept;
         vec3(float x, float y, float z) noexcept;
 
-        vec3(const vec2& vec) noexcept;
+        explicit vec3(const vec2& vec) noexcept;
         vec3(const vec2& xy, float z) noexcept;
         vec3(float x, const vec2& yz) noexcept;
         
-        vec3(const vec4& vec) noexcept;
+        explicit vec3(const vec4& vec) noexcept;
 
         vec3& operator=(const vec2& vec) noexcept;
         vec3& operator=(const vec4& vec) noexcept;

@@ -229,6 +229,10 @@ namespace math {
         return mat * value;
     }
 
+    vec3 operator*(const vec3 &vec, const mat4 mat) noexcept {
+        return vec3(vec4(vec) * mat);
+    }
+
     vec4 operator*(const vec4 &vec, const mat4 mat) noexcept {
         const mat4 transposed = transpose(mat);
         return vec4(

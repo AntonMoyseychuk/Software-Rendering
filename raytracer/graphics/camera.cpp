@@ -9,8 +9,8 @@ namespace raytracing::gfx {
             m_right(math::normalize(math::cross(up, -m_forward))),
             m_up(math::cross(-m_forward, m_right)),
             m_radius(1.0f),
-            m_thi_radians(math::angle(math::normalize(math::vec3(m_forward.x, 0.0f, m_forward.z)), math::vec4::FORWARD)),
-            m_theta_radians(math::angle(math::normalize(math::vec3(m_forward.x, m_forward.y, 0.0f)), math::vec4::UP)),
+            m_thi_radians(math::angle(math::normalize(math::vec3(m_forward.x, 0.0f, m_forward.z)), math::vec3::FORWARD)),
+            m_theta_radians(math::angle(m_forward, math::vec3::UP)),
             m_tan_fov_div2(tanf(math::ToRadians(fov_degrees) / 2.0f)), 
             m_aspect_ratio(aspect_ratio)
     {
@@ -35,7 +35,7 @@ namespace raytracing::gfx {
                 IsTendsTo(forward_y, 0.0f) ? 0.0f : forward_y,
                 IsTendsTo(forward_z, 0.0f) ? 0.0f : forward_z
             ));
-            m_right = cross(vec4::UP, -m_forward);
+            m_right = cross(vec3::UP, -m_forward);
             m_up = cross(-m_forward, m_right);
 
             this->_RecalculateRays();
@@ -92,17 +92,19 @@ namespace raytracing::gfx {
     // }
 
     void Camera::_RecalculateRays() const noexcept {
-        const auto dx = 2.0f / m_ray_cache_size.x;
-        const auto dy = 2.0f / m_ray_cache_size.y;
+        const float dx = 2.0f / m_ray_cache_size.x;
+        const float dy = 2.0f / m_ray_cache_size.y;
 
-        for (std::size_t y = 0; y < m_ray_cache_size.y; ++y) {
-            for (std::size_t x = 0; x < m_ray_cache_size.x; ++x) {
+        const size_t width = m_ray_cache_size.x, height = m_ray_cache_size.y;
+
+        for (size_t y = 0; y < height; ++y) {
+            for (size_t x = 0; x < width; ++x) {
                 const float pixel_x = m_forward.x + (-1.0f + (x * dx)) * m_aspect_ratio * m_tan_fov_div2;
                 const float pixel_y = m_forward.y + (1.0f - (y * dy)) * m_tan_fov_div2;
 
                 const auto ray_dir = math::normalize(m_forward + m_right * pixel_x + m_up * pixel_y);
 
-                m_ray_cache[x + y * m_ray_cache_size.x] = Ray(m_position, ray_dir);
+                m_ray_cache[x + y * width] = Ray(m_position, ray_dir);
             }
         }
     }

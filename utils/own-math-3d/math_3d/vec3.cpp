@@ -20,7 +20,12 @@ namespace math {
         : x(value), y(value), z(value)
     {
     }
-    
+
+    vec3::vec3(const float *arr) noexcept
+        : x(arr[0]), y(arr[1]), z(arr[2])
+    {
+    }
+
     vec3::vec3(float x, float y, float z) noexcept
         : x(x), y(y), z(z)
     {

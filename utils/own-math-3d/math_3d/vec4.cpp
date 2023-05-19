@@ -41,6 +41,11 @@ namespace math {
     {
     }
 
+    vec4::vec4(const float *arr) noexcept
+        : mm_128(_mm_set_ps(arr[3], arr[2], arr[1], arr[0]))
+    {
+    }
+
     vec4::vec4(float x, float y, float z, float w) noexcept
         : mm_128(_mm_set_ps(w, z, y, x))
     {

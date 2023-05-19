@@ -111,8 +111,8 @@ namespace raytracing::gfx {
     void Renderer::SetAntialiasingLevel(AntialiasingLevel level) noexcept {
         m_antialiasing_level = level;
         
-        const auto antialiasing_frame_size = m_frame_size * static_cast<float>(level);
-        m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y);
+        const math::vec2 antialiasing_frame_size = m_frame_size * static_cast<float>(level);
+        m_frame.resize(uint32_t(antialiasing_frame_size.x) * uint32_t(antialiasing_frame_size.y));
     }
 
     AntialiasingLevel Renderer::GetAntialiasingLevel() const noexcept {

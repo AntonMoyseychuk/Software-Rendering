@@ -10,17 +10,18 @@ namespace math {
 
     union vec4 {
         vec4() noexcept = default;
-        vec4(float value) noexcept;
-        vec4(const __m128& mm_128) noexcept;
+        explicit vec4(float value) noexcept;
+        explicit vec4(const __m128& mm_128) noexcept;
+        explicit vec4(const float* arr) noexcept;
         vec4(float x, float y, float z, float w) noexcept;
 
-        vec4(const vec2& vec) noexcept;
+        explicit vec4(const vec2& vec) noexcept;
         vec4(const vec2& xy, const vec2& zw) noexcept;
         vec4(const vec2& xy, float z, float w) noexcept;
         vec4(float x, const vec2& yz, float w) noexcept;
         vec4(float x, float y, const vec2& zw) noexcept;
 
-        vec4(const vec3& vec) noexcept;
+        explicit vec4(const vec3& vec) noexcept;
         vec4(const vec3& xyz, float w) noexcept;
         vec4(float x, const vec3& yzw) noexcept;
 

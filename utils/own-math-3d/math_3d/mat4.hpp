@@ -1,4 +1,5 @@
 #pragma once
+#include "vec3.hpp"
 #include "vec4.hpp"
 
 namespace math {
@@ -64,6 +65,7 @@ namespace math {
     };
 
     mat4 operator*(float value, const mat4 mat) noexcept;
+    vec3 operator*(const vec3& vec, const mat4 mat) noexcept;
     vec4 operator*(const vec4& vec, const mat4 mat) noexcept;
 
     mat4 inverse(const mat4& mat) noexcept;

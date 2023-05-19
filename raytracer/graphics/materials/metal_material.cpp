@@ -10,11 +10,13 @@ namespace raytracing::gfx {
     }
     
     bool Metal::Scatter(const IntersectionData &int_data, math::color &attenuation, Ray &scattered_ray) const noexcept {
-        const auto reflected = math::reflect(int_data.casted_ray.direction, int_data.normal);
-        scattered_ray = Ray(int_data.point, reflected + reflection_index * math::random_unit_vector_in_hemisphere(int_data.normal));
+        using namespace math;
+
+        const auto reflected = reflect(int_data.casted_ray.direction, int_data.normal);
+        scattered_ray = Ray(int_data.point, reflected + reflection_index * vec3(random_unit_vector_in_hemisphere(vec4(int_data.normal))));
         
         attenuation = color;
 
-        return math::dot(reflected, int_data.normal) > 0.0f;
+        return dot(reflected, int_data.normal) > 0.0f;
     }
 }

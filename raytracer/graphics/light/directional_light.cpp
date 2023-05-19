@@ -32,7 +32,7 @@ namespace raytracing::gfx {
 
         const IGlaringMaterial* glaring = dynamic_cast<IGlaringMaterial*>(int_data.material.get());
         if (glaring && glaring->specular_index > 0.0f) {
-            const vec4 reflected_vec = reflect(int_data.casted_ray.direction, int_data.normal);
+            const vec3 reflected_vec = reflect(int_data.casted_ray.direction, int_data.normal);
             const float r_dot_v = dot(reflected_vec, -int_data.casted_ray.direction);
             if (r_dot_v > 0.0f) {
                 out_intensity += m_intensity * powf(r_dot_v, glaring->specular_index);
