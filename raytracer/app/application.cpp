@@ -123,19 +123,19 @@ namespace raytracing::app {
         if (camera != nullptr) {
             if (m_window->IsKeyPressed(Key::LALT)) {
                 if (m_window->IsKeyPressed(Key::RALT)) {
-                    camera->Rotate(math::ToRadians(180.0f), math::vec2(0.0f, 1.0f));
+                    camera->Rotate(math::to_radians(180.0f), math::vec2(0.0f, 1.0f));
                 }
 
                 if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
-                    camera->Rotate(math::ToRadians(-25.0f * dt), math::vec2(0.0f, 1.0f));
+                    camera->Rotate(math::to_radians(-25.0f * dt), math::vec2(0.0f, 1.0f));
                 } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
-                    camera->Rotate(math::ToRadians(25.0f * dt), math::vec2(0.0f, 1.0f));
+                    camera->Rotate(math::to_radians(25.0f * dt), math::vec2(0.0f, 1.0f));
                 }
 
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                    camera->Rotate(math::ToRadians(-25.0f * dt), math::vec2(1.0f, 0.0f));
+                    camera->Rotate(math::to_radians(-25.0f * dt), math::vec2(1.0f, 0.0f));
                 } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                    camera->Rotate(math::ToRadians(25.0f * dt), math::vec2(1.0f, 0.0f));
+                    camera->Rotate(math::to_radians(25.0f * dt), math::vec2(1.0f, 0.0f));
                 }
 
                 if (m_window->IsKeyPressed(Key::W)) {

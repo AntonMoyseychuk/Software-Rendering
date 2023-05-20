@@ -51,7 +51,7 @@ namespace raytracing::gfx {
         const auto normal_not_normalized = cross(e0, m_v1.position - m_v0.position);
         const auto normal = normalize(normal_not_normalized);
         const auto dot_raydir_normal = dot(ray.direction, normal);
-        if (IsTendsTo(dot_raydir_normal, 0.0f)) { //parallel
+        if (is_tends_to(dot_raydir_normal, 0.0f)) { //parallel
             return {};
         }
 

@@ -11,7 +11,7 @@ namespace raytracing::gfx {
             m_radius(1.0f),
             m_thi_radians(math::angle(math::normalize(math::vec3(m_forward.x, 0.0f, m_forward.z)), math::vec3::FORWARD)),
             m_theta_radians(math::angle(m_forward, math::vec3::UP)),
-            m_tan_fov_div2(tanf(math::ToRadians(fov_degrees) / 2.0f)), 
+            m_tan_fov_div2(tanf(math::to_radians(fov_degrees) / 2.0f)), 
             m_aspect_ratio(aspect_ratio)
     {
     }
@@ -21,7 +21,7 @@ namespace raytracing::gfx {
     }
     
     void Camera::Rotate(float angle_radians, const math::vec2& axis) noexcept {
-        if (!math::IsTendsTo(angle_radians, 0.0f)) {
+        if (!math::is_tends_to(angle_radians, 0.0f)) {
             using namespace math;
 
             m_thi_radians += axis.y * angle_radians;
@@ -31,9 +31,9 @@ namespace raytracing::gfx {
             const auto forward_y = m_radius * std::cosf(m_theta_radians);
             const auto forward_z = m_radius * std::sinf(m_theta_radians) * std::cosf(m_thi_radians);
             m_forward = normalize(vec3(
-                IsTendsTo(forward_x, 0.0f) ? 0.0f : forward_x,
-                IsTendsTo(forward_y, 0.0f) ? 0.0f : forward_y,
-                IsTendsTo(forward_z, 0.0f) ? 0.0f : forward_z
+                is_tends_to(forward_x, 0.0f) ? 0.0f : forward_x,
+                is_tends_to(forward_y, 0.0f) ? 0.0f : forward_y,
+                is_tends_to(forward_z, 0.0f) ? 0.0f : forward_z
             ));
             m_right = cross(vec3::UP, -m_forward);
             m_up = cross(-m_forward, m_right);
