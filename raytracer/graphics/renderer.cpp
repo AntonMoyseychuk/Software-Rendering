@@ -41,7 +41,7 @@ namespace raytracing::gfx {
     }
 
     const std::vector<uint32_t> &Renderer::Render(const gfx::Scene &scene) noexcept {
-        const math::vec2 antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
+        const math::vec2f antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
         m_frame.resize(antialiasing_frame_size.x * antialiasing_frame_size.y); // Must be here!!!
         
         const auto& rays = scene.GetCamera()->GenerateRays();
@@ -111,7 +111,7 @@ namespace raytracing::gfx {
     void Renderer::SetAntialiasingLevel(AntialiasingLevel level) noexcept {
         m_antialiasing_level = level;
         
-        const math::vec2 antialiasing_frame_size = m_frame_size * static_cast<float>(level);
+        const math::vec2f antialiasing_frame_size = m_frame_size * static_cast<float>(level);
         m_frame.resize(uint32_t(antialiasing_frame_size.x) * uint32_t(antialiasing_frame_size.y));
     }
 
@@ -119,16 +119,16 @@ namespace raytracing::gfx {
         return m_antialiasing_level;
     }
 
-    void Renderer::SetOutputFrameSize(const math::vec2& size) noexcept {
+    void Renderer::SetOutputFrameSize(const math::vec2f& size) noexcept {
         if (m_frame_size.x != size.x || m_frame_size.y != size.y) {
             m_frame_size = size;
             
-            const math::vec2 antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
+            const math::vec2f antialiasing_frame_size = m_frame_size * static_cast<float>(m_antialiasing_level);
             m_frame.resize(uint32_t(antialiasing_frame_size.x) * uint32_t(antialiasing_frame_size.y));
         }
     }
 
-    const math::vec2 &Renderer::GetOutputFrameSize() const noexcept {
+    const math::vec2f &Renderer::GetOutputFrameSize() const noexcept {
         return m_frame_size;
     }
 

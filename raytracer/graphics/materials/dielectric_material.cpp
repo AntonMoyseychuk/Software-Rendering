@@ -17,7 +17,7 @@ namespace raytracing::gfx {
         float sin_theta = std::sqrt(1.0f - cos_theta * cos_theta);
 
         bool cannot_refract = refraction_ratio * sin_theta > 1.0f;
-        math::vec3 direction = (cannot_refract || _Reflectance(cos_theta, refraction_ratio) > math::random(0.0f, 1.0f)) ? 
+        math::vec3f direction = (cannot_refract || _Reflectance(cos_theta, refraction_ratio) > math::random(0.0f, 1.0f)) ? 
             math::reflect(int_data.casted_ray.direction, int_data.normal) : 
             math::refract(int_data.casted_ray.direction, int_data.normal, refraction_ratio);
 

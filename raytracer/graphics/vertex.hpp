@@ -6,9 +6,9 @@
 namespace raytracing::gfx {
     struct Vertex {
         Vertex() = default;
-        Vertex(const math::vec3& position)
+        Vertex(const math::vec3f& position)
             : position(position) {}
 
-        math::vec3 position;
+        math::vec3f position;
     };
 }

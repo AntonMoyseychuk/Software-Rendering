@@ -7,23 +7,23 @@
 namespace raytracing::gfx {
     class Camera {
     public:
-        Camera(const math::vec3& position, const math::vec3& look_at, const math::vec3& up, float fov_degrees, float aspect_ratio);
+        Camera(const math::vec3f& position, const math::vec3f& look_at, const math::vec3f& up, float fov_degrees, float aspect_ratio);
 
         const std::vector<gfx::Ray>& GenerateRays() const noexcept;
 
-        void Rotate(float angle_radians, const math::vec2& axis) noexcept;
-        void MoveFor(const math::vec3& offset) noexcept;
+        void Rotate(float angle_radians, const math::vec2f& axis) noexcept;
+        void MoveFor(const math::vec3f& offset) noexcept;
 
     #pragma region getters-setters
         void SetAspectRatio(float aspect) noexcept;
         float GetAspectRatio() const noexcept;
 
-        void SetViewportSize(const math::vec2& size) const noexcept;
+        void SetViewportSize(const math::vec2f& size) const noexcept;
 
-        const math::vec3& GetPosition() const noexcept;
-        const math::vec3& GetForward() const noexcept;
-        const math::vec3& GetRight() const noexcept;
-        const math::vec3& GetUp() const noexcept;
+        const math::vec3f& GetPosition() const noexcept;
+        const math::vec3f& GetForward() const noexcept;
+        const math::vec3f& GetRight() const noexcept;
+        const math::vec3f& GetUp() const noexcept;
 
         // math::mat4f GetView() const noexcept;
     #pragma endregion getters-setters
@@ -32,10 +32,10 @@ namespace raytracing::gfx {
         void _RecalculateRays() const noexcept;
 
     private:
-        math::vec3 m_position = math::vec3::ZERO;
-        math::vec3 m_forward = math::vec3::BACKWARD;
-        math::vec3 m_right = math::vec3::RIGHT;
-        math::vec3 m_up = math::vec3::UP;
+        math::vec3f m_position = math::vec3f::ZERO;
+        math::vec3f m_forward = math::vec3f::BACKWARD;
+        math::vec3f m_right = math::vec3f::RIGHT;
+        math::vec3f m_up = math::vec3f::UP;
         const float m_radius = 1.0f;
         float m_thi_radians = math::MATH_PI;
         float m_theta_radians = math::MATH_PI_DIV_2;
@@ -44,6 +44,6 @@ namespace raytracing::gfx {
         float m_aspect_ratio = 0.0f;
 
         mutable std::vector<gfx::Ray> m_ray_cache;
-        mutable math::vec2 m_ray_cache_size;
+        mutable math::vec2f m_ray_cache_size;
     };
 }

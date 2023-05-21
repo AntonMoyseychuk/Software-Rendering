@@ -5,7 +5,7 @@
 #include "graphics/materials/glaring_material.hpp"
 
 namespace raytracing::gfx {
-    PointLigth::PointLigth(const math::vec3& _position, const math::color& _color, float _intensity)
+    PointLigth::PointLigth(const math::vec3f& _position, const math::color& _color, float _intensity)
         : ILight(_color, _intensity), position(_position)
     {
     }
@@ -22,7 +22,7 @@ namespace raytracing::gfx {
             return false;
         }
 
-        const auto ray_to_light = gfx::Ray(int_data.point + vec3(math::MATH_EPSILON), normalize(position - int_data.point));
+        const auto ray_to_light = gfx::Ray(int_data.point + vec3f(math::MATH_EPSILON), normalize(position - int_data.point));
         for (const auto& drawable : drawables) {
             if (drawable->IsIntersect(ray_to_light)) {
                 return false;
@@ -43,7 +43,7 @@ namespace raytracing::gfx {
         return true;
     }
 
-    void PointLigth::MoveFor(const math::vec3 &dist) noexcept {
+    void PointLigth::MoveFor(const math::vec3f &dist) noexcept {
         position += dist;
     }
 }

@@ -6,13 +6,13 @@
 #include <cassert>
 
 namespace math {
-    const vec4 vec4::ZERO(0.0f); 
-    const vec4 vec4::LEFT(-1.0f, 0.0f, 0.0f, 0.0f); 
-    const vec4 vec4::UP(0.0f, 1.0f, 0.0f, 0.0f); 
-    const vec4 vec4::RIGHT(1.0f, 0.0f, 0.0f, 0.0f); 
-    const vec4 vec4::DOWN(0.0f, -1.0f, 0.0f, 0.0f); 
-    const vec4 vec4::FORWARD(0.0f, 0.0f, 1.0f, 0.0f); 
-    const vec4 vec4::BACKWARD(0.0f, 0.0f, -1.0f, 0.0f);
+    const vec4f vec4f::ZERO(0.0f); 
+    const vec4f vec4f::LEFT(-1.0f, 0.0f, 0.0f, 0.0f); 
+    const vec4f vec4f::UP(0.0f, 1.0f, 0.0f, 0.0f); 
+    const vec4f vec4f::RIGHT(1.0f, 0.0f, 0.0f, 0.0f); 
+    const vec4f vec4f::DOWN(0.0f, -1.0f, 0.0f, 0.0f); 
+    const vec4f vec4f::FORWARD(0.0f, 0.0f, 1.0f, 0.0f); 
+    const vec4f vec4f::BACKWARD(0.0f, 0.0f, -1.0f, 0.0f);
 
     const color color::RED(1.0f, 0.0f, 0.0f, 1.0f);
     const color color::GREEN(0.0f, 0.5f, 0.0f, 1.0f);
@@ -31,170 +31,170 @@ namespace math {
     const color color::GREY(0.5f, 0.5f, 0.5f, 1.0f);
 
 
-    vec4::vec4(float value) noexcept
+    vec4f::vec4f(float value) noexcept
         : mm_128(_mm_set_ps1(value))
     {
     }
 
-    vec4::vec4(const __m128 &mm_128) noexcept
+    vec4f::vec4f(const __m128 &mm_128) noexcept
         : mm_128(mm_128)
     {
     }
 
-    vec4::vec4(const float *arr) noexcept
-        : mm_128(_mm_set_ps(arr[3], arr[2], arr[1], arr[0]))
+    vec4f::vec4f(const float *arr) noexcept
+        : mm_128(_mm_load_ps(arr))
     {
     }
 
-    vec4::vec4(float x, float y, float z, float w) noexcept
+    vec4f::vec4f(float x, float y, float z, float w) noexcept
         : mm_128(_mm_set_ps(w, z, y, x))
     {
     }
 
-    vec4::vec4(const vec4 &vec) noexcept
+    vec4f::vec4f(const vec4f &vec) noexcept
         : mm_128(vec.mm_128)
     {
     }
 
-    vec4::vec4(const vec2 &vec) noexcept
+    vec4f::vec4f(const vec2f &vec) noexcept
         : mm_128(_mm_set_ps(0.0f, 0.0f, vec.y, vec.x)) 
     {
     }
 
-    vec4::vec4(const vec2 &xy, const vec2 &zw) noexcept
+    vec4f::vec4f(const vec2f &xy, const vec2f &zw) noexcept
         : mm_128(_mm_set_ps(zw.y, zw.x, xy.y, xy.x))
     {
     }
 
-    vec4::vec4(const vec2 &xy, float z, float w) noexcept
+    vec4f::vec4f(const vec2f &xy, float z, float w) noexcept
         : mm_128(_mm_set_ps(w, z, xy.y, xy.x)) 
     {
     }
     
-    vec4::vec4(float x, const vec2 &yz, float w) noexcept
+    vec4f::vec4f(float x, const vec2f &yz, float w) noexcept
         : mm_128(_mm_set_ps(w, yz.y, yz.x, x))
     {
     }
     
-    vec4::vec4(float x, float y, const vec2 &zw) noexcept
+    vec4f::vec4f(float x, float y, const vec2f &zw) noexcept
         : mm_128(_mm_set_ps(zw.y, zw.x, y, x))
     {
     }
     
-    vec4::vec4(const vec3 &vec) noexcept
+    vec4f::vec4f(const vec3f &vec) noexcept
         : mm_128(_mm_set_ps(0.0f, vec.z, vec.y, vec.x))
     {
     }
     
-    vec4::vec4(const vec3 &xyz, float w) noexcept
+    vec4f::vec4f(const vec3f &xyz, float w) noexcept
         : mm_128(_mm_set_ps(w, xyz.z, xyz.y, xyz.x))
     {
     }
     
-    vec4::vec4(float x, const vec3 &yzw) noexcept
+    vec4f::vec4f(float x, const vec3f &yzw) noexcept
         : mm_128(_mm_set_ps(xyz.z, xyz.y, xyz.x, x))
     {
     }
 
-    vec4 &vec4::operator=(const vec2 &vec) noexcept {
+    vec4f &vec4f::operator=(const vec2f &vec) noexcept {
         mm_128 = _mm_set_ps(0.0f, 0.0f, vec.y, vec.x);
 
         return *this;
     }
 
-    vec4 &vec4::operator=(const vec3 &vec) noexcept {
+    vec4f &vec4f::operator=(const vec3f &vec) noexcept {
         mm_128 = _mm_set_ps(0.0f, vec.z, vec.y, vec.x);
 
         return *this;
     }
 
-    vec4 &vec4::operator=(const vec4 &vec) noexcept {
+    vec4f &vec4f::operator=(const vec4f &vec) noexcept {
         mm_128 = vec.mm_128;
 
         return *this;
     }
 
-    vec4 vec4::operator-() const noexcept {
-        return vec4(-x, -y, -z, -w);
+    vec4f vec4f::operator-() const noexcept {
+        return vec4f(-x, -y, -z, -w);
     }
 
-    vec4 vec4::operator+(const vec4 &vec) const noexcept {
-        return vec4(_mm_add_ps(mm_128, vec.mm_128));
+    vec4f vec4f::operator+(const vec4f &vec) const noexcept {
+        return vec4f(_mm_add_ps(mm_128, vec.mm_128));
     }
 
-    vec4 vec4::operator-(const vec4 &vec) const noexcept {
-        return vec4(_mm_sub_ps(mm_128, vec.mm_128));
+    vec4f vec4f::operator-(const vec4f &vec) const noexcept {
+        return vec4f(_mm_sub_ps(mm_128, vec.mm_128));
     }
 
-    vec4 &vec4::operator+=(const vec4 &vec) noexcept {
+    vec4f &vec4f::operator+=(const vec4f &vec) noexcept {
         mm_128 = _mm_add_ps(mm_128, vec.mm_128);
         return *this;
     }
 
-    vec4 &vec4::operator-=(const vec4 &vec) noexcept {
+    vec4f &vec4f::operator-=(const vec4f &vec) noexcept {
         mm_128 = _mm_sub_ps(mm_128, vec.mm_128);
         return *this;
     }
 
-    vec4 vec4::operator*(const vec4 &vec) const noexcept {
-        return vec4(_mm_mul_ps(mm_128, vec.mm_128));
+    vec4f vec4f::operator*(const vec4f &vec) const noexcept {
+        return vec4f(_mm_mul_ps(mm_128, vec.mm_128));
     }
 
-    vec4 &vec4::operator*=(const vec4 &vec) noexcept {
+    vec4f &vec4f::operator*=(const vec4f &vec) noexcept {
         mm_128 = _mm_mul_ps(mm_128, vec.mm_128);
         return *this;
     }
 
-    vec4 vec4::operator*(float value) const noexcept {
-        return vec4(_mm_mul_ps(mm_128, _mm_set_ps1(value)));
+    vec4f vec4f::operator*(float value) const noexcept {
+        return vec4f(_mm_mul_ps(mm_128, _mm_set_ps1(value)));
     }
 
-    vec4 &vec4::operator*=(float value) noexcept {
+    vec4f &vec4f::operator*=(float value) noexcept {
         mm_128 = _mm_mul_ps(mm_128, _mm_set_ps1(value));
         return *this;
     }
 
-    vec4 vec4::operator/(float value) const noexcept {
-        return vec4(_mm_div_ps(mm_128, _mm_set_ps1(value)));
+    vec4f vec4f::operator/(float value) const noexcept {
+        return vec4f(_mm_div_ps(mm_128, _mm_set_ps1(value)));
     }
 
-    vec4 &vec4::operator/=(float value) noexcept{
+    vec4f &vec4f::operator/=(float value) noexcept{
         mm_128 = _mm_div_ps(mm_128, _mm_set_ps1(value));
         return *this;
     }
 
-    bool vec4::operator==(const vec4 &vec) const noexcept {
-        return _mm_cvtss_f32(_mm_cmpeq_ps(mm_128, vec.mm_128));
+    bool vec4f::operator==(const vec4f &vec) const noexcept {
+        return is_tends_to(x, vec.x) && is_tends_to(y, vec.y) && is_tends_to(z, vec.z) && is_tends_to(w, vec.w);
     }
 
-    bool vec4::operator!=(const vec4 &vec) const noexcept {
+    bool vec4f::operator!=(const vec4f &vec) const noexcept {
         return !(*this == vec);
     }
 
-    float vec4::length() const noexcept {
+    float vec4f::length() const noexcept {
         return _mm_cvtss_f32(_mm_sqrt_ps(_mm_dp_ps(mm_128, mm_128, 0xF1)));
     }
 
-    float &vec4::operator[](size_t i) noexcept {
+    float &vec4f::operator[](size_t i) noexcept {
         assert(i < 4);
         return arr[i];
     }
 
-    float vec4::operator[](size_t i) const noexcept {
+    float vec4f::operator[](size_t i) const noexcept {
         assert(i < 4);
         return arr[i];
     }
 
-    vec4 vec4::get_random_in_range(float min, float max) noexcept {
-        return vec4(random(min, max), random(min, max), random(min, max), random(min, max));
+    vec4f vec4f::get_random_vector(float min, float max) noexcept {
+        return vec4f(random(min, max), random(min, max), random(min, max), random(min, max));
     }
 
-    vec4 operator*(float value, const vec4 &vec) noexcept {
+    vec4f operator*(float value, const vec4f &vec) noexcept {
         return vec * value;
     }
 
-    vec4 normalize(const vec4 &vec) noexcept {
+    vec4f normalize(const vec4f &vec) noexcept {
         const __m128 div = _mm_set_ps1(vec.length());
-        return vec4(_mm_div_ps(vec.mm_128, div));
+        return vec4f(_mm_div_ps(vec.mm_128, div));
     }
 }

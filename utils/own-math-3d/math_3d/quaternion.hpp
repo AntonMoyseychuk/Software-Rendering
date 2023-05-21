@@ -1,9 +1,9 @@
 #pragma once
 
 namespace math {
-    union vec4;
-    union vec3;
-    union vec2;
+    union vec4f;
+    union vec3f;
+    union vec2f;
 
     struct quaternion {
         quaternion() = default;
@@ -17,12 +17,12 @@ namespace math {
     quaternion normalize(const quaternion& q) noexcept;
     quaternion conjugate(const quaternion& q) noexcept;
 
-    vec4 operator*(const vec4& vec, const quaternion& q) noexcept;
-    vec4& operator*=(vec4& vec, const quaternion& q) noexcept;
+    vec4f operator*(const vec4f& vec, const quaternion& q) noexcept;
+    vec4f& operator*=(vec4f& vec, const quaternion& q) noexcept;
 
-    vec3 operator*(const vec3& vec, const quaternion& q) noexcept;
-    vec3& operator*=(vec3& vec, const quaternion& q) noexcept;
+    vec3f operator*(const vec3f& vec, const quaternion& q) noexcept;
+    vec3f& operator*=(vec3f& vec, const quaternion& q) noexcept;
 
-    vec2 operator*(const vec2& vec, const quaternion& q) noexcept;
-    vec2& operator*=(vec2& vec, const quaternion& q) noexcept;
+    vec2f operator*(const vec2f& vec, const quaternion& q) noexcept;
+    vec2f& operator*=(vec2f& vec, const quaternion& q) noexcept;
 }

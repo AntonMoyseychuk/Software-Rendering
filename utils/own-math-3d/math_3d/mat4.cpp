@@ -5,14 +5,14 @@
 #include <cassert>
 
 namespace math {
-    const mat4 mat4::IDENTITY(
+    const mat4f mat4f::IDENTITY(
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 1.0f
     );
 
-    mat4::mat4(
+    mat4f::mat4f(
         float v00, float v01, float v02, float v03, 
         float v04, float v05, float v06, float v07,
         float v08, float v09, float v10, float v11, 
@@ -21,22 +21,22 @@ namespace math {
         : vec_row0(v00, v01, v02, v03), vec_row1(v04, v05, v06, v07), vec_row2(v08, v09, v10, v11), vec_row3(v12, v13, v14, v15)
     {}
     
-    mat4::mat4(const vec4 &vec_row0, const vec4 &vec_row1, const vec4 &vec_row2, const vec4 &vec_row3) noexcept
+    mat4f::mat4f(const vec4f &vec_row0, const vec4f &vec_row1, const vec4f &vec_row2, const vec4f &vec_row3) noexcept
         : vec_row0(vec_row0), vec_row1(vec_row1), vec_row2(vec_row2), vec_row3(vec_row3)
     {
     }
     
-    mat4::mat4(const __m128 &row0, const __m128 &row1, const __m128 &row2, const __m128 &row3) noexcept
+    mat4f::mat4f(const __m128 &row0, const __m128 &row1, const __m128 &row2, const __m128 &row3) noexcept
         : mm_row0(row0), mm_row1(row1), mm_row2(row2), mm_row3(row3)
     {
     }
 
-    mat4::mat4(const mat4 &mat) noexcept
+    mat4f::mat4f(const mat4f &mat) noexcept
         : mm_row0(mat.mm_row0), mm_row1(mat.mm_row1), mm_row2(mat.mm_row2), mm_row3(mat.mm_row3)
     {
     }
 
-    mat4 &mat4::operator=(const mat4 &mat) noexcept {
+    mat4f &mat4f::operator=(const mat4f &mat) noexcept {
         mm_row0 = mat.mm_row0; 
         mm_row1 = mat.mm_row1; 
         mm_row2 = mat.mm_row2; 
@@ -45,12 +45,12 @@ namespace math {
         return *this;
     }
 
-    mat4 mat4::operator-() const noexcept {
-        return mat4(-vec_row0, -vec_row1, -vec_row2, -vec_row3);
+    mat4f mat4f::operator-() const noexcept {
+        return mat4f(-vec_row0, -vec_row1, -vec_row2, -vec_row3);
     }
 
-    mat4 mat4::operator+(const mat4 &mat) const noexcept {
-        return mat4(
+    mat4f mat4f::operator+(const mat4f &mat) const noexcept {
+        return mat4f(
             _mm_add_ps(mm_row0, mat.mm_row0),
             _mm_add_ps(mm_row1, mat.mm_row1),
             _mm_add_ps(mm_row2, mat.mm_row2),
@@ -58,7 +58,7 @@ namespace math {
         );
     }
 
-    mat4 &mat4::operator+=(const mat4 &mat) noexcept {
+    mat4f &mat4f::operator+=(const mat4f &mat) noexcept {
         mm_row0 = _mm_add_ps(mm_row0, mat.mm_row0);
         mm_row1 = _mm_add_ps(mm_row1, mat.mm_row1);
         mm_row2 = _mm_add_ps(mm_row2, mat.mm_row2);
@@ -67,8 +67,8 @@ namespace math {
         return *this;
     }
 
-    mat4 mat4::operator-(const mat4 &mat) const noexcept {
-        return mat4(
+    mat4f mat4f::operator-(const mat4f &mat) const noexcept {
+        return mat4f(
             _mm_sub_ps(mm_row0, mat.mm_row0),
             _mm_sub_ps(mm_row1, mat.mm_row1),
             _mm_sub_ps(mm_row2, mat.mm_row2),
@@ -76,7 +76,7 @@ namespace math {
         );
     }
 
-    mat4 &mat4::operator-=(const mat4 &mat) noexcept {
+    mat4f &mat4f::operator-=(const mat4f &mat) noexcept {
         mm_row0 = _mm_sub_ps(mm_row0, mat.mm_row0);
         mm_row1 = _mm_sub_ps(mm_row1, mat.mm_row1);
         mm_row2 = _mm_sub_ps(mm_row2, mat.mm_row2);
@@ -85,9 +85,9 @@ namespace math {
         return *this;
     }
 
-    mat4 mat4::operator*(float value) const noexcept {
+    mat4f mat4f::operator*(float value) const noexcept {
         const __m128 mul = _mm_set_ps1(value);
-        return mat4(
+        return mat4f(
             _mm_mul_ps(mm_row0, mul),
             _mm_mul_ps(mm_row1, mul),
             _mm_mul_ps(mm_row2, mul),
@@ -95,7 +95,7 @@ namespace math {
         );
     }
 
-    mat4 &mat4::operator*=(float value) noexcept {
+    mat4f &mat4f::operator*=(float value) noexcept {
         const __m128 mul = _mm_set_ps1(value);
 
         mm_row0 = _mm_mul_ps(mm_row0, mul);
@@ -106,9 +106,9 @@ namespace math {
         return *this;
     }
 
-    mat4 mat4::operator/(float value) const noexcept {
+    mat4f mat4f::operator/(float value) const noexcept {
         const __m128 div = _mm_set_ps1(value);
-        return mat4(
+        return mat4f(
             _mm_div_ps(mm_row0, div),
             _mm_div_ps(mm_row1, div),
             _mm_div_ps(mm_row2, div),
@@ -116,7 +116,7 @@ namespace math {
         );
     }
 
-    mat4 &mat4::operator/=(float value) noexcept {
+    mat4f &mat4f::operator/=(float value) noexcept {
         const __m128 div = _mm_set_ps1(value);
 
         mm_row0 = _mm_div_ps(mm_row0, div);
@@ -127,57 +127,57 @@ namespace math {
         return *this;
     }
 
-    mat4 mat4::operator*(const mat4 &mat) const noexcept {
-        const mat4 transposed = transpose(mat);
+    mat4f mat4f::operator*(const mat4f &mat) const noexcept {
+        const mat4f transposed = transpose(mat);
 
-        vec4 row0(
+        vec4f row0(
             _mm_cvtss_f32(_mm_dp_ps(mm_row0, transposed.mm_row0, 0xF1)),
             _mm_cvtss_f32(_mm_dp_ps(mm_row0, transposed.mm_row1, 0xF1)),
             _mm_cvtss_f32(_mm_dp_ps(mm_row0, transposed.mm_row2, 0xF1)),
             _mm_cvtss_f32(_mm_dp_ps(mm_row0, transposed.mm_row3, 0xF1))
         );
 
-        vec4 row1(
+        vec4f row1(
             _mm_cvtss_f32(_mm_dp_ps(mm_row1, transposed.mm_row0, 0xF1)),
             _mm_cvtss_f32(_mm_dp_ps(mm_row1, transposed.mm_row1, 0xF1)),
             _mm_cvtss_f32(_mm_dp_ps(mm_row1, transposed.mm_row2, 0xF1)),
             _mm_cvtss_f32(_mm_dp_ps(mm_row1, transposed.mm_row3, 0xF1))
         );
 
-        vec4 row2(
+        vec4f row2(
             _mm_cvtss_f32(_mm_dp_ps(mm_row2, transposed.mm_row0, 0xF1)),
             _mm_cvtss_f32(_mm_dp_ps(mm_row2, transposed.mm_row1, 0xF1)),
             _mm_cvtss_f32(_mm_dp_ps(mm_row2, transposed.mm_row2, 0xF1)),
             _mm_cvtss_f32(_mm_dp_ps(mm_row2, transposed.mm_row3, 0xF1))
         );
 
-        vec4 row3(
+        vec4f row3(
             _mm_cvtss_f32(_mm_dp_ps(mm_row3, transposed.mm_row0, 0xF1)),
             _mm_cvtss_f32(_mm_dp_ps(mm_row3, transposed.mm_row1, 0xF1)),
             _mm_cvtss_f32(_mm_dp_ps(mm_row3, transposed.mm_row2, 0xF1)),
             _mm_cvtss_f32(_mm_dp_ps(mm_row3, transposed.mm_row3, 0xF1))
         );
 
-        return mat4(row0, row1, row2, row3);
+        return mat4f(row0, row1, row2, row3);
     }
 
-    mat4 &mat4::operator*=(const mat4 &mat) noexcept {
+    mat4f &mat4f::operator*=(const mat4f &mat) noexcept {
         *this = *this * mat;
 
         return *this;
     }
 
-    vec4 &mat4::operator[](size_t i) noexcept {
+    vec4f &mat4f::operator[](size_t i) noexcept {
         assert(i < raw_count);
         return vec_arr[i];
     }
 
-    const vec4 &mat4::operator[](size_t i) const noexcept {
+    const vec4f &mat4f::operator[](size_t i) const noexcept {
         assert(i < raw_count);
         return vec_arr[i];
     }
 
-    float mat4::determinant() const noexcept {
+    float mat4f::determinant() const noexcept {
         // _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(add)
 
         //T SubFactor00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
@@ -239,17 +239,17 @@ namespace math {
         return _mm_cvtss_f32(_mm_dp_ps(mm_arr[0], DetCof, 0xff));
     }
 
-    mat4 operator*(float value, const mat4 mat) noexcept {
+    mat4f operator*(float value, const mat4f mat) noexcept {
         return mat * value;
     }
 
-    vec3 operator*(const vec3 &vec, const mat4 mat) noexcept {
-        return vec3(vec4(vec) * mat);
+    vec3f operator*(const vec3f &vec, const mat4f mat) noexcept {
+        return vec3f(vec4f(vec) * mat);
     }
 
-    vec4 operator*(const vec4 &vec, const mat4 mat) noexcept {
-        const mat4 transposed = transpose(mat);
-        return vec4(
+    vec4f operator*(const vec4f &vec, const mat4f mat) noexcept {
+        const mat4f transposed = transpose(mat);
+        return vec4f(
             dot(vec, transposed.vec_row0), 
             dot(vec, transposed.vec_row1),
             dot(vec, transposed.vec_row2),  
@@ -257,11 +257,11 @@ namespace math {
         );
     }
 
-    mat4 inverse(const mat4 &mat) noexcept
+    mat4f inverse(const mat4f &mat) noexcept
     {
         assert(is_tends_to(mat.determinant(), 0.0f) == false);
 
-        mat4 out;
+        mat4f out;
 
         __m128 Fac0;
         {
@@ -483,8 +483,8 @@ namespace math {
         return out;
     }
 
-    mat4 transpose(const mat4 &mat) noexcept {
-        mat4 temp(mat);
+    mat4f transpose(const mat4f &mat) noexcept {
+        mat4f temp(mat);
         _MM_TRANSPOSE4_PS(temp.mm_row0, temp.mm_row1, temp.mm_row2, temp.mm_row3);
 
         return temp;

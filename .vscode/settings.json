@@ -87,6 +87,7 @@
         "unordered_set": "cpp",
         "any": "cpp",
         "resumable": "cpp",
-        "cassert": "cpp"
+        "cassert": "cpp",
+        "cstdalign": "cpp"
     }
 }

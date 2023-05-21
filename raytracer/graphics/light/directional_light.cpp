@@ -5,7 +5,7 @@
 #include "graphics/materials/glaring_material.hpp"
 
 namespace raytracing::gfx {
-    DirectionalLigth::DirectionalLigth(const math::vec3 &direction, const math::color& color, float intensity)
+    DirectionalLigth::DirectionalLigth(const math::vec3f &direction, const math::color& color, float intensity)
         : ILight(color, intensity), m_direction(math::normalize(direction)) 
     {
     }
@@ -21,7 +21,7 @@ namespace raytracing::gfx {
             return false;
         } // angle = (0, PI_DIV_2)
 
-        const auto ray_to_light = gfx::Ray(int_data.point + vec3(MATH_EPSILON), -m_direction);
+        const auto ray_to_light = gfx::Ray(int_data.point + vec3f(MATH_EPSILON), -m_direction);
         for (const auto& drawable : drawables) {
             if (drawable->IsIntersect(ray_to_light)) {
                 return false;
@@ -32,7 +32,7 @@ namespace raytracing::gfx {
 
         const IGlaringMaterial* glaring = dynamic_cast<IGlaringMaterial*>(int_data.material.get());
         if (glaring && glaring->specular_index > 0.0f) {
-            const vec3 reflected_vec = reflect(int_data.casted_ray.direction, int_data.normal);
+            const vec3f reflected_vec = reflect(int_data.casted_ray.direction, int_data.normal);
             const float r_dot_v = dot(reflected_vec, -int_data.casted_ray.direction);
             if (r_dot_v > 0.0f) {
                 out_intensity += m_intensity * powf(r_dot_v, glaring->specular_index);
@@ -41,15 +41,15 @@ namespace raytracing::gfx {
         return true;
     }
 
-    void DirectionalLigth::Rotate(const math::mat4 &rotation_mat) noexcept {
-        m_direction = math::vec3(m_direction * rotation_mat);
+    void DirectionalLigth::Rotate(const math::mat4f &rotation_mat) noexcept {
+        m_direction = math::vec3f(m_direction * rotation_mat);
     }
 
-    void DirectionalLigth::SetDirection(const math::vec3 &direction) noexcept {
+    void DirectionalLigth::SetDirection(const math::vec3f &direction) noexcept {
         m_direction = math::normalize(direction);
     }
     
-    const math::vec3& DirectionalLigth::GetDirection() const noexcept {
+    const math::vec3f& DirectionalLigth::GetDirection() const noexcept {
         return m_direction;
     }
 }

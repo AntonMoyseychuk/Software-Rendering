@@ -7,10 +7,10 @@
 
 namespace raytracing::gfx {
     Triangle::Triangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, std::shared_ptr<IMaterial> material)
-        : IDrawable(math::vec3(), material), m_v0(v0), m_v1(v1), m_v2(v2)
+        : IDrawable(math::vec3f(), material), m_v0(v0), m_v1(v1), m_v2(v2)
     {
-        const math::vec3 e = v1.position - v0.position;
-        const math::vec3 mid_e = v0.position + math::normalize(e) * (e.length() / 2.0f);
+        const math::vec3f e = v1.position - v0.position;
+        const math::vec3f mid_e = v0.position + math::normalize(e) * (e.length() / 2.0f);
         const auto mediana = mid_e - v2.position, center = v2.position + math::normalize(mediana) * (mediana.length() * 2.0f / 3.0f);
         m_position = center;
     }
@@ -100,7 +100,7 @@ namespace raytracing::gfx {
         return IntersectionData(hit_point, normal, t, ray, m_material);
     }
 
-    void Triangle::MoveFor(const math::vec3 &dist) noexcept {
+    void Triangle::MoveFor(const math::vec3f &dist) noexcept {
         m_v0.position += dist;
         m_v1.position += dist;
         m_v2.position += dist;

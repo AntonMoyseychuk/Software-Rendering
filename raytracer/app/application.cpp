@@ -45,46 +45,46 @@ namespace raytracing::app {
         m_renderer.SetAntialiasingLevel(AntialiasingLevel::X4);
         m_renderer.SetReflectionDepth(3);
 
-        auto camera = std::make_shared<Camera>(vec3(0.0f), vec3(0.0f, 0.0f, -5.0f), vec3::UP, 90.0f, (float)width / height);
-        camera->SetViewportSize(vec2(width, height) * static_cast<float>(m_renderer.GetAntialiasingLevel()));
+        auto camera = std::make_shared<Camera>(vec3f(0.0f), vec3f(0.0f, 0.0f, -5.0f), vec3f::UP, 90.0f, (float)width / height);
+        camera->SetViewportSize(vec2f(width, height) * static_cast<float>(m_renderer.GetAntialiasingLevel()));
 
         m_scene.SetCamera(camera);
 
         m_scene.AddDrawble(std::make_shared<Triangle>(
-                Vertex(vec3(-4.0f, -3.0f, -9.0f)), 
-                Vertex(vec3(0.0f, 5.0f, -9.0f)), 
-                Vertex(vec3(4.0f, -3.0f, -9.0f)),
+                Vertex(vec3f(-4.0f, -3.0f, -9.0f)), 
+                Vertex(vec3f(0.0f, 5.0f, -9.0f)), 
+                Vertex(vec3f(4.0f, -3.0f, -9.0f)),
                 std::make_shared<Metal>(color::GREY)
             )
         );
 
-        m_scene.AddDrawble(std::make_shared<Sphere>(vec3(0.0f, 0.0f, -5.5f), 1.6f, std::make_shared<Dielectric>(1.4f)));
-        m_scene.AddDrawble(std::make_shared<Sphere>(vec3(-3.0f, 0.65f, -5.0f), 0.8f, std::make_shared<Diffuse>(color::RED)));
-        m_scene.AddDrawble(std::make_shared<Sphere>(vec3(-1.5f, 0.65f, -5.0f), 0.8f, std::make_shared<Metal>(color::GREEN, 0.0f, 500.0f)));
-        m_scene.AddDrawble(std::make_shared<Sphere>(vec3(0.0f, 0.65f, -5.0f), 0.8f, std::make_shared<Diffuse>(color::BLUE)));
-        m_scene.AddDrawble(std::make_shared<Sphere>(vec3(1.5f, 0.65f, -5.0f), 0.8f, std::make_shared<Metal>(color::MAGENTA, 0.2f)));
-        m_scene.AddDrawble(std::make_shared<Sphere>(vec3(3.0f, 0.65f, -5.0f), 0.8f, std::make_shared<Diffuse>(color::ORANGE)));
-        m_scene.AddDrawble(std::make_shared<Sphere>(vec3(-3.0f, -1.0f, -5.0f), 0.8f, std::make_shared<Metal>(color::YELLOW, 0.5f)));
-        m_scene.AddDrawble(std::make_shared<Sphere>(vec3(-1.5f, -1.0f, -5.0f), 0.8f, std::make_shared<Diffuse>(color::PURPLE)));
-        m_scene.AddDrawble(std::make_shared<Sphere>(vec3(0.0f, -1.0f, -5.0f), 0.8f, std::make_shared<Metal>(color::CYAN)));
-        m_scene.AddDrawble(std::make_shared<Sphere>(vec3(1.5f, -1.0f, -5.0f), 0.8f, std::make_shared<Diffuse>(color::GOLDEN)));
-        m_scene.AddDrawble(std::make_shared<Sphere>(vec3(3.0f, -1.0f, -5.0f), 0.8f, std::make_shared<Metal>(color::SKY_BLUE)));
+        m_scene.AddDrawble(std::make_shared<Sphere>(vec3f(0.0f, 0.0f, -5.5f), 1.6f, std::make_shared<Dielectric>(1.4f)));
+        m_scene.AddDrawble(std::make_shared<Sphere>(vec3f(-3.0f, 0.65f, -5.0f), 0.8f, std::make_shared<Diffuse>(color::RED)));
+        m_scene.AddDrawble(std::make_shared<Sphere>(vec3f(-1.5f, 0.65f, -5.0f), 0.8f, std::make_shared<Metal>(color::GREEN, 0.0f, 500.0f)));
+        m_scene.AddDrawble(std::make_shared<Sphere>(vec3f(0.0f, 0.65f, -5.0f), 0.8f, std::make_shared<Diffuse>(color::BLUE)));
+        m_scene.AddDrawble(std::make_shared<Sphere>(vec3f(1.5f, 0.65f, -5.0f), 0.8f, std::make_shared<Metal>(color::MAGENTA, 0.2f)));
+        m_scene.AddDrawble(std::make_shared<Sphere>(vec3f(3.0f, 0.65f, -5.0f), 0.8f, std::make_shared<Diffuse>(color::ORANGE)));
+        m_scene.AddDrawble(std::make_shared<Sphere>(vec3f(-3.0f, -1.0f, -5.0f), 0.8f, std::make_shared<Metal>(color::YELLOW, 0.5f)));
+        m_scene.AddDrawble(std::make_shared<Sphere>(vec3f(-1.5f, -1.0f, -5.0f), 0.8f, std::make_shared<Diffuse>(color::PURPLE)));
+        m_scene.AddDrawble(std::make_shared<Sphere>(vec3f(0.0f, -1.0f, -5.0f), 0.8f, std::make_shared<Metal>(color::CYAN)));
+        m_scene.AddDrawble(std::make_shared<Sphere>(vec3f(1.5f, -1.0f, -5.0f), 0.8f, std::make_shared<Diffuse>(color::GOLDEN)));
+        m_scene.AddDrawble(std::make_shared<Sphere>(vec3f(3.0f, -1.0f, -5.0f), 0.8f, std::make_shared<Metal>(color::SKY_BLUE)));
         
         m_scene.AddDrawble(std::make_shared<Triangle>(
-                Vertex(vec3(-15.0f, -2.0f, 2.0f)), 
-                Vertex(vec3(0.0f, -1.0f, -17.0f)), 
-                Vertex(vec3(15.0f, -2.0f, 2.0f)),
+                Vertex(vec3f(-15.0f, -2.0f, 2.0f)), 
+                Vertex(vec3f(0.0f, -1.0f, -17.0f)), 
+                Vertex(vec3f(15.0f, -2.0f, 2.0f)),
                 std::make_shared<Metal>(color::BLACK, 0.05f)
             )
         );
         
         // m_scene.AddLight(std::make_shared<PointLigth>(math::vec3f(-8.0f, -10.0f, 8.0f), Color::WHITE, 1.0f));
-        m_scene.AddLight(std::make_shared<DirectionalLigth>(vec3(2.0f, -1.0f, -2.0f), color::WHITE, 1.0f));
+        m_scene.AddLight(std::make_shared<DirectionalLigth>(vec3f(2.0f, -1.0f, -2.0f), color::WHITE, 1.0f));
         m_scene.AddLight(std::make_shared<AmbientLight>(color::WHITE, 0.1f));
     }
     
     void Application::Run() noexcept {
-        math::vec2 last_window_size;
+        math::vec2f last_window_size;
 
         auto& camera = m_scene.GetCamera();
 
@@ -95,7 +95,7 @@ namespace raytracing::app {
 
             m_window->PollEvent();
 
-            const math::vec2 curr_window_size(m_window->GetWidth(), m_window->GetHeight());
+            const math::vec2f curr_window_size(m_window->GetWidth(), m_window->GetHeight());
             if (last_window_size != curr_window_size) {
                 m_renderer.SetOutputFrameSize(curr_window_size);
                 
@@ -123,19 +123,19 @@ namespace raytracing::app {
         if (camera != nullptr) {
             if (m_window->IsKeyPressed(Key::LALT)) {
                 if (m_window->IsKeyPressed(Key::RALT)) {
-                    camera->Rotate(math::to_radians(180.0f), math::vec2(0.0f, 1.0f));
+                    camera->Rotate(math::to_radians(180.0f), math::vec2f(0.0f, 1.0f));
                 }
 
                 if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
-                    camera->Rotate(math::to_radians(-25.0f * dt), math::vec2(0.0f, 1.0f));
+                    camera->Rotate(math::to_radians(-25.0f * dt), math::vec2f(0.0f, 1.0f));
                 } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
-                    camera->Rotate(math::to_radians(25.0f * dt), math::vec2(0.0f, 1.0f));
+                    camera->Rotate(math::to_radians(25.0f * dt), math::vec2f(0.0f, 1.0f));
                 }
 
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                    camera->Rotate(math::to_radians(-25.0f * dt), math::vec2(1.0f, 0.0f));
+                    camera->Rotate(math::to_radians(-25.0f * dt), math::vec2f(1.0f, 0.0f));
                 } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                    camera->Rotate(math::to_radians(25.0f * dt), math::vec2(1.0f, 0.0f));
+                    camera->Rotate(math::to_radians(25.0f * dt), math::vec2f(1.0f, 0.0f));
                 }
 
                 if (m_window->IsKeyPressed(Key::W)) {
@@ -166,21 +166,21 @@ namespace raytracing::app {
         if (drawable != nullptr) {
             if (m_window->IsKeyPressed(Key::SPASE)) {
                 if (m_window->IsKeyPressed(Key::W)) {
-                    drawable->MoveFor(vec3::UP * 2.0f * dt);
+                    drawable->MoveFor(vec3f::UP * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::S)) {
-                    drawable->MoveFor(vec3::DOWN * 2.0f * dt);
+                    drawable->MoveFor(vec3f::DOWN * 2.0f * dt);
                 }
                 
                 if (m_window->IsKeyPressed(Key::A)) {
-                    drawable->MoveFor(vec3::LEFT * 2.0f * dt);
+                    drawable->MoveFor(vec3f::LEFT * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::D)) {
-                    drawable->MoveFor(vec3::RIGHT * 2.0f * dt);
+                    drawable->MoveFor(vec3f::RIGHT * 2.0f * dt);
                 }
 
                 if (m_window->IsKeyPressed(Key::Z)) {
-                    drawable->MoveFor(vec3::BACKWARD * 2.0f * dt);
+                    drawable->MoveFor(vec3f::BACKWARD * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::X)) {
-                    drawable->MoveFor(vec3::FORWARD * 2.0f * dt);
+                    drawable->MoveFor(vec3f::FORWARD * 2.0f * dt);
                 }
                 
                 if (dynamic_cast<gfx::Triangle*>(drawable) != nullptr) {
@@ -215,27 +215,27 @@ namespace raytracing::app {
         if ((point_light = dynamic_cast<gfx::PointLigth*>(light)) != nullptr) {
             if (m_window->IsKeyPressed(Key::LSHIFT)) {
                 if (m_window->IsKeyPressed(Key::W)) {
-                    point_light->MoveFor(math::vec3::UP * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::UP * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::S)) {
-                    point_light->MoveFor(math::vec3::DOWN * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::DOWN * 2.0f * dt);
                 }
 
                 if (m_window->IsKeyPressed(Key::A)) {
-                    point_light->MoveFor(math::vec3::LEFT * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::LEFT * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::D)) {
-                    point_light->MoveFor(math::vec3::RIGHT * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::RIGHT * 2.0f * dt);
                 }
 
                 if (m_window->IsKeyPressed(Key::Z)) {
-                    point_light->MoveFor(math::vec3::BACKWARD * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::BACKWARD * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::X)) {
-                    point_light->MoveFor(math::vec3::FORWARD * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::FORWARD * 2.0f * dt);
                 }
                 
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                    point_light->MoveFor(math::vec3::BACKWARD * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::BACKWARD * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                    point_light->MoveFor(math::vec3::FORWARD * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::FORWARD * 2.0f * dt);
                 }
             }
         }

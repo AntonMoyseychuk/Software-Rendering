@@ -7,12 +7,12 @@
 namespace raytracing::gfx {
     struct IntersectionData {
         IntersectionData() = default;
-        IntersectionData(const math::vec3& point, const math::vec3& normal, float distance, const Ray& casted_ray, std::shared_ptr<IMaterial> material);
+        IntersectionData(const math::vec3f& point, const math::vec3f& normal, float distance, const Ray& casted_ray, std::shared_ptr<IMaterial> material);
 
-        void SetFaceNormal(const Ray& ray, const math::vec3& outward_normal) noexcept;
+        void SetFaceNormal(const Ray& ray, const math::vec3f& outward_normal) noexcept;
 
-        math::vec3 point;
-        math::vec3 normal;
+        math::vec3f point;
+        math::vec3f normal;
         float distance;
         bool is_front_face;
 

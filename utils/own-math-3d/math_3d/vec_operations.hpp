@@ -2,24 +2,24 @@
 #include <type_traits>
 
 namespace math {
-    union vec3;
-    union vec4;
+    union vec3f;
+    union vec4f;
 
-    vec4 cross(const vec4& a, const vec4& b) noexcept;
-    float dot(const vec4& a, const vec4& b) noexcept;
+    vec4f cross(const vec4f& a, const vec4f& b) noexcept;
+    float dot(const vec4f& a, const vec4f& b) noexcept;
 
-    vec3 cross(const vec3& a, const vec3& b) noexcept;
-    float dot(const vec3& a, const vec3& b) noexcept;
+    vec3f cross(const vec3f& a, const vec3f& b) noexcept;
+    float dot(const vec3f& a, const vec3f& b) noexcept;
 
-    vec4 random_unit_vector() noexcept;
-    vec4 random_unit_vector_in_hemisphere(const vec4& normal) noexcept;
+    vec4f random_unit_vector() noexcept;
+    vec4f random_unit_vector_in_hemisphere(const vec4f& normal) noexcept;
 
-    vec4 reflect(const vec4& unit_vec, const vec4& normal) noexcept;
-    vec3 reflect(const vec3& unit_vec, const vec3& normal) noexcept;
+    vec4f reflect(const vec4f& unit_vec, const vec4f& normal) noexcept;
+    vec3f reflect(const vec3f& unit_vec, const vec3f& normal) noexcept;
     
-    vec4 refract(const vec4& unit_vec, const vec4& normal, float n1_over_n2) noexcept;
-    vec3 refract(const vec3& unit_vec, const vec3& normal, float n1_over_n2) noexcept;
+    vec4f refract(const vec4f& unit_vec, const vec4f& normal, float n1_over_n2) noexcept;
+    vec3f refract(const vec3f& unit_vec, const vec3f& normal, float n1_over_n2) noexcept;
 
-    float angle(const vec4& unit_vec1, const vec4& unit_vec2) noexcept;
-    float angle(const vec3& unit_vec1, const vec3& unit_vec2) noexcept;
+    float angle(const vec4f& unit_vec1, const vec4f& unit_vec2) noexcept;
+    float angle(const vec3f& unit_vec1, const vec3f& unit_vec2) noexcept;
 }

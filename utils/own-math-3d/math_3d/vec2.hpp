@@ -1,52 +1,52 @@
 #pragma once
 
 namespace math {
-    union vec3;
-    union vec4;
+    union vec3f;
+    union vec4f;
 
-    union vec2 {
+    union vec2f {
     public:
-        vec2() noexcept = default;
-        explicit vec2(float value) noexcept;
-        explicit vec2(const float* arr) noexcept;
-        vec2(float x, float y) noexcept;
+        vec2f() noexcept = default;
+        explicit vec2f(float value) noexcept;
+        explicit vec2f(const float* arr) noexcept;
+        vec2f(float x, float y) noexcept;
 
-        explicit vec2(const vec3& vec) noexcept;
-        explicit vec2(const vec4& vec) noexcept;
+        explicit vec2f(const vec3f& vec) noexcept;
+        explicit vec2f(const vec4f& vec) noexcept;
 
-        vec2& operator=(const vec3& vec) noexcept;
-        vec2& operator=(const vec4& vec) noexcept;
+        vec2f& operator=(const vec3f& vec) noexcept;
+        vec2f& operator=(const vec4f& vec) noexcept;
 
-        vec2 operator-() const noexcept;
+        vec2f operator-() const noexcept;
 
-        vec2 operator+(const vec2& vec) const noexcept;
-        vec2 operator-(const vec2& vec) const noexcept;
-        vec2& operator+=(const vec2& vec) noexcept;
-        vec2& operator-=(const vec2& vec) noexcept;
+        vec2f operator+(const vec2f& vec) const noexcept;
+        vec2f operator-(const vec2f& vec) const noexcept;
+        vec2f& operator+=(const vec2f& vec) noexcept;
+        vec2f& operator-=(const vec2f& vec) noexcept;
 
-        vec2 operator*(const vec2& vec) const noexcept;
-        vec2& operator*=(const vec2& vec) noexcept;
+        vec2f operator*(const vec2f& vec) const noexcept;
+        vec2f& operator*=(const vec2f& vec) noexcept;
 
-        vec2 operator*(float value) const noexcept;
-        vec2& operator*=(float value) noexcept;
-        vec2 operator/(float value) const noexcept;
-        vec2& operator/=(float value) noexcept;
+        vec2f operator*(float value) const noexcept;
+        vec2f& operator*=(float value) noexcept;
+        vec2f operator/(float value) const noexcept;
+        vec2f& operator/=(float value) noexcept;
 
-        bool operator==(const vec2& vec) const noexcept;
-        bool operator!=(const vec2& vec) const noexcept;
+        bool operator==(const vec2f& vec) const noexcept;
+        bool operator!=(const vec2f& vec) const noexcept;
 
         float length() const noexcept;
 
         float& operator[](size_t i) noexcept;
         float operator[](size_t i) const noexcept;
 
-        static vec2 get_random_in_range(float min, float max) noexcept;
+        static vec2f get_random_vector(float min, float max) noexcept;
 
-        static const vec2 ZERO; 
-        static const vec2 LEFT; 
-        static const vec2 UP; 
-        static const vec2 RIGHT; 
-        static const vec2 DOWN; 
+        static const vec2f ZERO; 
+        static const vec2f LEFT; 
+        static const vec2f UP; 
+        static const vec2f RIGHT; 
+        static const vec2f DOWN; 
 
 
         struct {
@@ -56,7 +56,7 @@ namespace math {
         float arr[2];
     };
 
-    vec2 operator*(float value, const vec2& vec) noexcept;
+    vec2f operator*(float value, const vec2f& vec) noexcept;
 
-    vec2 normalize(const vec2& vec) noexcept;
+    vec2f normalize(const vec2f& vec) noexcept;
 }

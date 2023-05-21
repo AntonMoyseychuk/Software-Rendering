@@ -54,8 +54,8 @@ namespace raytracing::gfx {
         void SetAntialiasingLevel(AntialiasingLevel level) noexcept;
         AntialiasingLevel GetAntialiasingLevel() const noexcept;
 
-        void SetOutputFrameSize(const math::vec2& size) noexcept;
-        const math::vec2& GetOutputFrameSize() const noexcept;
+        void SetOutputFrameSize(const math::vec2f& size) noexcept;
+        const math::vec2f& GetOutputFrameSize() const noexcept;
 
         void SetBackgroundColor(const math::color& color) noexcept;
         const math::color& GetBackgroundColor() const noexcept;
@@ -66,7 +66,7 @@ namespace raytracing::gfx {
 
     private:
         std::vector<uint32_t> m_frame;
-        math::vec2 m_frame_size;
+        math::vec2f m_frame_size;
         
         AntialiasingLevel m_antialiasing_level = AntialiasingLevel::NONE;
         size_t m_reflection_depth = 0;

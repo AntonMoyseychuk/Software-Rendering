@@ -12,9 +12,9 @@ namespace rasterization::gfx {
         bool Load(const char* filepath) const noexcept;
         void Free() const noexcept;
 
-        mutable std::vector<math::vec3> vertexes;
-        mutable std::vector<math::vec3> normals;
-        mutable std::vector<math::vec2> texture_coords;
-        mutable std::vector<math::vec3> indexes;
+        mutable std::vector<math::vec3f> vertexes;
+        mutable std::vector<math::vec3f> normals;
+        mutable std::vector<math::vec2f> texture_coords;
+        mutable std::vector<math::vec3f> indexes;
     };
 }

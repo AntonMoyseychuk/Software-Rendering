@@ -24,8 +24,8 @@ namespace rasterization::gfx {
 
         const size_t vertex_count = local_coords.size();
 
-        static std::vector<vec3> transform_coords;
-        static std::vector<vec3> screen_coords;
+        static std::vector<vec3f> transform_coords;
+        static std::vector<vec3f> screen_coords;
 
     #pragma region resizing-buffers
         screen_coords.resize(vertex_count);
@@ -44,7 +44,7 @@ namespace rasterization::gfx {
         // Pixel Shader
         m_window_ptr->FillPixelBuffer(R_G_B_A(m_background_color));
 
-        const static vec3 light_dir = normalize(vec3::BACKWARD + vec3::LEFT);
+        const static vec3f light_dir = normalize(vec3f::BACKWARD + vec3f::LEFT);
 
         switch (mode) {
         case RenderMode::POINTS:
@@ -61,7 +61,7 @@ namespace rasterization::gfx {
 
         case RenderMode::TRIANGLES:
             for (size_t i = 0; i < indexes.size(); i += 3) {
-                const vec3 normal = normalize(cross(
+                const vec3f normal = normalize(cross(
                     local_coords[indexes[i + 2][0]] - local_coords[indexes[i][0]], 
                     local_coords[indexes[i + 1][0]] - local_coords[indexes[i][0]]
                 ));
@@ -78,19 +78,19 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_VertexShader(const math::vec3& local_coord, math::vec3& transformed_coord) const noexcept {
+    void Rasterizer::_VertexShader(const math::vec3f& local_coord, math::vec3f& transformed_coord) const noexcept {
         using namespace math;
 
-        static const mat4 mvp = scale(mat4::IDENTITY, vec4(0.5f));
+        static const mat4f mvp = scale(mat4f::IDENTITY, vec4f(0.5f));
         transformed_coord = local_coord * mvp;
     }
 
-    void Rasterizer::_Rasterize(const std::vector<math::vec3> &transformed_coords, std::vector<math::vec3> &screen_coords) const noexcept {
+    void Rasterizer::_Rasterize(const std::vector<math::vec3f> &transformed_coords, std::vector<math::vec3f> &screen_coords) const noexcept {
         const float dx = m_window_ptr->GetWidth() / 2.0f;
         const float dy = m_window_ptr->GetHeight() / 2.0f;
 
         for (size_t i = 0; i < transformed_coords.size(); ++i) {
-            screen_coords[i] = math::vec3(
+            screen_coords[i] = math::vec3f(
                 std::floorf((1.0f + transformed_coords[i].x) * dx), 
                 std::floorf((1.0f - transformed_coords[i].y) * dy), 
                 transformed_coords[i].z
@@ -98,7 +98,7 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_PointPixelShader(const math::vec3& screen_coord, const math::color& color) const noexcept {
+    void Rasterizer::_PointPixelShader(const math::vec3f& screen_coord, const math::color& color) const noexcept {
         const int64_t idx = screen_coord.x + screen_coord.y * m_window_ptr->GetWidth();
         if (idx >= 0 && idx < m_z_buffer.size()) {
             if (screen_coord.z >= m_z_buffer[static_cast<size_t>(idx)]) {
@@ -108,7 +108,7 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_LinePixelShader(const math::vec3& screen_coord_v0, const math::vec3& screen_coord_v1, const math::color& color) const noexcept {
+    void Rasterizer::_LinePixelShader(const math::vec3f& screen_coord_v0, const math::vec3f& screen_coord_v1, const math::color& color) const noexcept {
         using namespace math;
 
         auto v0 = screen_coord_v0;
@@ -125,7 +125,7 @@ namespace rasterization::gfx {
             interpolate<int32_t>(v0.x, v0.y, v1.x, v1.y, values);
             interpolate<float>(v0.x, v0.z, v1.x, v1.z, z_values);
             for (int32_t x = v0.x; x <= v1.x; ++x) {
-                _PointPixelShader(vec3(x, values[x - v0.x], z_values[x - v0.x]), color);
+                _PointPixelShader(vec3f(x, values[x - v0.x], z_values[x - v0.x]), color);
             }
         } else {
             if (v0.y > v1.y) {
@@ -135,15 +135,15 @@ namespace rasterization::gfx {
             interpolate<int32_t>(v0.y, v0.x, v1.y, v1.x, values);
             interpolate<float>(v0.y, v0.z, v1.y, v1.z, z_values);
             for (int32_t y = v0.y; y <= v1.y; ++y) {
-                _PointPixelShader(vec3(values[y - v0.y], y, z_values[y - v0.y]), color);
+                _PointPixelShader(vec3f(values[y - v0.y], y, z_values[y - v0.y]), color);
             }
         }
     }
 
     void Rasterizer::_TrianglePixelShader( 
-        const math::vec3 &screen_coords0, 
-        const math::vec3 &screen_coords1, 
-        const math::vec3 &screen_coords2, 
+        const math::vec3f &screen_coords0, 
+        const math::vec3f &screen_coords1, 
+        const math::vec3f &screen_coords2, 
         const math::color& triangle_color
     ) const noexcept {
         using namespace math;
@@ -163,14 +163,14 @@ namespace rasterization::gfx {
             const float alpha = static_cast<float>(i) / total_height;
             const float beta  = static_cast<float>(i - (is_second_half ? v1.y - v0.y : 0)) / segment_height;
             
-            vec3 left = v0 + (v2 - v0) * alpha;
-            vec3 right = is_second_half ? v1 + (v2 - v1) * beta : v0 + (v1 - v0) * beta;
+            vec3f left = v0 + (v2 - v0) * alpha;
+            vec3f right = is_second_half ? v1 + (v2 - v1) * beta : v0 + (v1 - v0) * beta;
             if (left.x > right.x) { std::swap(left, right); }
             
             interpolate<float>(left.x, left.z, right.x, right.z, z_values);
 
             for (int32_t j = left.x; j <= right.x; ++j) {
-                _PointPixelShader(vec3(j, v0.y + i, z_values[j - left.x]), triangle_color);
+                _PointPixelShader(vec3f(j, v0.y + i, z_values[j - left.x]), triangle_color);
             }
         } 
     }
@@ -181,9 +181,9 @@ namespace rasterization::gfx {
 
     size_t Rasterizer::CreateBuffer(BufferType type, const void* buffer, size_t size) noexcept {
         if (type == BufferType::VERTEX) {
-            return _CreateVertexBuffer((const math::vec3*)buffer, size / sizeof(math::vec3));
+            return _CreateVertexBuffer((const math::vec3f*)buffer, size / sizeof(math::vec3f));
         } else if (type == BufferType::INDEX) {
-            return _CreateIndexBuffer((const math::vec3*)buffer, size / sizeof(math::vec3));
+            return _CreateIndexBuffer((const math::vec3f*)buffer, size / sizeof(math::vec3f));
         } else {
             assert(false && "Invalid Buffer Type");
         }
@@ -191,29 +191,29 @@ namespace rasterization::gfx {
         return 0;
     }
 
-    size_t Rasterizer::_CreateVertexBuffer(const math::vec3 *buffer, size_t count) noexcept {
+    size_t Rasterizer::_CreateVertexBuffer(const math::vec3f *buffer, size_t count) noexcept {
         size_t id;
         do {
             id = math::random((size_t)0, SIZE_MAX) + 1;
         } while (m_vbos.count(id) != 0);
 
-        m_vbos[id] = std::vector<math::vec3>(buffer, buffer + count);
+        m_vbos[id] = std::vector<math::vec3f>(buffer, buffer + count);
     
         return id;
     }
 
-    size_t Rasterizer::_CreateIndexBuffer(const math::vec3 *buffer, size_t count) noexcept {
+    size_t Rasterizer::_CreateIndexBuffer(const math::vec3f *buffer, size_t count) noexcept {
         size_t id;
         do {
             id = math::random((size_t)0, SIZE_MAX) + 1;
         } while (m_ibos.count(id) != 0);
 
-        m_ibos[id] = std::vector<math::vec3>(buffer, buffer + count);
+        m_ibos[id] = std::vector<math::vec3f>(buffer, buffer + count);
 
         return id;
     }
 
-    std::vector<math::vec3>& Rasterizer::GetVertexBuffer(size_t id) noexcept {
+    std::vector<math::vec3f>& Rasterizer::GetVertexBuffer(size_t id) noexcept {
         return m_vbos.at(id);
     }
 

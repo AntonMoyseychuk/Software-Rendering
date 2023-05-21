@@ -4,7 +4,7 @@
 #include <cassert>
 
 namespace raytracing::gfx {
-    Sphere::Sphere(const math::vec3& position, float r, std::shared_ptr<IMaterial> material)
+    Sphere::Sphere(const math::vec3f& position, float r, std::shared_ptr<IMaterial> material)
         : IDrawable(position, material), m_radius(r)
     {
     }
@@ -16,7 +16,7 @@ namespace raytracing::gfx {
     std::optional<IntersectionData> Sphere::IsIntersect(const Ray& ray) const noexcept {
         using namespace math;
 
-        vec3 k = ray.origin - m_position;
+        vec3f k = ray.origin - m_position;
         float b = 2.0f * dot(k, ray.direction);
         float c = dot(k,k) - m_radius * m_radius;
         float d = b * b - 4.0f * c;
