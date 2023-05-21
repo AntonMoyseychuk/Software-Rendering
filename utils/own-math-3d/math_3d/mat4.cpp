@@ -1,6 +1,9 @@
 #include "mat4.hpp"
-#include "math.hpp"
+
+#include "vec3.hpp"
 #include "vec_operations.hpp"
+
+#include "util.hpp"
 
 #include <cassert>
 

@@ -2,7 +2,7 @@
 #include "vec3.hpp"
 #include "vec4.hpp"
 
-#include "math.hpp"
+#include "util.hpp"
 
 #include <cassert>
 #include <cmath>

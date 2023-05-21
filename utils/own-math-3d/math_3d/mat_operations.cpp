@@ -3,7 +3,7 @@
 #include "vec4.hpp"
 #include "vec_operations.hpp"
 
-#include "math.hpp"
+#include "util.hpp"
 
 #include <cmath>
 #include <cassert>

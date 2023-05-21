@@ -5,7 +5,7 @@
 #include "math_3d/mat4.hpp"
 #include "math_3d/mat_operations.hpp"
 
-#include "math_3d/math.hpp"
+#include "math_3d/util.hpp"
 
 #include <cassert>
 

@@ -1,7 +1,7 @@
 #include "vec3.hpp"
 #include "vec4.hpp"
 
-#include "math.hpp"
+#include "util.hpp"
 
 #include <cassert>
 #include <cmath>
@@ -91,6 +91,18 @@ namespace math {
         x -= vec.x;
         y -= vec.y;
         z -= vec.z;
+
+        return *this;
+    }
+
+    vec3f vec3f::operator*(const vec3f &vec) const noexcept {
+        return vec3f(x * vec.x, y * vec.y, z * vec.z);
+    }
+
+    vec3f &vec3f::operator*=(const vec3f &vec) noexcept {
+        x *= vec.x;
+        y *= vec.y;
+        z *= vec.z;
 
         return *this;
     }

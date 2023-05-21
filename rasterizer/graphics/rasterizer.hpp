@@ -1,5 +1,6 @@
 #pragma once
 #include "window/window.hpp"
+
 #include "math_3d/vec4.hpp"
 
 #include "model.hpp"

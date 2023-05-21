@@ -1,6 +1,6 @@
 #include "vec4.hpp"
 
-#include "math.hpp"
+#include "util.hpp"
 
 #include <cmath>
 #include <cassert>
@@ -164,7 +164,7 @@ namespace math {
     }
 
     bool vec4f::operator==(const vec4f &vec) const noexcept {
-        return is_tends_to(x, vec.x) && is_tends_to(y, vec.y) && is_tends_to(z, vec.z) && is_tends_to(w, vec.w);
+        return _mm_movemask_ps(_mm_cmpeq_ps(mm_128, vec.mm_128)) == 0xF;
     }
 
     bool vec4f::operator!=(const vec4f &vec) const noexcept {

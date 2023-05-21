@@ -1,10 +1,6 @@
 #include "application.hpp"
 #include "math_3d/math.hpp"
 
-#include "math_3d/quaternion.hpp"
-#include "math_3d/vec4.hpp"
-#include "math_3d/vec3.hpp"
-
 #include "graphics/model.hpp"
 
 #include <iostream>
