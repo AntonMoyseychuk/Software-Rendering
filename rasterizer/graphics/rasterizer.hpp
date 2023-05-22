@@ -1,5 +1,5 @@
 #pragma once
-#include "core_engine.hpp"
+#include "core/gl_api.hpp"
 
 #include "window/window.hpp"
 
@@ -33,18 +33,13 @@ namespace rasterization::gfx {
 
         void _PointPixelShader(const math::vec3f& screen_coord, const math::color& color) const noexcept;
         void _LinePixelShader(const math::vec3f& screen_coord_v0, const math::vec3f& screen_coord_v1, const math::color& color) const noexcept;
-        void _TrianglePixelShader(
-            const math::vec3f &screen_coords0, 
-            const math::vec3f &screen_coords1, 
-            const math::vec3f &screen_coords2, 
-            const math::color& triangle_color
-        ) const noexcept;
+        void _TrianglePixelShader(const math::vec3f &screen_coords0, const math::vec3f &screen_coords1, const math::vec3f &screen_coords2) const noexcept;
 
     private:
         mutable std::vector<float> m_z_buffer;
 
         win_framewrk::Window* m_window_ptr = nullptr;
-        const CoreEngine& m_core;
+        const GLApi& m_core;
 
         math::color m_background_color = math::color::BLACK;
     };

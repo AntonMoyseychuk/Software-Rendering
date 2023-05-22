@@ -2,9 +2,8 @@ project(rasterizer)
 
 set(CMAKE_CXX_STANDARD 17)
 
-file(GLOB SRC_FILES 
-    "${PROJECT_SOURCE_DIR}/app/*.cpp"
-    "${PROJECT_SOURCE_DIR}/graphics/*.cpp"
+file(GLOB_RECURSE SRC_FILES 
+    "${PROJECT_SOURCE_DIR}/*.cpp"
 
     "${MATH_DIR}/math_3d/*.cpp"
     "${WINDOW_DIR}/window/*.cpp"

@@ -9,12 +9,12 @@
 
 namespace rasterization::gfx {
     Rasterizer::Rasterizer()
-        : m_core(CoreEngine::Get())
+        : m_core(GLApi::Get())
     {
     }
 
     Rasterizer::Rasterizer(win_framewrk::Window *window)
-        : m_window_ptr(window), m_core(CoreEngine::Get())
+        : m_window_ptr(window), m_core(GLApi::Get())
     {
         BindWindow(window);
     }
@@ -69,12 +69,13 @@ namespace rasterization::gfx {
                     transform_coords[indexes[i + 1]] - transform_coords[indexes[i]]
                 ));
                 const float light_intensity = dot(normal, light_dir) + 0.1f;
+
+                m_core.SetShaderUniform("polygon_color", light_intensity * color);
                 
                 _TrianglePixelShader(
                     screen_coords[indexes[i]], 
                     screen_coords[indexes[i + 1]], 
-                    screen_coords[indexes[i + 2]],
-                    color * light_intensity
+                    screen_coords[indexes[i + 2]]
                 );
             }
             break;
@@ -143,13 +144,10 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_TrianglePixelShader( 
-        const math::vec3f &screen_coords0, 
-        const math::vec3f &screen_coords1, 
-        const math::vec3f &screen_coords2, 
-        const math::color& triangle_color
-    ) const noexcept {
+    void Rasterizer::_TrianglePixelShader(const math::vec3f &screen_coords0, const math::vec3f &screen_coords1, const math::vec3f &screen_coords2) const noexcept {
         using namespace math;
+
+        const color& polygon_color = m_core.m_vec4f_uniforms["polygon_color"];
 
         auto v0 = screen_coords0, v1 = screen_coords1, v2 = screen_coords2;
         if (v0.y > v1.y) { std::swap(v0, v1); }
@@ -173,7 +171,7 @@ namespace rasterization::gfx {
             interpolate<float>(left.x, left.z, right.x, right.z, z_values);
 
             for (int32_t j = left.x; j <= right.x; ++j) {
-                _PointPixelShader(vec3f(j, v0.y + i, z_values[j - left.x]), triangle_color);
+                _PointPixelShader(vec3f(j, v0.y + i, z_values[j - left.x]), polygon_color);
             }
         } 
     }

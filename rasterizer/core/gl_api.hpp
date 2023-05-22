@@ -10,7 +10,7 @@ namespace rasterization::gfx {
     enum class BufferType : uint8_t { VERTEX = 1 };
     enum class AttribDataType : uint8_t { INT8 = 1, UINT8, INT16, UINT16, INT32, UINT32, INT64, UINT64, FLOAT, DOUBLE };
 
-    class CoreEngine final {
+    class GLApi final {
     private:
         struct _Attribute {
             size_t size;
@@ -27,7 +27,7 @@ namespace rasterization::gfx {
     public:
         friend class Rasterizer;
 
-        static const CoreEngine& Get() noexcept;
+        static const GLApi& Get() noexcept;
 
         size_t CreateBuffer(BufferType type, const void* buffer, size_t size) const noexcept;
         void VertexAttribPointer(size_t vbo_id, size_t index, size_t size, AttribDataType type, size_t stride, const void* pointer) const noexcept;
@@ -38,9 +38,12 @@ namespace rasterization::gfx {
         void EraseIndexBuffer(size_t id) const noexcept;
 
         void SetShaderUniform(const std::string& uniform_name, const math::mat4f& mat) const noexcept;
+        void SetShaderUniform(const std::string& uniform_name, const math::vec4f& vec) const noexcept;
+        void SetShaderUniform(const std::string& uniform_name, const math::vec3f& vec) const noexcept;
+        void SetShaderUniform(const std::string& uniform_name, const math::vec2f& vec) const noexcept;
 
     private:
-        CoreEngine() = default;
+        GLApi() = default;
 
     private:
         size_t _CreateVertexBuffer(const void* buffer, size_t size) const noexcept;
@@ -50,5 +53,8 @@ namespace rasterization::gfx {
         mutable std::unordered_map<size_t, std::vector<size_t>> m_ibos;
 
         mutable std::unordered_map<std::string, math::mat4f> m_mat4_uniforms;
+        mutable std::unordered_map<std::string, math::vec4f> m_vec4f_uniforms;
+        mutable std::unordered_map<std::string, math::vec3f> m_vec3f_uniforms;
+        mutable std::unordered_map<std::string, math::vec2f> m_vec2f_uniforms;
     };
 }

@@ -1,7 +1,7 @@
 #include "application.hpp"
 #include "math_3d/math.hpp"
 
-#include "graphics/core_engine.hpp"
+#include "core/gl_api.hpp"
 #include "graphics/model.hpp"
 
 #include <iostream>
@@ -24,7 +24,7 @@ namespace rasterization {
         using namespace math;
         using namespace win_framewrk;
 
-        static const CoreEngine& core = CoreEngine::Get();
+        static const GLApi& core = GLApi::Get();
 
         Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
         
@@ -42,7 +42,7 @@ namespace rasterization {
             const auto dt = _LockFPS();
             std::cout << "FPS: " << std::to_string(1.0f / dt) << std::endl;
 
-            const float angle = to_radians(dt) * 20.0f;
+            const float angle = to_radians(dt) * 25.0f;
 
         #pragma region input
             if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
