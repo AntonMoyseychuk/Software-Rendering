@@ -181,15 +181,7 @@ namespace win_framewrk {
             LOG_WIN_INFO(__FUNCTION__);
         #endif
 
-        FillPixelBuffer(_InternalColor(r, g, b, a).rgba);
-    }
-
-    void Window::FillPixelBuffer(std::uint32_t color) const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
-        const auto maped_color = _MapRGBA(m_surface_ptr->format, _InternalColor(color));
+        const auto maped_color = _MapRGBA(m_surface_ptr->format, _InternalColor(r, g, b, a));
         auto buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
         std::fill_n(buffer, m_width * m_height, maped_color);
     }
