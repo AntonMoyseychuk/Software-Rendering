@@ -10,7 +10,9 @@ namespace util {
             std::vector<math::vec3f>& vertexes, 
             std::vector<math::vec3f>& normals,
             std::vector<math::vec2f>& texture_coords, 
-            std::vector<math::vec3f>& indexes
+            std::vector<size_t>& vert_indexes,
+            std::vector<size_t>& texture_indexes,
+            std::vector<size_t>& normal_indexes
         ) noexcept;
     };
 }

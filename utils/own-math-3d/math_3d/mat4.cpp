@@ -242,15 +242,15 @@ namespace math {
         return _mm_cvtss_f32(_mm_dp_ps(mm_arr[0], DetCof, 0xff));
     }
 
-    mat4f operator*(float value, const mat4f mat) noexcept {
+    mat4f operator*(float value, const mat4f& mat) noexcept {
         return mat * value;
     }
 
-    vec3f operator*(const vec3f &vec, const mat4f mat) noexcept {
-        return vec3f(vec4f(vec) * mat);
+    vec3f operator*(const vec3f &vec, const mat4f& mat) noexcept {
+        return vec3f(vec4f(vec, 1.0f) * mat);
     }
 
-    vec4f operator*(const vec4f &vec, const mat4f mat) noexcept {
+    vec4f operator*(const vec4f &vec, const mat4f& mat) noexcept {
         const mat4f transposed = transpose(mat);
         return vec4f(
             dot(vec, transposed.vec_row0), 
@@ -260,8 +260,7 @@ namespace math {
         );
     }
 
-    mat4f inverse(const mat4f &mat) noexcept
-    {
+    mat4f inverse(const mat4f &mat) noexcept {
         assert(is_tends_to(mat.determinant(), 0.0f) == false);
 
         mat4f out;

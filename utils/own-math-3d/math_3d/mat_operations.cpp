@@ -1,6 +1,7 @@
 #include "mat_operations.hpp"
 
 #include "vec4.hpp"
+#include "vec3.hpp"
 #include "vec_operations.hpp"
 
 #include "util.hpp"
@@ -9,7 +10,7 @@
 #include <cassert>
 
 namespace math {
-    mat4f scale(const mat4f &mat, const vec4f &scale) noexcept {
+    mat4f scale(const mat4f &mat, const vec3f &scale) noexcept {
         return mat * mat4f(
             scale[0],       0,          0,      0,
                 0,      scale[1],       0,      0,
@@ -18,7 +19,7 @@ namespace math {
         );
     }
     
-    mat4f translate(const mat4f &mat, const vec4f &translation) noexcept {
+    mat4f translate(const mat4f &mat, const vec3f &translation) noexcept {
         return mat * mat4f(
                 1,              0,              0,       0,
                 0,              1,              0,       0,
@@ -63,12 +64,12 @@ namespace math {
         );
     }
 
-    mat4f look_at_rh(const vec4f &eye, const vec4f &look_at, const vec4f &up) noexcept {
+    mat4f look_at_rh(const vec3f &eye, const vec3f &look_at, const vec3f &up) noexcept {
         const auto forward = normalize(eye - look_at);
         const auto right = normalize(cross(up, forward));
         const auto new_up = cross(forward, right);
 
-        return mat4f(right, new_up, forward, vec4f(eye.xyz, 1.0f));
+        return mat4f(vec4f(right, 0.0f), vec4f(new_up, 0.0f), vec4f(forward, 0.0f), vec4f(eye, 1.0f));
     }
 
     mat4f perspective(float fovy_radians, float aspect, float z_near, float z_far) noexcept {

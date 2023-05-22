@@ -13,17 +13,15 @@ namespace math {
         explicit vec4f(float value) noexcept;
         explicit vec4f(const __m128& mm_128) noexcept;
         explicit vec4f(const float* arr) noexcept;
-        vec4f(float x, float y, float z, float w) noexcept;
+        vec4f(float x, float y, float z, float w = 1.0f) noexcept;
         vec4f(const vec4f& vec) noexcept;
 
-        explicit vec4f(const vec2f& vec) noexcept;
         vec4f(const vec2f& xy, const vec2f& zw) noexcept;
-        vec4f(const vec2f& xy, float z, float w) noexcept;
-        vec4f(float x, const vec2f& yz, float w) noexcept;
+        vec4f(const vec2f& xy, float z = 0.0f, float w = 1.0f) noexcept;
+        vec4f(float x, const vec2f& yz, float w = 1.0f) noexcept;
         vec4f(float x, float y, const vec2f& zw) noexcept;
 
-        explicit vec4f(const vec3f& vec) noexcept;
-        vec4f(const vec3f& xyz, float w) noexcept;
+        vec4f(const vec3f& xyz, float w = 1.0f) noexcept;
         vec4f(float x, const vec3f& yzw) noexcept;
 
         vec4f& operator=(const vec2f& vec) noexcept;

@@ -56,11 +56,6 @@ namespace math {
     {
     }
 
-    vec4f::vec4f(const vec2f &vec) noexcept
-        : mm_128(_mm_set_ps(0.0f, 0.0f, vec.y, vec.x)) 
-    {
-    }
-
     vec4f::vec4f(const vec2f &xy, const vec2f &zw) noexcept
         : mm_128(_mm_set_ps(zw.y, zw.x, xy.y, xy.x))
     {
@@ -78,11 +73,6 @@ namespace math {
     
     vec4f::vec4f(float x, float y, const vec2f &zw) noexcept
         : mm_128(_mm_set_ps(zw.y, zw.x, y, x))
-    {
-    }
-    
-    vec4f::vec4f(const vec3f &vec) noexcept
-        : mm_128(_mm_set_ps(0.0f, vec.z, vec.y, vec.x))
     {
     }
     

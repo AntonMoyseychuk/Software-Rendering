@@ -1,6 +1,7 @@
 #include "application.hpp"
 #include "math_3d/math.hpp"
 
+#include "graphics/core_engine.hpp"
 #include "graphics/model.hpp"
 
 #include <iostream>
@@ -23,10 +24,12 @@ namespace rasterization {
         using namespace math;
         using namespace win_framewrk;
 
+        static const CoreEngine& core = CoreEngine::Get();
+
         Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
         
-        size_t vbo = m_rasterizer.CreateBuffer(BufferType::VERTEX, model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0]));
-        size_t ibo = m_rasterizer.CreateBuffer(BufferType::INDEX, model.indexes.data(), model.indexes.size() * sizeof(model.indexes[0]));
+        size_t vbo = core.CreateBuffer(BufferType::VERTEX, model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0]));
+        size_t ibo = core.CreateIndexBuffer(model.vert_indexes.data(), model.vert_indexes.size());
         model.Free();
 
         while (m_window->IsOpen()) {
@@ -35,29 +38,57 @@ namespace rasterization {
             const auto dt = _LockFPS();
             std::cout << "FPS: " << std::to_string(1.0f / dt) << std::endl;
 
-            const float angle = to_radians(dt) * 10.0f;
+            const float angle = to_radians(dt) * 20.0f;
 
         #pragma region input
-            auto& internal_buff = m_rasterizer.GetVertexBuffer(vbo);
-            if (m_window->IsKeyPressed(Key::D)) {
-                for (auto& vert : internal_buff) {
-                    vert *= quaternion(cosf(angle), 0.0f, sinf(angle), 0.0f);
-                }
-            } else if (m_window->IsKeyPressed(Key::A)) {
-                for (auto& vert : internal_buff) {
-                    vert *= quaternion(cosf(-angle), 0.0f, sinf(-angle), 0.0f);
-                }
-            }
+            // std::vector<vec3f>& internal_buff = core.GetVertexBuffer(vbo);
+            // if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
+            //     const quaternion q(cosf(angle), 0.0f, sinf(angle), 0.0f);
+            //     for (auto& vert : internal_buff) {
+            //         vert = vert * q;
+            //     }
+            // } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
+            //     const quaternion q(cosf(-angle), 0.0f, sinf(-angle), 0.0f);
+            //     for (auto& vert : internal_buff) {
+            //         vert *= q;
+            //     }
+            // }
 
-            if (m_window->IsKeyPressed(Key::W)) {
-                for (auto& vert : internal_buff) {
-                    vert *= quaternion(cosf(-angle), sinf(-angle), 0.0f, 0.0f);
-                }
-            } else if (m_window->IsKeyPressed(Key::S)) {
-                for (auto& vert : internal_buff) {
-                    vert *= quaternion(cosf(angle), sinf(angle), 0.0f, 0.0f);
-                }
-            }
+            // if (m_window->IsKeyPressed(Key::UP_ARROW)) {
+            //     const quaternion q(cosf(-angle), sinf(-angle), 0.0f, 0.0f);
+            //     for (auto& vert : internal_buff) {
+            //         vert *= q;
+            //     }
+            // } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
+            //     const quaternion q(cosf(angle), sinf(angle), 0.0f, 0.0f);
+            //     for (auto& vert : internal_buff) {
+            //         vert *= q;
+            //     }
+            // }
+
+            // if (m_window->IsKeyPressed(Key::D)) {
+            //     const mat4f mat = translate(mat4f::IDENTITY, vec3f::RIGHT  * dt);
+            //     for (auto& vert : internal_buff) {
+            //         vert = vert * mat;
+            //     }
+            // } else if (m_window->IsKeyPressed(Key::A)) {
+            //     const mat4f mat = translate(mat4f::IDENTITY, vec3f::LEFT * dt);
+            //     for (auto& vert : internal_buff) {
+            //         vert = vert * mat;
+            //     }
+            // }
+
+            // if (m_window->IsKeyPressed(Key::W)) {
+            //     const mat4f mat = translate(mat4f::IDENTITY, vec3f::UP * dt);
+            //     for (auto& vert : internal_buff) {
+            //         vert = vert * mat;
+            //     }
+            // } else if (m_window->IsKeyPressed(Key::S)) {
+            //     const mat4f mat = translate(mat4f::IDENTITY, vec3f::DOWN * dt);
+            //     for (auto& vert : internal_buff) {
+            //         vert = vert * mat;
+            //     }
+            // }
         #pragma endregion input
 
             m_rasterizer.Render(RenderMode::TRIANGLES, vbo, ibo, color::GOLDEN);

@@ -16,6 +16,8 @@ namespace rasterization::gfx {
         mutable std::vector<math::vec3f> vertexes;
         mutable std::vector<math::vec3f> normals;
         mutable std::vector<math::vec2f> texture_coords;
-        mutable std::vector<math::vec3f> indexes;
+        mutable std::vector<size_t> vert_indexes;
+        mutable std::vector<size_t> texture_indexes;
+        mutable std::vector<size_t> normal_indexes;
     };
 }

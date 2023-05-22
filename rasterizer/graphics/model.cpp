@@ -16,10 +16,12 @@ namespace rasterization::gfx {
         vertexes.clear();
         normals.clear();
         texture_coords.clear();
-        indexes.clear();
+        vert_indexes.clear();
+        texture_indexes.clear();
+        normal_indexes.clear();
     }
 
     bool Model::Load(const char *filepath) const noexcept {
-        return util::OBJParser::Parse(filepath, vertexes, normals, texture_coords, indexes);
+        return util::OBJParser::Parse(filepath, vertexes, normals, texture_coords, vert_indexes, texture_indexes, normal_indexes);
     }
 }

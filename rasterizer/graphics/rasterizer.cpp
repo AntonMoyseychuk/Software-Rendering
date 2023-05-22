@@ -1,8 +1,8 @@
 #include "rasterizer.hpp"
 
-#include "math_3d/vec4.hpp"
+#include "core_engine.hpp"
+
 #include "math_3d/vec_operations.hpp"
-#include "math_3d/mat4.hpp"
 #include "math_3d/mat_operations.hpp"
 
 #include "math_3d/util.hpp"
@@ -18,9 +18,13 @@ namespace rasterization::gfx {
 
     void Rasterizer::Render(RenderMode mode, size_t vbo_id, size_t ibo_id, const math::color& color) const noexcept {
         using namespace math;
+
+        static const CoreEngine& core = CoreEngine::Get();
         
-        const auto& local_coords = m_vbos.at(vbo_id);
-        const auto& indexes = m_ibos.at(ibo_id);
+        core.EraseBuffer(0);
+
+        const auto& local_coords = core.m_vbos.at(vbo_id);
+        const auto& indexes = core.m_ibos.at(ibo_id);
 
         const size_t vertex_count = local_coords.size();
 
@@ -49,28 +53,28 @@ namespace rasterization::gfx {
         switch (mode) {
         case RenderMode::POINTS:
             for (size_t i = 0; i < indexes.size(); ++i) {
-                _PointPixelShader(screen_coords[indexes[i][0]], color);
+                _PointPixelShader(screen_coords[indexes[i]], color);
             }    
             break;
 
         case RenderMode::LINES:
             for (size_t i = 0; i < indexes.size(); i += 2) {
-                _LinePixelShader(screen_coords[indexes[i][0]], screen_coords[indexes[i + 1][0]], color);
+                _LinePixelShader(screen_coords[indexes[i]], screen_coords[indexes[i + 1]], color);
             }
             break;
 
         case RenderMode::TRIANGLES:
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 const vec3f normal = normalize(cross(
-                    local_coords[indexes[i + 2][0]] - local_coords[indexes[i][0]], 
-                    local_coords[indexes[i + 1][0]] - local_coords[indexes[i][0]]
+                    local_coords[indexes[i + 2]] - local_coords[indexes[i]], 
+                    local_coords[indexes[i + 1]] - local_coords[indexes[i]]
                 ));
                 const float light_intensity = dot(normal, light_dir) + 0.1f;
                 
                 _TrianglePixelShader(
-                    screen_coords[indexes[i][0]], 
-                    screen_coords[indexes[i + 1][0]], 
-                    screen_coords[indexes[i + 2][0]],
+                    screen_coords[indexes[i]], 
+                    screen_coords[indexes[i + 1]], 
+                    screen_coords[indexes[i + 2]],
                     color * light_intensity
                 );
             }
@@ -81,7 +85,7 @@ namespace rasterization::gfx {
     void Rasterizer::_VertexShader(const math::vec3f& local_coord, math::vec3f& transformed_coord) const noexcept {
         using namespace math;
 
-        static const mat4f mvp = scale(mat4f::IDENTITY, vec4f(0.5f));
+        static const mat4f mvp = scale(mat4f::IDENTITY, vec3f(0.5f));
         transformed_coord = local_coord * mvp;
     }
 
@@ -177,45 +181,7 @@ namespace rasterization::gfx {
 
     void Rasterizer::_ResizeZBuffer(uint32_t width, uint32_t height) const noexcept {
         m_z_buffer.resize(width * height, -std::numeric_limits<float>::max());
-    }
-
-    size_t Rasterizer::CreateBuffer(BufferType type, const void* buffer, size_t size) noexcept {
-        if (type == BufferType::VERTEX) {
-            return _CreateVertexBuffer((const math::vec3f*)buffer, size / sizeof(math::vec3f));
-        } else if (type == BufferType::INDEX) {
-            return _CreateIndexBuffer((const math::vec3f*)buffer, size / sizeof(math::vec3f));
-        } else {
-            assert(false && "Invalid Buffer Type");
-        }
-
-        return 0;
-    }
-
-    size_t Rasterizer::_CreateVertexBuffer(const math::vec3f *buffer, size_t count) noexcept {
-        size_t id;
-        do {
-            id = math::random((size_t)0, SIZE_MAX) + 1;
-        } while (m_vbos.count(id) != 0);
-
-        m_vbos[id] = std::vector<math::vec3f>(buffer, buffer + count);
-    
-        return id;
-    }
-
-    size_t Rasterizer::_CreateIndexBuffer(const math::vec3f *buffer, size_t count) noexcept {
-        size_t id;
-        do {
-            id = math::random((size_t)0, SIZE_MAX) + 1;
-        } while (m_ibos.count(id) != 0);
-
-        m_ibos[id] = std::vector<math::vec3f>(buffer, buffer + count);
-
-        return id;
-    }
-
-    std::vector<math::vec3f>& Rasterizer::GetVertexBuffer(size_t id) noexcept {
-        return m_vbos.at(id);
-    }
+    }    
 
     bool Rasterizer::BindWindow(win_framewrk::Window* window) noexcept {
         if (window == nullptr) {

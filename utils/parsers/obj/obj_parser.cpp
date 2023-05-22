@@ -5,11 +5,13 @@
 #include <algorithm>
 
 namespace util {
-    bool OBJParser::Parse(const char* filepath, 
-        std::vector<math::vec3f>& vertexes, 
-        std::vector<math::vec3f>& normals, 
-        std::vector<math::vec2f>& texture_coords, 
-        std::vector<math::vec3f>& indexes
+    bool OBJParser::Parse(const char *filepath, 
+        std::vector<math::vec3f> &vertexes, 
+        std::vector<math::vec3f> &normals, 
+        std::vector<math::vec2f> &texture_coords, 
+        std::vector<size_t> &vert_indexes, 
+        std::vector<size_t> &texture_indexes,
+        std::vector<size_t> &normal_indexes
     ) noexcept {
         std::ifstream file(filepath);
 
@@ -43,14 +45,16 @@ namespace util {
                 ss >> key >> key >> uv.x >> uv.y;
                 texture_coords.emplace_back(uv);
             } else if (!str.compare(0, 2, "f ")) {
-                math::vec3f vertex_indexes;
+                size_t vert_idx, texture_idx, normal_idx;
                 char slash;
 
                 ss >> key;
 
                 for (size_t i = 0; i < 3; ++i) {
-                    ss >> vertex_indexes[0] >> slash >> vertex_indexes[1] >> slash >> vertex_indexes[2];
-                    indexes.emplace_back(vertex_indexes - math::vec3f(1));
+                    ss >> vert_idx >> slash >> texture_idx >> slash >> normal_idx;
+                    vert_indexes.emplace_back(vert_idx - 1);
+                    texture_indexes.emplace_back(texture_idx - 1);
+                    normal_indexes.emplace_back(normal_idx - 1);
                 }
             }
         }
