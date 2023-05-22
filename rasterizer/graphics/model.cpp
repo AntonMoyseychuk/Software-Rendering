@@ -13,12 +13,12 @@ namespace rasterization::gfx {
     }
 
     void Model::Free() const noexcept {
-        vertexes.clear();
-        normals.clear();
-        texture_coords.clear();
-        vert_indexes.clear();
-        texture_indexes.clear();
-        normal_indexes.clear();
+        std::vector<math::vec3f>().swap(vertexes);
+        std::vector<math::vec3f>().swap(normals);
+        std::vector<math::vec2f>().swap(texture_coords);
+        std::vector<size_t>().swap(vert_indexes);
+        std::vector<size_t>().swap(texture_indexes);
+        std::vector<size_t>().swap(normal_indexes);
     }
 
     bool Model::Load(const char *filepath) const noexcept {

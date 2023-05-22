@@ -29,6 +29,7 @@ namespace rasterization {
         Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
         
         size_t vbo = core.CreateBuffer(BufferType::VERTEX, model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0]));
+        core.VertexAttribPointer(vbo, 0, sizeof(vec3f), AttribDataType::FLOAT, sizeof(vec3f), (void*)0);
         size_t ibo = core.CreateIndexBuffer(model.vert_indexes.data(), model.vert_indexes.size());
         model.Free();
 

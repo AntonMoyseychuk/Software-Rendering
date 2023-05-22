@@ -22,7 +22,7 @@ namespace rasterization::gfx {
     void Rasterizer::Render(RenderMode mode, size_t vbo_id, size_t ibo_id, const math::color& color) const noexcept {
         using namespace math;
 
-        const auto& local_coords = m_core.m_vbos.at(vbo_id);
+        const auto& local_coords = *(std::vector<vec3f>*)&m_core.m_vbos[vbo_id].data;
         const auto& indexes = m_core.m_ibos.at(ibo_id);
 
         const size_t vertex_count = local_coords.size();
@@ -65,8 +65,8 @@ namespace rasterization::gfx {
         case RenderMode::TRIANGLES:
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 const vec3f normal = normalize(cross(
-                    local_coords[indexes[i + 2]] - local_coords[indexes[i]], 
-                    local_coords[indexes[i + 1]] - local_coords[indexes[i]]
+                    transform_coords[indexes[i + 2]] - transform_coords[indexes[i]], 
+                    transform_coords[indexes[i + 1]] - transform_coords[indexes[i]]
                 ));
                 const float light_intensity = dot(normal, light_dir) + 0.1f;
                 
