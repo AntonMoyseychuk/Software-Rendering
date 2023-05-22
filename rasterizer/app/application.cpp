@@ -32,6 +32,9 @@ namespace rasterization {
         size_t ibo = core.CreateIndexBuffer(model.vert_indexes.data(), model.vert_indexes.size());
         model.Free();
 
+        core.SetShaderUniform("scale", scale(mat4f::IDENTITY, vec3f(0.5f)));
+
+        mat4f rotation, translation;
         while (m_window->IsOpen()) {
             m_window->PollEvent();
 
@@ -41,54 +44,37 @@ namespace rasterization {
             const float angle = to_radians(dt) * 20.0f;
 
         #pragma region input
-            // std::vector<vec3f>& internal_buff = core.GetVertexBuffer(vbo);
-            // if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
-            //     const quaternion q(cosf(angle), 0.0f, sinf(angle), 0.0f);
-            //     for (auto& vert : internal_buff) {
-            //         vert = vert * q;
-            //     }
-            // } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
-            //     const quaternion q(cosf(-angle), 0.0f, sinf(-angle), 0.0f);
-            //     for (auto& vert : internal_buff) {
-            //         vert *= q;
-            //     }
-            // }
+            if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
+                rotation = rotate_y(rotation, -angle);
+                core.SetShaderUniform("rotate", rotation);
+            } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
+                rotation = rotate_y(rotation, angle);
+                core.SetShaderUniform("rotate", rotation);
+            }
 
-            // if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-            //     const quaternion q(cosf(-angle), sinf(-angle), 0.0f, 0.0f);
-            //     for (auto& vert : internal_buff) {
-            //         vert *= q;
-            //     }
-            // } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-            //     const quaternion q(cosf(angle), sinf(angle), 0.0f, 0.0f);
-            //     for (auto& vert : internal_buff) {
-            //         vert *= q;
-            //     }
-            // }
+            if (m_window->IsKeyPressed(Key::UP_ARROW)) {
+                rotation = rotate_x(rotation, -angle);
+                core.SetShaderUniform("rotate", rotation);
+            } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
+                rotation = rotate_x(rotation, angle);
+                core.SetShaderUniform("rotate", rotation);
+            }
 
-            // if (m_window->IsKeyPressed(Key::D)) {
-            //     const mat4f mat = translate(mat4f::IDENTITY, vec3f::RIGHT  * dt);
-            //     for (auto& vert : internal_buff) {
-            //         vert = vert * mat;
-            //     }
-            // } else if (m_window->IsKeyPressed(Key::A)) {
-            //     const mat4f mat = translate(mat4f::IDENTITY, vec3f::LEFT * dt);
-            //     for (auto& vert : internal_buff) {
-            //         vert = vert * mat;
-            //     }
-            // }
+            if (m_window->IsKeyPressed(Key::D)) {
+                translation = translate(translation, vec3f::RIGHT * dt);
+                core.SetShaderUniform("translate", translation);
+            } else if (m_window->IsKeyPressed(Key::A)) {
+                translation = translate(translation, vec3f::LEFT * dt);
+                core.SetShaderUniform("translate", translation);
+            }
 
-            // if (m_window->IsKeyPressed(Key::W)) {
-            //     const mat4f mat = translate(mat4f::IDENTITY, vec3f::UP * dt);
-            //     for (auto& vert : internal_buff) {
-            //         vert = vert * mat;
-            //     }
-            // } else if (m_window->IsKeyPressed(Key::S)) {
-            //     const mat4f mat = translate(mat4f::IDENTITY, vec3f::DOWN * dt);
-            //     for (auto& vert : internal_buff) {
-            //         vert = vert * mat;
-            //     }
-            // }
+            if (m_window->IsKeyPressed(Key::W)) {
+                translation = translate(translation, vec3f::UP * dt);
+                core.SetShaderUniform("translate", translation);
+            } else if (m_window->IsKeyPressed(Key::S)) {
+                translation = translate(translation, vec3f::DOWN * dt);
+                core.SetShaderUniform("translate", translation);
+            }
         #pragma endregion input
 
             m_rasterizer.Render(RenderMode::TRIANGLES, vbo, ibo, color::GOLDEN);

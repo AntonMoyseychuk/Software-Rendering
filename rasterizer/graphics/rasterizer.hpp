@@ -1,4 +1,6 @@
 #pragma once
+#include "core_engine.hpp"
+
 #include "window/window.hpp"
 
 #include "math_3d/vec4.hpp"
@@ -9,7 +11,7 @@ namespace rasterization::gfx {
 
     class Rasterizer final {
     public:
-        Rasterizer() = default;
+        Rasterizer();
         Rasterizer(win_framewrk::Window* window);
         
         bool BindWindow(win_framewrk::Window* window) noexcept;
@@ -42,6 +44,7 @@ namespace rasterization::gfx {
         mutable std::vector<float> m_z_buffer;
 
         win_framewrk::Window* m_window_ptr = nullptr;
+        const CoreEngine& m_core;
 
         math::color m_background_color = math::color::BLACK;
     };

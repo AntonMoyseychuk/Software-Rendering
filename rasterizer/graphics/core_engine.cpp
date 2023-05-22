@@ -40,6 +40,10 @@ namespace rasterization::gfx {
         m_ibos.erase(id);
     }
 
+    void CoreEngine::SetShaderUniform(const std::string& uniform_name, const math::mat4f &mat) const noexcept {
+        m_mat4_uniforms[uniform_name] = mat;
+    }
+
     size_t CoreEngine::_CreateVertexBuffer(const math::vec3f *buffer, size_t count) const noexcept {
         size_t id;
         do {
@@ -50,8 +54,4 @@ namespace rasterization::gfx {
     
         return id;
     }
-
-    // std::vector<math::vec3f>& CoreEngine::GetVertexBuffer(size_t id) noexcept {
-    //     return m_vbos.at(id);
-    // }
 }

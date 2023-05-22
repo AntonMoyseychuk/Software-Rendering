@@ -1,7 +1,5 @@
 #include "rasterizer.hpp"
 
-#include "core_engine.hpp"
-
 #include "math_3d/vec_operations.hpp"
 #include "math_3d/mat_operations.hpp"
 
@@ -10,8 +8,13 @@
 #include <cassert>
 
 namespace rasterization::gfx {
+    Rasterizer::Rasterizer()
+        : m_core(CoreEngine::Get())
+    {
+    }
+
     Rasterizer::Rasterizer(win_framewrk::Window *window)
-        : m_window_ptr(window)
+        : m_window_ptr(window), m_core(CoreEngine::Get())
     {
         BindWindow(window);
     }
@@ -19,12 +22,8 @@ namespace rasterization::gfx {
     void Rasterizer::Render(RenderMode mode, size_t vbo_id, size_t ibo_id, const math::color& color) const noexcept {
         using namespace math;
 
-        static const CoreEngine& core = CoreEngine::Get();
-        
-        core.EraseBuffer(0);
-
-        const auto& local_coords = core.m_vbos.at(vbo_id);
-        const auto& indexes = core.m_ibos.at(ibo_id);
+        const auto& local_coords = m_core.m_vbos.at(vbo_id);
+        const auto& indexes = m_core.m_ibos.at(ibo_id);
 
         const size_t vertex_count = local_coords.size();
 
@@ -84,8 +83,8 @@ namespace rasterization::gfx {
 
     void Rasterizer::_VertexShader(const math::vec3f& local_coord, math::vec3f& transformed_coord) const noexcept {
         using namespace math;
-
-        static const mat4f mvp = scale(mat4f::IDENTITY, vec3f(0.5f));
+        
+        const mat4f mvp = m_core.m_mat4_uniforms["scale"] * m_core.m_mat4_uniforms["rotate"] * m_core.m_mat4_uniforms["translate"];
         transformed_coord = local_coord * mvp;
     }
 

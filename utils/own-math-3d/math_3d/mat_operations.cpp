@@ -33,10 +33,10 @@ namespace math {
         const float sin_angle = std::sin(angle_radians);
 
         return mat * mat4f(
-            cos_angle,  0,  sin_angle, 0,
-			    0,      1,      0,     0,
-            -sin_angle, 0, cos_angle,  0,
-                0,      0,      0,     1
+            1,     0,         0,        0,
+			0,  cos_angle, sin_angle,   0,
+            0, -sin_angle, cos_angle,   0,
+            0,     0,         0,        1
         );
     }
     

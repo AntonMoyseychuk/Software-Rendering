@@ -15,12 +15,16 @@ namespace math {
         0.0f, 0.0f, 0.0f, 1.0f
     );
 
+    mat4f::mat4f() noexcept
+        : mm_row0(IDENTITY.mm_row0), mm_row1(IDENTITY.mm_row1), mm_row2(IDENTITY.mm_row2), mm_row3(IDENTITY.mm_row3)
+    {
+    }
+
     mat4f::mat4f(
-        float v00, float v01, float v02, float v03, 
+        float v00, float v01, float v02, float v03,
         float v04, float v05, float v06, float v07,
-        float v08, float v09, float v10, float v11, 
-        float v12, float v13, float v14, float v15
-    ) noexcept 
+        float v08, float v09, float v10, float v11,
+        float v12, float v13, float v14, float v15) noexcept
         : vec_row0(v00, v01, v02, v03), vec_row1(v04, v05, v06, v07), vec_row2(v08, v09, v10, v11), vec_row3(v12, v13, v14, v15)
     {}
     

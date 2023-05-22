@@ -5,7 +5,7 @@ namespace math {
     union vec3f;
 
     union mat4f {
-        mat4f() noexcept = default;
+        mat4f() noexcept;
         mat4f(float v00, float v01, float v02, float v03,
             float v04, float v05, float v06, float v07,
             float v08, float v09, float v10, float v11,
