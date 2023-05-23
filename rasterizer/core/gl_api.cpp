@@ -64,6 +64,10 @@ namespace rasterization::gfx {
         m_vec2f_uniforms[uniform_name] = vec;
     }
 
+    void GLApi::SetShaderUniform(const std::string &uniform_name, float value) const noexcept {
+        m_float_uniforms[uniform_name] = value;
+    }
+
     size_t GLApi::_CreateVertexBuffer(const void* buffer, size_t size) const noexcept {
         size_t id;
         do {

@@ -17,7 +17,7 @@ namespace rasterization::gfx {
         bool BindWindow(win_framewrk::Window* window) noexcept;
         const win_framewrk::Window* IsWindowBinded() const noexcept;
 
-        void Render(RenderMode mode, size_t vbo_id, size_t ibo_id, const math::color& color) const noexcept;
+        void Render(RenderMode mode, size_t vbo_id, size_t ibo_id) const noexcept;
         void SwapBuffers() const noexcept;
         void ClearBackBuffer() const noexcept;
 
@@ -32,7 +32,7 @@ namespace rasterization::gfx {
         void _Rasterize(const std::vector<math::vec3f> &transformed_coords, std::vector<math::vec3f> &screen_coords) const noexcept;
 
         void _PointPixelShader(const math::vec3f& screen_coord, const math::color& color) const noexcept;
-        void _LinePixelShader(const math::vec3f& screen_coord_v0, const math::vec3f& screen_coord_v1, const math::color& color) const noexcept;
+        void _LinePixelShader(const math::vec3f& screen_coord_v0, const math::vec3f& screen_coord_v1) const noexcept;
         void _TrianglePixelShader(const math::vec3f &screen_coords0, const math::vec3f &screen_coords1, const math::vec3f &screen_coords2) const noexcept;
 
     private:

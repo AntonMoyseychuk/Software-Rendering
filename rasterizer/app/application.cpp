@@ -17,6 +17,48 @@ namespace rasterization {
 
         m_rasterizer.BindWindow(m_window);
         assert(m_rasterizer.IsWindowBinded() != nullptr);
+
+
+        using namespace gfx;
+        using namespace math;
+        static const GLApi& core = GLApi::Get();
+
+        Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
+        
+        m_VBO_IBO["model"] = std::make_pair(
+            core.CreateBuffer(BufferType::VERTEX, model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
+            core.CreateIndexBuffer(model.vert_indexes.data(), model.vert_indexes.size())
+        );
+        core.VertexAttribPointer(m_VBO_IBO["model"].first, 0, sizeof(vec3f), AttribDataType::FLOAT, sizeof(vec3f), (void*)0);
+
+        const vec3f cube[] = {
+            { -0.75f, -0.75f, 0.75f },
+            { -0.75f,  0.75f, 0.75f },
+            {  0.75f,  0.75f, 0.75f },
+            {  0.75f, -0.75f, 0.75f },
+
+            { -0.75f, -0.75f, -0.75f },
+            { -0.75f,  0.75f, -0.75f },
+            {  0.75f,  0.75f, -0.75f },
+            {  0.75f, -0.75f, -0.75f }
+        };
+        const size_t indexes[] = {
+            0, 1,
+            1, 2,
+            2, 3,
+            3, 0,
+
+            4, 5,
+            5, 6,
+            6, 7,
+            7, 4,
+        };
+
+        m_VBO_IBO["cube"] = std::make_pair(
+            core.CreateBuffer(BufferType::VERTEX, cube, sizeof(cube)),
+            core.CreateIndexBuffer(indexes, sizeof(indexes) / sizeof(size_t))
+        );
+        core.VertexAttribPointer(m_VBO_IBO["cube"].first, 0, sizeof(vec3f), AttribDataType::FLOAT, sizeof(vec3f), (void*)0);
     }
 
     void Application::Run() noexcept {
@@ -26,14 +68,9 @@ namespace rasterization {
 
         static const GLApi& core = GLApi::Get();
 
-        Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
-        
-        size_t vbo = core.CreateBuffer(BufferType::VERTEX, model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0]));
-        core.VertexAttribPointer(vbo, 0, sizeof(vec3f), AttribDataType::FLOAT, sizeof(vec3f), (void*)0);
-        size_t ibo = core.CreateIndexBuffer(model.vert_indexes.data(), model.vert_indexes.size());
-        model.Free();
-
-        core.SetShaderUniform("scale", scale(mat4f::IDENTITY, vec3f(0.5f)));
+        core.SetShaderUniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
+        core.SetShaderUniform("polygon_color", color::GOLDEN);
+        core.SetShaderUniform("line_color", color::LIME);
 
         mat4f rotation, translation;
         while (m_window->IsOpen()) {
@@ -47,38 +84,39 @@ namespace rasterization {
         #pragma region input
             if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
                 rotation = rotate_y(rotation, -angle);
-                core.SetShaderUniform("rotate", rotation);
             } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
                 rotation = rotate_y(rotation, angle);
-                core.SetShaderUniform("rotate", rotation);
             }
 
             if (m_window->IsKeyPressed(Key::UP_ARROW)) {
                 rotation = rotate_x(rotation, -angle);
-                core.SetShaderUniform("rotate", rotation);
             } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
                 rotation = rotate_x(rotation, angle);
-                core.SetShaderUniform("rotate", rotation);
             }
 
             if (m_window->IsKeyPressed(Key::D)) {
                 translation = translate(translation, vec3f::RIGHT * dt);
-                core.SetShaderUniform("translate", translation);
             } else if (m_window->IsKeyPressed(Key::A)) {
                 translation = translate(translation, vec3f::LEFT * dt);
-                core.SetShaderUniform("translate", translation);
             }
 
             if (m_window->IsKeyPressed(Key::W)) {
                 translation = translate(translation, vec3f::UP * dt);
-                core.SetShaderUniform("translate", translation);
             } else if (m_window->IsKeyPressed(Key::S)) {
                 translation = translate(translation, vec3f::DOWN * dt);
-                core.SetShaderUniform("translate", translation);
             }
         #pragma endregion input
 
-            m_rasterizer.Render(RenderMode::TRIANGLES, vbo, ibo, color::GOLDEN);
+            core.SetShaderUniform("scale", scale(mat4f::IDENTITY, vec3f(0.5f)));
+            core.SetShaderUniform("rotate", rotation);
+            core.SetShaderUniform("translate", translation);
+            m_rasterizer.Render(RenderMode::TRIANGLES, m_VBO_IBO["model"].first, m_VBO_IBO["model"].second);
+
+            core.SetShaderUniform("scale", mat4f::IDENTITY);
+            core.SetShaderUniform("rotate", mat4f::IDENTITY);
+            core.SetShaderUniform("translate", mat4f::IDENTITY);
+            m_rasterizer.Render(RenderMode::LINES, m_VBO_IBO["cube"].first, m_VBO_IBO["cube"].second);
+
             m_rasterizer.SwapBuffers(); 
             m_rasterizer.ClearBackBuffer();
         }

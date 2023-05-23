@@ -41,6 +41,7 @@ namespace rasterization::gfx {
         void SetShaderUniform(const std::string& uniform_name, const math::vec4f& vec) const noexcept;
         void SetShaderUniform(const std::string& uniform_name, const math::vec3f& vec) const noexcept;
         void SetShaderUniform(const std::string& uniform_name, const math::vec2f& vec) const noexcept;
+        void SetShaderUniform(const std::string& uniform_name, float value) const noexcept;
 
     private:
         GLApi() = default;
@@ -56,5 +57,7 @@ namespace rasterization::gfx {
         mutable std::unordered_map<std::string, math::vec4f> m_vec4f_uniforms;
         mutable std::unordered_map<std::string, math::vec3f> m_vec3f_uniforms;
         mutable std::unordered_map<std::string, math::vec2f> m_vec2f_uniforms;
+
+        mutable std::unordered_map<std::string, float> m_float_uniforms;
     };
 }

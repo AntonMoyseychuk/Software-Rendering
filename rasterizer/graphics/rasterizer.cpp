@@ -19,7 +19,7 @@ namespace rasterization::gfx {
         BindWindow(window);
     }
 
-    void Rasterizer::Render(RenderMode mode, size_t vbo_id, size_t ibo_id, const math::color& color) const noexcept {
+    void Rasterizer::Render(RenderMode mode, size_t vbo_id, size_t ibo_id) const noexcept {
         using namespace math;
 
         const auto& local_coords = *(std::vector<vec3f>*)&m_core.m_vbos[vbo_id].data;
@@ -45,20 +45,16 @@ namespace rasterization::gfx {
         _Rasterize(transform_coords, screen_coords);
 
         // Pixel Shader
-        m_window_ptr->FillPixelBuffer(R_G_B_A(m_background_color));
-
-        const static vec3f light_dir = normalize(vec3f::BACKWARD + vec3f::LEFT);
-
         switch (mode) {
         case RenderMode::POINTS:
             for (size_t i = 0; i < indexes.size(); ++i) {
-                _PointPixelShader(screen_coords[indexes[i]], color);
+                _PointPixelShader(screen_coords[indexes[i]], m_core.m_vec4f_uniforms["point_color"]);
             }    
             break;
 
         case RenderMode::LINES:
             for (size_t i = 0; i < indexes.size(); i += 2) {
-                _LinePixelShader(screen_coords[indexes[i]], screen_coords[indexes[i + 1]], color);
+                _LinePixelShader(screen_coords[indexes[i]], screen_coords[indexes[i + 1]]);
             }
             break;
 
@@ -68,15 +64,10 @@ namespace rasterization::gfx {
                     transform_coords[indexes[i + 2]] - transform_coords[indexes[i]], 
                     transform_coords[indexes[i + 1]] - transform_coords[indexes[i]]
                 ));
-                const float light_intensity = dot(normal, light_dir) + 0.1f;
+                const float light_intensity = dot(normal, m_core.m_vec3f_uniforms["light_dir"]) + 0.1f;
+                m_core.SetShaderUniform("light_intensity", light_intensity);
 
-                m_core.SetShaderUniform("polygon_color", light_intensity * color);
-                
-                _TrianglePixelShader(
-                    screen_coords[indexes[i]], 
-                    screen_coords[indexes[i + 1]], 
-                    screen_coords[indexes[i + 2]]
-                );
+                _TrianglePixelShader(screen_coords[indexes[i]], screen_coords[indexes[i + 1]], screen_coords[indexes[i + 2]]);
             }
             break;
         }
@@ -112,8 +103,10 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_LinePixelShader(const math::vec3f& screen_coord_v0, const math::vec3f& screen_coord_v1, const math::color& color) const noexcept {
+    void Rasterizer::_LinePixelShader(const math::vec3f& screen_coord_v0, const math::vec3f& screen_coord_v1) const noexcept {
         using namespace math;
+
+        const math::color& color = m_core.m_vec4f_uniforms["line_color"];
 
         auto v0 = screen_coord_v0;
         auto v1 = screen_coord_v1;
@@ -147,14 +140,14 @@ namespace rasterization::gfx {
     void Rasterizer::_TrianglePixelShader(const math::vec3f &screen_coords0, const math::vec3f &screen_coords1, const math::vec3f &screen_coords2) const noexcept {
         using namespace math;
 
-        const color& polygon_color = m_core.m_vec4f_uniforms["polygon_color"];
-
         auto v0 = screen_coords0, v1 = screen_coords1, v2 = screen_coords2;
         if (v0.y > v1.y) { std::swap(v0, v1); }
         if (v0.y > v2.y) { std::swap(v0, v2); }
         if (v1.y > v2.y) { std::swap(v1, v2); }
 
         static std::vector<float> z_values; 
+
+        const color color = m_core.m_vec4f_uniforms["polygon_color"] * m_core.m_float_uniforms["light_intensity"];
 
         const uint32_t total_height = v2.y - v0.y;
         for (uint32_t i = 0; i < total_height; ++i) {
@@ -171,13 +164,13 @@ namespace rasterization::gfx {
             interpolate<float>(left.x, left.z, right.x, right.z, z_values);
 
             for (int32_t j = left.x; j <= right.x; ++j) {
-                _PointPixelShader(vec3f(j, v0.y + i, z_values[j - left.x]), polygon_color);
+                _PointPixelShader(vec3f(j, v0.y + i, z_values[j - left.x]), color);
             }
         } 
     }
 
     void Rasterizer::_ResizeZBuffer(uint32_t width, uint32_t height) const noexcept {
-        m_z_buffer.resize(width * height, -std::numeric_limits<float>::max());
+        m_z_buffer.resize(width * height, std::numeric_limits<float>::lowest());
     }    
 
     bool Rasterizer::BindWindow(win_framewrk::Window* window) noexcept {
@@ -196,6 +189,7 @@ namespace rasterization::gfx {
 
     void Rasterizer::SwapBuffers() const noexcept {
         m_window_ptr->PresentPixelBuffer();
+        m_window_ptr->FillPixelBuffer(R_G_B_A(m_background_color));
     }
 
     void Rasterizer::ClearBackBuffer() const noexcept {
