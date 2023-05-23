@@ -47,6 +47,8 @@ namespace rasterization::gfx {
         // Pixel Shader
         switch (mode) {
         case RenderMode::POINTS:
+            assert(m_core.m_vec4f_uniforms.count("point_color") == 1);
+
             for (size_t i = 0; i < indexes.size(); ++i) {
                 _PointPixelShader(screen_coords[indexes[i]], m_core.m_vec4f_uniforms["point_color"]);
             }    
@@ -59,11 +61,14 @@ namespace rasterization::gfx {
             break;
 
         case RenderMode::TRIANGLES:
+            assert(m_core.m_vec3f_uniforms.count("light_dir") == 1);
+            
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 const vec3f normal = normalize(cross(
                     transform_coords[indexes[i + 2]] - transform_coords[indexes[i]], 
                     transform_coords[indexes[i + 1]] - transform_coords[indexes[i]]
                 ));
+
                 const float light_intensity = dot(normal, m_core.m_vec3f_uniforms["light_dir"]) + 0.1f;
                 m_core.SetShaderUniform("light_intensity", light_intensity);
 
@@ -74,10 +79,14 @@ namespace rasterization::gfx {
     }
 
     void Rasterizer::_VertexShader(const math::vec3f& local_coord, math::vec3f& transformed_coord) const noexcept {
-        using namespace math;
+        assert(
+            m_core.m_mat4_uniforms.count("scale") == 1 &&
+            m_core.m_mat4_uniforms.count("rotate") == 1 && 
+            m_core.m_mat4_uniforms.count("translate") == 1
+        );
         
-        const mat4f mvp = m_core.m_mat4_uniforms["scale"] * m_core.m_mat4_uniforms["rotate"] * m_core.m_mat4_uniforms["translate"];
-        transformed_coord = local_coord * mvp;
+        const math::mat4f model = m_core.m_mat4_uniforms["scale"] * m_core.m_mat4_uniforms["rotate"] * m_core.m_mat4_uniforms["translate"];
+        transformed_coord = local_coord * model;
     }
 
     void Rasterizer::_Rasterize(const std::vector<math::vec3f> &transformed_coords, std::vector<math::vec3f> &screen_coords) const noexcept {
@@ -105,7 +114,8 @@ namespace rasterization::gfx {
 
     void Rasterizer::_LinePixelShader(const math::vec3f& screen_coord_v0, const math::vec3f& screen_coord_v1) const noexcept {
         using namespace math;
-
+        
+        assert(m_core.m_vec4f_uniforms.count("line_color") == 1);
         const math::color& color = m_core.m_vec4f_uniforms["line_color"];
 
         auto v0 = screen_coord_v0;
@@ -147,6 +157,10 @@ namespace rasterization::gfx {
 
         static std::vector<float> z_values; 
 
+        assert(
+            m_core.m_vec4f_uniforms.count("polygon_color") == 1 &&
+            m_core.m_float_uniforms.count("light_intensity") == 1
+        );
         const color color = m_core.m_vec4f_uniforms["polygon_color"] * m_core.m_float_uniforms["light_intensity"];
 
         const uint32_t total_height = v2.y - v0.y;

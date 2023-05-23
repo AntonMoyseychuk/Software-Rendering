@@ -16,7 +16,10 @@ namespace math {
     );
 
     mat4f::mat4f() noexcept
-        : mm_row0(IDENTITY.mm_row0), mm_row1(IDENTITY.mm_row1), mm_row2(IDENTITY.mm_row2), mm_row3(IDENTITY.mm_row3)
+        : mm_row0(_mm_setr_ps(1.0f, 0.0f, 0.0f, 0.0f)), 
+            mm_row1(_mm_setr_ps(0.0f, 1.0f, 0.0f, 0.0f)),
+            mm_row2(_mm_setr_ps(0.0f, 0.0f, 1.0f, 0.0f)), 
+            mm_row3(_mm_setr_ps(0.0f, 0.0f, 0.0f, 1.0f))
     {
     }
 

@@ -71,8 +71,10 @@ namespace rasterization {
         core.SetShaderUniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
         core.SetShaderUniform("polygon_color", color::GOLDEN);
         core.SetShaderUniform("line_color", color::LIME);
+        core.SetShaderUniform("point_color", color::SKY_BLUE);
 
         mat4f rotation, translation;
+        RenderMode model_render_mode = RenderMode::TRIANGLES;
         while (m_window->IsOpen()) {
             m_window->PollEvent();
 
@@ -82,6 +84,14 @@ namespace rasterization {
             const float angle = to_radians(dt) * 25.0f;
 
         #pragma region input
+            if (m_window->IsKeyPressed(Key::NUMBER_1)) {
+                model_render_mode = RenderMode::POINTS;
+            } else if (m_window->IsKeyPressed(Key::NUMBER_2)) {
+                model_render_mode = RenderMode::LINES;
+            } else if (m_window->IsKeyPressed(Key::NUMBER_3)) {
+                model_render_mode = RenderMode::TRIANGLES;
+            }
+
             if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
                 rotation = rotate_y(rotation, -angle);
             } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
@@ -110,7 +120,7 @@ namespace rasterization {
             core.SetShaderUniform("scale", scale(mat4f::IDENTITY, vec3f(0.5f)));
             core.SetShaderUniform("rotate", rotation);
             core.SetShaderUniform("translate", translation);
-            m_rasterizer.Render(RenderMode::TRIANGLES, m_VBO_IBO["model"].first, m_VBO_IBO["model"].second);
+            m_rasterizer.Render(model_render_mode, m_VBO_IBO["model"].first, m_VBO_IBO["model"].second);
 
             core.SetShaderUniform("scale", mat4f::IDENTITY);
             core.SetShaderUniform("rotate", mat4f::IDENTITY);

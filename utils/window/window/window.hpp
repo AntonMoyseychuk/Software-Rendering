@@ -11,6 +11,17 @@
 
 namespace win_framewrk {
     enum class Key { 
+        NUMBER_0 = SDL_Scancode::SDL_SCANCODE_0,
+        NUMBER_1 = SDL_Scancode::SDL_SCANCODE_1,
+        NUMBER_2 = SDL_Scancode::SDL_SCANCODE_2,
+        NUMBER_3 = SDL_Scancode::SDL_SCANCODE_3,
+        NUMBER_4 = SDL_Scancode::SDL_SCANCODE_4,
+        NUMBER_5 = SDL_Scancode::SDL_SCANCODE_5,
+        NUMBER_6 = SDL_Scancode::SDL_SCANCODE_6,
+        NUMBER_7 = SDL_Scancode::SDL_SCANCODE_7,
+        NUMBER_8 = SDL_Scancode::SDL_SCANCODE_8,
+        NUMBER_9 = SDL_Scancode::SDL_SCANCODE_9,
+
         W = SDL_Scancode::SDL_SCANCODE_W,
         A = SDL_Scancode::SDL_SCANCODE_A,
         D = SDL_Scancode::SDL_SCANCODE_D,
