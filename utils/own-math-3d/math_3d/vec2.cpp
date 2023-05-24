@@ -102,10 +102,12 @@ namespace math {
     }
 
     vec2f vec2f::operator/(float value) const noexcept {
+        assert(!is_tends_to(value, 0.0f));
         return vec2f(x / value, y / value);
     }
 
     vec2f &vec2f::operator/=(float value) noexcept {
+        assert(!is_tends_to(value, 0.0f));
         x /= value;
         y /= value;
 
@@ -143,6 +145,8 @@ namespace math {
     }
     
     vec2f normalize(const vec2f &vec) noexcept {
-        return vec * (1.0f / vec.length());
+        const float length = vec.length();
+        assert(!is_tends_to(length, 0.0f));
+        return vec * (1.0f / length);
     }
 }
