@@ -27,22 +27,22 @@ namespace rasterization::gfx {
 
         const size_t vertex_count = local_coords.size();
 
-        static std::vector<vec3f> transform_coords;
         static std::vector<vec3f> screen_coords;
+        static std::vector<vec3f> raster_coords;
 
     #pragma region resizing-buffers
         screen_coords.resize(vertex_count);
-        transform_coords.resize(vertex_count);
+        raster_coords.resize(vertex_count);
         _ResizeZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
 
         // Vertex Shader
         for (size_t i = 0; i < vertex_count; ++i) {
-            _VertexShader(local_coords[i], transform_coords[i]);
+            _VertexShader(local_coords[i], screen_coords[i]);
         }
 
         // Rasterization
-        _Rasterize(transform_coords, screen_coords);
+        _Rasterize(screen_coords, raster_coords);
 
         // Pixel Shader
         switch (mode) {
@@ -50,13 +50,13 @@ namespace rasterization::gfx {
             assert(m_core.m_vec4f_uniforms.count("point_color") == 1);
 
             for (size_t i = 0; i < indexes.size(); ++i) {
-                _PointPixelShader(screen_coords[indexes[i]], m_core.m_vec4f_uniforms["point_color"]);
+                _PointPixelShader(raster_coords[indexes[i]], m_core.m_vec4f_uniforms["point_color"]);
             }    
             break;
 
         case RenderMode::LINES:
             for (size_t i = 0; i < indexes.size(); i += 2) {
-                _LinePixelShader(screen_coords[indexes[i]], screen_coords[indexes[i + 1]]);
+                _LinePixelShader(raster_coords[indexes[i]], raster_coords[indexes[i + 1]]);
             }
             break;
 
@@ -65,61 +65,60 @@ namespace rasterization::gfx {
             
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 const vec3f normal = normalize(cross(
-                    transform_coords[indexes[i + 2]] - transform_coords[indexes[i]], 
-                    transform_coords[indexes[i + 1]] - transform_coords[indexes[i]]
+                    screen_coords[indexes[i + 2]] - screen_coords[indexes[i]], 
+                    screen_coords[indexes[i + 1]] - screen_coords[indexes[i]]
                 ));
 
                 const float light_intensity = dot(normal, m_core.m_vec3f_uniforms["light_dir"]) + 0.1f;
                 m_core.SetShaderUniform("light_intensity", light_intensity);
 
-                _TrianglePixelShader(screen_coords[indexes[i]], screen_coords[indexes[i + 1]], screen_coords[indexes[i + 2]]);
+                _TrianglePixelShader(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]]);
             }
             break;
         }
     }
 
-    void Rasterizer::_VertexShader(const math::vec3f& local_coord, math::vec3f& transformed_coord) const noexcept {
+    void Rasterizer::_VertexShader(const math::vec3f& local_coord, math::vec3f& screen_coord) const noexcept {
         assert(
-            m_core.m_mat4_uniforms.count("scale") == 1 &&
-            m_core.m_mat4_uniforms.count("rotate") == 1 && 
-            m_core.m_mat4_uniforms.count("translate") == 1
+            m_core.m_mat4_uniforms.count("model") == 1 &&
+            m_core.m_mat4_uniforms.count("view") == 1 && 
+            m_core.m_mat4_uniforms.count("projection") == 1
         );
         
-        const math::mat4f model = m_core.m_mat4_uniforms["scale"] * m_core.m_mat4_uniforms["rotate"] * m_core.m_mat4_uniforms["translate"];
-        transformed_coord = local_coord * model;
+        screen_coord = local_coord * m_core.m_mat4_uniforms["model"] * m_core.m_mat4_uniforms["view"];
     }
 
-    void Rasterizer::_Rasterize(const std::vector<math::vec3f> &transformed_coords, std::vector<math::vec3f> &screen_coords) const noexcept {
+    void Rasterizer::_Rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept {
         const float dx = m_window_ptr->GetWidth() / 2.0f;
         const float dy = m_window_ptr->GetHeight() / 2.0f;
 
-        for (size_t i = 0; i < transformed_coords.size(); ++i) {
-            screen_coords[i] = math::vec3f(
-                std::floorf((1.0f + transformed_coords[i].x) * dx), 
-                std::floorf((1.0f - transformed_coords[i].y) * dy), 
-                transformed_coords[i].z
+        for (size_t i = 0; i < screen_coords.size(); ++i) {
+            raster_coords[i] = math::vec3f(
+                std::floorf((1.0f + screen_coords[i].x) * dx), 
+                std::floorf((1.0f - screen_coords[i].y) * dy), 
+                screen_coords[i].z
             );
         }
     }
 
-    void Rasterizer::_PointPixelShader(const math::vec3f& screen_coord, const math::color& color) const noexcept {
-        const int64_t idx = screen_coord.x + screen_coord.y * m_window_ptr->GetWidth();
+    void Rasterizer::_PointPixelShader(const math::vec3f& raster_coord, const math::color& color) const noexcept {
+        const int64_t idx = raster_coord.x + raster_coord.y * m_window_ptr->GetWidth();
         if (idx >= 0 && idx < m_z_buffer.size()) {
-            if (screen_coord.z >= m_z_buffer[static_cast<size_t>(idx)]) {
-                m_z_buffer[static_cast<size_t>(idx)] = screen_coord.z;
-                m_window_ptr->SetPixelColor(screen_coord.x, screen_coord.y, R_G_B_A(color));
+            if (raster_coord.z >= m_z_buffer[static_cast<size_t>(idx)]) {
+                m_z_buffer[static_cast<size_t>(idx)] = raster_coord.z;
+                m_window_ptr->SetPixelColor(raster_coord.x, raster_coord.y, R_G_B_A(color));
             }
         }
     }
 
-    void Rasterizer::_LinePixelShader(const math::vec3f& screen_coord_v0, const math::vec3f& screen_coord_v1) const noexcept {
+    void Rasterizer::_LinePixelShader(const math::vec3f& raster_coord_v0, const math::vec3f& raster_coord_v1) const noexcept {
         using namespace math;
         
         assert(m_core.m_vec4f_uniforms.count("line_color") == 1);
         const math::color& color = m_core.m_vec4f_uniforms["line_color"];
 
-        auto v0 = screen_coord_v0;
-        auto v1 = screen_coord_v1;
+        auto v0 = raster_coord_v0;
+        auto v1 = raster_coord_v1;
 
         static std::vector<int32_t> values;
         static std::vector<float> z_values;
@@ -147,10 +146,10 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_TrianglePixelShader(const math::vec3f &screen_coords0, const math::vec3f &screen_coords1, const math::vec3f &screen_coords2) const noexcept {
+    void Rasterizer::_TrianglePixelShader(const math::vec3f &raster_coord_0, const math::vec3f &raster_coord_1, const math::vec3f &raster_coord_2) const noexcept {
         using namespace math;
 
-        auto v0 = screen_coords0, v1 = screen_coords1, v2 = screen_coords2;
+        auto v0 = raster_coord_0, v1 = raster_coord_1, v2 = raster_coord_2;
         if (v0.y > v1.y) { std::swap(v0, v1); }
         if (v0.y > v2.y) { std::swap(v0, v2); }
         if (v1.y > v2.y) { std::swap(v1, v2); }

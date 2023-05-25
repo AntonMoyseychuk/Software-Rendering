@@ -73,6 +73,10 @@ namespace rasterization {
         core.SetShaderUniform("line_color", color::LIME);
         core.SetShaderUniform("point_color", color::SKY_BLUE);
 
+
+        core.SetShaderUniform("view", look_at_rh(vec3f::ZERO, vec3f::BACKWARD, vec3f::UP));
+        core.SetShaderUniform("projection", perspective(MATH_PI_DIV_2, float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
+
         mat4f rotation, translation;
         RenderMode model_render_mode = RenderMode::TRIANGLES;
         while (m_window->IsOpen()) {
@@ -115,16 +119,21 @@ namespace rasterization {
             } else if (m_window->IsKeyPressed(Key::S)) {
                 translation = translate(translation, vec3f::DOWN * dt);
             }
+
+            if (m_window->IsKeyPressed(Key::Z)) {
+                translation = translate(translation, vec3f::BACKWARD * dt);
+            } else if (m_window->IsKeyPressed(Key::X)) {
+                translation = translate(translation, vec3f::FORWARD * dt);
+            }
         #pragma endregion input
 
+            core.SetShaderUniform("model", scale(mat4f::IDENTITY, vec3f(0.5f)) * rotation * translation);
             core.SetShaderUniform("scale", scale(mat4f::IDENTITY, vec3f(0.5f)));
             core.SetShaderUniform("rotate", rotation);
             core.SetShaderUniform("translate", translation);
             m_rasterizer.Render(model_render_mode, m_VBO_IBO["model"].first, m_VBO_IBO["model"].second);
 
-            core.SetShaderUniform("scale", mat4f::IDENTITY);
-            core.SetShaderUniform("rotate", mat4f::IDENTITY);
-            core.SetShaderUniform("translate", mat4f::IDENTITY);
+            core.SetShaderUniform("model", mat4f::IDENTITY);
             m_rasterizer.Render(RenderMode::LINES, m_VBO_IBO["cube"].first, m_VBO_IBO["cube"].second);
 
             m_rasterizer.SwapBuffers(); 

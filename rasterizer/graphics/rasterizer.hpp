@@ -1,7 +1,7 @@
 #pragma once
-#include "core/gl_api.hpp"
-
 #include "window/window.hpp"
+#include "core/gl_api.hpp"
+#include "thread_pool/thread_pool.hpp"
 
 #include "math_3d/vec4.hpp"
 
@@ -28,15 +28,17 @@ namespace rasterization::gfx {
         void _ResizeZBuffer(uint32_t width, uint32_t height) const noexcept;
 
     private:
-        void _VertexShader(const math::vec3f& local_coord, math::vec3f& transformed_coord) const noexcept;
-        void _Rasterize(const std::vector<math::vec3f> &transformed_coords, std::vector<math::vec3f> &screen_coords) const noexcept;
+        void _VertexShader(const math::vec3f& local_coord, math::vec3f& screen_coord) const noexcept;
+        void _Rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept;
 
-        void _PointPixelShader(const math::vec3f& screen_coord, const math::color& color) const noexcept;
-        void _LinePixelShader(const math::vec3f& screen_coord_v0, const math::vec3f& screen_coord_v1) const noexcept;
-        void _TrianglePixelShader(const math::vec3f &screen_coords0, const math::vec3f &screen_coords1, const math::vec3f &screen_coords2) const noexcept;
+        void _PointPixelShader(const math::vec3f& raster_coord, const math::color& color) const noexcept;
+        void _LinePixelShader(const math::vec3f& raster_coord_v0, const math::vec3f& raster_coord_v1) const noexcept;
+        void _TrianglePixelShader(const math::vec3f &raster_coord_0, const math::vec3f &raster_coord_1, const math::vec3f &raster_coord_2) const noexcept;
 
     private:
         mutable std::vector<float> m_z_buffer;
+
+        // mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 
         win_framewrk::Window* m_window_ptr = nullptr;
         const GLApi& m_core;
