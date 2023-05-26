@@ -28,12 +28,12 @@ namespace rasterization::gfx {
         void _ResizeZBuffer(uint32_t width, uint32_t height) const noexcept;
 
     private:
-        void _VertexShader(const math::vec3f& local_coord, math::vec3f& screen_coord) const noexcept;
+        math::vec3f _VertexShader(const math::vec3f& local_coord) const noexcept;
         void _Rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept;
 
-        void _PointPixelShader(const math::vec3f& raster_coord, const math::color& color) const noexcept;
-        void _LinePixelShader(const math::vec3f& raster_coord_v0, const math::vec3f& raster_coord_v1) const noexcept;
-        void _TrianglePixelShader(const math::vec3f &raster_coord_0, const math::vec3f &raster_coord_1, const math::vec3f &raster_coord_2) const noexcept;
+        void _RenderPixel(const math::vec3f& raster_coord, const math::color& color) const noexcept;
+        void _RenderLine(const math::vec3f& raster_coord_v0, const math::vec3f& raster_coord_v1) const noexcept;
+        void _RenderTriangle(const math::vec3f &raster_coord_0, const math::vec3f &raster_coord_1, const math::vec3f &raster_coord_2) const noexcept;
 
     private:
         mutable std::vector<float> m_z_buffer;

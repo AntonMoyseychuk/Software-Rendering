@@ -38,7 +38,7 @@ namespace rasterization::gfx {
 
         // Vertex Shader
         for (size_t i = 0; i < vertex_count; ++i) {
-            _VertexShader(local_coords[i], screen_coords[i]);
+            screen_coords[i] = _VertexShader(local_coords[i]);
         }
 
         // Rasterization
@@ -50,13 +50,13 @@ namespace rasterization::gfx {
             assert(m_core.m_vec4f_uniforms.count("point_color") == 1);
 
             for (size_t i = 0; i < indexes.size(); ++i) {
-                _PointPixelShader(raster_coords[indexes[i]], m_core.m_vec4f_uniforms["point_color"]);
+                _RenderPixel(raster_coords[indexes[i]], m_core.m_vec4f_uniforms["point_color"]);
             }    
             break;
 
         case RenderMode::LINES:
             for (size_t i = 0; i < indexes.size(); i += 2) {
-                _LinePixelShader(raster_coords[indexes[i]], raster_coords[indexes[i + 1]]);
+                _RenderLine(raster_coords[indexes[i]], raster_coords[indexes[i + 1]]);
             }
             break;
 
@@ -72,20 +72,18 @@ namespace rasterization::gfx {
                 const float light_intensity = dot(normal, m_core.m_vec3f_uniforms["light_dir"]) + 0.1f;
                 m_core.SetShaderUniform("light_intensity", light_intensity);
 
-                _TrianglePixelShader(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]]);
+                _RenderTriangle(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]]);
             }
             break;
         }
     }
 
-    void Rasterizer::_VertexShader(const math::vec3f& local_coord, math::vec3f& screen_coord) const noexcept {
-        assert(
-            m_core.m_mat4_uniforms.count("model") == 1 &&
-            m_core.m_mat4_uniforms.count("view") == 1 && 
-            m_core.m_mat4_uniforms.count("projection") == 1
-        );
+    math::vec3f Rasterizer::_VertexShader(const math::vec3f& local_coord) const noexcept {
+        assert(m_core.m_mat4_uniforms.count("model") == 1);
+        assert(m_core.m_mat4_uniforms.count("view") == 1);
+        assert(m_core.m_mat4_uniforms.count("projection") == 1);
         
-        screen_coord = local_coord * m_core.m_mat4_uniforms["model"] * m_core.m_mat4_uniforms["view"];
+        return local_coord * m_core.m_mat4_uniforms["model"] * m_core.m_mat4_uniforms["view"] * m_core.m_mat4_uniforms["projection"];
     }
 
     void Rasterizer::_Rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept {
@@ -96,12 +94,12 @@ namespace rasterization::gfx {
             raster_coords[i] = math::vec3f(
                 std::floorf((1.0f + screen_coords[i].x) * dx), 
                 std::floorf((1.0f - screen_coords[i].y) * dy), 
-                screen_coords[i].z
+                -screen_coords[i].z
             );
         }
     }
 
-    void Rasterizer::_PointPixelShader(const math::vec3f& raster_coord, const math::color& color) const noexcept {
+    void Rasterizer::_RenderPixel(const math::vec3f& raster_coord, const math::color& color) const noexcept {
         const int64_t idx = raster_coord.x + raster_coord.y * m_window_ptr->GetWidth();
         if (idx >= 0 && idx < m_z_buffer.size()) {
             if (raster_coord.z >= m_z_buffer[static_cast<size_t>(idx)]) {
@@ -111,7 +109,7 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_LinePixelShader(const math::vec3f& raster_coord_v0, const math::vec3f& raster_coord_v1) const noexcept {
+    void Rasterizer::_RenderLine(const math::vec3f& raster_coord_v0, const math::vec3f& raster_coord_v1) const noexcept {
         using namespace math;
         
         assert(m_core.m_vec4f_uniforms.count("line_color") == 1);
@@ -131,7 +129,7 @@ namespace rasterization::gfx {
             interpolate<int32_t>(v0.x, v0.y, v1.x, v1.y, values);
             interpolate<float>(v0.x, v0.z, v1.x, v1.z, z_values);
             for (int32_t x = v0.x; x <= v1.x; ++x) {
-                _PointPixelShader(vec3f(x, values[x - v0.x], z_values[x - v0.x]), color);
+                _RenderPixel(vec3f(x, values[x - v0.x], z_values[x - v0.x]), color);
             }
         } else {
             if (v0.y > v1.y) {
@@ -141,12 +139,12 @@ namespace rasterization::gfx {
             interpolate<int32_t>(v0.y, v0.x, v1.y, v1.x, values);
             interpolate<float>(v0.y, v0.z, v1.y, v1.z, z_values);
             for (int32_t y = v0.y; y <= v1.y; ++y) {
-                _PointPixelShader(vec3f(values[y - v0.y], y, z_values[y - v0.y]), color);
+                _RenderPixel(vec3f(values[y - v0.y], y, z_values[y - v0.y]), color);
             }
         }
     }
 
-    void Rasterizer::_TrianglePixelShader(const math::vec3f &raster_coord_0, const math::vec3f &raster_coord_1, const math::vec3f &raster_coord_2) const noexcept {
+    void Rasterizer::_RenderTriangle(const math::vec3f &raster_coord_0, const math::vec3f &raster_coord_1, const math::vec3f &raster_coord_2) const noexcept {
         using namespace math;
 
         auto v0 = raster_coord_0, v1 = raster_coord_1, v2 = raster_coord_2;
@@ -156,10 +154,8 @@ namespace rasterization::gfx {
 
         static std::vector<float> z_values; 
 
-        assert(
-            m_core.m_vec4f_uniforms.count("polygon_color") == 1 &&
-            m_core.m_float_uniforms.count("light_intensity") == 1
-        );
+        assert(m_core.m_vec4f_uniforms.count("polygon_color") == 1);
+        assert(m_core.m_float_uniforms.count("light_intensity") == 1);
         const color color = m_core.m_vec4f_uniforms["polygon_color"] * m_core.m_float_uniforms["light_intensity"];
 
         const uint32_t total_height = v2.y - v0.y;
@@ -177,7 +173,7 @@ namespace rasterization::gfx {
             interpolate<float>(left.x, left.z, right.x, right.z, z_values);
 
             for (int32_t j = left.x; j <= right.x; ++j) {
-                _PointPixelShader(vec3f(j, v0.y + i, z_values[j - left.x]), color);
+                _RenderPixel(vec3f(j, v0.y + i, z_values[j - left.x]), color);
             }
         } 
     }
