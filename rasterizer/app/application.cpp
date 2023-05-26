@@ -69,6 +69,7 @@ namespace rasterization {
         static const GLApi& core = GLApi::Get();
 
         core.SetShaderUniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
+        
         core.SetShaderUniform("polygon_color", color::GOLDEN);
         core.SetShaderUniform("line_color", color::LIME);
         core.SetShaderUniform("point_color", color::SKY_BLUE);
@@ -126,7 +127,7 @@ namespace rasterization {
             }
         #pragma endregion input
 
-            core.SetShaderUniform("model", scale(mat4f::IDENTITY, vec3f(0.5f)) * rotation * translation);
+            core.SetShaderUniform("model", scale(mat4f::IDENTITY, vec3f(0.65f)) * rotation * translation);
             m_rasterizer.Render(model_render_mode, m_VBO_IBO["model"].first, m_VBO_IBO["model"].second);
 
             core.SetShaderUniform("model", mat4f::IDENTITY);

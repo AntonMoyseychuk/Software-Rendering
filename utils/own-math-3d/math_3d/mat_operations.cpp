@@ -76,7 +76,7 @@ namespace math {
         assert(aspect > 0.0f && "aspect must be greater than 0");
 		assert(is_tends_to(z_near, z_far) == false && "z_near is equal to z_far");
 
-		const auto tan_half_fovy = tanf(fovy_radians / 2.0f);
+		const float tan_half_fovy = std::tanf(fovy_radians / 2.0f);
 
 		mat4f result;
 		result[0][0] = 1.0f / (aspect * tan_half_fovy);
@@ -84,6 +84,7 @@ namespace math {
 		result[2][2] = -(z_far + z_near) / (z_far - z_near);
 		result[2][3] = -1.0f;
 		result[3][2] = -(2.0f * z_far * z_near) / (z_far - z_near);
-		return transpose(result);
+		// return transpose(result);
+		return result;
     }
 }

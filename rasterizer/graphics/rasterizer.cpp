@@ -83,7 +83,8 @@ namespace rasterization::gfx {
         assert(m_core.m_mat4_uniforms.count("view") == 1);
         assert(m_core.m_mat4_uniforms.count("projection") == 1);
         
-        return local_coord * m_core.m_mat4_uniforms["model"] * m_core.m_mat4_uniforms["view"] * m_core.m_mat4_uniforms["projection"];
+        return local_coord * m_core.m_mat4_uniforms["model"] * m_core.m_mat4_uniforms["view"];
+        // return local_coord * m_core.m_mat4_uniforms["model"] * m_core.m_mat4_uniforms["view"] * m_core.m_mat4_uniforms["projection"];
     }
 
     void Rasterizer::_Rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept {
@@ -91,11 +92,10 @@ namespace rasterization::gfx {
         const float dy = m_window_ptr->GetHeight() / 2.0f;
 
         for (size_t i = 0; i < screen_coords.size(); ++i) {
-            raster_coords[i] = math::vec3f(
-                std::floorf((1.0f + screen_coords[i].x) * dx), 
-                std::floorf((1.0f - screen_coords[i].y) * dy), 
-                -screen_coords[i].z
-            );
+            raster_coords[i].x = std::floorf((1.0f + screen_coords[i].x) * dx);
+            raster_coords[i].y = std::floorf((1.0f - screen_coords[i].y) * dy);
+            raster_coords[i].z = screen_coords[i].z;
+            // raster_coords[i].z = -screen_coords[i].z;
         }
     }
 
