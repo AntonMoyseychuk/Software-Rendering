@@ -52,6 +52,16 @@ namespace rasterization {
             5, 6,
             6, 7,
             7, 4,
+
+            0, 4,
+            4, 5,
+            5, 1,
+            1, 0,
+
+            2, 6,
+            6, 7,
+            7, 3,
+            3, 2,
         };
 
         m_VBO_IBO["cube"] = std::make_pair(
@@ -74,7 +84,7 @@ namespace rasterization {
         core.SetShaderUniform("line_color", color::LIME);
         core.SetShaderUniform("point_color", color::SKY_BLUE);
 
-        core.SetShaderUniform("view", look_at_rh(vec3f::ZERO, vec3f::BACKWARD, vec3f::UP));
+        core.SetShaderUniform("view", look_at_rh(vec3f::FORWARD * 2.0f, vec3f::ZERO, vec3f::UP));
         core.SetShaderUniform("projection", perspective(MATH_PI_DIV_2, float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
 
         mat4f rotation, translation;
@@ -130,7 +140,7 @@ namespace rasterization {
             core.SetShaderUniform("model", scale(mat4f::IDENTITY, vec3f(0.65f)) * rotation * translation);
             m_rasterizer.Render(model_render_mode, m_VBO_IBO["model"].first, m_VBO_IBO["model"].second);
 
-            core.SetShaderUniform("model", mat4f::IDENTITY);
+            core.SetShaderUniform("model", mat4f::IDENTITY * rotation);
             m_rasterizer.Render(RenderMode::LINES, m_VBO_IBO["cube"].first, m_VBO_IBO["cube"].second);
 
             m_rasterizer.SwapBuffers(); 

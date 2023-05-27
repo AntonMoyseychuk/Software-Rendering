@@ -147,16 +147,16 @@ namespace rasterization::gfx {
     void Rasterizer::_RenderTriangle(const math::vec3f &raster_coord_0, const math::vec3f &raster_coord_1, const math::vec3f &raster_coord_2) const noexcept {
         using namespace math;
 
+        assert(m_core.m_vec4f_uniforms.count("polygon_color") == 1);
+        assert(m_core.m_float_uniforms.count("light_intensity") == 1);
+        const color color = m_core.m_vec4f_uniforms["polygon_color"] * m_core.m_float_uniforms["light_intensity"];
+
         auto v0 = raster_coord_0, v1 = raster_coord_1, v2 = raster_coord_2;
         if (v0.y > v1.y) { std::swap(v0, v1); }
         if (v0.y > v2.y) { std::swap(v0, v2); }
         if (v1.y > v2.y) { std::swap(v1, v2); }
 
         static std::vector<float> z_values; 
-
-        assert(m_core.m_vec4f_uniforms.count("polygon_color") == 1);
-        assert(m_core.m_float_uniforms.count("light_intensity") == 1);
-        const color color = m_core.m_vec4f_uniforms["polygon_color"] * m_core.m_float_uniforms["light_intensity"];
 
         const uint32_t total_height = v2.y - v0.y;
         for (uint32_t i = 0; i < total_height; ++i) {
