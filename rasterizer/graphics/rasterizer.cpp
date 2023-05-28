@@ -171,7 +171,7 @@ namespace rasterization::gfx {
             for (int32_t j = left.x; j <= right.x; ++j) {
                 _RenderPixel(vec3f(j, v0.y + i, z_values[j - left.x]), color);
             }
-        } 
+        }
     }
 
     void Rasterizer::_ResizeZBuffer(uint32_t width, uint32_t height) const noexcept {

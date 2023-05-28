@@ -5,7 +5,20 @@
 #include <cmath>
 
 namespace math {
-    vec4f cross(const vec4f &a, const vec4f &b) noexcept {
+    vec3f barycentric(const vec3f &a, const vec3f &b, const vec3f &c, const vec3f &point) noexcept {
+        vec3f u = cross(
+            vec3f(c.x - a.x, b.x - a.x, a.x - point.x), 
+            vec3f(c.y - a.y, b.y - a.y, a.y - point.y)
+        );
+
+        if (abs(u.z) < 1.0f) {
+            return vec3f(-1.0f);
+        }
+        return vec3f(1.0f - (u.x + u.y) /u.z, u.y / u.z, u.x / u.z);
+    }
+
+    vec4f cross(const vec4f &a, const vec4f &b) noexcept
+    {
         const __m128 a1 = _mm_shuffle_ps(a.mm_128, a.mm_128, _MM_SHUFFLE(3, 0, 2, 1));
         const __m128 b1 = _mm_shuffle_ps(b.mm_128, b.mm_128, _MM_SHUFFLE(3, 0, 2, 1));
         const __m128 a2 = _mm_shuffle_ps(a.mm_128, a.mm_128, _MM_SHUFFLE(3, 1, 0, 2));
@@ -14,7 +27,7 @@ namespace math {
         const __m128 t2 = _mm_mul_ps(a1, b2);
         return vec4f(_mm_sub_ps(t2, t1));
     }
-    
+
     float dot(const vec4f &a, const vec4f &b) noexcept {
         return _mm_cvtss_f32(_mm_dp_ps(a.mm_128, b.mm_128, 0xF1));
     }

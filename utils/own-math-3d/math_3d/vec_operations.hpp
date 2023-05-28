@@ -5,6 +5,8 @@ namespace math {
     union vec3f;
     union vec4f;
 
+    vec3f barycentric(const vec3f& a, const vec3f& b, const vec3f& c, const vec3f& point) noexcept;
+
     vec4f cross(const vec4f& a, const vec4f& b) noexcept;
     float dot(const vec4f& a, const vec4f& b) noexcept;
 
