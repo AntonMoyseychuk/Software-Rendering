@@ -84,8 +84,7 @@ namespace rasterization {
         core.SetShaderUniform("line_color", color::LIME);
         core.SetShaderUniform("point_color", color::SKY_BLUE);
 
-        core.SetShaderUniform("view", look_at_rh(vec3f::FORWARD * 2.0f, vec3f::ZERO, vec3f::UP));
-        core.SetShaderUniform("projection", perspective(MATH_PI_DIV_2, float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
+        core.SetShaderUniform("view", look_at_rh(vec3f::FORWARD, vec3f::ZERO, vec3f::UP));
 
         mat4f rotation, translation;
         RenderMode model_render_mode = RenderMode::TRIANGLES;
@@ -136,6 +135,8 @@ namespace rasterization {
                 translation = translate(translation, vec3f::FORWARD * dt);
             }
         #pragma endregion input
+
+            core.SetShaderUniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
 
             core.SetShaderUniform("model", scale(mat4f::IDENTITY, vec3f(0.65f)) * rotation * translation);
             m_rasterizer.Render(model_render_mode, m_VBO_IBO["model"].first, m_VBO_IBO["model"].second);
