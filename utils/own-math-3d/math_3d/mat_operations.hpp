@@ -1,6 +1,8 @@
 #pragma once
 #include "mat4.hpp"
 
+#include <stdint.h>
+
 namespace math {
     union vec3f;
 
@@ -13,4 +15,5 @@ namespace math {
 
     mat4f look_at_rh(const vec3f& eye, const vec3f& look_at, const vec3f& up) noexcept;
     mat4f perspective(float fovy_radians, float aspect, float z_near, float z_far) noexcept;
+    mat4f viewport(uint32_t width, uint32_t height) noexcept;
 }

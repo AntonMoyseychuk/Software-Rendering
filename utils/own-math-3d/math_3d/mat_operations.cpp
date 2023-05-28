@@ -79,12 +79,34 @@ namespace math {
 		const float tan_half_fovy = std::tanf(fovy_radians / 2.0f);
 
 		mat4f result;
-		result[0][0] = 1.0f / (aspect * tan_half_fovy);
-		result[1][1] = 1.0f / (tan_half_fovy);
-		result[2][2] = -(z_far + z_near) / (z_far - z_near);
-		result[2][3] = -1.0f;
-		result[3][2] = -(2.0f * z_far * z_near) / (z_far - z_near);
+		// result[0][0] = 1.0f / (aspect * tan_half_fovy);
+		// result[1][1] = 1.0f / (tan_half_fovy);
+		// result[2][2] = -(z_far + z_near) / (z_far - z_near);
+		// result[2][3] = -1.0f;
+		// result[3][2] = -(2.0f * z_far * z_near) / (z_far - z_near);
 		// return transpose(result);
+
+        result[0][0] = 1.0f / (aspect * tan_half_fovy);
+		result[1][1] = 1.0f / (tan_half_fovy);
+		result[2][2] = z_far / (z_far - z_near);
+		result[2][3] = 1.0f;
+		result[3][2] = -z_far * z_near / (z_far - z_near);
+
 		return result;
+    }
+    
+    mat4f viewport(uint32_t width, uint32_t height) noexcept {
+        mat4f result;
+
+        result[0][0] = -0.5f * width;
+        result[1][1] = -0.5f * height;
+        result[2][2] = 1.0f;
+
+        result[3][0] = 0.5f * width;
+        result[3][1] = 0.5f * height;
+
+        result[3][3] = 1.0f;
+
+        return result;
     }
 }
