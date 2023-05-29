@@ -13,6 +13,10 @@ namespace rasterization::gfx {
     class GLApi final {
     private:
         struct _Attribute {
+            _Attribute() noexcept = default;
+            _Attribute(size_t size, AttribDataType type, size_t stride, const void* ptr) noexcept
+                : size(size), type(type), stride(stride), ptr(ptr) {}
+
             size_t size;
             AttribDataType type;
             size_t stride;
@@ -21,7 +25,7 @@ namespace rasterization::gfx {
 
         struct _Buffer {
             std::vector<uint8_t> data;
-            std::unordered_map<size_t, _Attribute> attributes;
+            std::vector<_Attribute> attributes;
         };
 
     public:
@@ -30,7 +34,7 @@ namespace rasterization::gfx {
         static const GLApi& Get() noexcept;
 
         size_t CreateBuffer(BufferType type, const void* buffer, size_t size) const noexcept;
-        void VertexAttribPointer(size_t vbo_id, size_t index, size_t size, AttribDataType type, size_t stride, const void* pointer) const noexcept;
+        void VertexAttribPointer(size_t vbo_id, size_t size, AttribDataType type, size_t stride, const void* ptr) const noexcept;
 
         size_t CreateIndexBuffer(const size_t* buffer, size_t count) const noexcept;
         

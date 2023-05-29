@@ -69,7 +69,7 @@ namespace math {
     };
 
     mat4f operator*(float value, const mat4f& mat) noexcept;
-    vec3f operator*(const vec3f& vec, const mat4f& mat) noexcept;
+    vec4f operator*(const vec3f& vec, const mat4f& mat) noexcept;
     vec4f operator*(const vec4f& vec, const mat4f& mat) noexcept;
 
     mat4f inverse(const mat4f& mat) noexcept;

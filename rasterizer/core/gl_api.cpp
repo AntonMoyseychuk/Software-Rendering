@@ -21,12 +21,8 @@ namespace rasterization::gfx {
         return 0;
     }
 
-    void GLApi::VertexAttribPointer(size_t vbo_id, size_t index, size_t size, 
-        AttribDataType type, size_t stride, const void *pointer
-    ) const noexcept {
-        if (m_vbos.count(vbo_id) != 0) {
-            m_vbos[vbo_id].attributes[index] = { size, type, stride, pointer };
-        }
+    void GLApi::VertexAttribPointer(size_t vbo_id, size_t size, AttribDataType type, size_t stride, const void *ptr) const noexcept {
+        m_vbos[vbo_id].attributes.emplace_back(size, type, stride, ptr);
     }
 
     size_t GLApi::CreateIndexBuffer(const size_t *buffer, size_t count) const noexcept {
@@ -76,7 +72,7 @@ namespace rasterization::gfx {
 
         m_vbos[id] = _Buffer {
             std::vector<uint8_t>((uint8_t*)buffer, (uint8_t*)buffer + size), 
-            std::unordered_map<size_t, _Attribute>() 
+            std::vector<_Attribute>() 
         };
     
         return id;

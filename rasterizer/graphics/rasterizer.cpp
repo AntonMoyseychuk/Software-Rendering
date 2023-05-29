@@ -79,11 +79,14 @@ namespace rasterization::gfx {
     }
 
     math::vec3f Rasterizer::_VertexShader(const math::vec3f& local_coord) const noexcept {
+        using namespace math;
+
         assert(m_core.m_mat4_uniforms.count("model") == 1);
         assert(m_core.m_mat4_uniforms.count("view") == 1);
         assert(m_core.m_mat4_uniforms.count("projection") == 1);
         
-        return local_coord * m_core.m_mat4_uniforms["model"] * m_core.m_mat4_uniforms["view"] * m_core.m_mat4_uniforms["projection"];
+        const vec4f screen = local_coord * m_core.m_mat4_uniforms["model"] * m_core.m_mat4_uniforms["view"] * m_core.m_mat4_uniforms["projection"];
+        return screen.xyz;
     }
 
     void Rasterizer::_Rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept {

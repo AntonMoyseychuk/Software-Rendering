@@ -29,7 +29,7 @@ namespace rasterization {
             core.CreateBuffer(BufferType::VERTEX, model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
             core.CreateIndexBuffer(model.vert_indexes.data(), model.vert_indexes.size())
         );
-        core.VertexAttribPointer(m_VBO_IBO["model"].first, 0, sizeof(vec3f), AttribDataType::FLOAT, sizeof(vec3f), (void*)0);
+        core.VertexAttribPointer(m_VBO_IBO["model"].first, sizeof(vec3f), AttribDataType::FLOAT, sizeof(vec3f), (void*)0);
 
         const vec3f cube[] = {
             { -0.75f, -0.75f, 0.75f },
@@ -68,7 +68,7 @@ namespace rasterization {
             core.CreateBuffer(BufferType::VERTEX, cube, sizeof(cube)),
             core.CreateIndexBuffer(indexes, sizeof(indexes) / sizeof(size_t))
         );
-        core.VertexAttribPointer(m_VBO_IBO["cube"].first, 0, sizeof(vec3f), AttribDataType::FLOAT, sizeof(vec3f), (void*)0);
+        core.VertexAttribPointer(m_VBO_IBO["cube"].first, sizeof(vec3f), AttribDataType::FLOAT, sizeof(vec3f), (void*)0);
     }
 
     void Application::Run() noexcept {
