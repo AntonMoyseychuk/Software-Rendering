@@ -141,7 +141,7 @@ namespace rasterization {
             core.SetShaderUniform("model", scale(mat4f::IDENTITY, vec3f(0.65f)) * rotation * translation);
             m_rasterizer.Render(model_render_mode, m_VBO_IBO["model"].first, m_VBO_IBO["model"].second);
 
-            core.SetShaderUniform("model", mat4f::IDENTITY * translation);
+            core.SetShaderUniform("model", mat4f::IDENTITY);
             m_rasterizer.Render(RenderMode::LINES, m_VBO_IBO["cube"].first, m_VBO_IBO["cube"].second);
 
             m_rasterizer.SwapBuffers(); 

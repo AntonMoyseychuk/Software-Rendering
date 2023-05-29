@@ -91,10 +91,10 @@ namespace math {
     
     mat4f viewport(uint32_t width, uint32_t height) noexcept {
         return mat4f(
-            0.5f * width,                 0.0f,       0.0f,       0.0f,
-                    0.0f,       -0.5f * height,       0.0f,       0.0f,
-                    0.0f,                 0.0f,       1.0f,       0.0f,
-            0.5f * width,        0.5f * height,       0.0f,       1.0f
+            0.5f * width,             0.0f,     0.0f,      0.0f,
+                    0.0f,   -0.5f * height,     0.0f,      0.0f,
+                    0.0f,             0.0f,     1.0f,      0.0f,
+            0.5f * width,    0.5f * height,     0.0f,      1.0f
         );
     }
 }
