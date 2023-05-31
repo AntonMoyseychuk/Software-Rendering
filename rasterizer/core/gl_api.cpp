@@ -1,5 +1,6 @@
 #include "gl_api.hpp"
 #include "math_3d/util.hpp"
+#include "math_3d/mat_operations.hpp"
 
 #include <cassert>
 
@@ -62,6 +63,10 @@ namespace rasterization::gfx {
 
     void GLApi::SetShaderUniform(const std::string &uniform_name, float value) const noexcept {
         m_float_uniforms[uniform_name] = value;
+    }
+
+    void GLApi::Viewport(uint32_t width, uint32_t height) const noexcept {
+        m_viewport = math::viewport(width, height);
     }
 
     size_t GLApi::_CreateVertexBuffer(const void* buffer, size_t size) const noexcept {
