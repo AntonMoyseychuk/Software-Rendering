@@ -72,18 +72,18 @@ namespace math {
         return mat4f(vec4f(right, 0.0f), vec4f(new_up, 0.0f), vec4f(forward, 0.0f), vec4f(eye, 1.0f));
     }
 
-    mat4f perspective(float fovy_radians, float aspect, float z_near, float z_far) noexcept {
+    mat4f perspective(float fovy_radians, float aspect, float near, float far) noexcept {
         assert(aspect > 0.0f);
-		assert(!is_tends_to(z_near, z_far));
+		assert(near > 0.0f && far > 0.0f && !is_tends_to(near, far));
 
 		const float tan_half_fovy = std::tanf(fovy_radians / 2.0f);
 
 		mat4f result;
         result[0][0] = 1.0f / (aspect * tan_half_fovy);
 		result[1][1] = 1.0f / (tan_half_fovy);
-		result[2][2] = z_far / (z_far - z_near);
+		result[2][2] = (far + near) / (far - near);
 		result[2][3] = 1.0f;
-		result[3][2] = -z_far * z_near / (z_far - z_near);
+		result[3][2] = -2.0f * far * near / (far - near);
 		result[3][3] = 0.0f;
 
 		return result;

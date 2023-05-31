@@ -90,9 +90,8 @@ namespace rasterization::gfx {
     }
 
     void Rasterizer::_Rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept {
-        const math::mat4f viewport = math::viewport(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
         for (size_t i = 0; i < screen_coords.size(); ++i) {
-            raster_coords[i] = screen_coords[i] * viewport;
+            raster_coords[i] = screen_coords[i] * m_core.m_viewport;
             raster_coords[i].x = std::floor(raster_coords[i].x);
             raster_coords[i].y = std::floor(raster_coords[i].y);
         }
@@ -201,7 +200,7 @@ namespace rasterization::gfx {
     }
 
     void Rasterizer::ClearBackBuffer() const noexcept {
-        std::fill(m_z_buffer.begin(), m_z_buffer.end(), -std::numeric_limits<float>::max());
+        std::fill(m_z_buffer.begin(), m_z_buffer.end(), std::numeric_limits<float>::lowest());
     }
 
     void Rasterizer::SetBackgroundColor(const math::color& color) noexcept {

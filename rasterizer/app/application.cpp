@@ -137,6 +137,7 @@ namespace rasterization {
         #pragma endregion input
 
             core.SetShaderUniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
+            core.Viewport(m_window->GetWidth(), m_window->GetHeight());
 
             core.SetShaderUniform("model", scale(mat4f::IDENTITY, vec3f(0.65f)) * rotation * translation);
             m_rasterizer.Render(model_render_mode, m_VBO_IBO["model"].first, m_VBO_IBO["model"].second);

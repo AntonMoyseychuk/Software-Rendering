@@ -14,6 +14,6 @@ namespace math {
     mat4f rotate_z(const mat4f& mat, float angle_radians) noexcept;
 
     mat4f look_at_rh(const vec3f& eye, const vec3f& look_at, const vec3f& up) noexcept;
-    mat4f perspective(float fovy_radians, float aspect, float z_near, float z_far) noexcept;
+    mat4f perspective(float fovy_radians, float aspect, float near, float far) noexcept;
     mat4f viewport(uint32_t width, uint32_t height) noexcept;
 }
