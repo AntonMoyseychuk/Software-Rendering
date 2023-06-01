@@ -27,11 +27,13 @@ namespace rasterization::gfx {
 
         const size_t vertex_count = local_coords.size();
 
-        static std::vector<vec3f> screen_coords;
+        static std::vector<vec4f> screen_coords;
+        static std::vector<vec3f> ndc_coords;
         static std::vector<vec3f> raster_coords;
 
     #pragma region resizing-buffers
         screen_coords.resize(vertex_count);
+        ndc_coords.resize(vertex_count);
         raster_coords.resize(vertex_count);
         _ResizeZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
@@ -41,8 +43,13 @@ namespace rasterization::gfx {
             screen_coords[i] = _VertexShader(local_coords[i]);
         }
 
+        // To NDC
+        for (size_t i = 0; i < vertex_count; ++i) {
+            ndc_coords[i] = screen_coords[i].xyz / screen_coords[i].w;
+        }
+
         // Rasterization
-        _Rasterize(screen_coords, raster_coords);
+        _Rasterize(ndc_coords, raster_coords);
 
         // Pixel Shader
         switch (mode) {
@@ -65,8 +72,8 @@ namespace rasterization::gfx {
             
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 const vec3f normal = normalize(cross(
-                    screen_coords[indexes[i + 2]] - screen_coords[indexes[i]], 
-                    screen_coords[indexes[i + 1]] - screen_coords[indexes[i]]
+                    screen_coords[indexes[i + 2]].xyz - screen_coords[indexes[i]].xyz,
+                    screen_coords[indexes[i + 1]].xyz - screen_coords[indexes[i]].xyz
                 ));
 
                 const float light_intensity = dot(normal, m_core.m_vec3f_uniforms["light_dir"]) + 0.1f;
@@ -78,15 +85,14 @@ namespace rasterization::gfx {
         }
     }
 
-    math::vec3f Rasterizer::_VertexShader(const math::vec3f& local_coord) const noexcept {
+    math::vec4f Rasterizer::_VertexShader(const math::vec3f& local_coord) const noexcept {
         using namespace math;
 
         assert(m_core.m_mat4_uniforms.count("model") == 1);
         assert(m_core.m_mat4_uniforms.count("view") == 1);
         assert(m_core.m_mat4_uniforms.count("projection") == 1);
         
-        const vec4f screen = local_coord * m_core.m_mat4_uniforms["model"] * m_core.m_mat4_uniforms["view"] * m_core.m_mat4_uniforms["projection"];
-        return screen.xyz;
+        return local_coord * m_core.m_mat4_uniforms["model"] * m_core.m_mat4_uniforms["view"] * m_core.m_mat4_uniforms["projection"];
     }
 
     void Rasterizer::_Rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept {
@@ -100,7 +106,7 @@ namespace rasterization::gfx {
     void Rasterizer::_RenderPixel(const math::vec3f& raster_coord, const math::color& color) const noexcept {
         const int64_t idx = raster_coord.x + raster_coord.y * m_window_ptr->GetWidth();
         if (idx >= 0 && idx < m_z_buffer.size()) {
-            if (raster_coord.z >= m_z_buffer[static_cast<size_t>(idx)]) {
+            if (raster_coord.z <= m_z_buffer[static_cast<size_t>(idx)]) {
                 m_z_buffer[static_cast<size_t>(idx)] = raster_coord.z;
                 m_window_ptr->SetPixelColor(raster_coord.x, raster_coord.y, R_G_B_A(color));
             }
@@ -177,7 +183,7 @@ namespace rasterization::gfx {
     }
 
     void Rasterizer::_ResizeZBuffer(uint32_t width, uint32_t height) const noexcept {
-        m_z_buffer.resize(width * height, std::numeric_limits<float>::lowest());
+        m_z_buffer.resize(width * height, std::numeric_limits<float>::max());
     }    
 
     bool Rasterizer::BindWindow(win_framewrk::Window* window) noexcept {
@@ -200,7 +206,7 @@ namespace rasterization::gfx {
     }
 
     void Rasterizer::ClearBackBuffer() const noexcept {
-        std::fill(m_z_buffer.begin(), m_z_buffer.end(), std::numeric_limits<float>::lowest());
+        std::fill(m_z_buffer.begin(), m_z_buffer.end(), std::numeric_limits<float>::max());
     }
 
     void Rasterizer::SetBackgroundColor(const math::color& color) noexcept {

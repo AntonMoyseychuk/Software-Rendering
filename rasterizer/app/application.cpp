@@ -84,7 +84,7 @@ namespace rasterization {
         core.SetShaderUniform("line_color", color::LIME);
         core.SetShaderUniform("point_color", color::SKY_BLUE);
 
-        core.SetShaderUniform("view", look_at_rh(vec3f::FORWARD, vec3f::ZERO, vec3f::UP));
+        core.SetShaderUniform("view", look_at_rh(vec3f::FORWARD * 3.0f, vec3f::ZERO, vec3f::UP));
 
         mat4f rotation, translation;
         RenderMode model_render_mode = RenderMode::TRIANGLES;
@@ -142,7 +142,7 @@ namespace rasterization {
             core.SetShaderUniform("model", scale(mat4f::IDENTITY, vec3f(0.65f)) * rotation * translation);
             m_rasterizer.Render(model_render_mode, m_VBO_IBO["model"].first, m_VBO_IBO["model"].second);
 
-            core.SetShaderUniform("model", mat4f::IDENTITY);
+            core.SetShaderUniform("model", rotation * translation);
             m_rasterizer.Render(RenderMode::LINES, m_VBO_IBO["cube"].first, m_VBO_IBO["cube"].second);
 
             m_rasterizer.SwapBuffers(); 

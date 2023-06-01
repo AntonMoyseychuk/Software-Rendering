@@ -28,7 +28,7 @@ namespace rasterization::gfx {
         void _ResizeZBuffer(uint32_t width, uint32_t height) const noexcept;
 
     private:
-        math::vec3f _VertexShader(const math::vec3f& local_coord) const noexcept;
+        math::vec4f _VertexShader(const math::vec3f& local_coord) const noexcept;
         void _Rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept;
 
         void _RenderPixel(const math::vec3f& raster_coord, const math::color& color) const noexcept;
