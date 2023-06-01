@@ -100,6 +100,8 @@ namespace win_framewrk {
 
         const SDL_Window* GetSDLWindowHandle() const noexcept;
         SDL_Window* GetSDLWindowHandle() noexcept;
+
+        void SetResizeCallback(const std::function<void(uint32_t width, uint32_t height)>& callback) const noexcept;
     #pragma endregion getters-setters
 
     private:
@@ -140,6 +142,8 @@ namespace win_framewrk {
         uint32_t m_width = 0;
         uint32_t m_height = 0;
         bool m_is_quit = false;
+
+        mutable std::function<void(uint32_t width, uint32_t height)> _ResizeCallback;
         
         mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
     };

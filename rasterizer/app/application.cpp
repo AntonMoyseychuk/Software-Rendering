@@ -13,15 +13,20 @@ namespace rasterization {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height, size_t fps_lock)
         : m_window(win_framewrk::Window::Get()), m_last_frame(std::chrono::steady_clock::now()), m_fps_lock(1.0f / (fps_lock > 0 ? fps_lock : 1))
     {
+        using namespace gfx;
+        using namespace math;
+        static const GLApi& core = GLApi::Get();
+    
         m_window->Init(title, width, height);
 
         m_rasterizer.BindWindow(m_window);
         assert(m_rasterizer.IsWindowBinded() != nullptr);
 
+        core.Viewport(width, height);
 
-        using namespace gfx;
-        using namespace math;
-        static const GLApi& core = GLApi::Get();
+        m_window->SetResizeCallback([](uint32_t width, uint32_t height){
+            core.Viewport(width, height);
+        });
 
         Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
         
@@ -137,7 +142,6 @@ namespace rasterization {
         #pragma endregion input
 
             core.SetShaderUniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            core.Viewport(m_window->GetWidth(), m_window->GetHeight());
 
             core.SetShaderUniform("model", scale(mat4f::IDENTITY, vec3f(0.65f)) * rotation * translation);
             m_rasterizer.Render(model_render_mode, m_VBO_IBO["model"].first, m_VBO_IBO["model"].second);

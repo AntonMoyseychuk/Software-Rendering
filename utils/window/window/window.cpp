@@ -108,6 +108,10 @@ namespace win_framewrk {
         m_width = new_width;
         m_height = new_height;
 
+        if (_ResizeCallback) {
+            _ResizeCallback(new_width, new_height);
+        }
+
         LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
     }
 
@@ -352,6 +356,10 @@ namespace win_framewrk {
 
     SDL_Window *Window::GetSDLWindowHandle() noexcept {
         return m_window_ptr.get();
+    }
+
+    void Window::SetResizeCallback(const std::function<void(uint32_t width, uint32_t height)> &callback) const noexcept {
+        _ResizeCallback = callback;
     }
 
     void Window::SDLDeinitializer::operator()(bool *is_sdl_initialized_ptr) const {
