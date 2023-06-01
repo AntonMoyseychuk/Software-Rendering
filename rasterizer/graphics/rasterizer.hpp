@@ -17,7 +17,7 @@ namespace rasterization::gfx {
         bool BindWindow(win_framewrk::Window* window) noexcept;
         const win_framewrk::Window* IsWindowBinded() const noexcept;
 
-        void Render(RenderMode mode, size_t vbo_id, size_t ibo_id) const noexcept;
+        void Render(RenderMode mode) const noexcept;
         void SwapBuffers() const noexcept;
         void ClearBackBuffer() const noexcept;
 
@@ -41,7 +41,7 @@ namespace rasterization::gfx {
         // mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 
         win_framewrk::Window* m_window_ptr = nullptr;
-        const GLApi& m_core;
+        const gl_api& m_core;
 
         math::color m_background_color = math::color::BLACK;
     };

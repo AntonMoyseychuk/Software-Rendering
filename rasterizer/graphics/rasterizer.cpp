@@ -9,21 +9,23 @@
 
 namespace rasterization::gfx {
     Rasterizer::Rasterizer()
-        : m_core(GLApi::Get())
+        : m_core(gl_api::get())
     {
     }
 
     Rasterizer::Rasterizer(win_framewrk::Window *window)
-        : m_window_ptr(window), m_core(GLApi::Get())
+        : m_window_ptr(window), m_core(gl_api::get())
     {
         BindWindow(window);
     }
 
-    void Rasterizer::Render(RenderMode mode, size_t vbo_id, size_t ibo_id) const noexcept {
+    void Rasterizer::Render(RenderMode mode) const noexcept {
         using namespace math;
 
-        const auto& local_coords = *(std::vector<vec3f>*)&m_core.m_vbos[vbo_id].data;
-        const auto& indexes = m_core.m_ibos.at(ibo_id);
+        // const auto& local_coords = *(std::vector<vec3f>*)&m_core.m_vbos[vbo_id].data;
+        const auto& local_coords = *(std::vector<vec3f>*)&m_core._get_vertex_buffer();
+        // const auto& indexes = m_core.m_ibos.at(ibo_id);
+        const auto& indexes = m_core._get_index_buffer();
 
         const size_t vertex_count = local_coords.size();
 
@@ -38,7 +40,7 @@ namespace rasterization::gfx {
         _ResizeZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
 
-        // Vertex Shader
+        // Vertex Shaders
         for (size_t i = 0; i < vertex_count; ++i) {
             screen_coords[i] = _VertexShader(local_coords[i]);
         }
@@ -51,7 +53,7 @@ namespace rasterization::gfx {
         // Rasterization
         _Rasterize(ndc_coords, raster_coords);
 
-        // Pixel Shader
+        // Pixel Shaders
         switch (mode) {
         case RenderMode::POINTS:
             assert(m_core.m_vec4f_uniforms.count("point_color") == 1);
@@ -77,7 +79,7 @@ namespace rasterization::gfx {
                 ));
 
                 const float light_intensity = dot(normal, m_core.m_vec3f_uniforms["light_dir"]) + 0.1f;
-                m_core.SetShaderUniform("light_intensity", light_intensity);
+                m_core.uniform("light_intensity", light_intensity);
 
                 _RenderTriangle(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]]);
             }

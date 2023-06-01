@@ -15,26 +15,26 @@ namespace rasterization {
     {
         using namespace gfx;
         using namespace math;
-        static const GLApi& core = GLApi::Get();
+        static const gl_api& core = gl_api::get();
     
         m_window->Init(title, width, height);
 
         m_rasterizer.BindWindow(m_window);
         assert(m_rasterizer.IsWindowBinded() != nullptr);
 
-        core.Viewport(width, height);
+        core.viewport(width, height);
 
         m_window->SetResizeCallback([](uint32_t width, uint32_t height){
-            core.Viewport(width, height);
+            core.viewport(width, height);
         });
 
         Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
         
         m_VBO_IBO["model"] = std::make_pair(
-            core.CreateBuffer(BufferType::VERTEX, model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
-            core.CreateIndexBuffer(model.vert_indexes.data(), model.vert_indexes.size())
+            core.create_vertex_buffer(model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
+            core.create_index_buffer(model.vert_indexes.data(), model.vert_indexes.size())
         );
-        core.VertexAttribPointer(m_VBO_IBO["model"].first, sizeof(vec3f), AttribDataType::FLOAT, sizeof(vec3f), (void*)0);
+        core.vertex_attrib_pointer(m_VBO_IBO["model"].first, sizeof(vec3f), attrib_data_type::FLOAT, sizeof(vec3f), (void*)0);
 
         const vec3f cube[] = {
             { -0.75f, -0.75f, 0.75f },
@@ -70,10 +70,10 @@ namespace rasterization {
         };
 
         m_VBO_IBO["cube"] = std::make_pair(
-            core.CreateBuffer(BufferType::VERTEX, cube, sizeof(cube)),
-            core.CreateIndexBuffer(indexes, sizeof(indexes) / sizeof(size_t))
+            core.create_vertex_buffer(cube, sizeof(cube)),
+            core.create_index_buffer(indexes, sizeof(indexes) / sizeof(size_t))
         );
-        core.VertexAttribPointer(m_VBO_IBO["cube"].first, sizeof(vec3f), AttribDataType::FLOAT, sizeof(vec3f), (void*)0);
+        core.vertex_attrib_pointer(m_VBO_IBO["cube"].first, sizeof(vec3f), attrib_data_type::FLOAT, sizeof(vec3f), (void*)0);
     }
 
     void Application::Run() noexcept {
@@ -81,15 +81,15 @@ namespace rasterization {
         using namespace math;
         using namespace win_framewrk;
 
-        static const GLApi& core = GLApi::Get();
+        static const gl_api& core = gl_api::get();
 
-        core.SetShaderUniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
+        core.uniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
         
-        core.SetShaderUniform("polygon_color", color::GOLDEN);
-        core.SetShaderUniform("line_color", color::LIME);
-        core.SetShaderUniform("point_color", color::SKY_BLUE);
+        core.uniform("polygon_color", color::GOLDEN);
+        core.uniform("line_color", color::LIME);
+        core.uniform("point_color", color::SKY_BLUE);
 
-        core.SetShaderUniform("view", look_at_rh(vec3f::FORWARD * 3.0f, vec3f::ZERO, vec3f::UP));
+        core.uniform("view", look_at_rh(vec3f::FORWARD * 3.0f, vec3f::ZERO, vec3f::UP));
 
         mat4f rotation, translation;
         RenderMode model_render_mode = RenderMode::TRIANGLES;
@@ -141,13 +141,18 @@ namespace rasterization {
             }
         #pragma endregion input
 
-            core.SetShaderUniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
+            core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
 
-            core.SetShaderUniform("model", scale(mat4f::IDENTITY, vec3f(0.65f)) * rotation * translation);
-            m_rasterizer.Render(model_render_mode, m_VBO_IBO["model"].first, m_VBO_IBO["model"].second);
+            const mat4f RT = rotation * translation;
+            core.uniform("model", scale(mat4f::IDENTITY, vec3f(0.65f)) * RT);
+            core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].first);
+            core.bind(buffer_type::INDEX, m_VBO_IBO["model"].second);
+            m_rasterizer.Render(model_render_mode);
 
-            core.SetShaderUniform("model", rotation * translation);
-            m_rasterizer.Render(RenderMode::LINES, m_VBO_IBO["cube"].first, m_VBO_IBO["cube"].second);
+            core.uniform("model", RT);
+            core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].first);
+            core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].second);
+            m_rasterizer.Render(RenderMode::LINES);
 
             m_rasterizer.SwapBuffers(); 
             m_rasterizer.ClearBackBuffer();
