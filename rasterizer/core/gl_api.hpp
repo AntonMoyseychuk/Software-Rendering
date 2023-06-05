@@ -39,8 +39,8 @@ namespace rasterization::gfx {
         gl_api() noexcept;
 
         //temporary
-        const std::vector<uint8_t>& _get_vertex_buffer() const noexcept;
-        const std::vector<size_t>& _get_index_buffer() const noexcept;
+        const std::vector<uint8_t>& _get_binded_vertex_buffer() const noexcept;
+        const std::vector<size_t>& _get_binded_index_buffer() const noexcept;
         //
 
     private:

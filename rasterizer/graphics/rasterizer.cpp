@@ -23,8 +23,8 @@ namespace rasterization::gfx {
         using namespace math;
 
     #pragma region input-assembler
-        const auto& local_coords = *(std::vector<vec3f>*)&m_core._get_vertex_buffer();
-        const auto& indexes = m_core._get_index_buffer();
+        const auto& local_coords = *(std::vector<vec3f>*)&m_core._get_binded_vertex_buffer();
+        const auto& indexes = m_core._get_binded_index_buffer();
     #pragma endregion input-assembler
 
     #pragma region resizing-buffers

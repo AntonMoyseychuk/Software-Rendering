@@ -15,12 +15,12 @@ namespace rasterization::gfx {
     {
     }
 
-    const std::vector<uint8_t> &gl_api::_get_vertex_buffer() const noexcept {
+    const std::vector<uint8_t> &gl_api::_get_binded_vertex_buffer() const noexcept {
         assert(m_buf_engine.m_vbos.count(m_buf_engine.m_curr_vbo) > 0);
         return m_buf_engine.m_vbos[m_buf_engine.m_curr_vbo].data;
     }
 
-    const std::vector<size_t> &gl_api::_get_index_buffer() const noexcept {
+    const std::vector<size_t> &gl_api::_get_binded_index_buffer() const noexcept {
         assert(m_buf_engine.m_ibos.count(m_buf_engine.m_curr_ibo) > 0);
         return m_buf_engine.m_ibos[m_buf_engine.m_curr_ibo];
     }
