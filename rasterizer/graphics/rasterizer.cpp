@@ -22,36 +22,39 @@ namespace rasterization::gfx {
     void Rasterizer::Render(RenderMode mode) const noexcept {
         using namespace math;
 
-        // const auto& local_coords = *(std::vector<vec3f>*)&m_core.m_vbos[vbo_id].data;
+    #pragma region input-assembler
         const auto& local_coords = *(std::vector<vec3f>*)&m_core._get_vertex_buffer();
-        // const auto& indexes = m_core.m_ibos.at(ibo_id);
         const auto& indexes = m_core._get_index_buffer();
+    #pragma endregion input-assembler
 
+    #pragma region resizing-buffers
         const size_t vertex_count = local_coords.size();
 
         static std::vector<vec4f> screen_coords;
         static std::vector<vec3f> ndc_coords;
         static std::vector<vec3f> raster_coords;
 
-    #pragma region resizing-buffers
         screen_coords.resize(vertex_count);
         ndc_coords.resize(vertex_count);
         raster_coords.resize(vertex_count);
         _ResizeZBuffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
 
-        // Vertex Shaders
+    #pragma region VS
         for (size_t i = 0; i < vertex_count; ++i) {
             screen_coords[i] = _VertexShader(local_coords[i]);
         }
+    #pragma endregion VS
 
-        // To NDC
+    #pragma region NDC
         for (size_t i = 0; i < vertex_count; ++i) {
             ndc_coords[i] = screen_coords[i].xyz / screen_coords[i].w;
         }
+    #pragma endregion NDC
 
-        // Rasterization
+    #pragma region rasterization
         _Rasterize(ndc_coords, raster_coords);
+    #pragma endregion rasterization
 
         // Pixel Shaders
         switch (mode) {
@@ -64,13 +67,16 @@ namespace rasterization::gfx {
             break;
 
         case RenderMode::LINES:
+            assert(m_core.m_vec4f_uniforms.count("line_color") == 1);
+
             for (size_t i = 0; i < indexes.size(); i += 2) {
-                _RenderLine(raster_coords[indexes[i]], raster_coords[indexes[i + 1]]);
+                _RenderLine(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], m_core.m_vec4f_uniforms["line_color"]);
             }
             break;
 
         case RenderMode::TRIANGLES:
             assert(m_core.m_vec3f_uniforms.count("light_dir") == 1);
+            assert(m_core.m_vec4f_uniforms.count("polygon_color") == 1);
             
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 const vec3f normal = normalize(cross(
@@ -79,9 +85,9 @@ namespace rasterization::gfx {
                 ));
 
                 const float light_intensity = dot(normal, m_core.m_vec3f_uniforms["light_dir"]) + 0.1f;
-                m_core.uniform("light_intensity", light_intensity);
+                const color color = m_core.m_vec4f_uniforms["polygon_color"] * light_intensity;
 
-                _RenderTriangle(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]]);
+                _RenderTriangle(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]], color);
             }
             break;
         }
@@ -115,11 +121,8 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_RenderLine(const math::vec3f& raster_coord_v0, const math::vec3f& raster_coord_v1) const noexcept {
+    void Rasterizer::_RenderLine(const math::vec3f& raster_coord_v0, const math::vec3f& raster_coord_v1, const math::color& color) const noexcept {
         using namespace math;
-        
-        assert(m_core.m_vec4f_uniforms.count("line_color") == 1);
-        const math::color& color = m_core.m_vec4f_uniforms["line_color"];
 
         auto v0 = raster_coord_v0;
         auto v1 = raster_coord_v1;
@@ -150,12 +153,13 @@ namespace rasterization::gfx {
         }
     }
 
-    void Rasterizer::_RenderTriangle(const math::vec3f &raster_coord_0, const math::vec3f &raster_coord_1, const math::vec3f &raster_coord_2) const noexcept {
+    void Rasterizer::_RenderTriangle(
+        const math::vec3f &raster_coord_0, 
+        const math::vec3f &raster_coord_1, 
+        const math::vec3f &raster_coord_2, 
+        const math::color& color
+    ) const noexcept {
         using namespace math;
-
-        assert(m_core.m_vec4f_uniforms.count("polygon_color") == 1);
-        assert(m_core.m_float_uniforms.count("light_intensity") == 1);
-        const color color = m_core.m_vec4f_uniforms["polygon_color"] * m_core.m_float_uniforms["light_intensity"];
 
         auto v0 = raster_coord_0, v1 = raster_coord_1, v2 = raster_coord_2;
         if (v0.y > v1.y) { std::swap(v0, v1); }

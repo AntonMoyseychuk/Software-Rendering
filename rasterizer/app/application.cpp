@@ -37,15 +37,15 @@ namespace rasterization {
         core.vertex_attrib_pointer(m_VBO_IBO["model"].first, sizeof(vec3f), attrib_data_type::FLOAT, sizeof(vec3f), (void*)0);
 
         const vec3f cube[] = {
-            { -0.75f, -0.75f, 0.75f },
-            { -0.75f,  0.75f, 0.75f },
-            {  0.75f,  0.75f, 0.75f },
-            {  0.75f, -0.75f, 0.75f },
+            { -1.0f, -1.0f, 1.0f },
+            { -1.0f,  1.0f, 1.0f },
+            {  1.0f,  1.0f, 1.0f },
+            {  1.0f, -1.0f, 1.0f },
 
-            { -0.75f, -0.75f, -0.75f },
-            { -0.75f,  0.75f, -0.75f },
-            {  0.75f,  0.75f, -0.75f },
-            {  0.75f, -0.75f, -0.75f }
+            { -1.0f, -1.0f, -1.0f },
+            { -1.0f,  1.0f, -1.0f },
+            {  1.0f,  1.0f, -1.0f },
+            {  1.0f, -1.0f, -1.0f }
         };
         const size_t indexes[] = {
             0, 1,
@@ -89,6 +89,7 @@ namespace rasterization {
         core.uniform("line_color", color::LIME);
         core.uniform("point_color", color::SKY_BLUE);
 
+        core.uniform("model", mat4f::IDENTITY);
         core.uniform("view", look_at_rh(vec3f::FORWARD * 3.0f, vec3f::ZERO, vec3f::UP));
 
         mat4f rotation, translation;
@@ -112,44 +113,51 @@ namespace rasterization {
 
             if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
                 rotation = rotate_y(rotation, -angle);
+                core.uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
                 rotation = rotate_y(rotation, angle);
+                core.uniform("model", rotation * translation);
             }
 
             if (m_window->IsKeyPressed(Key::UP_ARROW)) {
                 rotation = rotate_x(rotation, -angle);
+                core.uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
                 rotation = rotate_x(rotation, angle);
+                core.uniform("model", rotation * translation);
             }
 
             if (m_window->IsKeyPressed(Key::D)) {
                 translation = translate(translation, vec3f::RIGHT * dt);
+                core.uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::A)) {
                 translation = translate(translation, vec3f::LEFT * dt);
+                core.uniform("model", rotation * translation);
             }
 
             if (m_window->IsKeyPressed(Key::W)) {
                 translation = translate(translation, vec3f::UP * dt);
+                core.uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::S)) {
                 translation = translate(translation, vec3f::DOWN * dt);
+                core.uniform("model", rotation * translation);
             }
 
             if (m_window->IsKeyPressed(Key::Z)) {
                 translation = translate(translation, vec3f::BACKWARD * dt);
+                core.uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::X)) {
                 translation = translate(translation, vec3f::FORWARD * dt);
+                core.uniform("model", rotation * translation);
             }
         #pragma endregion input
 
             core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-
-            const mat4f RT = rotation * translation;
-            core.uniform("model", scale(mat4f::IDENTITY, vec3f(0.65f)) * RT);
+            
             core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].first);
             core.bind(buffer_type::INDEX, m_VBO_IBO["model"].second);
             m_rasterizer.Render(model_render_mode);
 
-            core.uniform("model", RT);
             core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].first);
             core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].second);
             m_rasterizer.Render(RenderMode::LINES);
