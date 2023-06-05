@@ -5,13 +5,37 @@
 #include <cassert>
 
 namespace rasterization::gfx {
-    const gl_api &gl_api::get() noexcept {
+    gl_api &gl_api::get() noexcept {
         static gl_api engine;
         return engine;
     }
 
+    bool gl_api::bind_window(win_framewrk::Window *window) noexcept {
+        return m_render_engine.bind_window(window);
+    }
+
+    const win_framewrk::Window *gl_api::is_window_binded() const noexcept {
+        return m_render_engine.is_window_binded();
+    }
+
+    void gl_api::render(render_mode mode) const noexcept {
+        m_render_engine.render(mode);
+    }
+
+    void gl_api::swap_buffers() const noexcept {
+        m_render_engine.swap_buffers();
+    }
+
+    void gl_api::clear_backbuffer() const noexcept {
+        m_render_engine.clear_backbuffer();
+    }
+
+    void gl_api::set_clear_color(const math::color &color) noexcept {
+        m_render_engine.set_clear_color(color);
+    }
+
     gl_api::gl_api() noexcept 
-        : m_buf_engine(_buffer_engine::get())
+        : m_buf_engine(_buffer_engine::get()), m_render_engine(_render_engine::get())
     {
     }
 
@@ -51,27 +75,27 @@ namespace rasterization::gfx {
     }
 #pragma endregion buffer_engine_api
 
-    void gl_api::uniform(const std::string& uniform_name, const math::mat4f &mat) const noexcept {
+    void gl_api::uniform(const std::string& uniform_name, const math::mat4f &mat) noexcept {
         m_mat4_uniforms[uniform_name] = mat;
     }
 
-    void gl_api::uniform(const std::string &uniform_name, const math::vec4f &vec) const noexcept {
+    void gl_api::uniform(const std::string &uniform_name, const math::vec4f &vec) noexcept {
         m_vec4f_uniforms[uniform_name] = vec;
     }
 
-    void gl_api::uniform(const std::string &uniform_name, const math::vec3f &vec) const noexcept {
+    void gl_api::uniform(const std::string &uniform_name, const math::vec3f &vec) noexcept {
         m_vec3f_uniforms[uniform_name] = vec;
     }
 
-    void gl_api::uniform(const std::string &uniform_name, const math::vec2f &vec) const noexcept {
+    void gl_api::uniform(const std::string &uniform_name, const math::vec2f &vec) noexcept {
         m_vec2f_uniforms[uniform_name] = vec;
     }
 
-    void gl_api::uniform(const std::string &uniform_name, float value) const noexcept {
+    void gl_api::uniform(const std::string &uniform_name, float value) noexcept {
         m_float_uniforms[uniform_name] = value;
     }
 
-    void gl_api::viewport(uint32_t width, uint32_t height) const noexcept {
+    void gl_api::viewport(uint32_t width, uint32_t height) noexcept {
         m_viewport = math::viewport(width, height);
     }
 }

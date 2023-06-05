@@ -1,4 +1,5 @@
 #include "application.hpp"
+
 #include "math_3d/math.hpp"
 
 #include "core/gl_api.hpp"
@@ -10,22 +11,23 @@
 
 
 namespace rasterization {
+    static rasterization::gfx::gl_api& core = gfx::gl_api::get();
+
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height, size_t fps_lock)
         : m_window(win_framewrk::Window::Get()), m_last_frame(std::chrono::steady_clock::now()), m_fps_lock(1.0f / (fps_lock > 0 ? fps_lock : 1))
     {
         using namespace gfx;
         using namespace math;
-        static const gl_api& core = gl_api::get();
     
         m_window->Init(title, width, height);
 
-        m_rasterizer.BindWindow(m_window);
-        assert(m_rasterizer.IsWindowBinded() != nullptr);
+        core.bind_window(m_window);
+        assert(core.is_window_binded() != nullptr);
 
         core.viewport(width, height);
 
         m_window->SetResizeCallback([](uint32_t width, uint32_t height){
-            core.viewport(width, height);
+            gfx::gl_api::get().viewport(width, height);
         });
 
         Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
@@ -81,8 +83,6 @@ namespace rasterization {
         using namespace math;
         using namespace win_framewrk;
 
-        static const gl_api& core = gl_api::get();
-
         core.uniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
         
         core.uniform("polygon_color", color::GOLDEN);
@@ -93,7 +93,7 @@ namespace rasterization {
         core.uniform("view", look_at_rh(vec3f::FORWARD * 3.0f, vec3f::ZERO, vec3f::UP));
 
         mat4f rotation, translation;
-        RenderMode model_render_mode = RenderMode::TRIANGLES;
+        render_mode model_render_mode = render_mode::TRIANGLES;
         while (m_window->IsOpen()) {
             m_window->PollEvent();
 
@@ -104,11 +104,11 @@ namespace rasterization {
 
         #pragma region input
             if (m_window->IsKeyPressed(Key::NUMBER_1)) {
-                model_render_mode = RenderMode::POINTS;
+                model_render_mode = render_mode::POINTS;
             } else if (m_window->IsKeyPressed(Key::NUMBER_2)) {
-                model_render_mode = RenderMode::LINES;
+                model_render_mode = render_mode::LINES;
             } else if (m_window->IsKeyPressed(Key::NUMBER_3)) {
-                model_render_mode = RenderMode::TRIANGLES;
+                model_render_mode = render_mode::TRIANGLES;
             }
 
             if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
@@ -156,14 +156,14 @@ namespace rasterization {
             
             core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].first);
             core.bind(buffer_type::INDEX, m_VBO_IBO["model"].second);
-            m_rasterizer.Render(model_render_mode);
+            core.render(model_render_mode);
 
             core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].first);
             core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].second);
-            m_rasterizer.Render(RenderMode::LINES);
+            core.render(render_mode::LINES);
 
-            m_rasterizer.SwapBuffers(); 
-            m_rasterizer.ClearBackBuffer();
+            core.swap_buffers(); 
+            core.clear_backbuffer();
         }
     }
     

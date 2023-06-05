@@ -4,12 +4,12 @@
 #include <cassert>
 
 namespace rasterization::gfx {
-    const _buffer_engine &_buffer_engine::get() noexcept {
+    _buffer_engine &_buffer_engine::get() noexcept {
         static _buffer_engine _buffer_engine;
         return _buffer_engine;
     }
     
-    size_t _buffer_engine::create_vertex_buffer(const void *buffer, size_t size) const noexcept {
+    size_t _buffer_engine::create_vertex_buffer(const void *buffer, size_t size) noexcept {
         size_t id;
         do {
             id = math::random((size_t)0, SIZE_MAX - 1) + 1;
@@ -23,12 +23,12 @@ namespace rasterization::gfx {
         return id;
     }
 
-    void _buffer_engine::vertex_attrib_pointer(size_t vbo_id, size_t size, attrib_data_type type, size_t stride, const void *ptr) const noexcept {
+    void _buffer_engine::vertex_attrib_pointer(size_t vbo_id, size_t size, attrib_data_type type, size_t stride, const void *ptr) noexcept {
         assert(m_vbos.count(vbo_id) > 0);
         m_vbos[vbo_id].attributes.emplace_back(size, type, stride, ptr);
     }
 
-    size_t _buffer_engine::create_index_buffer(const size_t *buffer, size_t count) const noexcept {
+    size_t _buffer_engine::create_index_buffer(const size_t *buffer, size_t count) noexcept {
         size_t id;
         do {
             id = math::random((size_t)0, SIZE_MAX - 1) + 1;
@@ -39,15 +39,15 @@ namespace rasterization::gfx {
         return id;
     }
 
-    void _buffer_engine::erase_buffer(size_t id) const noexcept {
+    void _buffer_engine::erase_buffer(size_t id) noexcept {
         m_vbos.erase(id);
     }
 
-    void _buffer_engine::erase_index_buffer(size_t id) const noexcept {
+    void _buffer_engine::erase_index_buffer(size_t id) noexcept {
         m_ibos.erase(id);
     }
     
-    void _buffer_engine::bind(buffer_type type, size_t id) const noexcept {
+    void _buffer_engine::bind(buffer_type type, size_t id) noexcept {
         switch (type) {
         case buffer_type::VERTEX:
             assert(m_vbos.count(id) > 0);

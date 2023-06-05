@@ -20,25 +20,23 @@ namespace rasterization::gfx {
         VERTEX, INDEX
     };
 
-    class _buffer_engine final {
-        friend class gl_api;
-    public:
-        static const _buffer_engine& get() noexcept;
+    struct _buffer_engine final {
+        static _buffer_engine& get() noexcept;
 
-        size_t create_vertex_buffer(const void* buffer, size_t size) const noexcept;
-        void vertex_attrib_pointer(size_t vbo_id, size_t size, attrib_data_type type, size_t stride, const void* ptr) const noexcept;
+        size_t create_vertex_buffer(const void* buffer, size_t size) noexcept;
+        void vertex_attrib_pointer(size_t vbo_id, size_t size, attrib_data_type type, size_t stride, const void* ptr) noexcept;
 
-        size_t create_index_buffer(const size_t* buffer, size_t count) const noexcept;
+        size_t create_index_buffer(const size_t* buffer, size_t count) noexcept;
         
-        void erase_buffer(size_t id) const noexcept;
-        void erase_index_buffer(size_t id) const noexcept;
+        void erase_buffer(size_t id) noexcept;
+        void erase_index_buffer(size_t id) noexcept;
 
-        void bind(buffer_type type, size_t id) const noexcept;
+        void bind(buffer_type type, size_t id) noexcept;
 
-    private:
+    private:   
         _buffer_engine() = default;
 
-    private:
+    public:
         struct attribute {
             attribute() noexcept = default;
             attribute(size_t size, attrib_data_type type, size_t stride, const void* ptr) noexcept
@@ -55,11 +53,10 @@ namespace rasterization::gfx {
             std::vector<attribute> attributes;
         };
 
-    private:
-        mutable std::unordered_map<size_t, buffer> m_vbos;
-        mutable std::unordered_map<size_t, std::vector<size_t>> m_ibos;
+        std::unordered_map<size_t, buffer> m_vbos;
+        std::unordered_map<size_t, std::vector<size_t>> m_ibos;
 
-        mutable size_t m_curr_vbo = 0;
-        mutable size_t m_curr_ibo = 0;
+        size_t m_curr_vbo = 0;
+        size_t m_curr_ibo = 0;
     };
 }

@@ -3,6 +3,7 @@
 #include "math_3d/mat4.hpp"
 
 #include "buffer_engine.hpp"
+#include "render_engine.hpp"
 
 #include <string>
 #include <unordered_map>
@@ -10,10 +11,21 @@
 
 namespace rasterization::gfx {
     class gl_api final {
-        friend class Rasterizer;
+        friend struct _render_engine;
 
     public:
-        static const gl_api& get() noexcept;
+        static gl_api& get() noexcept;
+
+    #pragma region rasterizer_api
+        bool bind_window(win_framewrk::Window* window) noexcept;
+        const win_framewrk::Window* is_window_binded() const noexcept;
+
+        void render(render_mode mode) const noexcept;
+        void swap_buffers() const noexcept;
+        void clear_backbuffer() const noexcept;
+
+        void set_clear_color(const math::color& color) noexcept;
+    #pragma endregion rasterizer_api
 
     #pragma region buffer_engine_api
         size_t create_vertex_buffer(const void* buffer, size_t size) const noexcept;
@@ -27,13 +39,13 @@ namespace rasterization::gfx {
         void bind(buffer_type type, size_t id) const noexcept;
     #pragma endregion buffer_engine_api
 
-        void uniform(const std::string& uniform_name, const math::mat4f& mat) const noexcept;
-        void uniform(const std::string& uniform_name, const math::vec4f& vec) const noexcept;
-        void uniform(const std::string& uniform_name, const math::vec3f& vec) const noexcept;
-        void uniform(const std::string& uniform_name, const math::vec2f& vec) const noexcept;
-        void uniform(const std::string& uniform_name, float value) const noexcept;
+        void uniform(const std::string& uniform_name, const math::mat4f& mat) noexcept;
+        void uniform(const std::string& uniform_name, const math::vec4f& vec) noexcept;
+        void uniform(const std::string& uniform_name, const math::vec3f& vec) noexcept;
+        void uniform(const std::string& uniform_name, const math::vec2f& vec) noexcept;
+        void uniform(const std::string& uniform_name, float value) noexcept;
 
-        void viewport(uint32_t width, uint32_t height) const noexcept;
+        void viewport(uint32_t width, uint32_t height) noexcept;
 
     private:
         gl_api() noexcept;
@@ -44,15 +56,16 @@ namespace rasterization::gfx {
         //
 
     private:
-        const _buffer_engine& m_buf_engine;
+        _buffer_engine& m_buf_engine;
+        _render_engine& m_render_engine;
 
-        mutable std::unordered_map<std::string, math::mat4f> m_mat4_uniforms;
-        mutable std::unordered_map<std::string, math::vec4f> m_vec4f_uniforms;
-        mutable std::unordered_map<std::string, math::vec3f> m_vec3f_uniforms;
-        mutable std::unordered_map<std::string, math::vec2f> m_vec2f_uniforms;
+        std::unordered_map<std::string, math::mat4f> m_mat4_uniforms;
+        std::unordered_map<std::string, math::vec4f> m_vec4f_uniforms;
+        std::unordered_map<std::string, math::vec3f> m_vec3f_uniforms;
+        std::unordered_map<std::string, math::vec2f> m_vec2f_uniforms;
 
-        mutable std::unordered_map<std::string, float> m_float_uniforms;
+        std::unordered_map<std::string, float> m_float_uniforms;
 
-        mutable math::mat4f m_viewport;
+        math::mat4f m_viewport;
     };
 }

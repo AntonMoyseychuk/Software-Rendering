@@ -1,6 +1,5 @@
 #pragma once
 #include "window/window.hpp"
-#include "graphics/rasterizer.hpp"
 
 #include <string>
 #include <chrono>
@@ -18,7 +17,6 @@ namespace rasterization {
 
     private:
         win_framewrk::Window* m_window;
-        gfx::Rasterizer m_rasterizer;
 
         using vbo_t = size_t;
         using ibo_t = size_t;
