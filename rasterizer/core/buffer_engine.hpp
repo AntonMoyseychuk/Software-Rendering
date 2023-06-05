@@ -20,10 +20,10 @@ namespace rasterization::gfx {
         VERTEX, INDEX
     };
 
-    class buffer_engine final {
+    class _buffer_engine final {
         friend class gl_api;
     public:
-        static const buffer_engine& get() noexcept;
+        static const _buffer_engine& get() noexcept;
 
         size_t create_vertex_buffer(const void* buffer, size_t size) const noexcept;
         void vertex_attrib_pointer(size_t vbo_id, size_t size, attrib_data_type type, size_t stride, const void* ptr) const noexcept;
@@ -36,12 +36,12 @@ namespace rasterization::gfx {
         void bind(buffer_type type, size_t id) const noexcept;
 
     private:
-        buffer_engine() = default;
+        _buffer_engine() = default;
 
     private:
-        struct _attribute {
-            _attribute() noexcept = default;
-            _attribute(size_t size, attrib_data_type type, size_t stride, const void* ptr) noexcept
+        struct attribute {
+            attribute() noexcept = default;
+            attribute(size_t size, attrib_data_type type, size_t stride, const void* ptr) noexcept
                 : size(size), type(type), stride(stride), ptr(ptr) {}
 
             size_t size;
@@ -50,13 +50,13 @@ namespace rasterization::gfx {
             const void* ptr;
         };
 
-        struct _buffer {
+        struct buffer {
             std::vector<uint8_t> data;
-            std::vector<_attribute> attributes;
+            std::vector<attribute> attributes;
         };
 
     private:
-        mutable std::unordered_map<size_t, _buffer> m_vbos;
+        mutable std::unordered_map<size_t, buffer> m_vbos;
         mutable std::unordered_map<size_t, std::vector<size_t>> m_ibos;
 
         mutable size_t m_curr_vbo = 0;

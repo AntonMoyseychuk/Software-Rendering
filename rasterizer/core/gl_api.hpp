@@ -44,7 +44,7 @@ namespace rasterization::gfx {
         //
 
     private:
-        const buffer_engine& m_buf_engine;
+        const _buffer_engine& m_buf_engine;
 
         mutable std::unordered_map<std::string, math::mat4f> m_mat4_uniforms;
         mutable std::unordered_map<std::string, math::vec4f> m_vec4f_uniforms;

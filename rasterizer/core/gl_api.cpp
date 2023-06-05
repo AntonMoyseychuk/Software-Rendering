@@ -11,7 +11,7 @@ namespace rasterization::gfx {
     }
 
     gl_api::gl_api() noexcept 
-        : m_buf_engine(buffer_engine::get())
+        : m_buf_engine(_buffer_engine::get())
     {
     }
 

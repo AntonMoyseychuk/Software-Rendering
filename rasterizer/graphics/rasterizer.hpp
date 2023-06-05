@@ -33,7 +33,8 @@ namespace rasterization::gfx {
 
         void _RenderPixel(const math::vec3f& raster_coord, const math::color& color) const noexcept;
         void _RenderLine(const math::vec3f& raster_coord_0, const math::vec3f& raster_coord_1, const math::color& color) const noexcept;
-        void _RenderTriangle(const math::vec3f &raster_coord_0, 
+        void _RenderTriangle(
+            const math::vec3f &raster_coord_0, 
             const math::vec3f &raster_coord_1, 
             const math::vec3f &raster_coord_2, 
             const math::color& color
