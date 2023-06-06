@@ -1,6 +1,7 @@
 #include "render_engine.hpp"
 #include "core/gl_api.hpp"
 #include "core/buffer_engine.hpp"
+#include "core/shader_engine.hpp"
 
 #include "math_3d/vec_operations.hpp"
 #include "math_3d/mat_operations.hpp"
@@ -9,12 +10,13 @@
 
 #include <cassert>
 
-#define ASSERT_UNIFORM_VALIDITY(container, name) assert(container.count((name)) == 1)
 #define ASSERT_BUFFER_VALIDITY(container, id) assert(container.count((id)) == 1)
+#define ASSERT_SHADER_VALIDITY(container, id) assert(container.count((id)) == 1)
 
 namespace rasterization::gfx {
     static gl_api& core = gl_api::get();
     static _buffer_engine& buff_engine = _buffer_engine::get();
+    static _shader_engine& shader_engine = _shader_engine::get();
 
     void _render_engine::render(render_mode mode) const noexcept {
         using namespace math;
@@ -40,8 +42,10 @@ namespace rasterization::gfx {
     #pragma endregion resizing-buffers
 
     #pragma region VS
+        ASSERT_SHADER_VALIDITY(shader_engine.shader_programs, shader_engine.curr_shader);
         for (size_t i = 0; i < vertex_count; ++i) {
-            screen_coords[i] = _vertex_shader(local_coords[i]);
+            // screen_coords[i] = _vertex_shader(local_coords[i]);
+            screen_coords[i] = shader_engine.shader_programs[shader_engine.curr_shader].shader->vertex(&local_coords[i]);
         }
     #pragma endregion VS
 
@@ -56,24 +60,26 @@ namespace rasterization::gfx {
         // Pixel Shaders
         switch (mode) {
         case render_mode::POINTS:
-            ASSERT_UNIFORM_VALIDITY(core.m_vec4f_uniforms, "point_color");
+            ASSERT_UNIFORM_VALIDITY(shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec4f_uniforms, "point_color");
 
             for (size_t i = 0; i < indexes.size(); ++i) {
-                _render_pixel(raster_coords[indexes[i]], core.m_vec4f_uniforms["point_color"]);
+                _render_pixel(raster_coords[indexes[i]], 
+                    shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec4f_uniforms["point_color"]);
             }    
             break;
 
         case render_mode::LINES:
-            ASSERT_UNIFORM_VALIDITY(core.m_vec4f_uniforms, "line_color");
+            ASSERT_UNIFORM_VALIDITY(shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec4f_uniforms, "line_color");
 
             for (size_t i = 0; i < indexes.size(); i += 2) {
-                _render_line(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], core.m_vec4f_uniforms["line_color"]);
+                _render_line(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], 
+                    shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec4f_uniforms["line_color"]);
             }
             break;
 
         case render_mode::TRIANGLES:
-            ASSERT_UNIFORM_VALIDITY(core.m_vec3f_uniforms, "light_dir");
-            ASSERT_UNIFORM_VALIDITY(core.m_vec4f_uniforms, "polygon_color");
+            ASSERT_UNIFORM_VALIDITY(shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec3f_uniforms, "light_dir");
+            ASSERT_UNIFORM_VALIDITY(shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec4f_uniforms, "polygon_color");
             
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 const vec3f normal = normalize(cross(
@@ -81,8 +87,10 @@ namespace rasterization::gfx {
                     screen_coords[indexes[i + 1]].xyz - screen_coords[indexes[i]].xyz
                 ));
 
-                const float light_intensity = dot(normal, core.m_vec3f_uniforms["light_dir"]) + 0.1f;
-                const color color = core.m_vec4f_uniforms["polygon_color"] * light_intensity;
+                const float light_intensity = dot(normal, 
+                    shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec3f_uniforms["light_dir"]) + 0.1f;
+                const color color = shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec4f_uniforms["polygon_color"] 
+                    * light_intensity;
 
                 _render_triangle(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]], color);
             }
@@ -90,15 +98,15 @@ namespace rasterization::gfx {
         }
     }
 
-    math::vec4f _render_engine::_vertex_shader(const math::vec3f& local_coord) const noexcept {
-        using namespace math;
+    // math::vec4f _render_engine::_vertex_shader(const math::vec3f& local_coord) const noexcept {
+    //     using namespace math;
 
-        ASSERT_UNIFORM_VALIDITY(core.m_mat4_uniforms, "model");
-        ASSERT_UNIFORM_VALIDITY(core.m_mat4_uniforms, "view");
-        ASSERT_UNIFORM_VALIDITY(core.m_mat4_uniforms, "projection");
+    //     ASSERT_UNIFORM_VALIDITY(core.m_mat4_uniforms, "model");
+    //     ASSERT_UNIFORM_VALIDITY(core.m_mat4_uniforms, "view");
+    //     ASSERT_UNIFORM_VALIDITY(core.m_mat4_uniforms, "projection");
         
-        return local_coord * core.m_mat4_uniforms["model"] * core.m_mat4_uniforms["view"] * core.m_mat4_uniforms["projection"];
-    }
+    //     return local_coord * core.m_mat4_uniforms["model"] * core.m_mat4_uniforms["view"] * core.m_mat4_uniforms["projection"];
+    // }
 
     void _render_engine::_rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept {
         for (size_t i = 0; i < screen_coords.size(); ++i) {

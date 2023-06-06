@@ -5,6 +5,8 @@
 #include "core/gl_api.hpp"
 #include "graphics/model.hpp"
 
+#include "graphics/shaders/simple_shader.hpp"
+
 #include <iostream>
 #include <memory>
 #include <cassert>
@@ -82,6 +84,9 @@ namespace rasterization {
         using namespace gfx;
         using namespace math;
         using namespace win_framewrk;
+
+        size_t shader = core.create_shader(std::make_shared<SimpleShader>());
+        core.bind_shader(shader);
 
         core.uniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
         

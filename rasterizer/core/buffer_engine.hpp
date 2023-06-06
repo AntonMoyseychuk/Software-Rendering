@@ -21,6 +21,9 @@ namespace rasterization::gfx {
     };
 
     struct _buffer_engine final {
+        _buffer_engine(const _buffer_engine& engine) = delete;
+        _buffer_engine& operator=(const _buffer_engine& engine) = delete;
+
         static _buffer_engine& get() noexcept;
 
         size_t create_vertex_buffer(const void* buffer, size_t size) noexcept;

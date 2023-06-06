@@ -4,6 +4,7 @@
 
 #include "buffer_engine.hpp"
 #include "render_engine.hpp"
+#include "shader_engine.hpp"
 
 #include <string>
 #include <unordered_map>
@@ -14,6 +15,9 @@ namespace rasterization::gfx {
         friend struct _render_engine;
 
     public:
+        gl_api(const gl_api& api) = delete;
+        gl_api& operator=(const gl_api& api) = delete;
+
         static gl_api& get() noexcept;
 
     #pragma region rasterizer_api
@@ -39,11 +43,16 @@ namespace rasterization::gfx {
         void bind(buffer_type type, size_t id) const noexcept;
     #pragma endregion buffer_engine_api
 
+    #pragma region shader_engine_api
+        size_t create_shader(const std::shared_ptr<shader>& shader) noexcept;
+        void bind_shader(size_t shader_id) noexcept;
+
         void uniform(const std::string& uniform_name, const math::mat4f& mat) noexcept;
         void uniform(const std::string& uniform_name, const math::vec4f& vec) noexcept;
         void uniform(const std::string& uniform_name, const math::vec3f& vec) noexcept;
         void uniform(const std::string& uniform_name, const math::vec2f& vec) noexcept;
         void uniform(const std::string& uniform_name, float value) noexcept;
+    #pragma endregion shader_engine_api
 
         void viewport(uint32_t width, uint32_t height) noexcept;
 
@@ -53,13 +62,14 @@ namespace rasterization::gfx {
     private:
         _buffer_engine& m_buf_engine;
         _render_engine& m_render_engine;
+        _shader_engine& m_shader_engine;
 
-        std::unordered_map<std::string, math::mat4f> m_mat4_uniforms;
-        std::unordered_map<std::string, math::vec4f> m_vec4f_uniforms;
-        std::unordered_map<std::string, math::vec3f> m_vec3f_uniforms;
-        std::unordered_map<std::string, math::vec2f> m_vec2f_uniforms;
+        // std::unordered_map<std::string, math::mat4f> m_mat4_uniforms;
+        // std::unordered_map<std::string, math::vec4f> m_vec4f_uniforms;
+        // std::unordered_map<std::string, math::vec3f> m_vec3f_uniforms;
+        // std::unordered_map<std::string, math::vec2f> m_vec2f_uniforms;
 
-        std::unordered_map<std::string, float> m_float_uniforms;
+        // std::unordered_map<std::string, float> m_float_uniforms;
 
         math::mat4f m_viewport;
     };

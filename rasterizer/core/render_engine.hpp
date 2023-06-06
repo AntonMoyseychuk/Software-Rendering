@@ -8,7 +8,9 @@ namespace rasterization::gfx {
     enum class render_mode : uint8_t { LINES, POINTS, TRIANGLES };
 
     struct _render_engine final {
-    public:
+        _render_engine(const _render_engine& engine) = delete;
+        _render_engine& operator=(const _render_engine& engine) = delete;
+
         static _render_engine& get() noexcept;
         
         bool bind_window(win_framewrk::Window* window) noexcept;
