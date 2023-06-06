@@ -18,9 +18,11 @@ namespace rasterization {
     private:
         win_framewrk::Window* m_window;
 
-        using vbo_t = size_t;
-        using ibo_t = size_t;
-        std::unordered_map<std::string, std::pair<vbo_t, ibo_t>> m_VBO_IBO;
+        struct VBO_IBO {
+            size_t vbo;
+            size_t ibo;
+        };
+        std::unordered_map<std::string, VBO_IBO> m_VBO_IBO;
 
         mutable std::chrono::steady_clock::time_point m_last_frame;
         mutable float m_fps_lock;

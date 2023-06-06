@@ -32,11 +32,11 @@ namespace rasterization {
 
         Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
         
-        m_VBO_IBO["model"] = std::make_pair(
+        m_VBO_IBO["model"] = {
             core.create_vertex_buffer(model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
             core.create_index_buffer(model.vert_indexes.data(), model.vert_indexes.size())
-        );
-        core.vertex_attrib_pointer(m_VBO_IBO["model"].first, sizeof(vec3f), attrib_data_type::FLOAT, sizeof(vec3f), (void*)0);
+        };
+        core.vertex_attrib_pointer(m_VBO_IBO["model"].vbo, sizeof(vec3f), attrib_data_type::FLOAT, sizeof(vec3f), (void*)0);
 
         const vec3f cube[] = {
             { -1.0f, -1.0f, 1.0f },
@@ -71,11 +71,11 @@ namespace rasterization {
             3, 2,
         };
 
-        m_VBO_IBO["cube"] = std::make_pair(
+        m_VBO_IBO["cube"] = {
             core.create_vertex_buffer(cube, sizeof(cube)),
             core.create_index_buffer(indexes, sizeof(indexes) / sizeof(size_t))
-        );
-        core.vertex_attrib_pointer(m_VBO_IBO["cube"].first, sizeof(vec3f), attrib_data_type::FLOAT, sizeof(vec3f), (void*)0);
+        };
+        core.vertex_attrib_pointer(m_VBO_IBO["cube"].vbo, sizeof(vec3f), attrib_data_type::FLOAT, sizeof(vec3f), (void*)0);
     }
 
     void Application::Run() noexcept {
@@ -154,12 +154,12 @@ namespace rasterization {
 
             core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
             
-            core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].first);
-            core.bind(buffer_type::INDEX, m_VBO_IBO["model"].second);
+            core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+            core.bind(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
             core.render(model_render_mode);
 
-            core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].first);
-            core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].second);
+            core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
+            core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
             core.render(render_mode::LINES);
 
             core.swap_buffers(); 
