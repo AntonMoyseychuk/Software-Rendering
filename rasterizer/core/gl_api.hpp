@@ -6,9 +6,6 @@
 #include "render_engine.hpp"
 #include "shader_engine.hpp"
 
-#include <string>
-#include <unordered_map>
-#include <vector>
 
 namespace rasterization::gfx {
     class gl_api final {
@@ -63,13 +60,6 @@ namespace rasterization::gfx {
         _buffer_engine& m_buf_engine;
         _render_engine& m_render_engine;
         _shader_engine& m_shader_engine;
-
-        // std::unordered_map<std::string, math::mat4f> m_mat4_uniforms;
-        // std::unordered_map<std::string, math::vec4f> m_vec4f_uniforms;
-        // std::unordered_map<std::string, math::vec3f> m_vec3f_uniforms;
-        // std::unordered_map<std::string, math::vec2f> m_vec2f_uniforms;
-
-        // std::unordered_map<std::string, float> m_float_uniforms;
 
         math::mat4f m_viewport;
     };

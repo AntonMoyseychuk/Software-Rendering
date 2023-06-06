@@ -44,7 +44,6 @@ namespace rasterization::gfx {
     #pragma region VS
         ASSERT_SHADER_VALIDITY(shader_engine.shader_programs, shader_engine.curr_shader);
         for (size_t i = 0; i < vertex_count; ++i) {
-            // screen_coords[i] = _vertex_shader(local_coords[i]);
             screen_coords[i] = shader_engine.shader_programs[shader_engine.curr_shader].shader->vertex(&local_coords[i]);
         }
     #pragma endregion VS
@@ -97,16 +96,6 @@ namespace rasterization::gfx {
             break;
         }
     }
-
-    // math::vec4f _render_engine::_vertex_shader(const math::vec3f& local_coord) const noexcept {
-    //     using namespace math;
-
-    //     ASSERT_UNIFORM_VALIDITY(core.m_mat4_uniforms, "model");
-    //     ASSERT_UNIFORM_VALIDITY(core.m_mat4_uniforms, "view");
-    //     ASSERT_UNIFORM_VALIDITY(core.m_mat4_uniforms, "projection");
-        
-    //     return local_coord * core.m_mat4_uniforms["model"] * core.m_mat4_uniforms["view"] * core.m_mat4_uniforms["projection"];
-    // }
 
     void _render_engine::_rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept {
         for (size_t i = 0; i < screen_coords.size(); ++i) {
