@@ -24,7 +24,6 @@ namespace rasterization::gfx {
         _render_engine() noexcept = default;
         void _resize_z_buffer(uint32_t width, uint32_t height) const noexcept;
 
-    private:
         math::vec4f _vertex_shader(const math::vec3f& local_coord) const noexcept;
         void _rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept;
 

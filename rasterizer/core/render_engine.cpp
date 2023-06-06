@@ -8,6 +8,8 @@
 
 #include <cassert>
 
+#define ASSERT_UNIFORM_VALIDITY(container, name) assert(container.count((name)) == 1)
+
 namespace rasterization::gfx {
     static gl_api& core = gl_api::get();
 
@@ -51,7 +53,7 @@ namespace rasterization::gfx {
         // Pixel Shaders
         switch (mode) {
         case render_mode::POINTS:
-            assert(core.m_vec4f_uniforms.count("point_color") == 1);
+            ASSERT_UNIFORM_VALIDITY(core.m_vec4f_uniforms, "point_color");
 
             for (size_t i = 0; i < indexes.size(); ++i) {
                 _render_pixel(raster_coords[indexes[i]], core.m_vec4f_uniforms["point_color"]);
@@ -59,7 +61,7 @@ namespace rasterization::gfx {
             break;
 
         case render_mode::LINES:
-            assert(core.m_vec4f_uniforms.count("line_color") == 1);
+            ASSERT_UNIFORM_VALIDITY(core.m_vec4f_uniforms, "line_color");
 
             for (size_t i = 0; i < indexes.size(); i += 2) {
                 _render_line(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], core.m_vec4f_uniforms["line_color"]);
@@ -67,8 +69,8 @@ namespace rasterization::gfx {
             break;
 
         case render_mode::TRIANGLES:
-            assert(core.m_vec3f_uniforms.count("light_dir") == 1);
-            assert(core.m_vec4f_uniforms.count("polygon_color") == 1);
+            ASSERT_UNIFORM_VALIDITY(core.m_vec3f_uniforms, "light_dir");
+            ASSERT_UNIFORM_VALIDITY(core.m_vec4f_uniforms, "polygon_color");
             
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 const vec3f normal = normalize(cross(
@@ -88,9 +90,9 @@ namespace rasterization::gfx {
     math::vec4f _render_engine::_vertex_shader(const math::vec3f& local_coord) const noexcept {
         using namespace math;
 
-        assert(core.m_mat4_uniforms.count("model") == 1);
-        assert(core.m_mat4_uniforms.count("view") == 1);
-        assert(core.m_mat4_uniforms.count("projection") == 1);
+        ASSERT_UNIFORM_VALIDITY(core.m_mat4_uniforms, "model");
+        ASSERT_UNIFORM_VALIDITY(core.m_mat4_uniforms, "view");
+        ASSERT_UNIFORM_VALIDITY(core.m_mat4_uniforms, "projection");
         
         return local_coord * core.m_mat4_uniforms["model"] * core.m_mat4_uniforms["view"] * core.m_mat4_uniforms["projection"];
     }
