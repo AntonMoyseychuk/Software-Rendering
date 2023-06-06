@@ -13,9 +13,9 @@ namespace rasterization::gfx {
         size_t id;
         do {
             id = math::random((size_t)0, SIZE_MAX - 1) + 1;
-        } while (m_vbos.count(id) != 0);
+        } while (vbos.count(id) != 0);
 
-        m_vbos[id] = _buffer_engine::buffer {
+        vbos[id] = _buffer_engine::buffer {
             std::vector<uint8_t>((uint8_t*)buffer, (uint8_t*)buffer + size), 
             std::vector<attribute>() 
         };
@@ -24,39 +24,39 @@ namespace rasterization::gfx {
     }
 
     void _buffer_engine::vertex_attrib_pointer(size_t vbo_id, size_t size, attrib_data_type type, size_t stride, const void *ptr) noexcept {
-        assert(m_vbos.count(vbo_id) > 0);
-        m_vbos[vbo_id].attributes.emplace_back(size, type, stride, ptr);
+        assert(vbos.count(vbo_id) > 0);
+        vbos[vbo_id].attributes.emplace_back(size, type, stride, ptr);
     }
 
     size_t _buffer_engine::create_index_buffer(const size_t *buffer, size_t count) noexcept {
         size_t id;
         do {
             id = math::random((size_t)0, SIZE_MAX - 1) + 1;
-        } while (m_ibos.count(id) != 0);
+        } while (ibos.count(id) != 0);
 
-        m_ibos[id] = std::vector<size_t>(buffer, buffer + count);
+        ibos[id] = std::vector<size_t>(buffer, buffer + count);
 
         return id;
     }
 
     void _buffer_engine::erase_buffer(size_t id) noexcept {
-        m_vbos.erase(id);
+        vbos.erase(id);
     }
 
     void _buffer_engine::erase_index_buffer(size_t id) noexcept {
-        m_ibos.erase(id);
+        ibos.erase(id);
     }
     
     void _buffer_engine::bind(buffer_type type, size_t id) noexcept {
         switch (type) {
         case buffer_type::VERTEX:
-            assert(m_vbos.count(id) > 0);
-            m_curr_vbo = id;
+            assert(vbos.count(id) > 0);
+            curr_vbo = id;
             break;
         
         case buffer_type::INDEX:
-            assert(m_ibos.count(id) > 0);
-            m_curr_ibo = id;
+            assert(ibos.count(id) > 0);
+            curr_ibo = id;
             break;
 
         default:

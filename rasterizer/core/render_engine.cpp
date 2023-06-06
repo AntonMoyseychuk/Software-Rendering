@@ -1,5 +1,6 @@
 #include "render_engine.hpp"
 #include "core/gl_api.hpp"
+#include "core/buffer_engine.hpp"
 
 #include "math_3d/vec_operations.hpp"
 #include "math_3d/mat_operations.hpp"
@@ -9,16 +10,20 @@
 #include <cassert>
 
 #define ASSERT_UNIFORM_VALIDITY(container, name) assert(container.count((name)) == 1)
+#define ASSERT_BUFFER_VALIDITY(container, id) assert(container.count((id)) == 1)
 
 namespace rasterization::gfx {
     static gl_api& core = gl_api::get();
+    static _buffer_engine& buff_engine = _buffer_engine::get();
 
     void _render_engine::render(render_mode mode) const noexcept {
         using namespace math;
 
     #pragma region input-assembler
-        const auto& local_coords = *(std::vector<vec3f>*)&core._get_binded_vertex_buffer();
-        const auto& indexes = core._get_binded_index_buffer();
+        ASSERT_BUFFER_VALIDITY(buff_engine.vbos, buff_engine.curr_vbo);
+        ASSERT_BUFFER_VALIDITY(buff_engine.ibos, buff_engine.curr_ibo);
+        const auto& local_coords = *(std::vector<vec3f>*)&buff_engine.vbos[buff_engine.curr_vbo].data;
+        const auto& indexes = buff_engine.ibos[buff_engine.curr_ibo];
     #pragma endregion input-assembler
 
     #pragma region resizing-buffers
@@ -46,9 +51,7 @@ namespace rasterization::gfx {
         }
     #pragma endregion NDC
 
-    #pragma region rasterization
         _rasterize(ndc_coords, raster_coords);
-    #pragma endregion rasterization
 
         // Pixel Shaders
         switch (mode) {

@@ -53,10 +53,10 @@ namespace rasterization::gfx {
             std::vector<attribute> attributes;
         };
 
-        std::unordered_map<size_t, buffer> m_vbos;
-        std::unordered_map<size_t, std::vector<size_t>> m_ibos;
+        std::unordered_map<size_t, buffer> vbos;
+        std::unordered_map<size_t, std::vector<size_t>> ibos;
 
-        size_t m_curr_vbo = 0;
-        size_t m_curr_ibo = 0;
+        size_t curr_vbo = 0;
+        size_t curr_ibo = 0;
     };
 }
