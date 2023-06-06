@@ -4,6 +4,10 @@
 #include <cassert>
 
 namespace rasterization::gfx {
+    struct Vertex {
+        math::vec3f position;
+    };
+
     SimpleShader::SimpleShader()
         : shader()
     {
@@ -16,7 +20,7 @@ namespace rasterization::gfx {
         ASSERT_UNIFORM_VALIDITY(m_uniform_buffer->mat4f_uniforms, "view");
         ASSERT_UNIFORM_VALIDITY(m_uniform_buffer->mat4f_uniforms, "projection");
         
-        return *(const vec3f*)vertex * 
+        return ((const Vertex*)vertex)->position * 
             m_uniform_buffer->mat4f_uniforms["model"] * 
             m_uniform_buffer->mat4f_uniforms["view"] * 
             m_uniform_buffer->mat4f_uniforms["projection"];
