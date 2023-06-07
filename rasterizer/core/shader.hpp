@@ -13,14 +13,18 @@ namespace rasterization::gfx {
         std::unordered_map<std::string, float> float_uniforms;
     };
 
-    class shader {
+    class shader final {
         friend struct _shader_engine;
 
-    public:
-        virtual math::vec4f vertex(const void* vertex) const = 0;
-        virtual math::vec4f pixel(const void* vertex) const = 0;
+        shader() = default;
+        shader(math::vec4f (*vertex)(const uniform_buffer&, const void*), math::color (*pixel)(const uniform_buffer&, const void*))
+            : vertex(vertex), pixel(pixel) {}
 
-    protected:
+    public:
+        math::vec4f (*vertex)(const uniform_buffer& uniform_buffer, const void* vertex) = nullptr;
+        math::color (*pixel)(const uniform_buffer& uniform_buffer, const void* vertex) = nullptr;
+
+    private:
         uniform_buffer* m_uniform_buffer = nullptr;
     };
 }

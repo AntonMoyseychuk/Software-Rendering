@@ -9,23 +9,38 @@ namespace rasterization::gfx {
         return engine;
     }
     
-    size_t _shader_engine::create_shader(const std::shared_ptr<shader> &shader) noexcept {
+    // size_t _shader_engine::create_shader(const std::shared_ptr<shader> &shader) noexcept {
+    //     size_t id;
+    //     do {
+    //         id = math::random((size_t)0, SIZE_MAX - 1) + 1;
+    //     } while (shader_programs.count(id) != 0);
+
+    //     shader_programs[id] = _shader_program { shader, uniform_buffer() };
+    //     shader_programs[id].shader->m_uniform_buffer = &shader_programs[id].uniform_buffer;
+
+    //     return id;
+    // }
+
+    size_t _shader_engine::create_shader(
+        math::vec4f (*vertex)(const uniform_buffer &uniform_buffer, const void *vertex), 
+        math::color (*pixel)(const uniform_buffer &uniform_buffer, const void *vertex)
+    ) noexcept {
         size_t id;
         do {
             id = math::random((size_t)0, SIZE_MAX - 1) + 1;
         } while (shader_programs.count(id) != 0);
 
-        shader_programs[id] = _shader_program { shader, uniform_buffer() };
-        shader_programs[id].shader->m_uniform_buffer = &shader_programs[id].uniform_buffer;
+        shader_programs[id] = _shader_program { shader(vertex, pixel), uniform_buffer() };
 
         return id;
     }
-    
-    void _shader_engine::bind_shader(size_t shader_id) noexcept {
+
+    void _shader_engine::bind_shader(size_t shader_id) noexcept
+    {
         ASSERT_SHADER_ID_VALIDITY(shader_id);
         curr_shader = shader_id;
     }
-    
+
     void _shader_engine::uniform(const std::string &uniform_name, const math::mat4f &mat) noexcept {
         ASSERT_SHADER_ID_VALIDITY(curr_shader);
         shader_programs[curr_shader].uniform_buffer.mat4f_uniforms[uniform_name] = mat;

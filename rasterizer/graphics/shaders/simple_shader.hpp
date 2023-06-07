@@ -2,11 +2,8 @@
 #include "core/shader.hpp"
 
 namespace rasterization::gfx {
-    class SimpleShader : public shader {
-    public:
-        SimpleShader();
-
-        math::vec4f vertex(const void* vertex) const override;
-        math::vec4f pixel(const void* vertex) const override;
+    struct SimpleShader final {
+        static math::vec4f vertex(const uniform_buffer& uniform_buffer, const void* vertex);
+        static math::vec4f pixel(const uniform_buffer& uniform_buffer, const void* vertex);
     };
 }

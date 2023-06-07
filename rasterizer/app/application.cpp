@@ -83,7 +83,7 @@ namespace rasterization {
         using namespace math;
         using namespace win_framewrk;
 
-        size_t shader = core.create_shader(std::make_shared<SimpleShader>());
+        size_t shader = core.create_shader(SimpleShader::vertex, SimpleShader::pixel);
         core.bind_shader(shader);
 
         core.uniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));

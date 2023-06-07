@@ -43,8 +43,9 @@ namespace rasterization::gfx {
 
     #pragma region VS
         ASSERT_SHADER_VALIDITY(shader_engine.shader_programs, shader_engine.curr_shader);
+        const auto& curr_shader_program = shader_engine.shader_programs[shader_engine.curr_shader];
         for (size_t i = 0; i < vertex_count; ++i) {
-            screen_coords[i] = shader_engine.shader_programs[shader_engine.curr_shader].shader->vertex(&local_coords[i]);
+            screen_coords[i] = curr_shader_program.shader.vertex(curr_shader_program.uniform_buffer, &local_coords[i]);
         }
     #pragma endregion VS
 

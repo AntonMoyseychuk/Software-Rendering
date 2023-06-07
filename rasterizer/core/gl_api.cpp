@@ -68,11 +68,15 @@ namespace rasterization::gfx {
 #pragma endregion buffer_engine_api
 
 #pragma region shader_engine_api
-    size_t gl_api::create_shader(const std::shared_ptr<shader> &shader) noexcept {
-        return m_shader_engine.create_shader(shader);
+    size_t gl_api::create_shader(
+        math::vec4f (*vertex)(const uniform_buffer &uniform_buffer, const void *vertex), 
+        math::color (*pixel)(const uniform_buffer &uniform_buffer, const void *vertex)
+    ) noexcept {
+        return m_shader_engine.create_shader(vertex, pixel);
     }
 
-    void gl_api::bind_shader(size_t shader_id) noexcept {
+    void gl_api::bind_shader(size_t shader_id) noexcept
+    {
         m_shader_engine.bind_shader(shader_id);
     }
 
