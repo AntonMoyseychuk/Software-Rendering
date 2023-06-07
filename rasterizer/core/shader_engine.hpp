@@ -12,8 +12,10 @@ namespace rasterization::gfx {
 
         static _shader_engine& get() noexcept;
 
-        size_t create_shader(math::vec4f (*vertex)(const uniform_buffer& , const void*),
-            math::color (*pixel)(const uniform_buffer&, const void*)) noexcept;
+        size_t create_shader(
+            const std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)>& vertex,
+            const std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)>& pixel
+        ) noexcept;
         void bind_shader(size_t shader_id) noexcept;
 
         void uniform(const std::string& uniform_name, const math::mat4f& mat) noexcept;

@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <functional>
 
 #include "math_3d/math.hpp"
 
@@ -17,11 +18,13 @@ namespace rasterization::gfx {
         friend struct _shader_engine;
 
         shader() = default;
-        shader(math::vec4f (*vertex)(const uniform_buffer&, const void*), math::color (*pixel)(const uniform_buffer&, const void*))
-            : vertex(vertex), pixel(pixel) {}
+        shader(
+            const std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)>& vertex,
+            const std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)>& pixel
+        ) : vertex(vertex), pixel(pixel) {}
 
     public:
-        math::vec4f (*vertex)(const uniform_buffer& uniform_buffer, const void* vertex) = nullptr;
-        math::color (*pixel)(const uniform_buffer& uniform_buffer, const void* vertex) = nullptr;
+        std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)> vertex;
+        std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)> pixel;
     };
 }

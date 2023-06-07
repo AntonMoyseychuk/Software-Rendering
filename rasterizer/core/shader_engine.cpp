@@ -8,22 +8,10 @@ namespace rasterization::gfx {
         static _shader_engine engine;
         return engine;
     }
-    
-    // size_t _shader_engine::create_shader(const std::shared_ptr<shader> &shader) noexcept {
-    //     size_t id;
-    //     do {
-    //         id = math::random((size_t)0, SIZE_MAX - 1) + 1;
-    //     } while (shader_programs.count(id) != 0);
-
-    //     shader_programs[id] = _shader_program { shader, uniform_buffer() };
-    //     shader_programs[id].shader->m_uniform_buffer = &shader_programs[id].uniform_buffer;
-
-    //     return id;
-    // }
 
     size_t _shader_engine::create_shader(
-        math::vec4f (*vertex)(const uniform_buffer &uniform_buffer, const void *vertex), 
-        math::color (*pixel)(const uniform_buffer &uniform_buffer, const void *vertex)
+        const std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)>& vertex,
+        const std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)>& pixel
     ) noexcept {
         size_t id;
         do {

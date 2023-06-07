@@ -69,8 +69,8 @@ namespace rasterization::gfx {
 
 #pragma region shader_engine_api
     size_t gl_api::create_shader(
-        math::vec4f (*vertex)(const uniform_buffer &uniform_buffer, const void *vertex), 
-        math::color (*pixel)(const uniform_buffer &uniform_buffer, const void *vertex)
+        const std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)>& vertex,
+        const std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)>& pixel
     ) noexcept {
         return m_shader_engine.create_shader(vertex, pixel);
     }
