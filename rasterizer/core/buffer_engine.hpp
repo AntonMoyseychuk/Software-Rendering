@@ -3,19 +3,6 @@
 #include <vector>
 
 namespace rasterization::gfx {
-    enum class attrib_data_type : uint8_t { 
-        INT8 = 1, 
-        UINT8, 
-        INT16, 
-        UINT16, 
-        INT32, 
-        UINT32, 
-        INT64, 
-        UINT64, 
-        FLOAT, 
-        DOUBLE
-    };
-
     enum class buffer_type : uint8_t { 
         VERTEX, INDEX
     };
@@ -38,17 +25,6 @@ namespace rasterization::gfx {
         _buffer_engine() = default;
 
     public:
-        struct attribute {
-            attribute() noexcept = default;
-            attribute(size_t size, attrib_data_type type, size_t stride, const void* ptr) noexcept
-                : size(size), type(type), stride(stride), ptr(ptr) {}
-
-            size_t size;
-            attrib_data_type type;
-            size_t stride;
-            const void* ptr;
-        };
-
         struct vertex_buffer {
             std::vector<uint8_t> data;
         };
