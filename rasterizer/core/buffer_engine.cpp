@@ -15,9 +15,7 @@ namespace rasterization::gfx {
             id = math::random((size_t)0, SIZE_MAX - 1) + 1;
         } while (vbos.count(id) != 0);
 
-        vbos[id] = vertex_buffer {
-            std::vector<uint8_t>((uint8_t*)buffer, (uint8_t*)buffer + size)
-        };
+        vbos[id] = vertex_buffer { std::vector<uint8_t>((uint8_t*)buffer, (uint8_t*)buffer + size) };
     
         return id;
     }
@@ -46,12 +44,12 @@ namespace rasterization::gfx {
     void _buffer_engine::bind(buffer_type type, size_t id) noexcept {
         switch (type) {
         case buffer_type::VERTEX:
-            assert(vbos.count(id) > 0);
+            assert(vbos.count(id) == 1);
             curr_vbo = id;
             break;
         
         case buffer_type::INDEX:
-            assert(ibos.count(id) > 0);
+            assert(ibos.count(id) == 1);
             curr_ibo = id;
             break;
 

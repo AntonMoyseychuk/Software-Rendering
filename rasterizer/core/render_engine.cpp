@@ -24,8 +24,11 @@ namespace rasterization::gfx {
     #pragma region input-assembler
         ASSERT_BUFFER_VALIDITY(buff_engine.vbos, buff_engine.curr_vbo);
         ASSERT_BUFFER_VALIDITY(buff_engine.ibos, buff_engine.curr_ibo);
-        const auto& local_coords = *(std::vector<vec3f>*)&buff_engine.vbos[buff_engine.curr_vbo].data;
-        const auto& indexes = buff_engine.ibos[buff_engine.curr_ibo].data;
+        
+        const auto& vbo = buff_engine.vbos[buff_engine.curr_vbo];
+        const auto& ibo = buff_engine.ibos[buff_engine.curr_ibo];
+        const auto& local_coords = *(std::vector<vec3f>*)&vbo.data;
+        const std::vector<size_t>& indexes = ibo.data;
     #pragma endregion input-assembler
 
     #pragma region resizing-buffers
@@ -43,9 +46,10 @@ namespace rasterization::gfx {
 
     #pragma region VS
         ASSERT_SHADER_VALIDITY(shader_engine.shader_programs, shader_engine.curr_shader);
+
         const auto& shader_program = shader_engine.shader_programs[shader_engine.curr_shader];
         for (size_t i = 0; i < vertex_count; ++i) {
-            screen_coords[i] = shader_program.shader.vertex(shader_program.uniform_buffer, &local_coords[i]);
+            screen_coords[i] = shader_program.shader.vertex(shader_program.uniform_buffer,  &local_coords[i]);
         }
     #pragma endregion VS
 
@@ -60,26 +64,24 @@ namespace rasterization::gfx {
         // Pixel Shaders
         switch (mode) {
         case render_mode::POINTS:
-            ASSERT_UNIFORM_VALIDITY(shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec4f_uniforms, "point_color");
+            ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "point_color");
 
             for (size_t i = 0; i < indexes.size(); ++i) {
-                _render_pixel(raster_coords[indexes[i]], 
-                    shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec4f_uniforms["point_color"]);
+                _render_pixel(raster_coords[indexes[i]], shader_program.uniform_buffer.vec4f_uniforms.at("point_color"));
             }    
             break;
 
         case render_mode::LINES:
-            ASSERT_UNIFORM_VALIDITY(shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec4f_uniforms, "line_color");
+            ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "line_color");
 
             for (size_t i = 0; i < indexes.size(); i += 2) {
-                _render_line(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], 
-                    shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec4f_uniforms["line_color"]);
+                _render_line(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], shader_program.uniform_buffer.vec4f_uniforms.at("line_color"));
             }
             break;
 
         case render_mode::TRIANGLES:
-            ASSERT_UNIFORM_VALIDITY(shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec3f_uniforms, "light_dir");
-            ASSERT_UNIFORM_VALIDITY(shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec4f_uniforms, "polygon_color");
+            ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec3f_uniforms, "light_dir");
+            ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "polygon_color");
             
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 const vec3f normal = normalize(cross(
@@ -87,10 +89,8 @@ namespace rasterization::gfx {
                     screen_coords[indexes[i + 1]].xyz - screen_coords[indexes[i]].xyz
                 ));
 
-                const float light_intensity = dot(normal, 
-                    shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec3f_uniforms["light_dir"]) + 0.1f;
-                const color color = shader_engine.shader_programs[shader_engine.curr_shader].uniform_buffer.vec4f_uniforms["polygon_color"] 
-                    * light_intensity;
+                const float light_intensity = dot(normal, shader_program.uniform_buffer.vec3f_uniforms.at("light_dir")) + 0.1f;
+                const color color = shader_program.uniform_buffer.vec4f_uniforms.at("polygon_color") * light_intensity;
 
                 _render_triangle(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]], color);
             }
