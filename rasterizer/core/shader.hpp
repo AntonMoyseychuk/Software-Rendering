@@ -23,8 +23,5 @@ namespace rasterization::gfx {
     public:
         math::vec4f (*vertex)(const uniform_buffer& uniform_buffer, const void* vertex) = nullptr;
         math::color (*pixel)(const uniform_buffer& uniform_buffer, const void* vertex) = nullptr;
-
-    private:
-        uniform_buffer* m_uniform_buffer = nullptr;
     };
 }
