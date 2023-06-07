@@ -24,12 +24,12 @@ namespace rasterization {
         m_window->Init(title, width, height);
 
         core.bind_window(m_window);
-        assert(core.is_window_binded() != nullptr);
+        assert(core.is_window_binded());
 
         core.viewport(width, height);
 
         m_window->SetResizeCallback([](uint32_t width, uint32_t height){
-            gfx::gl_api::get().viewport(width, height);
+            core.viewport(width, height);
         });
 
         Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
@@ -38,7 +38,6 @@ namespace rasterization {
             core.create_vertex_buffer(model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
             core.create_index_buffer(model.vert_indexes.data(), model.vert_indexes.size())
         };
-        core.vertex_attrib_pointer(m_VBO_IBO["model"].vbo, sizeof(vec3f), attrib_data_type::FLOAT, sizeof(vec3f), (void*)0);
 
         const vec3f cube[] = {
             { -1.0f, -1.0f, 1.0f },
@@ -77,7 +76,6 @@ namespace rasterization {
             core.create_vertex_buffer(cube, sizeof(cube)),
             core.create_index_buffer(indexes, sizeof(indexes) / sizeof(size_t))
         };
-        core.vertex_attrib_pointer(m_VBO_IBO["cube"].vbo, sizeof(vec3f), attrib_data_type::FLOAT, sizeof(vec3f), (void*)0);
     }
 
     void Application::Run() noexcept {
@@ -105,9 +103,9 @@ namespace rasterization {
             const auto dt = _LockFPS();
             std::cout << "FPS: " << std::to_string(1.0f / dt) << std::endl;
 
-            const float angle = to_radians(dt) * 25.0f;
-
         #pragma region input
+            const float angle = to_radians(dt) * 25.0f;
+            
             if (m_window->IsKeyPressed(Key::NUMBER_1)) {
                 model_render_mode = render_mode::POINTS;
             } else if (m_window->IsKeyPressed(Key::NUMBER_2)) {

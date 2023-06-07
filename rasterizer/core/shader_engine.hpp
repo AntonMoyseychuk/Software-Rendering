@@ -26,7 +26,7 @@ namespace rasterization::gfx {
 
         struct _shader_program final {
             std::shared_ptr<shader> shader;
-            _uniform_buffer uniform_buffer;
+            uniform_buffer uniform_buffer;
         };
 
         using shader_id = size_t;

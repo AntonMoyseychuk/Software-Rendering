@@ -15,7 +15,7 @@ namespace rasterization::gfx {
             id = math::random((size_t)0, SIZE_MAX - 1) + 1;
         } while (shader_programs.count(id) != 0);
 
-        shader_programs[id] = _shader_program { shader, _uniform_buffer() };
+        shader_programs[id] = _shader_program { shader, uniform_buffer() };
         shader_programs[id].shader->m_uniform_buffer = &shader_programs[id].uniform_buffer;
 
         return id;

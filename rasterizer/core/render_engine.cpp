@@ -25,7 +25,7 @@ namespace rasterization::gfx {
         ASSERT_BUFFER_VALIDITY(buff_engine.vbos, buff_engine.curr_vbo);
         ASSERT_BUFFER_VALIDITY(buff_engine.ibos, buff_engine.curr_ibo);
         const auto& local_coords = *(std::vector<vec3f>*)&buff_engine.vbos[buff_engine.curr_vbo].data;
-        const auto& indexes = buff_engine.ibos[buff_engine.curr_ibo];
+        const auto& indexes = buff_engine.ibos[buff_engine.curr_ibo].data;
     #pragma endregion input-assembler
 
     #pragma region resizing-buffers

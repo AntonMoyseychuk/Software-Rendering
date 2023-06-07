@@ -50,10 +50,6 @@ namespace rasterization::gfx {
         return m_buf_engine.create_vertex_buffer(buffer, size);
     }
 
-    void gl_api::vertex_attrib_pointer(size_t vbo_id, size_t size, attrib_data_type type, size_t stride, const void *ptr) const noexcept {
-        m_buf_engine.vertex_attrib_pointer(vbo_id, size, type, stride, ptr);
-    }
-
     size_t gl_api::create_index_buffer(const size_t *buffer, size_t count) const noexcept {
         return m_buf_engine.create_index_buffer(buffer, count);
     }

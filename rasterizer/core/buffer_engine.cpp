@@ -15,17 +15,11 @@ namespace rasterization::gfx {
             id = math::random((size_t)0, SIZE_MAX - 1) + 1;
         } while (vbos.count(id) != 0);
 
-        vbos[id] = _buffer_engine::buffer {
-            std::vector<uint8_t>((uint8_t*)buffer, (uint8_t*)buffer + size), 
-            std::vector<attribute>() 
+        vbos[id] = vertex_buffer {
+            std::vector<uint8_t>((uint8_t*)buffer, (uint8_t*)buffer + size)
         };
     
         return id;
-    }
-
-    void _buffer_engine::vertex_attrib_pointer(size_t vbo_id, size_t size, attrib_data_type type, size_t stride, const void *ptr) noexcept {
-        assert(vbos.count(vbo_id) > 0);
-        vbos[vbo_id].attributes.emplace_back(size, type, stride, ptr);
     }
 
     size_t _buffer_engine::create_index_buffer(const size_t *buffer, size_t count) noexcept {
@@ -34,7 +28,9 @@ namespace rasterization::gfx {
             id = math::random((size_t)0, SIZE_MAX - 1) + 1;
         } while (ibos.count(id) != 0);
 
-        ibos[id] = std::vector<size_t>(buffer, buffer + count);
+        ibos[id] = index_buffer {
+            std::vector<size_t>(buffer, buffer + count)
+        };
 
         return id;
     }

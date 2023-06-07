@@ -27,8 +27,6 @@ namespace rasterization::gfx {
         static _buffer_engine& get() noexcept;
 
         size_t create_vertex_buffer(const void* buffer, size_t size) noexcept;
-        void vertex_attrib_pointer(size_t vbo_id, size_t size, attrib_data_type type, size_t stride, const void* ptr) noexcept;
-
         size_t create_index_buffer(const size_t* buffer, size_t count) noexcept;
         
         void erase_buffer(size_t id) noexcept;
@@ -51,13 +49,16 @@ namespace rasterization::gfx {
             const void* ptr;
         };
 
-        struct buffer {
+        struct vertex_buffer {
             std::vector<uint8_t> data;
-            std::vector<attribute> attributes;
         };
 
-        std::unordered_map<size_t, buffer> vbos;
-        std::unordered_map<size_t, std::vector<size_t>> ibos;
+        struct index_buffer {
+            std::vector<size_t> data;
+        };
+
+        std::unordered_map<size_t, vertex_buffer> vbos;
+        std::unordered_map<size_t, index_buffer> ibos;
 
         size_t curr_vbo = 0;
         size_t curr_ibo = 0;

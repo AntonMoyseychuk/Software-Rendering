@@ -1,7 +1,4 @@
 #pragma once
-#include "math_3d/vec4.hpp"
-#include "math_3d/mat4.hpp"
-
 #include "buffer_engine.hpp"
 #include "render_engine.hpp"
 #include "shader_engine.hpp"
@@ -30,8 +27,6 @@ namespace rasterization::gfx {
 
     #pragma region buffer_engine_api
         size_t create_vertex_buffer(const void* buffer, size_t size) const noexcept;
-        void vertex_attrib_pointer(size_t vbo_id, size_t size, attrib_data_type type, size_t stride, const void* ptr) const noexcept;
-
         size_t create_index_buffer(const size_t* buffer, size_t count) const noexcept;
         
         void erase_buffer(size_t id) const noexcept;
