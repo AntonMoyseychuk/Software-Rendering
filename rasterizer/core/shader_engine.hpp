@@ -27,15 +27,15 @@ namespace rasterization::gfx {
     private:
         _shader_engine() = default;
 
-        struct _shader_program final {
-            shader shader;
+        struct shader_program final {
+            _shader shader;
             uniform_buffer uniform_buffer;
         };
 
         using shader_id = size_t;
 
     public:
-        std::unordered_map<shader_id, _shader_program> shader_programs;
+        std::unordered_map<shader_id, shader_program> shader_programs;
         size_t curr_shader = 0;
     };
 }
