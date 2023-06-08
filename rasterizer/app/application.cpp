@@ -38,6 +38,8 @@ namespace rasterization {
             core.create_vertex_buffer(model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
             core.create_index_buffer(model.vert_indexes.data(), model.vert_indexes.size())
         };
+        core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+        core.set_buffer_element_size(sizeof(model.vertexes[0]));
 
         const vec3f cube[] = {
             { -1.0f, -1.0f, 1.0f },
@@ -76,6 +78,8 @@ namespace rasterization {
             core.create_vertex_buffer(cube, sizeof(cube)),
             core.create_index_buffer(indexes, sizeof(indexes) / sizeof(size_t))
         };
+        core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
+        core.set_buffer_element_size(sizeof(cube[0]));
     }
 
     void Application::Run() noexcept {

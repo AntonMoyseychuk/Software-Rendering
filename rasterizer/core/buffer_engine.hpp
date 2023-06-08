@@ -21,12 +21,15 @@ namespace rasterization::gfx {
 
         void bind(buffer_type type, size_t id) noexcept;
 
+        void set_buffer_element_size(size_t size) noexcept;
+
     private:   
         _buffer_engine() = default;
 
     public:
         struct vertex_buffer {
             std::vector<uint8_t> data;
+            size_t element_size;
         };
 
         struct index_buffer {

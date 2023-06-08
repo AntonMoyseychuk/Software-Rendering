@@ -15,7 +15,8 @@ namespace rasterization::gfx {
         ASSERT_UNIFORM_VALIDITY(uniform_buffer.mat4f_uniforms, "view");
         ASSERT_UNIFORM_VALIDITY(uniform_buffer.mat4f_uniforms, "projection");
         
-        return ((const Vertex*)vertex)->position * 
+        const Vertex* v = (const Vertex*)vertex;
+        return v->position * 
             uniform_buffer.mat4f_uniforms.at("model") * 
             uniform_buffer.mat4f_uniforms.at("view") * 
             uniform_buffer.mat4f_uniforms.at("projection");

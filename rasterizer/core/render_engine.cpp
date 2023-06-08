@@ -27,7 +27,7 @@ namespace rasterization::gfx {
         
         const auto& vbo = buff_engine.vbos[buff_engine.curr_vbo];
         const auto& ibo = buff_engine.ibos[buff_engine.curr_ibo];
-        const auto& local_coords = *(std::vector<vec3f>*)&vbo.data;
+        const std::vector<uint8_t>& local_coords = vbo.data;
         const std::vector<size_t>& indexes = ibo.data;
     #pragma endregion input-assembler
 
@@ -48,8 +48,8 @@ namespace rasterization::gfx {
         ASSERT_SHADER_VALIDITY(shader_engine.shader_programs, shader_engine.curr_shader);
 
         const auto& shader_program = shader_engine.shader_programs[shader_engine.curr_shader];
-        for (size_t i = 0; i < vertex_count; ++i) {
-            screen_coords[i] = shader_program.shader.vertex(shader_program.uniform_buffer,  &local_coords[i]);
+        for (size_t i = 0, j = 0; i < local_coords.size(); i += vbo.element_size, ++j) {
+            screen_coords[j] = shader_program.shader.vertex(shader_program.uniform_buffer, &local_coords[i]);
         }
     #pragma endregion VS
 

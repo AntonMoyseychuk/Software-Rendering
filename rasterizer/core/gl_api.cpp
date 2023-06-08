@@ -15,7 +15,7 @@ namespace rasterization::gfx {
     {
     }
 
-    void gl_api::viewport(uint32_t width, uint32_t height) noexcept {
+    void gl_api::viewport(uint32_t width, uint32_t height) const noexcept {
         m_viewport = math::viewport(width, height);
     }
 
@@ -65,38 +65,41 @@ namespace rasterization::gfx {
     void gl_api::bind(buffer_type type, size_t id) const noexcept {
         m_buf_engine.bind(type, id);
     }
+
+    void gl_api::set_buffer_element_size(size_t size) const noexcept {
+        m_buf_engine.set_buffer_element_size(size);
+    }
 #pragma endregion buffer_engine_api
 
 #pragma region shader_engine_api
     size_t gl_api::create_shader(
         const std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)>& vertex,
         const std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)>& pixel
-    ) noexcept {
+    ) const noexcept {
         return m_shader_engine.create_shader(vertex, pixel);
     }
 
-    void gl_api::bind_shader(size_t shader_id) noexcept
-    {
+    void gl_api::bind_shader(size_t shader_id) const noexcept {
         m_shader_engine.bind_shader(shader_id);
     }
 
-    void gl_api::uniform(const std::string &uniform_name, const math::mat4f &mat) noexcept {
+    void gl_api::uniform(const std::string &uniform_name, const math::mat4f &mat) const noexcept {
         m_shader_engine.uniform(uniform_name, mat);
     }
 
-    void gl_api::uniform(const std::string &uniform_name, const math::vec4f &vec) noexcept {
+    void gl_api::uniform(const std::string &uniform_name, const math::vec4f &vec) const noexcept {
         m_shader_engine.uniform(uniform_name, vec);
     }
 
-    void gl_api::uniform(const std::string &uniform_name, const math::vec3f &vec) noexcept {
+    void gl_api::uniform(const std::string &uniform_name, const math::vec3f &vec) const noexcept {
         m_shader_engine.uniform(uniform_name, vec);
     }
 
-    void gl_api::uniform(const std::string &uniform_name, const math::vec2f &vec) noexcept {
+    void gl_api::uniform(const std::string &uniform_name, const math::vec2f &vec) const noexcept {
         m_shader_engine.uniform(uniform_name, vec);
     }
 
-    void gl_api::uniform(const std::string &uniform_name, float value) noexcept {
+    void gl_api::uniform(const std::string &uniform_name, float value) const noexcept {
         m_shader_engine.uniform(uniform_name, value);
     }
 #pragma endregion shader_engine_api
