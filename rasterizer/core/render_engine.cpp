@@ -79,6 +79,14 @@ namespace rasterization::gfx {
             }
             break;
 
+        case render_mode::LINE_STRIP:
+            ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "line_color");
+
+            for (size_t i = 1; i < indexes.size(); ++i) {
+                _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program.uniform_buffer.vec4f_uniforms.at("line_color"));
+            }
+            break;
+
         case render_mode::TRIANGLES:
             ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec3f_uniforms, "light_dir");
             ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "polygon_color");

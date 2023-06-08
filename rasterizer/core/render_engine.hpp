@@ -5,7 +5,7 @@
 
 
 namespace rasterization::gfx {
-    enum class render_mode : uint8_t { LINES, POINTS, TRIANGLES };
+    enum class render_mode : uint8_t { POINTS, LINES, LINE_STRIP, TRIANGLES };
 
     struct _render_engine final {
         _render_engine(const _render_engine& engine) = delete;
