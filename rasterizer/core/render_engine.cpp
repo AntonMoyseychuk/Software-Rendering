@@ -15,10 +15,6 @@
 #include <cassert>
 
 namespace rasterization::gfx {
-    bool is_inside_clipping_space(const math::vec3f& point) noexcept {
-        return math::abs(point.x) < 1.0f && math::abs(point.y) < 1.0f;
-    }
-
     static gl_api& core = gl_api::get();
     static _buffer_engine& buff_engine = _buffer_engine::get();
     static _shader_engine& shader_engine = _shader_engine::get();
@@ -71,7 +67,7 @@ namespace rasterization::gfx {
             ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "point_color");
             
             for (size_t i = 0; i < indexes.size(); ++i) {
-                if (is_inside_clipping_space(ndc_coords[indexes[i]])) {
+                if (_is_inside_clipping_space(ndc_coords[indexes[i]])) {
                     _render_pixel(raster_coords[indexes[i]].xy, shader_program.uniform_buffer.vec4f_uniforms.at("point_color"));
                 }
             }    
@@ -107,9 +103,9 @@ namespace rasterization::gfx {
             ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "polygon_color");
 
             for (size_t i = 0; i < indexes.size(); i += 3) {
-                if (is_inside_clipping_space(ndc_coords[indexes[i]]) && 
-                    is_inside_clipping_space(ndc_coords[indexes[i + 1]]) && 
-                    is_inside_clipping_space(ndc_coords[indexes[i + 2]])
+                if (_is_inside_clipping_space(ndc_coords[indexes[i]]) && 
+                    _is_inside_clipping_space(ndc_coords[indexes[i + 1]]) && 
+                    _is_inside_clipping_space(ndc_coords[indexes[i + 2]])
                 ) {
                     const vec3f normal = normalize(cross(
                         screen_coords[indexes[i + 2]].xyz - screen_coords[indexes[i]].xyz,
@@ -230,6 +226,10 @@ namespace rasterization::gfx {
         }
 
         return false;
+    }
+
+    bool _render_engine::_is_inside_clipping_space(const math::vec3f &point) const noexcept {
+        return math::abs(point.x) <= 1.0f && math::abs(point.y) <= 1.0f && point.z <= -1.0f;
     }
 
     _render_engine &_render_engine::get() noexcept {

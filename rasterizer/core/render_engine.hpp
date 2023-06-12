@@ -27,6 +27,7 @@ namespace rasterization::gfx {
 
         void _resize_z_buffer(uint32_t width, uint32_t height) const noexcept;
         bool _check_and_update_depth(const math::vec3f& pixel) const noexcept;
+        bool _is_inside_clipping_space(const math::vec3f& point) const noexcept;
 
         void _rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept;
 
