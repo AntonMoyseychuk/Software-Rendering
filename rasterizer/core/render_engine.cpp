@@ -47,36 +47,33 @@ namespace rasterization::gfx {
         _resize_z_buffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
 
-    #pragma region VS
+    #pragma region local-coords-to-NDC
         ASSERT_SHADER_PROGRAM_ID_VALIDITY(shader_engine.shader_programs, shader_engine.curr_shader);
 
         const auto& shader_program = shader_engine.shader_programs[shader_engine.curr_shader];
         for (size_t i = 0, j = 0; i < local_coords.size(); i += vbo.element_size, ++j) {
             screen_coords[j] = shader_program.shader.vertex(shader_program.uniform_buffer, &local_coords[i]);
         }
-    #pragma endregion VS
-
-    #pragma region NDC
+        
         for (size_t i = 0; i < vertex_count; ++i) {
             ndc_coords[i] = screen_coords[i].xyz / screen_coords[i].w;
         }
-    #pragma endregion NDC
+    #pragma endregion local-coords-to-NDC
 
         _rasterize(ndc_coords, raster_coords);
 
         // Pixel Shaders
         switch (mode) {
-        case render_mode::POINTS:
-            assert(false && "render_mode::POINTS is not imlemented");
+        case render_mode::POINTS: {
+            ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "point_color");
+            
+            for (size_t i = 0; i < indexes.size(); ++i) {
+                if (is_inside_clipping_space(ndc_coords[indexes[i]])) {
+                    _render_pixel(raster_coords[indexes[i]].xy, shader_program.uniform_buffer.vec4f_uniforms.at("point_color"));
+                }
+            }    
             break;
-            // ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "point_color");
-            //
-            // for (size_t i = 0; i < indexes.size(); ++i) {
-            //     if (is_inside_clipping_space(ndc_coords[indexes[i]])) {
-            //         _render_pixel(raster_coords[indexes[i]], shader_program.uniform_buffer.vec4f_uniforms.at("point_color"));
-            //     }
-            // }    
-            // break;
+        }
         
         case render_mode::LINES:
             assert(false && "render_mode::LINES is not imlemented");
@@ -102,7 +99,7 @@ namespace rasterization::gfx {
             // }
             // break;
 
-        case render_mode::TRIANGLES:
+        case render_mode::TRIANGLES: {
             ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec3f_uniforms, "light_dir");
             ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "polygon_color");
             
@@ -123,6 +120,7 @@ namespace rasterization::gfx {
                 }
             }
             break;
+        }
 
         default:
             assert(false && "Invalid Rendering Mode");
@@ -138,15 +136,15 @@ namespace rasterization::gfx {
         }
     }
 
-    void _render_engine::_render_pixel(const math::vec3f& pixel, const math::color& color) const noexcept {
+    void _render_engine::_render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept {
         m_window_ptr->SetPixelColor(pixel.x, pixel.y, R_G_B_A(color));
     }
 
-    void _render_engine::_render_line(const math::vec3f& raster_coord_v0, const math::vec3f& raster_coord_v1, const math::color& color) const noexcept {
+    void _render_engine::_render_line(const math::vec3f& pixel_0, const math::vec3f& pixel_1, const math::color& color) const noexcept {
         using namespace math;
 
-        auto v0 = raster_coord_v0;
-        auto v1 = raster_coord_v1;
+        auto v0 = pixel_0;
+        auto v1 = pixel_1;
 
         static std::vector<int32_t> values;
         static std::vector<float> z_values;
@@ -161,7 +159,7 @@ namespace rasterization::gfx {
             for (int32_t x = v0.x; x <= v1.x; ++x) {
                 const vec3f pixel(x, values[x - v0.x], z_values[x - v0.x]);
                 if (_check_and_update_depth(pixel)) {
-                    _render_pixel(pixel, color);
+                    _render_pixel(pixel.xy, color);
                 }
             }
         } else {
@@ -174,21 +172,18 @@ namespace rasterization::gfx {
             for (int32_t y = v0.y; y <= v1.y; ++y) {
                 const vec3f pixel(values[y - v0.y], y, z_values[y - v0.y]);
                 if (_check_and_update_depth(pixel)) {
-                    _render_pixel(pixel, color);
+                    _render_pixel(pixel.xy, color);
                 }
             }
         }
     }
 
-    void _render_engine::_render_triangle(
-        const math::vec3f &raster_coord_0, 
-        const math::vec3f &raster_coord_1, 
-        const math::vec3f &raster_coord_2, 
+    void _render_engine::_render_triangle(const math::vec3f &pixel_0, const math::vec3f &pixel_1, const math::vec3f &pixel_2, 
         const math::color& color
     ) const noexcept {
         using namespace math;
 
-        auto v0 = raster_coord_0, v1 = raster_coord_1, v2 = raster_coord_2;
+        auto v0 = pixel_0, v1 = pixel_1, v2 = pixel_2;
         if (v0.y > v1.y) { std::swap(v0, v1); }
         if (v0.y > v2.y) { std::swap(v0, v2); }
         if (v1.y > v2.y) { std::swap(v1, v2); }
@@ -212,7 +207,7 @@ namespace rasterization::gfx {
             for (int32_t j = left.x; j <= right.x; ++j) {
                 const vec3f pixel(j, v0.y + i, z_values[j - left.x]);
                 if (_check_and_update_depth(pixel)) {
-                    _render_pixel(pixel, color);
+                    _render_pixel(pixel.xy, color);
                 }
             }
         }
