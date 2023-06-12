@@ -38,26 +38,14 @@ namespace rasterization::gfx {
     #pragma endregion buffer_engine_api
 
     #pragma region shader_engine_api
-        size_t create_shader(
-            const std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)>& vertex,
-            const std::function<math::vec4f(const uniform_buffer& uniform_buffer, const void* vertex)>& pixel
-        ) const noexcept;
+        size_t create_shader(const std::shared_ptr<_shader>& shader) const noexcept;
         void bind_shader(size_t shader_id) const noexcept;
-
-        size_t create_abstract_shader(const std::shared_ptr<_abstract_shader>& shader) const noexcept;
-        void bind_abstract_shader(size_t shader_id) const noexcept;
 
         void uniform(const std::string& uniform_name, const math::mat4f& mat) const noexcept;
         void uniform(const std::string& uniform_name, const math::vec4f& vec) const noexcept;
         void uniform(const std::string& uniform_name, const math::vec3f& vec) const noexcept;
         void uniform(const std::string& uniform_name, const math::vec2f& vec) const noexcept;
         void uniform(const std::string& uniform_name, float value) const noexcept;
-
-        void abstract_uniform(const std::string& uniform_name, const math::mat4f& mat) const noexcept;
-        void abstract_uniform(const std::string& uniform_name, const math::vec4f& vec) const noexcept;
-        void abstract_uniform(const std::string& uniform_name, const math::vec3f& vec) const noexcept;
-        void abstract_uniform(const std::string& uniform_name, const math::vec2f& vec) const noexcept;
-        void abstract_uniform(const std::string& uniform_name, float value) const noexcept;
     #pragma endregion shader_engine_api
 
         void viewport(uint32_t width, uint32_t height) const noexcept;
