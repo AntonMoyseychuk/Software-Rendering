@@ -104,8 +104,8 @@ namespace rasterization {
         while (m_window->IsOpen()) {
             m_window->PollEvent();
 
-            const auto dt = _LockFPS();
-            std::cout << "FPS: " << std::to_string(1.0f / dt) << std::endl;
+            const float dt = _LockFPS();
+            std::cout << "FPS: " << std::to_string(1.0f / dt) << ", time: " << dt << " ms\n";
 
         #pragma region input
             const float angle = to_radians(dt) * 25.0f;

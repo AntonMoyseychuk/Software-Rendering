@@ -11,9 +11,6 @@
 
 #include "math_3d/util.hpp"
 
-#include <cassert>
-
-
 
 namespace rasterization::gfx {
     static gl_api& core = gl_api::get();
