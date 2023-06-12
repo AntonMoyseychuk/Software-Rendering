@@ -6,11 +6,11 @@
 
 
 namespace rasterization::gfx {
-    struct uniform_buffer final {
-        std::unordered_map<std::string, math::mat4f> mat4f_uniforms;
-        std::unordered_map<std::string, math::vec4f> vec4f_uniforms;
-        std::unordered_map<std::string, math::vec3f> vec3f_uniforms;
-        std::unordered_map<std::string, math::vec2f> vec2f_uniforms;
+    struct _uniform_buffer final {
+        std::unordered_map<std::string, math::mat4f> mat4_uniforms;
+        std::unordered_map<std::string, math::vec4f> vec4_uniforms;
+        std::unordered_map<std::string, math::vec3f> vec3_uniforms;
+        std::unordered_map<std::string, math::vec2f> vec2_uniforms;
 
         std::unordered_map<std::string, float> float_uniforms;
     };
@@ -35,6 +35,6 @@ namespace rasterization::gfx {
         float get_float_uniform(const std::string& name) const noexcept;
 
     private:
-        uniform_buffer m_uniforms;
+        _uniform_buffer m_uniforms;
     };
 }

@@ -76,11 +76,11 @@ namespace rasterization::gfx {
         case render_mode::LINES:
             assert(false && "render_mode::LINES is not imlemented");
             break;
-            // ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "line_color");
+            // ASSERT_UNIFORM_VALIDITY(shader_program._uniform_buffer.vec4_uniforms, "line_color");
             //
             // for (size_t i = 1; i < indexes.size(); i += 2) {
             //     if (is_inside_clipping_space(ndc_coords[indexes[i - 1]]) && is_inside_clipping_space(ndc_coords[indexes[i]])) {
-            //         _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program.uniform_buffer.vec4f_uniforms.at("line_color"));
+            //         _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program._uniform_buffer.vec4_uniforms.at("line_color"));
             //     }
             // }
             // break;
@@ -88,11 +88,11 @@ namespace rasterization::gfx {
         case render_mode::LINE_STRIP:
             assert(false && "render_mode::LINE_STRIP is not imlemented");
             break;
-            // ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "line_color");
+            // ASSERT_UNIFORM_VALIDITY(shader_program._uniform_buffer.vec4_uniforms, "line_color");
             //
             // for (size_t i = 1; i < indexes.size(); ++i) {
             //     if (is_inside_clipping_space(ndc_coords[indexes[i - 1]]) && is_inside_clipping_space(ndc_coords[indexes[i]])) {
-            //         _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program.uniform_buffer.vec4f_uniforms.at("line_color"));
+            //         _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program._uniform_buffer.vec4_uniforms.at("line_color"));
             //     }
             // }
             // break;

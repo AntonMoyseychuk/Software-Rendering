@@ -27,22 +27,22 @@ namespace rasterization::gfx {
 
     void _shader_engine::uniform(const std::string &uniform_name, const math::mat4f &mat) noexcept {
         ASSERT_SHADER_PROGRAM_ID_VALIDITY(shader_programs, binded_shader);
-        shader_programs[binded_shader].shader->m_uniforms.mat4f_uniforms[uniform_name] = mat;
+        shader_programs[binded_shader].shader->m_uniforms.mat4_uniforms[uniform_name] = mat;
     }
 
     void _shader_engine::uniform(const std::string &uniform_name, const math::vec4f &vec) noexcept {
         ASSERT_SHADER_PROGRAM_ID_VALIDITY(shader_programs, binded_shader);
-        shader_programs[binded_shader].shader->m_uniforms.vec4f_uniforms[uniform_name] = vec;
+        shader_programs[binded_shader].shader->m_uniforms.vec4_uniforms[uniform_name] = vec;
     }
 
     void _shader_engine::uniform(const std::string &uniform_name, const math::vec3f &vec) noexcept {
         ASSERT_SHADER_PROGRAM_ID_VALIDITY(shader_programs, binded_shader);
-        shader_programs[binded_shader].shader->m_uniforms.vec3f_uniforms[uniform_name] = vec;
+        shader_programs[binded_shader].shader->m_uniforms.vec3_uniforms[uniform_name] = vec;
     }
 
     void _shader_engine::uniform(const std::string &uniform_name, const math::vec2f &vec) noexcept {
         ASSERT_SHADER_PROGRAM_ID_VALIDITY(shader_programs, binded_shader);
-        shader_programs[binded_shader].shader->m_uniforms.vec2f_uniforms[uniform_name] = vec;
+        shader_programs[binded_shader].shader->m_uniforms.vec2_uniforms[uniform_name] = vec;
     }
 
     void _shader_engine::uniform(const std::string &uniform_name, float value) noexcept {
