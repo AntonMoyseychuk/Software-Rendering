@@ -1,8 +1,9 @@
 #include "render_engine.hpp"
-#include "render_engine_macros.hpp"
 
 #include "core/gl_api.hpp"
+
 #include "core/buffer_engine.hpp"
+
 #include "core/shader_engine.hpp"
 #include "core/shader_engine_macros.hpp"
 
@@ -11,6 +12,7 @@
 
 #include "math_3d/util.hpp"
 
+#include <cassert>
 
 namespace rasterization::gfx {
     bool is_inside_clipping_space(const math::vec3f& point) noexcept {
@@ -24,12 +26,9 @@ namespace rasterization::gfx {
     void _render_engine::render(render_mode mode) const noexcept {
         using namespace math;
 
-    #pragma region input-assembler
-        ASSERT_BUFFER_VALIDITY(buff_engine.vbos, buff_engine.curr_vbo);
-        ASSERT_BUFFER_VALIDITY(buff_engine.ibos, buff_engine.curr_ibo);
-        
-        const auto& vbo = buff_engine.vbos[buff_engine.curr_vbo];
-        const auto& ibo = buff_engine.ibos[buff_engine.curr_ibo];
+    #pragma region input-assembler    
+        const auto& vbo = buff_engine._get_binded_vertex_buffer();
+        const auto& ibo = buff_engine._get_binded_index_buffer();
         const std::vector<uint8_t>& local_coords = vbo.data;
         const std::vector<size_t>& indexes = ibo.data;
     #pragma endregion input-assembler
@@ -47,20 +46,24 @@ namespace rasterization::gfx {
         _resize_z_buffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
 
-    #pragma region local-coords-to-NDC
-        ASSERT_SHADER_PROGRAM_ID_VALIDITY(shader_engine.shader_programs, shader_engine.curr_shader);
-
-        const auto& shader_program = shader_engine.shader_programs[shader_engine.curr_shader];
+    #pragma region local-to-raster-coords
+        const auto& shader_program = shader_engine._get_binded_shader_program();
         for (size_t i = 0, j = 0; i < local_coords.size(); i += vbo.element_size, ++j) {
-            screen_coords[j] = shader_program.shader.vertex(shader_program.uniform_buffer, &local_coords[i]);
+            screen_coords[j] = shader_program.vs(&local_coords[i]);
         }
         
         for (size_t i = 0; i < vertex_count; ++i) {
             ndc_coords[i] = screen_coords[i].xyz / screen_coords[i].w;
         }
-    #pragma endregion local-coords-to-NDC
 
-        _rasterize(ndc_coords, raster_coords);
+        for (size_t i = 0; i < screen_coords.size(); ++i) {
+            raster_coords[i] = ndc_coords[i] * core.m_viewport;
+            raster_coords[i].x = std::floor(raster_coords[i].x);
+            raster_coords[i].y = std::floor(raster_coords[i].y);
+        }
+    #pragma endregion local-to-raster-coords
+
+        // _rasterize(ndc_coords, raster_coords);
 
         // Pixel Shaders
         switch (mode) {
@@ -102,7 +105,7 @@ namespace rasterization::gfx {
         case render_mode::TRIANGLES: {
             ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec3f_uniforms, "light_dir");
             ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "polygon_color");
-            
+
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 if (is_inside_clipping_space(ndc_coords[indexes[i]]) && 
                     is_inside_clipping_space(ndc_coords[indexes[i + 1]]) && 
@@ -129,11 +132,11 @@ namespace rasterization::gfx {
     }
 
     void _render_engine::_rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept {
-        for (size_t i = 0; i < screen_coords.size(); ++i) {
-            raster_coords[i] = screen_coords[i] * core.m_viewport;
-            raster_coords[i].x = std::floor(raster_coords[i].x);
-            raster_coords[i].y = std::floor(raster_coords[i].y);
-        }
+        // for (size_t i = 0; i < screen_coords.size(); ++i) {
+        //     raster_coords[i] = screen_coords[i] * core.m_viewport;
+        //     raster_coords[i].x = std::floor(raster_coords[i].x);
+        //     raster_coords[i].y = std::floor(raster_coords[i].y);
+        // }
     }
 
     void _render_engine::_render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept {

@@ -46,7 +46,7 @@ namespace rasterization {
         //     { -1.0f,  1.0f, 1.0f },
         //     {  1.0f,  1.0f, 1.0f },
         //     {  1.0f, -1.0f, 1.0f },
-
+        //
         //     { -1.0f, -1.0f, -1.0f },
         //     { -1.0f,  1.0f, -1.0f },
         //     {  1.0f,  1.0f, -1.0f },
@@ -57,23 +57,23 @@ namespace rasterization {
         //     1, 2,
         //     2, 3,
         //     3, 0,
-
+        //
         //     4, 5,
         //     5, 6,
         //     6, 7,
         //     7, 4,
-
+        //
         //     0, 4,
         //     4, 5,
         //     5, 1,
         //     1, 0,
-
+        //
         //     2, 6,
         //     6, 7,
         //     7, 3,
         //     3, 2,
         // };
-
+        //
         // m_VBO_IBO["cube"] = {
         //     core.create_vertex_buffer(cube, sizeof(cube)),
         //     core.create_index_buffer(indexes, sizeof(indexes) / sizeof(size_t))
@@ -97,7 +97,7 @@ namespace rasterization {
         core.uniform("point_color", color::SKY_BLUE);
 
         core.uniform("model", mat4f::IDENTITY);
-        core.uniform("view", look_at_rh(vec3f::FORWARD * 2.0f, vec3f::ZERO, vec3f::UP));
+        core.uniform("view", look_at_rh(vec3f::FORWARD * 3.0f, vec3f::ZERO, vec3f::UP));
 
         mat4f rotation, translation;
         render_mode model_render_mode = render_mode::TRIANGLES;
@@ -105,7 +105,7 @@ namespace rasterization {
             m_window->PollEvent();
 
             const float dt = _LockFPS();
-            std::cout << "FPS: " << std::to_string(1.0f / dt) << ", time: " << dt << " ms\n";
+            std::cout << "FPS: " << std::to_string(1.0f / dt) << "\ttime: " << dt << "\tms\n";
 
         #pragma region input
             const float angle = to_radians(dt) * 25.0f;

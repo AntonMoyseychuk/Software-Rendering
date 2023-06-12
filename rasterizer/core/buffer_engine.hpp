@@ -31,15 +31,17 @@ namespace rasterization::gfx {
             std::vector<uint8_t> data;
             size_t element_size;
         };
-
+        const vertex_buffer& _get_binded_vertex_buffer() const noexcept;
+        
         struct index_buffer {
             std::vector<size_t> data;
         };
+        const index_buffer& _get_binded_index_buffer() const noexcept;
 
         std::unordered_map<size_t, vertex_buffer> vbos;
         std::unordered_map<size_t, index_buffer> ibos;
 
-        size_t curr_vbo = 0;
-        size_t curr_ibo = 0;
+        size_t binded_vbo = 0;
+        size_t binded_ibo = 0;
     };
 }

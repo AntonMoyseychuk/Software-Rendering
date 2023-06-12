@@ -1,4 +1,6 @@
 #include "buffer_engine.hpp"
+#include "buffer_engine_macros.hpp"
+
 #include "math_3d/util.hpp"
 
 #include <cassert>
@@ -45,12 +47,12 @@ namespace rasterization::gfx {
         switch (type) {
         case buffer_type::VERTEX:
             assert(vbos.count(id) == 1);
-            curr_vbo = id;
+            binded_vbo = id;
             break;
         
         case buffer_type::INDEX:
             assert(ibos.count(id) == 1);
-            curr_ibo = id;
+            binded_ibo = id;
             break;
 
         default:
@@ -60,7 +62,17 @@ namespace rasterization::gfx {
     }
     
     void _buffer_engine::set_buffer_element_size(size_t size) noexcept {
-        assert(vbos.count(curr_vbo) == 1);
-        vbos[curr_vbo].element_size = size;
+        assert(vbos.count(binded_vbo) == 1);
+        vbos[binded_vbo].element_size = size;
+    }
+    
+    const _buffer_engine::vertex_buffer &_buffer_engine::_get_binded_vertex_buffer() const noexcept {
+        ASSERT_BUFFER_VALIDITY(vbos, binded_vbo);
+        return vbos.at(binded_vbo);
+    }
+    
+    const _buffer_engine::index_buffer &_buffer_engine::_get_binded_index_buffer() const noexcept {
+        ASSERT_BUFFER_VALIDITY(ibos, binded_ibo);
+        return ibos.at(binded_ibo);
     }
 }

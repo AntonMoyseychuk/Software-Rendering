@@ -25,15 +25,21 @@ namespace rasterization::gfx {
     private:
         _shader_engine() = default;
 
+    public:
         struct shader_program final {
-            _shader shader;
             uniform_buffer uniform_buffer;
+            _shader shader;
+
+            math::vec4f vs(const void* vertex) const noexcept { return shader.vertex(uniform_buffer, vertex); }
+            math::color ps(const void* vertex) const noexcept { return shader.pixel(uniform_buffer, vertex); }
         };
+
+        const shader_program& _get_binded_shader_program() const noexcept;
 
         using shader_id = size_t;
 
     public:
         std::unordered_map<shader_id, shader_program> shader_programs;
-        size_t curr_shader = 0;
+        size_t binded_shader = 0;
     };
 }
