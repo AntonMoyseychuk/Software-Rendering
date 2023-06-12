@@ -83,6 +83,14 @@ namespace rasterization::gfx {
         m_shader_engine.bind_shader(shader_id);
     }
 
+    size_t gl_api::create_abstract_shader(const std::shared_ptr<_abstract_shader> &shader) const noexcept {
+        return m_shader_engine.create_abstract_shader(shader);
+    }
+
+    void gl_api::bind_abstract_shader(size_t shader_id) const noexcept {
+        m_shader_engine.bind_abstract_shader(shader_id);
+    }
+
     void gl_api::uniform(const std::string &uniform_name, const math::mat4f &mat) const noexcept {
         m_shader_engine.uniform(uniform_name, mat);
     }
@@ -101,6 +109,26 @@ namespace rasterization::gfx {
 
     void gl_api::uniform(const std::string &uniform_name, float value) const noexcept {
         m_shader_engine.uniform(uniform_name, value);
+    }
+    
+    void gl_api::abstract_uniform(const std::string &uniform_name, const math::mat4f &mat) const noexcept {
+        m_shader_engine.abstract_uniform(uniform_name, mat);
+    }
+    
+    void gl_api::abstract_uniform(const std::string &uniform_name, const math::vec4f &vec) const noexcept {
+        m_shader_engine.abstract_uniform(uniform_name, vec);
+    }
+
+    void gl_api::abstract_uniform(const std::string &uniform_name, const math::vec3f &vec) const noexcept {
+        m_shader_engine.abstract_uniform(uniform_name, vec);
+    }
+
+    void gl_api::abstract_uniform(const std::string &uniform_name, const math::vec2f &vec) const noexcept {
+        m_shader_engine.abstract_uniform(uniform_name, vec);
+    }
+
+    void gl_api::abstract_uniform(const std::string &uniform_name, float value) const noexcept {
+        m_shader_engine.abstract_uniform(uniform_name, value);
     }
 #pragma endregion shader_engine_api
 }

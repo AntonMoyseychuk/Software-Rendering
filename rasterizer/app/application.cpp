@@ -6,6 +6,7 @@
 #include "graphics/model.hpp"
 
 #include "graphics/shaders/simple_shader.hpp"
+#include "graphics/shaders/test.hpp"
 
 #include <iostream>
 #include <memory>
@@ -87,17 +88,20 @@ namespace rasterization {
         using namespace math;
         using namespace win_framewrk;
 
-        size_t shader = core.create_shader(SimpleShader::vertex, SimpleShader::pixel);
-        core.bind_shader(shader);
+        // size_t shader = core.create_shader(SimpleShader::vertex, SimpleShader::pixel);
+        // core.bind_shader(shader);
 
-        core.uniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
+        size_t shader = core.create_abstract_shader(std::make_shared<SimpleAbstrShader>());
+        core.bind_abstract_shader(shader);
+
+        core.abstract_uniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
         
-        core.uniform("polygon_color", color::GOLDEN);
-        core.uniform("line_color", color::LIME);
-        core.uniform("point_color", color::SKY_BLUE);
+        core.abstract_uniform("polygon_color", color::GOLDEN);
+        core.abstract_uniform("line_color", color::LIME);
+        core.abstract_uniform("point_color", color::SKY_BLUE);
 
-        core.uniform("model", mat4f::IDENTITY);
-        core.uniform("view", look_at_rh(vec3f::FORWARD * 3.0f, vec3f::ZERO, vec3f::UP));
+        core.abstract_uniform("model", mat4f::IDENTITY);
+        core.abstract_uniform("view", look_at_rh(vec3f::FORWARD * 3.0f, vec3f::ZERO, vec3f::UP));
 
         mat4f rotation, translation;
         render_mode model_render_mode = render_mode::TRIANGLES;
@@ -120,46 +124,46 @@ namespace rasterization {
 
             if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
                 rotation = rotate_y(rotation, -angle);
-                core.uniform("model", rotation * translation);
+                core.abstract_uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
                 rotation = rotate_y(rotation, angle);
-                core.uniform("model", rotation * translation);
+                core.abstract_uniform("model", rotation * translation);
             }
 
             if (m_window->IsKeyPressed(Key::UP_ARROW)) {
                 rotation = rotate_x(rotation, -angle);
-                core.uniform("model", rotation * translation);
+                core.abstract_uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
                 rotation = rotate_x(rotation, angle);
-                core.uniform("model", rotation * translation);
+                core.abstract_uniform("model", rotation * translation);
             }
 
             if (m_window->IsKeyPressed(Key::D)) {
                 translation = translate(translation, vec3f::RIGHT * dt);
-                core.uniform("model", rotation * translation);
+                core.abstract_uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::A)) {
                 translation = translate(translation, vec3f::LEFT * dt);
-                core.uniform("model", rotation * translation);
+                core.abstract_uniform("model", rotation * translation);
             }
 
             if (m_window->IsKeyPressed(Key::W)) {
                 translation = translate(translation, vec3f::UP * dt);
-                core.uniform("model", rotation * translation);
+                core.abstract_uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::S)) {
                 translation = translate(translation, vec3f::DOWN * dt);
-                core.uniform("model", rotation * translation);
+                core.abstract_uniform("model", rotation * translation);
             }
 
             if (m_window->IsKeyPressed(Key::Z)) {
                 translation = translate(translation, vec3f::BACKWARD * dt);
-                core.uniform("model", rotation * translation);
+                core.abstract_uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::X)) {
                 translation = translate(translation, vec3f::FORWARD * dt);
-                core.uniform("model", rotation * translation);
+                core.abstract_uniform("model", rotation * translation);
             }
         #pragma endregion input
 
-            core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
+            core.abstract_uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
             
             core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
             core.bind(buffer_type::INDEX, m_VBO_IBO["model"].ibo);

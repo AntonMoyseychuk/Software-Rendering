@@ -43,9 +43,10 @@ namespace rasterization::gfx {
     #pragma endregion resizing-buffers
 
     #pragma region local-to-raster-coords
-        const auto& shader_program = shader_engine._get_binded_shader_program();
+        // const auto& shader_program = shader_engine._get_binded_shader_program();
+        const auto& shader_program = shader_engine._get_binded_abstract_shader_program();
         for (size_t i = 0, j = 0; i < local_coords.size(); i += vbo.element_size, ++j) {
-            screen_coords[j] = shader_program.vs(&local_coords[i]);
+            screen_coords[j] = shader_program.shader->vertex(&local_coords[i]);
         }
         
         for (size_t i = 0; i < vertex_count; ++i) {
@@ -64,13 +65,13 @@ namespace rasterization::gfx {
         // Pixel Shaders
         switch (mode) {
         case render_mode::POINTS: {
-            ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "point_color");
+            // ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "point_color");
             
-            for (size_t i = 0; i < indexes.size(); ++i) {
-                if (_is_inside_clipping_space(ndc_coords[indexes[i]])) {
-                    _render_pixel(raster_coords[indexes[i]].xy, shader_program.uniform_buffer.vec4f_uniforms.at("point_color"));
-                }
-            }    
+            // for (size_t i = 0; i < indexes.size(); ++i) {
+            //     if (_is_inside_clipping_space(ndc_coords[indexes[i]])) {
+            //         _render_pixel(raster_coords[indexes[i]].xy, shader_program.uniform_buffer.vec4f_uniforms.at("point_color"));
+            //     }
+            // }    
             break;
         }
         
@@ -99,8 +100,8 @@ namespace rasterization::gfx {
             // break;
 
         case render_mode::TRIANGLES: {
-            ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec3f_uniforms, "light_dir");
-            ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "polygon_color");
+            // ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec3f_uniforms, "light_dir");
+            // ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "polygon_color");
 
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 if (_is_inside_clipping_space(ndc_coords[indexes[i]]) && 
@@ -112,8 +113,8 @@ namespace rasterization::gfx {
                         screen_coords[indexes[i + 1]].xyz - screen_coords[indexes[i]].xyz
                     ));
 
-                    const float light_intensity = dot(normal, shader_program.uniform_buffer.vec3f_uniforms.at("light_dir")) + 0.1f;
-                    const color color = shader_program.uniform_buffer.vec4f_uniforms.at("polygon_color") * light_intensity;
+                    const float light_intensity = dot(normal, shader_program.shader->get_vec3_uniform("light_dir")) + 0.1f;
+                    const color color = shader_program.shader->get_vec4_uniform("polygon_color") * light_intensity;
 
                     _render_triangle(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]], color);
                 }
