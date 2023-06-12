@@ -1,7 +1,10 @@
 #include "render_engine.hpp"
+#include "render_engine_macros.hpp"
+
 #include "core/gl_api.hpp"
 #include "core/buffer_engine.hpp"
 #include "core/shader_engine.hpp"
+#include "core/shader_engine_macros.hpp"
 
 #include "math_3d/vec_operations.hpp"
 #include "math_3d/mat_operations.hpp"
@@ -10,8 +13,7 @@
 
 #include <cassert>
 
-#define ASSERT_BUFFER_VALIDITY(container, id) assert(container.count((id)) == 1)
-#define ASSERT_SHADER_VALIDITY(container, id) assert(container.count((id)) == 1)
+
 
 namespace rasterization::gfx {
     static gl_api& core = gl_api::get();
@@ -45,7 +47,7 @@ namespace rasterization::gfx {
     #pragma endregion resizing-buffers
 
     #pragma region VS
-        ASSERT_SHADER_VALIDITY(shader_engine.shader_programs, shader_engine.curr_shader);
+        ASSERT_SHADER_PROGRAM_ID_VALIDITY(shader_engine.shader_programs, shader_engine.curr_shader);
 
         const auto& shader_program = shader_engine.shader_programs[shader_engine.curr_shader];
         for (size_t i = 0, j = 0; i < local_coords.size(); i += vbo.element_size, ++j) {

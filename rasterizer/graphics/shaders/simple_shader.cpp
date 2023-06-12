@@ -1,7 +1,7 @@
 #include "simple_shader.hpp"
-#include "core/shader_engine.hpp"
 
-#include <cassert>
+#include "core/shader_engine.hpp"
+#include "core/shader_engine_macros.hpp"
 
 namespace rasterization::gfx {
     struct Vertex {

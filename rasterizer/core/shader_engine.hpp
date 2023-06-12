@@ -3,8 +3,6 @@
 
 #include "shader.hpp"
 
-#define ASSERT_UNIFORM_VALIDITY(container, name) assert(container.count((name)) == 1)
-
 namespace rasterization::gfx {
     struct _shader_engine final {
         _shader_engine(const _shader_engine& engine) = delete;
