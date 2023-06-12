@@ -201,7 +201,7 @@ namespace rasterization::gfx {
             vec3f right = is_second_half ? v1 + (v2 - v1) * beta : v0 + (v1 - v0) * beta;
             if (left.x > right.x) { std::swap(left, right); }
             
-            interpolate<float>(left.x, left.z, right.x, right.z, z_values);
+            interpolate(left.x, left.z, right.x, right.z, z_values);
 
             for (int32_t j = left.x; j <= right.x; ++j) {
                 const vec3f pixel(j, v0.y + i, z_values[j - left.x]);
