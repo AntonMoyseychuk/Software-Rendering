@@ -13,6 +13,10 @@
 
 
 namespace rasterization::gfx {
+    bool is_inside_clipping_space(const math::vec3f& point) noexcept {
+        return math::abs(point.x) < 1.0f && math::abs(point.y) < 1.0f;
+    }
+
     static gl_api& core = gl_api::get();
     static _buffer_engine& buff_engine = _buffer_engine::get();
     static _shader_engine& shader_engine = _shader_engine::get();
@@ -63,44 +67,65 @@ namespace rasterization::gfx {
         // Pixel Shaders
         switch (mode) {
         case render_mode::POINTS:
-            ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "point_color");
-
-            for (size_t i = 0; i < indexes.size(); ++i) {
-                _render_pixel(raster_coords[indexes[i]], shader_program.uniform_buffer.vec4f_uniforms.at("point_color"));
-            }    
+            assert(false && "render_mode::POINTS is not imlemented");
             break;
-
+            // ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "point_color");
+            //
+            // for (size_t i = 0; i < indexes.size(); ++i) {
+            //     if (is_inside_clipping_space(ndc_coords[indexes[i]])) {
+            //         _render_pixel(raster_coords[indexes[i]], shader_program.uniform_buffer.vec4f_uniforms.at("point_color"));
+            //     }
+            // }    
+            // break;
+        
         case render_mode::LINES:
-            ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "line_color");
-
-            for (size_t i = 0; i < indexes.size(); i += 2) {
-                _render_line(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], shader_program.uniform_buffer.vec4f_uniforms.at("line_color"));
-            }
+            assert(false && "render_mode::LINES is not imlemented");
             break;
-
+            // ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "line_color");
+            //
+            // for (size_t i = 1; i < indexes.size(); i += 2) {
+            //     if (is_inside_clipping_space(ndc_coords[indexes[i - 1]]) && is_inside_clipping_space(ndc_coords[indexes[i]])) {
+            //         _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program.uniform_buffer.vec4f_uniforms.at("line_color"));
+            //     }
+            // }
+            // break;
+        
         case render_mode::LINE_STRIP:
-            ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "line_color");
-
-            for (size_t i = 1; i < indexes.size(); ++i) {
-                _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program.uniform_buffer.vec4f_uniforms.at("line_color"));
-            }
+            assert(false && "render_mode::LINE_STRIP is not imlemented");
             break;
+            // ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "line_color");
+            //
+            // for (size_t i = 1; i < indexes.size(); ++i) {
+            //     if (is_inside_clipping_space(ndc_coords[indexes[i - 1]]) && is_inside_clipping_space(ndc_coords[indexes[i]])) {
+            //         _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program.uniform_buffer.vec4f_uniforms.at("line_color"));
+            //     }
+            // }
+            // break;
 
         case render_mode::TRIANGLES:
             ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec3f_uniforms, "light_dir");
             ASSERT_UNIFORM_VALIDITY(shader_program.uniform_buffer.vec4f_uniforms, "polygon_color");
             
             for (size_t i = 0; i < indexes.size(); i += 3) {
-                const vec3f normal = normalize(cross(
-                    screen_coords[indexes[i + 2]].xyz - screen_coords[indexes[i]].xyz,
-                    screen_coords[indexes[i + 1]].xyz - screen_coords[indexes[i]].xyz
-                ));
+                if (is_inside_clipping_space(ndc_coords[indexes[i]]) && 
+                    is_inside_clipping_space(ndc_coords[indexes[i + 1]]) && 
+                    is_inside_clipping_space(ndc_coords[indexes[i + 2]])
+                ) {
+                    const vec3f normal = normalize(cross(
+                        screen_coords[indexes[i + 2]].xyz - screen_coords[indexes[i]].xyz,
+                        screen_coords[indexes[i + 1]].xyz - screen_coords[indexes[i]].xyz
+                    ));
 
-                const float light_intensity = dot(normal, shader_program.uniform_buffer.vec3f_uniforms.at("light_dir")) + 0.1f;
-                const color color = shader_program.uniform_buffer.vec4f_uniforms.at("polygon_color") * light_intensity;
+                    const float light_intensity = dot(normal, shader_program.uniform_buffer.vec3f_uniforms.at("light_dir")) + 0.1f;
+                    const color color = shader_program.uniform_buffer.vec4f_uniforms.at("polygon_color") * light_intensity;
 
-                _render_triangle(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]], color);
+                    _render_triangle(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]], color);
+                }
             }
+            break;
+
+        default:
+            assert(false && "Invalid Rendering Mode");
             break;
         }
     }
@@ -113,14 +138,8 @@ namespace rasterization::gfx {
         }
     }
 
-    void _render_engine::_render_pixel(const math::vec3f& raster_coord, const math::color& color) const noexcept {
-        const int64_t idx = raster_coord.x + raster_coord.y * m_window_ptr->GetWidth();
-        if (idx >= 0 && idx < m_z_buffer.size()) {
-            if (raster_coord.z <= m_z_buffer[static_cast<size_t>(idx)]) {
-                m_z_buffer[static_cast<size_t>(idx)] = raster_coord.z;
-                m_window_ptr->SetPixelColor(raster_coord.x, raster_coord.y, R_G_B_A(color));
-            }
-        }
+    void _render_engine::_render_pixel(const math::vec3f& pixel, const math::color& color) const noexcept {
+        m_window_ptr->SetPixelColor(pixel.x, pixel.y, R_G_B_A(color));
     }
 
     void _render_engine::_render_line(const math::vec3f& raster_coord_v0, const math::vec3f& raster_coord_v1, const math::color& color) const noexcept {
@@ -140,7 +159,10 @@ namespace rasterization::gfx {
             interpolate<int32_t>(v0.x, v0.y, v1.x, v1.y, values);
             interpolate<float>(v0.x, v0.z, v1.x, v1.z, z_values);
             for (int32_t x = v0.x; x <= v1.x; ++x) {
-                _render_pixel(vec3f(x, values[x - v0.x], z_values[x - v0.x]), color);
+                const vec3f pixel(x, values[x - v0.x], z_values[x - v0.x]);
+                if (_check_and_update_depth(pixel)) {
+                    _render_pixel(pixel, color);
+                }
             }
         } else {
             if (v0.y > v1.y) {
@@ -150,7 +172,10 @@ namespace rasterization::gfx {
             interpolate<int32_t>(v0.y, v0.x, v1.y, v1.x, values);
             interpolate<float>(v0.y, v0.z, v1.y, v1.z, z_values);
             for (int32_t y = v0.y; y <= v1.y; ++y) {
-                _render_pixel(vec3f(values[y - v0.y], y, z_values[y - v0.y]), color);
+                const vec3f pixel(values[y - v0.y], y, z_values[y - v0.y]);
+                if (_check_and_update_depth(pixel)) {
+                    _render_pixel(pixel, color);
+                }
             }
         }
     }
@@ -185,13 +210,28 @@ namespace rasterization::gfx {
             interpolate<float>(left.x, left.z, right.x, right.z, z_values);
 
             for (int32_t j = left.x; j <= right.x; ++j) {
-                _render_pixel(vec3f(j, v0.y + i, z_values[j - left.x]), color);
+                const vec3f pixel(j, v0.y + i, z_values[j - left.x]);
+                if (_check_and_update_depth(pixel)) {
+                    _render_pixel(pixel, color);
+                }
             }
         }
     }
 
     void _render_engine::_resize_z_buffer(uint32_t width, uint32_t height) const noexcept {
         m_z_buffer.resize(width * height, std::numeric_limits<float>::max());
+    }
+
+    bool _render_engine::_check_and_update_depth(const math::vec3f& pixel) const noexcept {
+        const int64_t idx = pixel.x + pixel.y * m_window_ptr->GetWidth();
+        if (math::between<size_t>(idx, 0, m_z_buffer.size())) {
+            if (pixel.z <= m_z_buffer[idx]) {
+                m_z_buffer[static_cast<size_t>(idx)] = pixel.z;
+                return true; 
+            }
+        }
+
+        return false;
     }
 
     _render_engine &_render_engine::get() noexcept {

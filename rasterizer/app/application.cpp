@@ -41,45 +41,45 @@ namespace rasterization {
         core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
         core.set_buffer_element_size(sizeof(model.vertexes[0]));
 
-        const vec3f cube[] = {
-            { -1.0f, -1.0f, 1.0f },
-            { -1.0f,  1.0f, 1.0f },
-            {  1.0f,  1.0f, 1.0f },
-            {  1.0f, -1.0f, 1.0f },
+        // const vec3f cube[] = {
+        //     { -1.0f, -1.0f, 1.0f },
+        //     { -1.0f,  1.0f, 1.0f },
+        //     {  1.0f,  1.0f, 1.0f },
+        //     {  1.0f, -1.0f, 1.0f },
 
-            { -1.0f, -1.0f, -1.0f },
-            { -1.0f,  1.0f, -1.0f },
-            {  1.0f,  1.0f, -1.0f },
-            {  1.0f, -1.0f, -1.0f }
-        };
-        const size_t indexes[] = {
-            0, 1,
-            1, 2,
-            2, 3,
-            3, 0,
+        //     { -1.0f, -1.0f, -1.0f },
+        //     { -1.0f,  1.0f, -1.0f },
+        //     {  1.0f,  1.0f, -1.0f },
+        //     {  1.0f, -1.0f, -1.0f }
+        // };
+        // const size_t indexes[] = {
+        //     0, 1,
+        //     1, 2,
+        //     2, 3,
+        //     3, 0,
 
-            4, 5,
-            5, 6,
-            6, 7,
-            7, 4,
+        //     4, 5,
+        //     5, 6,
+        //     6, 7,
+        //     7, 4,
 
-            0, 4,
-            4, 5,
-            5, 1,
-            1, 0,
+        //     0, 4,
+        //     4, 5,
+        //     5, 1,
+        //     1, 0,
 
-            2, 6,
-            6, 7,
-            7, 3,
-            3, 2,
-        };
+        //     2, 6,
+        //     6, 7,
+        //     7, 3,
+        //     3, 2,
+        // };
 
-        m_VBO_IBO["cube"] = {
-            core.create_vertex_buffer(cube, sizeof(cube)),
-            core.create_index_buffer(indexes, sizeof(indexes) / sizeof(size_t))
-        };
-        core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
-        core.set_buffer_element_size(sizeof(cube[0]));
+        // m_VBO_IBO["cube"] = {
+        //     core.create_vertex_buffer(cube, sizeof(cube)),
+        //     core.create_index_buffer(indexes, sizeof(indexes) / sizeof(size_t))
+        // };
+        // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
+        // core.set_buffer_element_size(sizeof(cube[0]));
     }
 
     void Application::Run() noexcept {
@@ -165,9 +165,9 @@ namespace rasterization {
             core.bind(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
             core.render(model_render_mode);
 
-            core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
-            core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
-            core.render(render_mode::LINES);
+            // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
+            // core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
+            // core.render(render_mode::LINES);
 
             core.swap_buffers(); 
             core.clear_backbuffer();

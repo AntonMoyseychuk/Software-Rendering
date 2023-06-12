@@ -24,18 +24,15 @@ namespace rasterization::gfx {
 
     private:
         _render_engine() noexcept = default;
+
         void _resize_z_buffer(uint32_t width, uint32_t height) const noexcept;
+        bool _check_and_update_depth(const math::vec3f& pixel) const noexcept;
 
         void _rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept;
 
-        void _render_pixel(const math::vec3f& raster_coord, const math::color& color) const noexcept;
-        void _render_line(const math::vec3f& raster_coord_0, const math::vec3f& raster_coord_1, const math::color& color) const noexcept;
-        void _render_triangle(
-            const math::vec3f &raster_coord_0, 
-            const math::vec3f &raster_coord_1, 
-            const math::vec3f &raster_coord_2, 
-            const math::color& color
-        ) const noexcept;
+        void _render_pixel(const math::vec3f& pixel, const math::color& color) const noexcept;
+        void _render_line(const math::vec3f& pixel_0, const math::vec3f& pixel_1, const math::color& color) const noexcept;
+        void _render_triangle(const math::vec3f &pixel_0, const math::vec3f &pixel_1, const math::vec3f &pixel_2, const math::color& color) const noexcept;
 
     private:
         mutable std::vector<float> m_z_buffer;

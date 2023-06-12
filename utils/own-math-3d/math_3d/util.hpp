@@ -43,6 +43,11 @@ namespace math {
     }
 
     template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
+    inline constexpr bool between(Type value, Type left, Type right) noexcept {
+        return value >= left && value <= right;
+    }
+
+    template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
     inline std::vector<Type>& interpolate(Type i0, Type d0, Type i1, Type d1, std::vector<Type>& values) noexcept {
         if (i0 == i1) {
             values.resize(1, d0);
