@@ -212,7 +212,7 @@ namespace rasterization::gfx {
         return false;
     }
 
-    bool _render_engine::_is_inside_clipping_space(const math::vec3f &point) const noexcept {
+    bool _render_engine::_is_inside_clipping_space(const math::vec3f &point) noexcept {
         return math::abs(point.x) <= 1.0f && math::abs(point.y) <= 1.0f && point.z <= -1.0f;
     }
 
