@@ -32,14 +32,20 @@ namespace rasterization {
             core.viewport(width, height);
         });
 
-        Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
-        
-        m_VBO_IBO["model"] = {
-            core.create_vertex_buffer(model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
-            core.create_index_buffer(model.vert_indexes.data(), model.vert_indexes.size())
+
+        const vec3f triangle[] = {
+            { -0.5f, -0.5f, 0.0f },
+            {  0.5f, -0.5f, 0.0f },
+            {  0.0f,  0.5f, 0.0f },
         };
-        core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-        core.set_buffer_element_size(sizeof(model.vertexes[0]));
+        const size_t ind[] = { 0, 1, 2 };
+
+        m_VBO_IBO["triangle"] = {
+            core.create_vertex_buffer(triangle, sizeof(triangle)),
+            core.create_index_buffer(ind, 3)
+        };
+        core.bind(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
+        core.set_buffer_element_size(sizeof(triangle[0]));
 
         // const vec3f cube[] = {
         //     { -1.0f, -1.0f, 1.0f },
@@ -80,6 +86,15 @@ namespace rasterization {
         // };
         // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
         // core.set_buffer_element_size(sizeof(cube[0]));
+
+        // Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
+        //
+        // m_VBO_IBO["model"] = {
+        //     core.create_vertex_buffer(model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
+        //     core.create_index_buffer(model.vert_indexes.data(), model.vert_indexes.size())
+        // };
+        // core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+        // core.set_buffer_element_size(sizeof(model.vertexes[0]));
     }
 
     void Application::Run() noexcept {
@@ -161,9 +176,13 @@ namespace rasterization {
 
             core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
             
-            core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-            core.bind(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
+            core.bind(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
+            core.bind(buffer_type::INDEX, m_VBO_IBO["triangle"].ibo);
             core.render(model_render_mode);
+
+            // core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+            // core.bind(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
+            // core.render(model_render_mode);
 
             // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
             // core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
