@@ -87,14 +87,14 @@ namespace rasterization {
         // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
         // core.set_buffer_element_size(sizeof(cube[0]));
 
-        // Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
-        //
-        // m_VBO_IBO["model"] = {
-        //     core.create_vertex_buffer(model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
-        //     core.create_index_buffer(model.vert_indexes.data(), model.vert_indexes.size())
-        // };
-        // core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-        // core.set_buffer_element_size(sizeof(model.vertexes[0]));
+        Model model("..\\..\\..\\rasterizer\\assets\\suzanne.obj");
+        
+        m_VBO_IBO["model"] = {
+            core.create_vertex_buffer(model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
+            core.create_index_buffer(model.vert_indexes.data(), model.vert_indexes.size())
+        };
+        core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+        core.set_buffer_element_size(sizeof(model.vertexes[0]));
     }
 
     void Application::Run() noexcept {
@@ -123,7 +123,7 @@ namespace rasterization {
             std::cout << "FPS: " << std::to_string(1.0f / dt) << "\ttime: " << dt << "\tms\n";
 
         #pragma region input
-            const float angle = to_radians(dt) * 25.0f;
+            const float angle = to_radians(dt) * 45.0f;
             
             if (m_window->IsKeyPressed(Key::NUMBER_1)) {
                 model_render_mode = render_mode::POINTS;
@@ -176,13 +176,13 @@ namespace rasterization {
 
             core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
             
-            core.bind(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
-            core.bind(buffer_type::INDEX, m_VBO_IBO["triangle"].ibo);
-            core.render(model_render_mode);
-
-            // core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-            // core.bind(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
+            // core.bind(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
+            // core.bind(buffer_type::INDEX, m_VBO_IBO["triangle"].ibo);
             // core.render(model_render_mode);
+
+            core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+            core.bind(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
+            core.render(model_render_mode);
 
             // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
             // core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);

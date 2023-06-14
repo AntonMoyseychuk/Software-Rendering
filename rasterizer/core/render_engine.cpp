@@ -56,8 +56,6 @@ namespace rasterization::gfx {
         }
     #pragma endregion local-to-raster-coords
 
-        // _rasterize(ndc_coords, raster_coords);
-
         // Pixel Shaders
         switch (mode) {
         case render_mode::POINTS: {
@@ -70,7 +68,7 @@ namespace rasterization::gfx {
             break;
         }
         
-        case render_mode::LINES:
+        case render_mode::LINES: {
             assert(false && "render_mode::LINES is not imlemented");
             break;
             // ASSERT_UNIFORM_VALIDITY(shader_program._uniform_buffer.vec4_uniforms, "line_color");
@@ -81,8 +79,9 @@ namespace rasterization::gfx {
             //     }
             // }
             // break;
+        }
         
-        case render_mode::LINE_STRIP:
+        case render_mode::LINE_STRIP: {
             assert(false && "render_mode::LINE_STRIP is not imlemented");
             break;
             // ASSERT_UNIFORM_VALIDITY(shader_program._uniform_buffer.vec4_uniforms, "line_color");
@@ -93,21 +92,19 @@ namespace rasterization::gfx {
             //     }
             // }
             // break;
+        }
 
         case render_mode::TRIANGLES: {
-            assert(indexes.size() % 3 == 0);
-            
             const color polygon_color = shader_program.shader->get_vec4_uniform("polygon_color");
-            for (size_t i = 0; i < indexes.size(); i += 3) {
-                if (inside_clipping_space[indexes[i]] && inside_clipping_space[indexes[i + 1]] && inside_clipping_space[indexes[i + 2]]) {
+            for (size_t i = 2; i < indexes.size(); i += 3) {
+                if (inside_clipping_space[indexes[i - 2]] && inside_clipping_space[indexes[i - 1]] && inside_clipping_space[indexes[i]]) {
                     const vec3f normal = normalize(cross(
-                        screen_coords[indexes[i + 2]].xyz - screen_coords[indexes[i]].xyz,
-                        screen_coords[indexes[i + 1]].xyz - screen_coords[indexes[i]].xyz
+                        screen_coords[indexes[i]].xyz - screen_coords[indexes[i - 2]].xyz,
+                        screen_coords[indexes[i - 1]].xyz - screen_coords[indexes[i]].xyz
                     ));
-
+                    
                     const float intensity = dot(normal, shader_program.shader->get_vec3_uniform("light_dir")) + 0.1f;
-
-                    _render_triangle(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]], polygon_color * intensity);
+                    _render_triangle(raster_coords[indexes[i - 2]], raster_coords[indexes[i - 1]], raster_coords[indexes[i]], polygon_color * intensity);
                 }
             }
             break;
@@ -123,11 +120,11 @@ namespace rasterization::gfx {
         m_window_ptr->SetPixelColor(pixel.x, pixel.y, R_G_B_A(color));
     }
 
-    void _render_engine::_render_line(const math::vec3f& pixel_0, const math::vec3f& pixel_1, const math::color& color) const noexcept {
+    void _render_engine::_render_line(const math::vec3f& pix0, const math::vec3f& pix1, const math::color& color) const noexcept {
         using namespace math;
 
-        auto v0 = pixel_0;
-        auto v1 = pixel_1;
+        auto v0 = pix0;
+        auto v1 = pix1;
 
         static std::vector<int32_t> values;
         static std::vector<float> z_values;
@@ -141,7 +138,7 @@ namespace rasterization::gfx {
             interpolate<float>(v0.x, v0.z, v1.x, v1.z, z_values);
             for (int32_t x = v0.x; x <= v1.x; ++x) {
                 const vec3f pixel(x, values[x - v0.x], z_values[x - v0.x]);
-                if (_check_and_update_depth(pixel)) {
+                if (_test_and_update_depth(pixel)) {
                     _render_pixel(pixel.xy, color);
                 }
             }
@@ -154,43 +151,33 @@ namespace rasterization::gfx {
             interpolate<float>(v0.y, v0.z, v1.y, v1.z, z_values);
             for (int32_t y = v0.y; y <= v1.y; ++y) {
                 const vec3f pixel(values[y - v0.y], y, z_values[y - v0.y]);
-                if (_check_and_update_depth(pixel)) {
+                if (_test_and_update_depth(pixel)) {
                     _render_pixel(pixel.xy, color);
                 }
             }
         }
     }
 
-    void _render_engine::_render_triangle(const math::vec3f &pixel_0, const math::vec3f &pixel_1, const math::vec3f &pixel_2, 
-        const math::color& color
-    ) const noexcept {
+    void _render_engine::_render_triangle(const math::vec3f &pix0, const math::vec3f &pix1, const math::vec3f &pix2, const math::color& color) const noexcept {
         using namespace math;
 
-        auto v0 = pixel_0, v1 = pixel_1, v2 = pixel_2;
-        if (v0.y > v1.y) { std::swap(v0, v1); }
-        if (v0.y > v2.y) { std::swap(v0, v2); }
-        if (v1.y > v2.y) { std::swap(v1, v2); }
+        const vec2i bboxmin(std::min(std::min(pix0.x, pix1.x), pix2.x), std::min(std::min(pix0.y, pix1.y), pix2.y));
+        const vec2i bboxmax(std::max(std::max(pix0.x, pix1.x), pix2.x), std::max(std::max(pix0.y, pix1.y), pix2.y));
 
-        static std::vector<float> z_values; 
-
-        const uint32_t total_height = v2.y - v0.y;
-        for (uint32_t i = 0; i < total_height; ++i) {
-            const bool is_second_half = i > v1.y - v0.y || v1.y == v0.y;
-            const uint32_t segment_height = is_second_half ? v2.y - v1.y : v1.y - v0.y;
-            
-            const float alpha = static_cast<float>(i) / total_height;
-            const float beta  = static_cast<float>(i - (is_second_half ? v1.y - v0.y : 0)) / segment_height;
-            
-            vec3f left = v0 + (v2 - v0) * alpha;
-            vec3f right = is_second_half ? v1 + (v2 - v1) * beta : v0 + (v1 - v0) * beta;
-            if (left.x > right.x) { std::swap(left, right); }
-            
-            interpolate(left.x, left.z, right.x, right.z, z_values);
-
-            for (int32_t j = left.x; j <= right.x; ++j) {
-                const vec3f pixel(j, v0.y + i, z_values[j - left.x]);
-                if (_check_and_update_depth(pixel)) {
-                    _render_pixel(pixel.xy, color);
+        for (size_t y = bboxmin.y; y <= bboxmax.y; ++y) {
+            for (size_t x = bboxmin.x; x <= bboxmax.x; ++x) {
+                const vec2f p(x, y);
+                
+                const float area = _edge(pix0.xy, pix1.xy, pix2.xy);
+                const float w0 = _edge(pix1.xy, pix2.xy, p) / area;
+                const float w1 = _edge(pix2.xy, pix0.xy, p) / area;
+                const float w2 = 1.0f - w0 - w1;
+                
+                if (w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) {
+                    const float depth = pix0.z * w0 + pix1.z * w1 + pix2.z * w2;
+                    if (_test_and_update_depth(math::vec3f(p, depth))) {
+                        _render_pixel(p, color);
+                    }
                 }
             }
         }
@@ -200,7 +187,7 @@ namespace rasterization::gfx {
         m_z_buffer.resize(width * height, std::numeric_limits<float>::max());
     }
 
-    bool _render_engine::_check_and_update_depth(const math::vec3f& pixel) const noexcept {
+    bool _render_engine::_test_and_update_depth(const math::vec3f& pixel) const noexcept {
         const int64_t idx = pixel.x + pixel.y * m_window_ptr->GetWidth();
         if (math::between<size_t>(idx, 0, m_z_buffer.size())) {
             if (pixel.z <= m_z_buffer[idx]) {
@@ -214,6 +201,10 @@ namespace rasterization::gfx {
 
     bool _render_engine::_is_inside_clipping_space(const math::vec3f &point) noexcept {
         return math::abs(point.x) <= 1.0f && math::abs(point.y) <= 1.0f && point.z <= -1.0f;
+    }
+
+    float _render_engine::_edge(const math::vec2f &v0, const math::vec2f &v1, const math::vec2f &p) noexcept {
+        return (p.x - v0.x) * (v1.y - v0.y) - (p.y - v0.y) * (v1.x - v0.x);
     }
 
     _render_engine &_render_engine::get() noexcept {

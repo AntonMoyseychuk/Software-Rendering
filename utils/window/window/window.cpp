@@ -132,9 +132,6 @@ namespace win_framewrk {
     }
 
     bool Window::IsOpen() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
         return !m_is_quit;
     }
     

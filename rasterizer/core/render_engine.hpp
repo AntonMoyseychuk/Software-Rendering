@@ -26,16 +26,30 @@ namespace rasterization::gfx {
     private:
         _render_engine() noexcept = default;
 
+    private:
         void _resize_z_buffer(uint32_t width, uint32_t height) const noexcept;
-        bool _check_and_update_depth(const math::vec3f& pixel) const noexcept;
-        static bool _is_inside_clipping_space(const math::vec3f& point) noexcept;
+        bool _test_and_update_depth(const math::vec3f& pixel) const noexcept;
 
+    private:
+        static bool _is_inside_clipping_space(const math::vec3f& point) noexcept;
+        
+        /**
+         * returns:
+         *  > 0: point is to the right of the edge
+         *    0: point is on the edge
+         *  < 0: point is to the left of the edge
+        */
+        static float _edge(const math::vec2f& v0, const math::vec2f& v1, const math::vec2f& p) noexcept;
+
+    private:
         void _render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept;
-        void _render_line(const math::vec3f& pixel_0, const math::vec3f& pixel_1, const math::color& color) const noexcept;
-        void _render_triangle(const math::vec3f &pixel_0, const math::vec3f &pixel_1, const math::vec3f &pixel_2, const math::color& color) const noexcept;
+        void _render_line(const math::vec3f& pix0, const math::vec3f& pix1, const math::color& color) const noexcept;
+        void _render_triangle(const math::vec3f &pix0, const math::vec3f &pix1, const math::vec3f &pix2, const math::color& color) const noexcept;
 
     private:
         mutable std::vector<float> m_z_buffer;
+
+        // mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 
         win_framewrk::Window* m_window_ptr = nullptr;
         math::color m_clear_color = math::color::BLACK;
