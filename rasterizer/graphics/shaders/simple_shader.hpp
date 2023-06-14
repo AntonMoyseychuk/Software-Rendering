@@ -3,7 +3,7 @@
 
 namespace rasterization::gfx {
     struct SimpleShader : public _shader {
-        math::vec4f vertex(const void* vertex) const noexcept;
-        math::color pixel(const void* vertex) const noexcept;
+        void vertex(const void* vertex) const noexcept override;
+        math::color pixel(const void* vertex) const noexcept override;
     };
 }

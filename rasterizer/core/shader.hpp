@@ -22,7 +22,7 @@ namespace rasterization::gfx {
         _shader() = default;
         virtual ~_shader() = default;
 
-        virtual math::vec4f vertex(const void* vertex) const noexcept = 0;
+        virtual void vertex(const void* vertex) const noexcept = 0;
         virtual math::color pixel(const void* vertex) const noexcept = 0;
 
         virtual void geometry() const noexcept;
@@ -33,6 +33,8 @@ namespace rasterization::gfx {
         const math::vec3f& get_vec3_uniform(const std::string& name) const noexcept;
         const math::vec2f& get_vec2_uniform(const std::string& name) const noexcept;
         float get_float_uniform(const std::string& name) const noexcept;
+
+        mutable math::vec4f gl_Position;
 
     private:
         _uniform_buffer m_uniforms;

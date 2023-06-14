@@ -45,7 +45,8 @@ namespace rasterization::gfx {
     #pragma region local-to-raster-coords
         const auto& shader_program = shader_engine._get_binded_shader_program();
         for (size_t i = 0, j = 0; i < local_coords.size(); i += vbo.element_size, ++j) {
-            screen_coords[j] = shader_program.shader->vertex(&local_coords[i]);
+            shader_program.shader->vertex(&local_coords[i]);
+            screen_coords[j] = shader_program.shader->gl_Position;
 
             const vec3f ndc = screen_coords[j].xyz / screen_coords[j].w;
             inside_clipping_space[j] = _is_inside_clipping_space(ndc);
