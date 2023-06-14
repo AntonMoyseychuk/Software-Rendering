@@ -177,8 +177,8 @@ namespace rasterization::gfx {
                 if (w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) {
                     prev_pixel_was_inside = true;
 
-                    const float depth = pix0.z * w0 + pix1.z * w1 + pix2.z * w2;
-                    if (_test_and_update_depth(math::vec3f(p, depth))) {
+                    const float invert_z = (1.0f / pix0.z) * w0 + (1.0f / pix1.z) * w1 + (1.0f / pix2.z) * w2;
+                    if (_test_and_update_depth(math::vec3f(p, 1.0f / invert_z))) {
                         _render_pixel(p, color);
                     }
                 } else if (prev_pixel_was_inside) {
