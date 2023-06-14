@@ -43,7 +43,6 @@ namespace rasterization::gfx {
     #pragma endregion resizing-buffers
 
     #pragma region local-to-raster-coords
-        // const auto& shader_program = shader_engine._get_binded_shader_program();
         const auto& shader_program = shader_engine._get_binded_shader_program();
         for (size_t i = 0, j = 0; i < local_coords.size(); i += vbo.element_size, ++j) {
             screen_coords[j] = shader_program.shader->vertex(&local_coords[i]);
@@ -98,6 +97,8 @@ namespace rasterization::gfx {
             // break;
 
         case render_mode::TRIANGLES: {
+            assert(indexes.size() % 3 == 0);
+            
             for (size_t i = 0; i < indexes.size(); i += 3) {
                 if (_is_inside_clipping_space(ndc_coords[indexes[i]]) && 
                     _is_inside_clipping_space(ndc_coords[indexes[i + 1]]) && 

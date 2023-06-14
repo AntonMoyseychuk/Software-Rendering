@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <execution> 
 
-#if defined(_DEBUG)
+#ifdef _DEBUG
     #include <iostream>
     #define LOG(tag, msg) std::cerr << '[' << (tag) << "]\t" << (msg) << '\n'
 
@@ -61,8 +61,6 @@ namespace win_framewrk {
     }
 
     Window &Window::operator=(Window &&window) noexcept {
-        LOG_WIN_INFO(__FUNCTION__);
-
         m_title = std::move(window.m_title);
         m_width = window.m_width;
         m_height = window.m_height;
@@ -79,10 +77,6 @@ namespace win_framewrk {
     }
         
     std::uint32_t Window::_MapRGBA(SDL_PixelFormat *format, _InternalColor color) noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         return SDL_MapRGBA(format, color.r, color.g, color.b, color.a);
     }
 
@@ -93,10 +87,6 @@ namespace win_framewrk {
     }
 
     bool Window::_UpdateSurface() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         m_surface_ptr = SDL_GetWindowSurface(m_window_ptr.get());
         return m_surface_ptr != nullptr;
     }
@@ -168,11 +158,7 @@ namespace win_framewrk {
     }
 
     void Window::FillPixelBuffer(const std::vector<std::uint32_t>& in_pixels) const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
-        const std::uint32_t step = 1;
+        const std::uint32_t step = m_height & 1 ? 1 : 2;
         for (std::uint32_t y = 0; y < m_height; y += step) {
             m_thread_pool.AddTask(&Window::_ThreadBufferFillingFunc, 0, y, m_width, y + step, m_surface_ptr, in_pixels.data());
         }
@@ -181,30 +167,16 @@ namespace win_framewrk {
     }
 
     void Window::FillPixelBuffer(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
-        const auto maped_color = _MapRGBA(m_surface_ptr->format, _InternalColor(r, g, b, a));
-        auto buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
-        std::fill_n(buffer, m_width * m_height, maped_color);
+        LOG_SDL_ERROR(SDL_FillRect(m_surface_ptr, NULL, SDL_MapRGBA(m_surface_ptr->format, r, g, b, a)) == 0, SDL_GetError());
     }
 
     void Window::PresentPixelBuffer() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
         LOG_SDL_ERROR(SDL_UpdateWindowSurface(m_window_ptr.get()) == 0, SDL_GetError());
         memset(m_surface_ptr->pixels, 0, sizeof(uint32_t) * m_surface_ptr->w * m_surface_ptr->h);
     }
 
     void Window::PollEvent() noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         while (SDL_PollEvent(&m_event)) {
             switch (m_event.type)  {
             case SDL_QUIT:
@@ -221,21 +193,12 @@ namespace win_framewrk {
     }
 
     bool Window::IsKeyPressed(Key key) const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-        
         static const std::uint8_t* keyboard = SDL_GetKeyboardState(nullptr);
 
         return keyboard[static_cast<SDL_Scancode>(key)];
     }
 
-    std::uint32_t Window::GetPixelColor(std::size_t x, std::size_t y) noexcept
-    {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-        
+    std::uint32_t Window::GetPixelColor(std::size_t x, std::size_t y) noexcept {
         if (x >= static_cast<std::size_t>(m_surface_ptr->w) || y >= static_cast<std::size_t>(m_surface_ptr->h)) {
             return 0;
         }
@@ -259,21 +222,13 @@ namespace win_framewrk {
         std::uint8_t b, 
         std::uint8_t a
     ) noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         if (x < m_width && y < m_height) {
             auto buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
-            buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, _InternalColor(r, g, b, a));
+            buffer[x + y * m_width] = SDL_MapRGBA(m_surface_ptr->format, r, g, b, a);
         }
     }
 
     void Window::SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         if (x < m_width && y < m_height) {
             auto buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
             buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, _InternalColor(color));
@@ -281,26 +236,15 @@ namespace win_framewrk {
     }
 
     void Window::SetTitle(const std::string_view title) noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         m_title = title;
         SDL_SetWindowTitle(m_window_ptr.get(), m_title.c_str());
     }
 
     const std::string& Window::GetTitle() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
         return m_title;
     }
 
     void Window::SetWidth(std::uint32_t width) noexcept  {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         m_width = width;
         SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
 
@@ -308,18 +252,10 @@ namespace win_framewrk {
     }
 
     std::uint32_t Window::GetWidth() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         return m_width;
     }
 
     void Window::SetHeight(std::uint32_t height) noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         m_height = height;
         SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
         
@@ -327,26 +263,14 @@ namespace win_framewrk {
     }
 
     std::uint32_t Window::GetHeight() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         return m_height;
     }
 
     const SDL_Surface* Window::GetSDLSurfaceHandle() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         return m_surface_ptr;
     }
 
     SDL_Surface* Window::GetSDLSurfaceHandle() noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         return m_surface_ptr;
     }
 

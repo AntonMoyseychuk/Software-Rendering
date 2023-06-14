@@ -32,7 +32,7 @@ namespace rasterization {
             core.viewport(width, height);
         });
 
-        Model model("..\\..\\..\\rasterizer\\assets\\suzanne.obj");
+        Model model("..\\..\\..\\rasterizer\\assets\\human.obj");
         
         m_VBO_IBO["model"] = {
             core.create_vertex_buffer(model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
@@ -97,7 +97,7 @@ namespace rasterization {
         core.uniform("point_color", color::SKY_BLUE);
 
         core.uniform("model", mat4f::IDENTITY);
-        core.uniform("view", look_at_rh(vec3f::FORWARD * 3.0f, vec3f::ZERO, vec3f::UP));
+        core.uniform("view", look_at_rh(vec3f::FORWARD * 2.5f, vec3f::ZERO, vec3f::UP));
 
         mat4f rotation, translation;
         render_mode model_render_mode = render_mode::TRIANGLES;
