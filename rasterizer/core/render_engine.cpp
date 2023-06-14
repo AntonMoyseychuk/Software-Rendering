@@ -165,6 +165,7 @@ namespace rasterization::gfx {
         const vec2i bboxmax(std::max(std::max(pix0.x, pix1.x), pix2.x), std::max(std::max(pix0.y, pix1.y), pix2.y));
 
         for (size_t y = bboxmin.y; y <= bboxmax.y; ++y) {
+            bool prev_pixel_was_inside = false;
             for (size_t x = bboxmin.x; x <= bboxmax.x; ++x) {
                 const vec2f p(x, y);
                 
@@ -174,10 +175,14 @@ namespace rasterization::gfx {
                 const float w2 = 1.0f - w0 - w1;
                 
                 if (w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) {
+                    prev_pixel_was_inside = true;
+
                     const float depth = pix0.z * w0 + pix1.z * w1 + pix2.z * w2;
                     if (_test_and_update_depth(math::vec3f(p, depth))) {
                         _render_pixel(p, color);
                     }
+                } else if (prev_pixel_was_inside) {
+                    break;
                 }
             }
         }
