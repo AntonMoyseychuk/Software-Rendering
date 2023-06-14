@@ -203,7 +203,7 @@ namespace win_framewrk {
             return 0;
         }
     
-        auto pixels = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
+        const uint32_t* pixels = static_cast<uint32_t*>(m_surface_ptr->pixels);
         std::uint8_t r, g, b, a;
         SDL_GetRGBA(pixels[y * m_surface_ptr->w + x], m_surface_ptr->format, &r, &g, &b, &a);
 
