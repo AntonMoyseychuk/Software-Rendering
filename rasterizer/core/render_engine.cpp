@@ -33,12 +33,12 @@ namespace rasterization::gfx {
         const size_t vertex_count = local_coords.size();
 
         static std::vector<vec4f> screen_coords;
-        static std::vector<vec3f> ndc_coords;
         static std::vector<vec3f> raster_coords;
+        static std::vector<bool> inside_clipping_space;
 
         screen_coords.resize(vertex_count);
-        ndc_coords.resize(vertex_count);
         raster_coords.resize(vertex_count);
+        inside_clipping_space.resize(vertex_count);
         _resize_z_buffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
 
@@ -46,16 +46,13 @@ namespace rasterization::gfx {
         const auto& shader_program = shader_engine._get_binded_shader_program();
         for (size_t i = 0, j = 0; i < local_coords.size(); i += vbo.element_size, ++j) {
             screen_coords[j] = shader_program.shader->vertex(&local_coords[i]);
-        }
-        
-        for (size_t i = 0; i < vertex_count; ++i) {
-            ndc_coords[i] = screen_coords[i].xyz / screen_coords[i].w;
-        }
 
-        for (size_t i = 0; i < screen_coords.size(); ++i) {
-            raster_coords[i] = ndc_coords[i] * core.m_viewport;
-            raster_coords[i].x = std::floor(raster_coords[i].x);
-            raster_coords[i].y = std::floor(raster_coords[i].y);
+            const vec3f ndc = screen_coords[j].xyz / screen_coords[j].w;
+            inside_clipping_space[j] = _is_inside_clipping_space(ndc);
+
+            raster_coords[j] = ndc * core.m_viewport;
+            raster_coords[j].x = std::floor(raster_coords[j].x);
+            raster_coords[j].y = std::floor(raster_coords[j].y);
         }
     #pragma endregion local-to-raster-coords
 
@@ -64,9 +61,10 @@ namespace rasterization::gfx {
         // Pixel Shaders
         switch (mode) {
         case render_mode::POINTS: {
+            const color point_color = shader_program.shader->get_vec4_uniform("point_color");
             for (size_t i = 0; i < indexes.size(); ++i) {
-                if (_is_inside_clipping_space(ndc_coords[indexes[i]])) {
-                    _render_pixel(raster_coords[indexes[i]].xy, shader_program.shader->get_vec4_uniform("point_color"));
+                if (inside_clipping_space[indexes[i]]) {
+                    _render_pixel(raster_coords[indexes[i]].xy, point_color);
                 }
             }    
             break;
@@ -99,20 +97,17 @@ namespace rasterization::gfx {
         case render_mode::TRIANGLES: {
             assert(indexes.size() % 3 == 0);
             
+            const color polygon_color = shader_program.shader->get_vec4_uniform("polygon_color");
             for (size_t i = 0; i < indexes.size(); i += 3) {
-                if (_is_inside_clipping_space(ndc_coords[indexes[i]]) && 
-                    _is_inside_clipping_space(ndc_coords[indexes[i + 1]]) && 
-                    _is_inside_clipping_space(ndc_coords[indexes[i + 2]])
-                ) {
+                if (inside_clipping_space[indexes[i]] && inside_clipping_space[indexes[i + 1]] && inside_clipping_space[indexes[i + 2]]) {
                     const vec3f normal = normalize(cross(
                         screen_coords[indexes[i + 2]].xyz - screen_coords[indexes[i]].xyz,
                         screen_coords[indexes[i + 1]].xyz - screen_coords[indexes[i]].xyz
                     ));
 
-                    const float light_intensity = dot(normal, shader_program.shader->get_vec3_uniform("light_dir")) + 0.1f;
-                    const color color = shader_program.shader->get_vec4_uniform("polygon_color") * light_intensity;
+                    const float intensity = dot(normal, shader_program.shader->get_vec3_uniform("light_dir")) + 0.1f;
 
-                    _render_triangle(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]], color);
+                    _render_triangle(raster_coords[indexes[i]], raster_coords[indexes[i + 1]], raster_coords[indexes[i + 2]], polygon_color * intensity);
                 }
             }
             break;
@@ -122,14 +117,6 @@ namespace rasterization::gfx {
             assert(false && "Invalid Rendering Mode");
             break;
         }
-    }
-
-    void _render_engine::_rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept {
-        // for (size_t i = 0; i < screen_coords.size(); ++i) {
-        //     raster_coords[i] = screen_coords[i] * core.m_viewport;
-        //     raster_coords[i].x = std::floor(raster_coords[i].x);
-        //     raster_coords[i].y = std::floor(raster_coords[i].y);
-        // }
     }
 
     void _render_engine::_render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept {

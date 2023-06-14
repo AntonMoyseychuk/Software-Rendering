@@ -1,5 +1,6 @@
 #pragma once
 #include "window/window.hpp"
+#include "thread_pool/thread_pool.hpp"
 
 #include "math_3d/vec4.hpp"
 
@@ -29,14 +30,14 @@ namespace rasterization::gfx {
         bool _check_and_update_depth(const math::vec3f& pixel) const noexcept;
         bool _is_inside_clipping_space(const math::vec3f& point) const noexcept;
 
-        void _rasterize(const std::vector<math::vec3f> &screen_coords, std::vector<math::vec3f> &raster_coords) const noexcept;
-
         void _render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept;
         void _render_line(const math::vec3f& pixel_0, const math::vec3f& pixel_1, const math::color& color) const noexcept;
         void _render_triangle(const math::vec3f &pixel_0, const math::vec3f &pixel_1, const math::vec3f &pixel_2, const math::color& color) const noexcept;
 
     private:
         mutable std::vector<float> m_z_buffer;
+
+        // mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 
         win_framewrk::Window* m_window_ptr = nullptr;
         math::color m_clear_color = math::color::BLACK;
