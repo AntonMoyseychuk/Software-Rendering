@@ -76,7 +76,7 @@ namespace win_framewrk {
         return *this;
     }
         
-    std::uint32_t Window::_MapRGBA(SDL_PixelFormat *format, _InternalColor color) noexcept {
+    uint32_t Window::_MapRGBA(SDL_PixelFormat *format, _InternalColor color) noexcept {
         return SDL_MapRGBA(format, color.r, color.g, color.b, color.a);
     }
 
@@ -91,7 +91,7 @@ namespace win_framewrk {
         return m_surface_ptr != nullptr;
     }
 
-    void Window::_OnResize(std::uint32_t new_width, std::uint32_t new_height) noexcept {
+    void Window::_OnResize(uint32_t new_width, uint32_t new_height) noexcept {
         LOG_WIN_EVENT("SDL_WINDOWEVENT_RESIZED", 
             "New size -> [" + std::to_string(new_width) + ", " + std::to_string(new_height) + "]");
             
@@ -111,7 +111,7 @@ namespace win_framewrk {
     }
 
 
-    bool Window::Init(const std::string& title, std::uint32_t width, std::uint32_t height) {
+    bool Window::Init(const std::string& title, uint32_t width, uint32_t height) {
         LOG_WIN_INFO(__FUNCTION__);
 
         if (m_window_ptr != nullptr) {
@@ -138,35 +138,30 @@ namespace win_framewrk {
         return !m_is_quit;
     }
     
-    void Window::_ThreadBufferFillingFunc(
-        std::uint32_t x0, 
-        std::uint32_t y0, 
-        std::uint32_t x_end, 
-        std::uint32_t y_end, 
-        SDL_Surface* surface, 
-        const std::uint32_t* in_pixels
+    void Window::_ThreadBufferFillingFunc(uint32_t x0, uint32_t y0, uint32_t x_end, uint32_t y_end, 
+        SDL_Surface* surface, const uint32_t* in_pixels
     ) noexcept {
 
         const auto lenght = x_end - x0;
-        auto buffer = static_cast<std::uint32_t*>(surface->pixels);
+        auto buffer = static_cast<uint32_t*>(surface->pixels);
 
-        for (std::size_t y = y0; y < y_end; ++y) {
-            for (std::size_t x = x0; x < x_end; ++x) {
+        for (size_t y = y0; y < y_end; ++y) {
+            for (size_t x = x0; x < x_end; ++x) {
                 buffer[x + y * lenght] = _MapRGBA(surface->format, _InternalColor(in_pixels[x + y * lenght]));
             }
         }
     }
 
-    void Window::FillPixelBuffer(const std::vector<std::uint32_t>& in_pixels) const noexcept {
-        const std::uint32_t step = m_height & 1 ? 1 : 2;
-        for (std::uint32_t y = 0; y < m_height; y += step) {
+    void Window::FillPixelBuffer(const std::vector<uint32_t>& in_pixels) const noexcept {
+        const uint32_t step = m_height & 1 ? 1 : 2;
+        for (uint32_t y = 0; y < m_height; y += step) {
             m_thread_pool.AddTask(&Window::_ThreadBufferFillingFunc, 0, y, m_width, y + step, m_surface_ptr, in_pixels.data());
         }
 
         m_thread_pool.WaitAll();
     }
 
-    void Window::FillPixelBuffer(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) const noexcept {
+    void Window::FillPixelBuffer(uint8_t r, uint8_t g, uint8_t b, uint8_t a) const noexcept {
         LOG_SDL_ERROR(SDL_FillRect(m_surface_ptr, NULL, SDL_MapRGBA(m_surface_ptr->format, r, g, b, a)) == 0, SDL_GetError());
     }
 
@@ -193,18 +188,18 @@ namespace win_framewrk {
     }
 
     bool Window::IsKeyPressed(Key key) const noexcept {
-        static const std::uint8_t* keyboard = SDL_GetKeyboardState(nullptr);
+        static const uint8_t* keyboard = SDL_GetKeyboardState(nullptr);
 
         return keyboard[static_cast<SDL_Scancode>(key)];
     }
 
-    std::uint32_t Window::GetPixelColor(std::size_t x, std::size_t y) noexcept {
-        if (x >= static_cast<std::size_t>(m_surface_ptr->w) || y >= static_cast<std::size_t>(m_surface_ptr->h)) {
+    uint32_t Window::GetPixelColor(size_t x, size_t y) noexcept {
+        if (x >= static_cast<size_t>(m_surface_ptr->w) || y >= static_cast<size_t>(m_surface_ptr->h)) {
             return 0;
         }
     
         const uint32_t* pixels = static_cast<uint32_t*>(m_surface_ptr->pixels);
-        std::uint8_t r, g, b, a;
+        uint8_t r, g, b, a;
         SDL_GetRGBA(pixels[y * m_surface_ptr->w + x], m_surface_ptr->format, &r, &g, &b, &a);
 
         #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -214,25 +209,16 @@ namespace win_framewrk {
         #endif
     }
 
-    void Window::SetPixelColor(
-        std::size_t x, 
-        std::size_t y, 
-        std::uint8_t r, 
-        std::uint8_t g, 
-        std::uint8_t b, 
-        std::uint8_t a
-    ) noexcept {
+    void Window::SetPixelColor(size_t x, size_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) noexcept {
         if (x < m_width && y < m_height) {
-            auto buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
+            auto buffer = static_cast<uint32_t*>(m_surface_ptr->pixels);
             buffer[x + y * m_width] = SDL_MapRGBA(m_surface_ptr->format, r, g, b, a);
         }
     }
 
-    void Window::SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept {
-        if (x < m_width && y < m_height) {
-            auto buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
-            buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, _InternalColor(color));
-        }
+    void Window::SetPixelColor(size_t x, size_t y, uint32_t color) noexcept {
+        const _InternalColor packed_color(color);
+        SetPixelColor(x, y, packed_color.r, packed_color.g, packed_color.b, packed_color.a);
     }
 
     void Window::SetTitle(const std::string_view title) noexcept {
@@ -244,25 +230,25 @@ namespace win_framewrk {
         return m_title;
     }
 
-    void Window::SetWidth(std::uint32_t width) noexcept  {
+    void Window::SetWidth(uint32_t width) noexcept  {
         m_width = width;
         SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
 
         LOG_SDL_ERROR(_UpdateSurface() == true, SDL_GetError());
     }
 
-    std::uint32_t Window::GetWidth() const noexcept {
+    uint32_t Window::GetWidth() const noexcept {
         return m_width;
     }
 
-    void Window::SetHeight(std::uint32_t height) noexcept {
+    void Window::SetHeight(uint32_t height) noexcept {
         m_height = height;
         SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
         
         LOG_SDL_ERROR(_UpdateSurface() == true, SDL_GetError());
     }
 
-    std::uint32_t Window::GetHeight() const noexcept {
+    uint32_t Window::GetHeight() const noexcept {
         return m_height;
     }
 
