@@ -41,6 +41,7 @@ namespace rasterization::gfx {
         size_t create_shader(const std::shared_ptr<_shader>& shader) const noexcept;
         void bind_shader(size_t shader_id) const noexcept;
 
+        void uniform(const std::string& uniform_name, const math::quaternion& q) const noexcept;
         void uniform(const std::string& uniform_name, const math::mat4f& mat) const noexcept;
         void uniform(const std::string& uniform_name, const math::vec4f& vec) const noexcept;
         void uniform(const std::string& uniform_name, const math::vec3f& vec) const noexcept;

@@ -12,6 +12,8 @@ namespace rasterization::gfx {
         std::unordered_map<std::string, math::vec3f> vec3_uniforms;
         std::unordered_map<std::string, math::vec2f> vec2_uniforms;
 
+        std::unordered_map<std::string, math::quaternion> quaternion_uniforms;
+
         std::unordered_map<std::string, float> float_uniforms;
     };
 
@@ -28,6 +30,7 @@ namespace rasterization::gfx {
         virtual void geometry() const noexcept;
 
     protected:
+        const math::quaternion& get_quaternion_uniform(const std::string& name) const noexcept;
         const math::mat4f& get_mat4_uniform(const std::string& name) const noexcept;
         const math::vec4f& get_vec4_uniform(const std::string& name) const noexcept;
         const math::vec3f& get_vec3_uniform(const std::string& name) const noexcept;

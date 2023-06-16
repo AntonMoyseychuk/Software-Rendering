@@ -6,6 +6,11 @@ namespace rasterization::gfx {
     {
     }
 
+    const math::quaternion &_shader::get_quaternion_uniform(const std::string &name) const noexcept {
+        ASSERT_UNIFORM_VALIDITY(m_uniforms.quaternion_uniforms, name);
+        return m_uniforms.quaternion_uniforms.at(name);
+    }
+
     const math::mat4f &_shader::get_mat4_uniform(const std::string &name) const noexcept {
         ASSERT_UNIFORM_VALIDITY(m_uniforms.mat4_uniforms, name);
         return m_uniforms.mat4_uniforms.at(name);

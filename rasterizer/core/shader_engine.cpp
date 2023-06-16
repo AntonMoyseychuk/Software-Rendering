@@ -25,7 +25,12 @@ namespace rasterization::gfx {
         binded_shader = shader_id;
     }
 
-    void _shader_engine::uniform(const std::string &uniform_name, const math::mat4f &mat) noexcept {
+    void _shader_engine::uniform(const std::string &uniform_name, const math::quaternion &q) noexcept {
+        ASSERT_SHADER_PROGRAM_ID_VALIDITY(shader_programs, binded_shader);
+        shader_programs[binded_shader].shader->m_uniforms.quaternion_uniforms[uniform_name] = q;
+    }
+
+    void _shader_engine::uniform(const std::string &uniform_name, const math::mat4f &mat) noexcept  {
         ASSERT_SHADER_PROGRAM_ID_VALIDITY(shader_programs, binded_shader);
         shader_programs[binded_shader].shader->m_uniforms.mat4_uniforms[uniform_name] = mat;
     }

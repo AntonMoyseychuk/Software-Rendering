@@ -79,11 +79,15 @@ namespace rasterization::gfx {
     void gl_api::bind_shader(size_t shader_id) const noexcept {
         m_shader_engine.bind_shader(shader_id);
     }
-    
+
+    void gl_api::uniform(const std::string &uniform_name, const math::quaternion &q) const noexcept {
+        m_shader_engine.uniform(uniform_name, q);
+    }
+
     void gl_api::uniform(const std::string &uniform_name, const math::mat4f &mat) const noexcept {
         m_shader_engine.uniform(uniform_name, mat);
     }
-    
+
     void gl_api::uniform(const std::string &uniform_name, const math::vec4f &vec) const noexcept {
         m_shader_engine.uniform(uniform_name, vec);
     }
