@@ -13,6 +13,6 @@ namespace rasterization::gfx {
     }
     
     math::color SimpleShader::pixel(const void *vertex) const noexcept {
-        return math::color();
+        return math::color::RED;
     }
 }

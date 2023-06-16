@@ -108,8 +108,6 @@ namespace rasterization {
         core.uniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
         
         core.uniform("polygon_color", color::GOLDEN);
-        core.uniform("line_color", color::LIME);
-        core.uniform("point_color", color::SKY_BLUE);
 
         core.uniform("model", mat4f::IDENTITY);
         core.uniform("view", look_at_rh(vec3f::FORWARD * 2.5f, vec3f::ZERO, vec3f::UP));

@@ -43,7 +43,8 @@ namespace rasterization::gfx {
     #pragma endregion resizing-buffers
 
     #pragma region local-to-raster-coords
-        const auto& shader_program = shader_engine._get_binded_shader_program();
+        const _shader_engine::shader_program& shader_program = shader_engine._get_binded_shader_program();
+        
         for (size_t i = 0, j = 0; i < local_coords.size(); i += vbo.element_size, ++j) {
             shader_program.shader->vertex(&local_coords[i]);
             screen_coords[j] = shader_program.shader->gl_Position;
@@ -57,13 +58,11 @@ namespace rasterization::gfx {
         }
     #pragma endregion local-to-raster-coords
 
-        // Pixel Shaders
         switch (mode) {
         case render_mode::POINTS: {
-            const color point_color = shader_program.shader->get_vec4_uniform("point_color");
             for (size_t i = 0; i < indexes.size(); ++i) {
                 if (inside_clipping_space[indexes[i]]) {
-                    _render_pixel(raster_coords[indexes[i]].xy, point_color);
+                    _render_pixel(raster_coords[indexes[i]].xy, shader_program.shader->pixel(nullptr));
                 }
             }    
             break;
