@@ -1,9 +1,9 @@
 #pragma once
 #include "window/window.hpp"
-#include "thread_pool/thread_pool.hpp"
 
 #include "math_3d/vec4.hpp"
 
+#include <any>
 
 namespace rasterization::gfx {
     enum class render_mode : uint8_t { POINTS, LINES, LINE_STRIP, TRIANGLES };
@@ -44,12 +44,20 @@ namespace rasterization::gfx {
     private:
         void _render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept;
         void _render_line(const math::vec3f& pix0, const math::vec3f& pix1, const math::color& color) const noexcept;
-        void _render_triangle(const math::vec3f &pix0, const math::vec3f &pix1, const math::vec3f &pix2, const math::color& color) const noexcept;
+
+        struct _shader;
+        struct vs_intermediate_data {
+            vs_intermediate_data() = default;
+            vs_intermediate_data(const std::any& vs_out, const math::vec4f& coord) 
+                : vs_out(vs_out), coord(coord) {}
+
+            std::any vs_out;
+            math::vec4f coord;
+        };
+        void _render_triangle(const vs_intermediate_data& v0, const vs_intermediate_data& v1, const vs_intermediate_data& v2) const noexcept;
 
     private:
         mutable std::vector<float> m_z_buffer;
-
-        // mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 
         win_framewrk::Window* m_window_ptr = nullptr;
         math::color m_clear_color = math::color::BLACK;

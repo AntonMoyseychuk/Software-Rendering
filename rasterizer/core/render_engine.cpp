@@ -32,12 +32,10 @@ namespace rasterization::gfx {
     #pragma region resizing-buffers
         const size_t vertex_count = local_coords.size();
 
-        static std::vector<vec4f> screen_coords;
-        static std::vector<vec3f> raster_coords;
         static std::vector<bool> inside_clipping_space;
+        static std::vector<vs_intermediate_data> vs_intermediates;
 
-        screen_coords.resize(vertex_count);
-        raster_coords.resize(vertex_count);
+        vs_intermediates.resize(vertex_count);
         inside_clipping_space.resize(vertex_count);
         _resize_z_buffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
@@ -46,65 +44,63 @@ namespace rasterization::gfx {
         const _shader_engine::shader_program& shader_program = shader_engine._get_binded_shader_program();
         
         for (size_t i = 0, j = 0; i < local_coords.size(); i += vbo.element_size, ++j) {
-            shader_program.shader->vertex(&local_coords[i]);
-            screen_coords[j] = shader_program.shader->gl_Position;
+            vs_intermediates[j].vs_out = shader_program.shader->vertex(&local_coords[i]);
+            vs_intermediates[j].coord = shader_program.shader->gl_Position;
 
-            const vec3f ndc = screen_coords[j].xyz / screen_coords[j].w;
-            inside_clipping_space[j] = _is_inside_clipping_space(ndc);
+            const vec4f ndc = vs_intermediates[j].coord.xyz / vs_intermediates[j].coord.w;
+            inside_clipping_space[j] = _is_inside_clipping_space(ndc.xyz);
 
-            raster_coords[j] = ndc * core.m_viewport;
-            raster_coords[j].x = std::floor(raster_coords[j].x);
-            raster_coords[j].y = std::floor(raster_coords[j].y);
+            vs_intermediates[j].coord = ndc * core.m_viewport;
+            vs_intermediates[j].coord.x = std::floor(vs_intermediates[j].coord.x);
+            vs_intermediates[j].coord.y = std::floor(vs_intermediates[j].coord.y);
         }
     #pragma endregion local-to-raster-coords
 
         switch (mode) {
-        case render_mode::POINTS: {
+        case render_mode::POINTS:
             for (size_t i = 0; i < indexes.size(); ++i) {
                 if (inside_clipping_space[indexes[i]]) {
-                    _render_pixel(raster_coords[indexes[i]].xy, shader_program.shader->pixel(nullptr));
+                    _render_pixel(vs_intermediates[indexes[i]].coord.xy, shader_program.shader->pixel(vs_intermediates[indexes[i]].vs_out));
                 }
             }    
             break;
-        }
         
-        case render_mode::LINES: {
-            assert(false && "render_mode::LINES is not imlemented");
-            break;
-            // ASSERT_UNIFORM_VALIDITY(shader_program._uniform_buffer.vec4_uniforms, "line_color");
-            //
-            // for (size_t i = 1; i < indexes.size(); i += 2) {
-            //     if (is_inside_clipping_space(ndc_coords[indexes[i - 1]]) && is_inside_clipping_space(ndc_coords[indexes[i]])) {
-            //         _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program._uniform_buffer.vec4_uniforms.at("line_color"));
-            //     }
-            // }
-            // break;
-        }
-        
-        case render_mode::LINE_STRIP: {
-            assert(false && "render_mode::LINE_STRIP is not imlemented");
-            break;
-            // ASSERT_UNIFORM_VALIDITY(shader_program._uniform_buffer.vec4_uniforms, "line_color");
-            //
-            // for (size_t i = 1; i < indexes.size(); ++i) {
-            //     if (is_inside_clipping_space(ndc_coords[indexes[i - 1]]) && is_inside_clipping_space(ndc_coords[indexes[i]])) {
-            //         _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program._uniform_buffer.vec4_uniforms.at("line_color"));
-            //     }
-            // }
-            // break;
-        }
+        // case render_mode::LINES: {
+        //     assert(false && "render_mode::LINES is not imlemented");
+        //     break;
+        //     // ASSERT_UNIFORM_VALIDITY(shader_program._uniform_buffer.vec4_uniforms, "line_color");
+        //     //
+        //     // for (size_t i = 1; i < indexes.size(); i += 2) {
+        //     //     if (is_inside_clipping_space(ndc_coords[indexes[i - 1]]) && is_inside_clipping_space(ndc_coords[indexes[i]])) {
+        //     //         _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program._uniform_buffer.vec4_uniforms.at("line_color"));
+        //     //     }
+        //     // }
+        //     // break;
+        // }
+        //
+        // case render_mode::LINE_STRIP: {
+        //     assert(false && "render_mode::LINE_STRIP is not imlemented");
+        //     break;
+        //     // ASSERT_UNIFORM_VALIDITY(shader_program._uniform_buffer.vec4_uniforms, "line_color");
+        //     //
+        //     // for (size_t i = 1; i < indexes.size(); ++i) {
+        //     //     if (is_inside_clipping_space(ndc_coords[indexes[i - 1]]) && is_inside_clipping_space(ndc_coords[indexes[i]])) {
+        //     //         _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program._uniform_buffer.vec4_uniforms.at("line_color"));
+        //     //     }
+        //     // }
+        //     // break;
+        // }
 
         case render_mode::TRIANGLES: {
-            const color polygon_color = shader_program.shader->get_vec4_uniform("polygon_color");
             for (size_t i = 2; i < indexes.size(); i += 3) {
                 if (inside_clipping_space[indexes[i - 2]] && inside_clipping_space[indexes[i - 1]] && inside_clipping_space[indexes[i]]) {
-                    const vec3f normal = normalize(cross(
-                        screen_coords[indexes[i]].xyz - screen_coords[indexes[i - 2]].xyz,
-                        screen_coords[indexes[i - 1]].xyz - screen_coords[indexes[i]].xyz
-                    ));
+                    // const vec3f normal = normalize(cross(
+                    //     screen_coords[indexes[i]].xyz - screen_coords[indexes[i - 2]].xyz,
+                    //     screen_coords[indexes[i - 1]].xyz - screen_coords[indexes[i]].xyz
+                    // ));
                     
-                    const float intensity = dot(normal, shader_program.shader->get_vec3_uniform("light_dir")) + 0.1f;
-                    _render_triangle(raster_coords[indexes[i - 2]], raster_coords[indexes[i - 1]], raster_coords[indexes[i]], polygon_color * intensity);
+                    // const float intensity = dot(normal, shader_program.shader->get_vec3_uniform("light_dir")) + 0.1f;
+                    _render_triangle(vs_intermediates[indexes[i - 2]], vs_intermediates[indexes[i - 1]], vs_intermediates[indexes[i]]);
                 }
             }
             break;
@@ -158,28 +154,32 @@ namespace rasterization::gfx {
         }
     }
 
-    void _render_engine::_render_triangle(const math::vec3f &pix0, const math::vec3f &pix1, const math::vec3f &pix2, const math::color& color) const noexcept {
+    void _render_engine::_render_triangle(const vs_intermediate_data& v0, const vs_intermediate_data& v1, const const vs_intermediate_data& v2) const noexcept {
         using namespace math;
 
-        const vec2i bboxmin(std::min(std::min(pix0.x, pix1.x), pix2.x), std::min(std::min(pix0.y, pix1.y), pix2.y));
-        const vec2i bboxmax(std::max(std::max(pix0.x, pix1.x), pix2.x), std::max(std::max(pix0.y, pix1.y), pix2.y));
+        const auto& shader = shader_engine._get_binded_shader_program().shader;
+
+        const vec2i bboxmin(std::min(std::min(v0.coord.x, v1.coord.x), v2.coord.x), std::min(std::min(v0.coord.y, v1.coord.y), v2.coord.y));
+        const vec2i bboxmax(std::max(std::max(v0.coord.x, v1.coord.x), v2.coord.x), std::max(std::max(v0.coord.y, v1.coord.y), v2.coord.y));
+
+        const color c0 = shader->pixel(v0.vs_out), c1 = shader->pixel(v1.vs_out), c2 = shader->pixel(v2.vs_out);
 
         for (size_t y = bboxmin.y; y <= bboxmax.y; ++y) {
             bool prev_pixel_was_inside = false;
             for (size_t x = bboxmin.x; x <= bboxmax.x; ++x) {
                 const vec2f p(x, y);
                 
-                const float area = _edge(pix0.xy, pix1.xy, pix2.xy);
-                const float w0 = _edge(pix1.xy, pix2.xy, p) / area;
-                const float w1 = _edge(pix2.xy, pix0.xy, p) / area;
+                const float area = _edge(v0.coord.xy, v1.coord.xy, v2.coord.xy);
+                const float w0 = _edge(v1.coord.xy, v2.coord.xy, p) / area;
+                const float w1 = _edge(v2.coord.xy, v0.coord.xy, p) / area;
                 const float w2 = 1.0f - w0 - w1;
                 
                 if (w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) {
                     prev_pixel_was_inside = true;
 
-                    const float invert_z = (1.0f / pix0.z) * w0 + (1.0f / pix1.z) * w1 + (1.0f / pix2.z) * w2;
-                    if (_test_and_update_depth(math::vec3f(p, 1.0f / invert_z))) {
-                        _render_pixel(p, color);
+                    const float invert_z = (1.0f / v0.coord.z) * w0 + (1.0f / v1.coord.z) * w1 + (1.0f / v2.coord.z) * w2;
+                    if (_test_and_update_depth(vec3f(p, 1.0f / invert_z))) {
+                        _render_pixel(p, w0 * c0 + w1 * c1 + w2 * c2);
                     }
                 } else if (prev_pixel_was_inside) {
                     break;

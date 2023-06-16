@@ -1,21 +1,20 @@
-#include "simple_shader.hpp"
+#include "model_shader.hpp"
 
 namespace rasterization::gfx {
     struct VSInData {
         math::vec3f position;
-        math::color color;
     };
 
-    std::any SimpleShader::vertex(const void *vertex) const noexcept {
+    std::any ModelShader::vertex(const void *vertex) const noexcept {
         using namespace math;
         
         const VSInData* v = (const VSInData*)vertex;
         gl_Position = v->position * get_mat4_uniform("model") * get_mat4_uniform("view") * get_mat4_uniform("projection");
 
-        return v->color;
+        return nullptr;
     }
     
-    math::color SimpleShader::pixel(const std::any& vs_out) const noexcept {
-        return std::any_cast<math::color>(vs_out);
+    math::color ModelShader::pixel(const std::any& vs_out) const noexcept {
+        return get_vec4_uniform("polygon_color");
     }
 }

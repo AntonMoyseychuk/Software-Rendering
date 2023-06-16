@@ -6,6 +6,7 @@
 #include "graphics/model.hpp"
 
 #include "graphics/shaders/simple_shader.hpp"
+#include "graphics/shaders/model_shader.hpp"
 
 #include <iostream>
 #include <memory>
@@ -14,6 +15,11 @@
 
 namespace rasterization {
     static rasterization::gfx::gl_api& core = gfx::gl_api::get();
+
+    struct Vertex {
+        math::vec3f position;
+        math::color color;
+    };
 
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height, size_t fps_lock)
         : m_window(win_framewrk::Window::Get()), m_last_frame(std::chrono::steady_clock::now()), m_fps_lock(1.0f / (fps_lock > 0 ? fps_lock : 1))
@@ -33,10 +39,10 @@ namespace rasterization {
         });
 
 
-        const vec3f triangle[] = {
-            { -0.5f, -0.5f, 0.0f },
-            {  0.5f, -0.5f, 0.0f },
-            {  0.0f,  0.5f, 0.0f },
+        const Vertex triangle[] = {
+            { {-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f} },
+            { { 0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f} },
+            { { 0.0f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f} },
         };
         const size_t ind[] = { 0, 1, 2 };
 
@@ -102,13 +108,15 @@ namespace rasterization {
         using namespace math;
         using namespace win_framewrk;
 
-        size_t shader = core.create_shader(std::make_shared<SimpleShader>());
-        core.bind_shader(shader);
-
-        core.uniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
+        size_t simple_shader = core.create_shader(std::make_shared<SimpleShader>());
+        core.bind_shader(simple_shader); 
+        core.uniform("model", mat4f::IDENTITY);
+        core.uniform("view", look_at_rh(vec3f::FORWARD * 2.5f, vec3f::ZERO, vec3f::UP));
         
+        size_t model_shader = core.create_shader(std::make_shared<ModelShader>());
+        core.bind_shader(model_shader); 
+        core.uniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
         core.uniform("polygon_color", color::GOLDEN);
-
         core.uniform("model", mat4f::IDENTITY);
         core.uniform("view", look_at_rh(vec3f::FORWARD * 2.5f, vec3f::ZERO, vec3f::UP));
 
@@ -172,15 +180,18 @@ namespace rasterization {
             }
         #pragma endregion input
 
-            core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
             
-            // core.bind(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
-            // core.bind(buffer_type::INDEX, m_VBO_IBO["triangle"].ibo);
-            // core.render(model_render_mode);
-
-            core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-            core.bind(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
+            core.bind_shader(simple_shader);
+            core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
+            core.bind(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
+            core.bind(buffer_type::INDEX, m_VBO_IBO["triangle"].ibo);
             core.render(model_render_mode);
+
+            // core.bind_shader(model_shader);
+            // core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
+            // core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+            // core.bind(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
+            // core.render(model_render_mode);
 
             // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
             // core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);

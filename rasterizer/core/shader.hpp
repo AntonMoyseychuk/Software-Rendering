@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <string>
+#include <any>
 
 #include "math_3d/math.hpp"
 
@@ -24,8 +25,8 @@ namespace rasterization::gfx {
         _shader() = default;
         virtual ~_shader() = default;
 
-        virtual void vertex(const void* vertex) const noexcept = 0;
-        virtual math::color pixel(const void* vertex) const noexcept = 0;
+        virtual std::any vertex(const void* vertex) const noexcept = 0;
+        virtual math::color pixel(const std::any& vs_out) const noexcept = 0;
 
         virtual void geometry() const noexcept;
 
