@@ -3,7 +3,7 @@
 #include "math_3d/math.hpp"
 
 #include "core/gl_api.hpp"
-#include "graphics/model.hpp"
+#include "graphics/mesh.hpp"
 
 #include "graphics/shaders/simple_shader.hpp"
 #include "graphics/shaders/model_shader.hpp"
@@ -38,11 +38,10 @@ namespace rasterization {
             core.viewport(width, height);
         });
 
-
         const Vertex triangle[] = {
-            { {-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f} },
-            { { 0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f} },
-            { { 0.0f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f} },
+            { {-0.5f, -0.5f, 0.0f}, color::RED },
+            { { 0.5f, -0.5f, 0.0f}, color::GREEN },
+            { { 0.0f,  0.5f, 0.0f}, color::BLUE },
         };
         const size_t ind[] = { 0, 1, 2 };
 
@@ -93,14 +92,14 @@ namespace rasterization {
         // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
         // core.set_buffer_element_size(sizeof(cube[0]));
 
-        Model model("..\\..\\..\\rasterizer\\assets\\suzanne.obj");
+        Mesh model("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
         
         m_VBO_IBO["model"] = {
-            core.create_vertex_buffer(model.vertexes.data(), model.vertexes.size() * sizeof(model.vertexes[0])),
+            core.create_vertex_buffer(model.positions.data(), model.positions.size() * sizeof(model.positions[0])),
             core.create_index_buffer(model.vert_indexes.data(), model.vert_indexes.size())
         };
         core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-        core.set_buffer_element_size(sizeof(model.vertexes[0]));
+        core.set_buffer_element_size(sizeof(model.positions[0]));
     }
 
     void Application::Run() noexcept {
@@ -180,7 +179,6 @@ namespace rasterization {
             }
         #pragma endregion input
 
-            
             core.bind_shader(simple_shader);
             core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
             core.bind(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);

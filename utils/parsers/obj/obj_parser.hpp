@@ -7,7 +7,7 @@ namespace util {
     class OBJParser final {
     public:
         static bool Parse(const char* filepath, 
-            std::vector<math::vec3f>& vertexes, 
+            std::vector<math::vec3f>& positions, 
             std::vector<math::vec3f>& normals,
             std::vector<math::vec2f>& texture_coords, 
             std::vector<size_t>& vert_indexes,

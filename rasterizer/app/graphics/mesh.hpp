@@ -6,14 +6,14 @@
 
 namespace rasterization::gfx {
     
-    struct Model {
-        Model() = default;
-        Model(const char* filepath);
+    struct Mesh {        
+        Mesh() = default;
+        Mesh(const char* filepath);
 
         bool Load(const char* filepath) const noexcept;
         void Free() const noexcept;
-
-        mutable std::vector<math::vec3f> vertexes;
+        
+        mutable std::vector<math::vec3f> positions;
         mutable std::vector<math::vec3f> normals;
         mutable std::vector<math::vec2f> texture_coords;
         mutable std::vector<size_t> vert_indexes;

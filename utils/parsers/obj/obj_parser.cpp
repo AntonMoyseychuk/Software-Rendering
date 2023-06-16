@@ -6,7 +6,7 @@
 
 namespace util {
     bool OBJParser::Parse(const char *filepath, 
-        std::vector<math::vec3f> &vertexes, 
+        std::vector<math::vec3f> &positions, 
         std::vector<math::vec3f> &normals, 
         std::vector<math::vec2f> &texture_coords, 
         std::vector<size_t> &vert_indexes, 
@@ -33,7 +33,7 @@ namespace util {
                 math::vec3f v;
 
                 ss >> key >> v.x >> v.y >> v.z;
-                vertexes.emplace_back(v);
+                positions.emplace_back(v);
             } else if (!str.compare(0, 3, "vn ")) {
                 math::vec3f n;
 
