@@ -3,7 +3,7 @@
 
 #include "shader.hpp"
 
-namespace rasterization::gfx {
+namespace gl {
     struct _shader_engine final {
         _shader_engine(const _shader_engine& engine) = delete;
         _shader_engine& operator=(const _shader_engine& engine) = delete;

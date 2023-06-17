@@ -5,7 +5,7 @@
 #include <string>
 #include <stdexcept>
 
-namespace rasterization::gfx {
+namespace rasterization {
     Mesh::Mesh(const char *filepath) {
         if (!Load(filepath)) {
             throw std::invalid_argument(std::string("Invalid filepath: ") + filepath);

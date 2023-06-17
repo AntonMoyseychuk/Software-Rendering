@@ -3,7 +3,7 @@
 
 #include <cassert>
 
-namespace rasterization::gfx {
+namespace gl {
     _shader_engine &_shader_engine::get() noexcept {
         static _shader_engine engine;
         return engine;

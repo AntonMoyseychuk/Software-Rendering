@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace rasterization::gfx {
+namespace rasterization {
     
     struct Mesh {        
         Mesh() = default;

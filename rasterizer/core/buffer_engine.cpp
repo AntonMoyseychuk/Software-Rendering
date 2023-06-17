@@ -5,7 +5,7 @@
 
 #include <cassert>
 
-namespace rasterization::gfx {
+namespace gl {
     _buffer_engine &_buffer_engine::get() noexcept {
         static _buffer_engine _buffer_engine;
         return _buffer_engine;

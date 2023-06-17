@@ -4,7 +4,7 @@
 #include "shader_engine.hpp"
 
 
-namespace rasterization::gfx {
+namespace gl {
     class gl_api final {
         friend struct _render_engine;
 

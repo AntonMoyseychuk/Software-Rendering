@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace rasterization::gfx {
+namespace gl {
     enum class buffer_type : uint8_t { 
         VERTEX, INDEX
     };

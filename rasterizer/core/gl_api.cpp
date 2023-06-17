@@ -4,7 +4,7 @@
 
 #include <cassert>
 
-namespace rasterization::gfx {
+namespace gl {
     gl_api &gl_api::get() noexcept {
         static gl_api engine;
         return engine;

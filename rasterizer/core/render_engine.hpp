@@ -5,7 +5,7 @@
 
 #include <any>
 
-namespace rasterization::gfx {
+namespace gl {
     enum class render_mode : uint8_t { POINTS, LINES, LINE_STRIP, TRIANGLES };
 
     struct _render_engine final {

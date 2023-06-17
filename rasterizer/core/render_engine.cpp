@@ -14,7 +14,7 @@
 
 #include <cassert>
 
-namespace rasterization::gfx {
+namespace gl {
     static gl_api& core = gl_api::get();
     static _buffer_engine& buff_engine = _buffer_engine::get();
     static _shader_engine& shader_engine = _shader_engine::get();

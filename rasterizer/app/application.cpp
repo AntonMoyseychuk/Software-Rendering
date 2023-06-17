@@ -14,7 +14,7 @@
 
 
 namespace rasterization {
-    static rasterization::gfx::gl_api& core = gfx::gl_api::get();
+    static gl::gl_api& core = gl::gl_api::get();
 
     struct Vertex {
         math::vec3f position;
@@ -24,7 +24,7 @@ namespace rasterization {
     Application::Application(const std::string &title, std::uint32_t width, std::uint32_t height, size_t fps_lock)
         : m_window(win_framewrk::Window::Get()), m_last_frame(std::chrono::steady_clock::now()), m_fps_lock(1.0f / (fps_lock > 0 ? fps_lock : 1))
     {
-        using namespace gfx;
+        using namespace gl;
         using namespace math;
     
         m_window->Init(title, width, height);
@@ -103,7 +103,7 @@ namespace rasterization {
     }
 
     void Application::Run() noexcept {
-        using namespace gfx;
+        using namespace gl;
         using namespace math;
         using namespace win_framewrk;
 

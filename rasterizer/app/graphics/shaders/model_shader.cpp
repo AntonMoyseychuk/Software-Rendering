@@ -1,6 +1,6 @@
 #include "model_shader.hpp"
 
-namespace rasterization::gfx {
+namespace rasterization {
     struct VSInData {
         math::vec3f position;
     };

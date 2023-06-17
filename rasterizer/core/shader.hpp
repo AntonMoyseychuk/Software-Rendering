@@ -6,7 +6,7 @@
 #include "math_3d/math.hpp"
 
 
-namespace rasterization::gfx {
+namespace gl {
     struct _uniform_buffer final {
         std::unordered_map<std::string, math::mat4f> mat4_uniforms;
         std::unordered_map<std::string, math::vec4f> vec4_uniforms;
