@@ -49,7 +49,7 @@ namespace rasterization {
             core.create_vertex_buffer(triangle, sizeof(triangle)),
             core.create_index_buffer(ind, 3)
         };
-        core.bind(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
+        core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
         core.set_buffer_element_size(sizeof(triangle[0]));
 
         // const vec3f cube[] = {
@@ -98,7 +98,7 @@ namespace rasterization {
             core.create_vertex_buffer(model.positions.data(), model.positions.size() * sizeof(model.positions[0])),
             core.create_index_buffer(model.vert_indexes.data(), model.vert_indexes.size())
         };
-        core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+        core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
         core.set_buffer_element_size(sizeof(model.positions[0]));
     }
 
@@ -129,6 +129,7 @@ namespace rasterization {
 
         #pragma region input
             const float angle = to_radians(dt) * 45.0f;
+            const float distance = dt * 3.0f;
             
             if (m_window->IsKeyPressed(Key::NUMBER_1)) {
                 model_render_mode = render_mode::POINTS;
@@ -155,48 +156,48 @@ namespace rasterization {
             }
 
             if (m_window->IsKeyPressed(Key::D)) {
-                translation = translate(translation, vec3f::RIGHT * dt);
+                translation = translate(translation, vec3f::RIGHT * distance);
                 core.uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::A)) {
-                translation = translate(translation, vec3f::LEFT * dt);
+                translation = translate(translation, vec3f::LEFT * distance);
                 core.uniform("model", rotation * translation);
             }
 
             if (m_window->IsKeyPressed(Key::W)) {
-                translation = translate(translation, vec3f::UP * dt);
+                translation = translate(translation, vec3f::UP * distance);
                 core.uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::S)) {
-                translation = translate(translation, vec3f::DOWN * dt);
+                translation = translate(translation, vec3f::DOWN * distance);
                 core.uniform("model", rotation * translation);
             }
 
             if (m_window->IsKeyPressed(Key::Z)) {
-                translation = translate(translation, vec3f::BACKWARD * dt);
+                translation = translate(translation, vec3f::BACKWARD * distance);
                 core.uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::X)) {
-                translation = translate(translation, vec3f::FORWARD * dt);
+                translation = translate(translation, vec3f::FORWARD * distance);
                 core.uniform("model", rotation * translation);
             }
         #pragma endregion input
 
-            core.bind_shader(simple_shader);
-            core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            core.bind(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
-            core.bind(buffer_type::INDEX, m_VBO_IBO["triangle"].ibo);
-            core.render(model_render_mode);
-
-            // core.bind_shader(model_shader);
+            // core.bind_shader(simple_shader);
             // core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            // core.bind(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-            // core.bind(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
+            // core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
+            // core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["triangle"].ibo);
             // core.render(model_render_mode);
+
+            core.bind_shader(model_shader);
+            core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
+            core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+            core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
+            core.render(model_render_mode);
 
             // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
             // core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
             // core.render(render_mode::LINES);
 
             core.swap_buffers(); 
-            core.clear_backbuffer();
+            core.clear_depth_buffer();
         }
     }
     

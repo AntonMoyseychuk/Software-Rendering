@@ -237,7 +237,7 @@ namespace rasterization::gfx {
         m_window_ptr->FillPixelBuffer(R_G_B_A(m_clear_color));
     }
 
-    void _render_engine::clear_backbuffer() const noexcept {
+    void _render_engine::clear_depth_buffer() const noexcept {
         std::fill(m_z_buffer.begin(), m_z_buffer.end(), std::numeric_limits<float>::max());
     }
 

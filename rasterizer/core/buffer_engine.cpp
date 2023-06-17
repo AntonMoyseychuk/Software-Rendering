@@ -35,15 +35,15 @@ namespace rasterization::gfx {
         return id;
     }
 
-    void _buffer_engine::erase_buffer(size_t id) noexcept {
+    void _buffer_engine::delete_vertex_buffer(size_t id) noexcept {
         vbos.erase(id);
     }
 
-    void _buffer_engine::erase_index_buffer(size_t id) noexcept {
+    void _buffer_engine::delete_index_buffer(size_t id) noexcept {
         ibos.erase(id);
     }
     
-    void _buffer_engine::bind(buffer_type type, size_t id) noexcept {
+    void _buffer_engine::bind_buffer(buffer_type type, size_t id) noexcept {
         switch (type) {
         case buffer_type::VERTEX:
             assert(vbos.count(id) == 1);

@@ -36,8 +36,8 @@ namespace rasterization::gfx {
         m_render_engine.swap_buffers();
     }
 
-    void gl_api::clear_backbuffer() const noexcept {
-        m_render_engine.clear_backbuffer();
+    void gl_api::clear_depth_buffer() const noexcept {
+        m_render_engine.clear_depth_buffer();
     }
 
     void gl_api::set_clear_color(const math::color &color) noexcept {
@@ -54,16 +54,16 @@ namespace rasterization::gfx {
         return m_buf_engine.create_index_buffer(buffer, count);
     }
 
-    void gl_api::erase_buffer(size_t id) const noexcept {
-        m_buf_engine.erase_buffer(id);
+    void gl_api::delete_vertex_buffer(size_t id) const noexcept {
+        m_buf_engine.delete_vertex_buffer(id);
     }
 
-    void gl_api::erase_index_buffer(size_t id) const noexcept {
-        m_buf_engine.erase_index_buffer(id);
+    void gl_api::delete_index_buffer(size_t id) const noexcept {
+        m_buf_engine.delete_index_buffer(id);
     }
 
-    void gl_api::bind(buffer_type type, size_t id) const noexcept {
-        m_buf_engine.bind(type, id);
+    void gl_api::bind_buffer(buffer_type type, size_t id) const noexcept {
+        m_buf_engine.bind_buffer(type, id);
     }
 
     void gl_api::set_buffer_element_size(size_t size) const noexcept {

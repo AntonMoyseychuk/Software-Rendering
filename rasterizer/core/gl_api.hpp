@@ -20,7 +20,7 @@ namespace rasterization::gfx {
 
         void render(render_mode mode) const noexcept;
         void swap_buffers() const noexcept;
-        void clear_backbuffer() const noexcept;
+        void clear_depth_buffer() const noexcept;
 
         void set_clear_color(const math::color& color) noexcept;
     #pragma endregion rasterizer_api
@@ -29,10 +29,10 @@ namespace rasterization::gfx {
         size_t create_vertex_buffer(const void* buffer, size_t size) const noexcept;
         size_t create_index_buffer(const size_t* buffer, size_t count) const noexcept;
         
-        void erase_buffer(size_t id) const noexcept;
-        void erase_index_buffer(size_t id) const noexcept;
+        void delete_vertex_buffer(size_t id) const noexcept;
+        void delete_index_buffer(size_t id) const noexcept;
 
-        void bind(buffer_type type, size_t id) const noexcept;
+        void bind_buffer(buffer_type type, size_t id) const noexcept;
 
         void set_buffer_element_size(size_t size) const noexcept;
     #pragma endregion buffer_engine_api

@@ -19,7 +19,7 @@ namespace rasterization::gfx {
 
         void render(render_mode mode) const noexcept;
         void swap_buffers() const noexcept;
-        void clear_backbuffer() const noexcept;
+        void clear_depth_buffer() const noexcept;
 
         void set_clear_color(const math::color& color) noexcept;
 

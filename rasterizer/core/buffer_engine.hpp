@@ -16,10 +16,10 @@ namespace rasterization::gfx {
         size_t create_vertex_buffer(const void* buffer, size_t size) noexcept;
         size_t create_index_buffer(const size_t* buffer, size_t count) noexcept;
         
-        void erase_buffer(size_t id) noexcept;
-        void erase_index_buffer(size_t id) noexcept;
+        void delete_vertex_buffer(size_t id) noexcept;
+        void delete_index_buffer(size_t id) noexcept;
 
-        void bind(buffer_type type, size_t id) noexcept;
+        void bind_buffer(buffer_type type, size_t id) noexcept;
 
         void set_buffer_element_size(size_t size) noexcept;
 
