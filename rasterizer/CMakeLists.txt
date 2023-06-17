@@ -5,8 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 file(GLOB_RECURSE SRC_FILES 
     "${PROJECT_SOURCE_DIR}/*.cpp"
 
-    "${DEPENDENCIES_DIR}/tinyobjloader/*.cpp"
-
     "${MATH_DIR}/math_3d/*.cpp"
     "${WINDOW_DIR}/window/*.cpp"
     "${THREAD_POOL_DIR}/thread_pool/*.cpp"
