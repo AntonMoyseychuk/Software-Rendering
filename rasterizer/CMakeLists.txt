@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 file(GLOB_RECURSE SRC_FILES 
     "${PROJECT_SOURCE_DIR}/*.cpp"
 
+    "${DEPENDENCIES_DIR}/tinyobjloader/*.cpp"
+
     "${MATH_DIR}/math_3d/*.cpp"
     "${WINDOW_DIR}/window/*.cpp"
     "${THREAD_POOL_DIR}/thread_pool/*.cpp"
@@ -16,8 +18,8 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 target_include_directories(${PROJECT_NAME} 
     PUBLIC "${PROJECT_SOURCE_DIR}"
     
+    PUBLIC "${DEPENDENCIES_DIR}"
     PUBLIC "${SDL_DIR}/include"
-    PUBLIC "${STB_DIR}"
     
     PUBLIC "${WINDOW_DIR}"
     PUBLIC "${THREAD_POOL_DIR}"
