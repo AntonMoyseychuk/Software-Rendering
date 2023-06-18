@@ -3,8 +3,7 @@
 #include "math_3d/math.hpp"
 
 #include "core/gl_api.hpp"
-// #include "graphics/mesh.hpp"
-#include "graphics/not_crazy_mesh.hpp"
+#include "graphics/mesh.hpp"
 
 #include "graphics/shaders/simple_shader.hpp"
 #include "graphics/shaders/gouraud_shader.hpp"
@@ -94,7 +93,7 @@ namespace rasterization {
         // core.set_buffer_element_size(sizeof(cube[0]));
 
         try {
-            NotCrazyMesh model("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
+            Mesh model("..\\..\\..\\rasterizer\\app\\assets\\human.obj");
             const auto& buffer = model.GetBuffer();
             
             m_VBO_IBO["model"] = {
