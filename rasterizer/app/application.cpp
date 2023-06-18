@@ -110,14 +110,14 @@ namespace rasterization {
         size_t simple_shader = core.create_shader(std::make_shared<SimpleShader>());
         core.bind_shader(simple_shader); 
         core.uniform("model", mat4f::IDENTITY);
-        core.uniform("view", look_at_rh(vec3f::FORWARD * 2.5f, vec3f::ZERO, vec3f::UP));
+        core.uniform("view", look_at_rh(vec3f::FORWARD() * 2.5f, vec3f::ZERO(), vec3f::UP()));
         
         size_t model_shader = core.create_shader(std::make_shared<ModelShader>());
         core.bind_shader(model_shader); 
-        core.uniform("light_dir", normalize(vec3f::BACKWARD + vec3f::LEFT));
+        core.uniform("light_dir", normalize(vec3f::BACKWARD() + vec3f::LEFT()));
         core.uniform("polygon_color", color::GOLDEN);
         core.uniform("model", mat4f::IDENTITY);
-        core.uniform("view", look_at_rh(vec3f::FORWARD * 2.5f, vec3f::ZERO, vec3f::UP));
+        core.uniform("view", look_at_rh(vec3f::FORWARD() * 2.5f, vec3f::ZERO(), vec3f::UP()));
 
         mat4f rotation, translation;
         render_mode model_render_mode = render_mode::TRIANGLES;
@@ -156,26 +156,26 @@ namespace rasterization {
             }
 
             if (m_window->IsKeyPressed(Key::D)) {
-                translation = translate(translation, vec3f::RIGHT * distance);
+                translation = translate(translation, vec3f::RIGHT() * distance);
                 core.uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::A)) {
-                translation = translate(translation, vec3f::LEFT * distance);
+                translation = translate(translation, vec3f::LEFT() * distance);
                 core.uniform("model", rotation * translation);
             }
 
             if (m_window->IsKeyPressed(Key::W)) {
-                translation = translate(translation, vec3f::UP * distance);
+                translation = translate(translation, vec3f::UP() * distance);
                 core.uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::S)) {
-                translation = translate(translation, vec3f::DOWN * distance);
+                translation = translate(translation, vec3f::DOWN() * distance);
                 core.uniform("model", rotation * translation);
             }
 
             if (m_window->IsKeyPressed(Key::Z)) {
-                translation = translate(translation, vec3f::BACKWARD * distance);
+                translation = translate(translation, vec3f::BACKWARD() * distance);
                 core.uniform("model", rotation * translation);
             } else if (m_window->IsKeyPressed(Key::X)) {
-                translation = translate(translation, vec3f::FORWARD * distance);
+                translation = translate(translation, vec3f::FORWARD() * distance);
                 core.uniform("model", rotation * translation);
             }
         #pragma endregion input

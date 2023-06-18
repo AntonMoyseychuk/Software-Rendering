@@ -11,7 +11,7 @@ namespace math {
         using type = typename Type;
 
         vec2() noexcept
-            : x(Type(0)), y(Type(0)) 
+            : x(0), y(0) 
         {}
         vec2(Type x, Type y) noexcept
             : x(x), y(y)
@@ -22,61 +22,57 @@ namespace math {
         explicit vec2(const Type* arr) noexcept
             : x(arr[0]), y(arr[1])
         {}
+        template<typename Right>
+        explicit vec2(const vec2<Right> vec) noexcept
+            : x(vec.x), y(vec.y)
+        {}
+        
+        
+        template<typename Right>
+        vec2& operator=(const vec2<Right>& vec) noexcept {
+            x = vec.x;
+            y = vec.y;
+            return *this;
+        }
 
-        // explicit vec2(const vec3f& vec) noexcept
-        //     : x(Type(vec.x)), y(Type(vec.y)) {}
-        // explicit vec2(const vec4f& vec) noexcept
-        //     : x(Type(vec.x)), y(Type(vec.y)) {}
-        //
-        // vec2& operator=(const vec3f& vec) noexcept {
-        //     x = Type(vec.x);
-        //     y = Type(vec.y);
-        //     return *this;
-        // }
-        // vec2& operator=(const vec4f& vec) noexcept {
-        //     x = Type(vec.x);
-        //     y = Type(vec.y);
-        //     return *this;
-        // }
-
+        template <typename = std::enable_if_t<std::is_signed_v<Type>>>
         vec2 operator-() const noexcept {
             return vec2(-x, -y);
         }
-
         template <typename Right>
         vec2 operator+(const vec2<Right>& vec) const noexcept {
-            return vec2(x + Type(vec.x), y + Type(vec.y));
+            return vec2(x + vec.x, y + vec.y);
         }
         template <typename Right>
         vec2 operator-(const vec2<Right>& vec) const noexcept {
-            return vec2(x - Type(vec.x), y - Type(vec.y));
+            return vec2(x - vec.x, y - vec.y);
         }
         template <typename Right>
         vec2& operator+=(const vec2<Right>& vec) noexcept {
-            x += Type(vec.x);
-            y += Type(vec.y);
+            x += vec.x;
+            y += vec.y;
             return *this;
         }
         template <typename Right>
         vec2& operator-=(const vec2<Right>& vec) noexcept {
-            x += Type(vec.x);
-            y += Type(vec.y);
+            x -= vec.x;
+            y -= vec.y;
             return *this;
         }
 
         template <typename Right>
         vec2 operator*(const vec2<Right>& vec) const noexcept {
-            return vec2(Type(x * vec.x), Type(y * vec.y));
+            return vec2(x * vec.x, y * vec.y);
         }
         template <typename Right>
         vec2& operator*=(const vec2<Right>& vec) noexcept {
-            x *= Type(vec.x);
-            y *= Type(vec.y);
+            x *= vec.x;
+            y *= vec.y;
             return *this;
         }
 
         vec2 operator*(Type value) const noexcept {
-            return vec2(Type(x * value), Type(y * value));
+            return vec2(x * value, y * value);
         }
         vec2& operator*=(Type value) noexcept {
             x *= value;
@@ -114,7 +110,7 @@ namespace math {
         }
         template <typename Right>
         bool operator!=(const vec2<Right>& vec) const noexcept {
-            return !(*this == vec);
+            return !this->operator==(vec);
         }
 
         float length() const noexcept {
@@ -131,31 +127,30 @@ namespace math {
         }
 
         static vec2 get_random_vector(Type min, Type max) noexcept {
-            return vec2f(random(min, max), random(min, max));
+            return vec2(random(min, max), random(min, max));
         }
 
         static const vec2& ZERO() noexcept {
-            static vec2 zero(Type(0));
+            static vec2 zero(0);
             return zero;
         } 
+
+        template <typename = std::enable_if_t<std::is_signed_v<Type>>>
         static const vec2& LEFT() noexcept {
-            assert(std::is_signed_v<Type>);
-            static vec2 left(Type(-1), Type(0));
+            static const vec2 left(-1, 0);
             return left;
         }
         static const vec2& RIGHT() noexcept {
-            assert(std::is_signed_v<Type>);
-            static vec2 right(Type(1), Type(0));
+            static const vec2 right(1, 0);
             return right;
         }
         static const vec2& UP() noexcept {
-            assert(std::is_signed_v<Type>);
-            static vec2 up(Type(0), Type(1));
+            static const vec2 up(0, 1);
             return up;
         }
+        template <typename = std::enable_if_t<std::is_signed_v<Type>>>
         static const vec2& DOWN() noexcept {
-            assert(std::is_signed_v<Type>);
-            static vec2 down(Type(0), Type(-1));
+            static const vec2 down(0, -1);
             return down;
         }
 

@@ -1,11 +1,10 @@
 #pragma once
 #include "mat4.hpp"
+#include "vec_operations.hpp"
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace math {
-    union vec3f;
-
     mat4f scale(const mat4f& mat, const vec3f& scale) noexcept;
     mat4f translate(const mat4f& mat, const vec3f& translation) noexcept;
     

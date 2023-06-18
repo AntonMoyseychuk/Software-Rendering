@@ -1,10 +1,7 @@
 #pragma once
-#include "vec2.hpp"
+#include "vec4.hpp"
 
 namespace math {
-    union vec4f;
-    union vec3f;
-
     struct quaternion {
         quaternion() = default;
         quaternion(float w, float x, float y, float z);

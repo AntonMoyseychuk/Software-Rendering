@@ -2,8 +2,6 @@
 #include "vec4.hpp"
 
 namespace math {
-    union vec3f;
-
     union mat4f {
         mat4f() noexcept;
         mat4f(float v00, float v01, float v02, float v03,

@@ -1,8 +1,4 @@
 #include "quaternion.hpp"
-#include "vec4.hpp"
-#include "vec3.hpp"
-
-#include <cmath>
 
 namespace math {
     math::quaternion::quaternion(float _w, float _x, float _y, float _z)

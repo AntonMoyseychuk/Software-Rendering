@@ -1,8 +1,4 @@
 #include "vec_operations.hpp"
-#include "vec4.hpp"
-#include "vec3.hpp"
-
-#include <cmath>
 
 namespace math {
     vec3f barycentric(const vec3f &a, const vec3f &b, const vec3f &c, const vec3f &point) noexcept {

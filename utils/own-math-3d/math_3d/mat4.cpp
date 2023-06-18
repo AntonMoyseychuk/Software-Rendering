@@ -1,11 +1,5 @@
 #include "mat4.hpp"
-
-#include "vec3.hpp"
 #include "vec_operations.hpp"
-
-#include "util.hpp"
-
-#include <cassert>
 
 namespace math {
     const mat4f mat4f::IDENTITY(
