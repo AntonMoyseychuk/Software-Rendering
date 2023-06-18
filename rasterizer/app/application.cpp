@@ -94,7 +94,7 @@ namespace rasterization {
 
         try {
             Mesh model("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
-            const auto& buffer = model.GetBuffer();
+            const Mesh::Buffer* buffer = model.GetBuffer();
             
             m_VBO_IBO["model"] = {
                 core.create_vertex_buffer(buffer->vertexes.data(), buffer->vertexes.size() * sizeof(buffer->vertexes[0])),

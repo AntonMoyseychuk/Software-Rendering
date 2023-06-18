@@ -12,8 +12,6 @@
 
 #include "math_3d/util.hpp"
 
-#include <cassert>
-
 namespace gl {
     static gl_api& core = gl_api::get();
     static _buffer_engine& buff_engine = _buffer_engine::get();
@@ -46,7 +44,7 @@ namespace gl {
 
     #pragma region local-to-raster-coords
         const _shader_engine::shader_program& shader_program = shader_engine._get_binded_shader_program();
-        
+
         for (size_t i = 0, j = 0; i < local_coords.size(); i += vbo.element_size, ++j) {
             vs_intermediates[j].vs_out = shader_program.shader->vertex(&local_coords[i]);
             vs_intermediates[j].coord = shader_program.shader->gl_Position;
@@ -95,7 +93,7 @@ namespace gl {
         //     // break;
         // }
 
-        case render_mode::TRIANGLES: {
+        case render_mode::TRIANGLES:
             for (size_t i = 2; i < indexes.size(); i += 3) {
                 if (inside_clipping_space[indexes[i - 2]] && inside_clipping_space[indexes[i - 1]] && inside_clipping_space[indexes[i]]) {
                     m_thread_pool.AddTask(&_render_engine::_render_triangle, this, 
@@ -108,7 +106,6 @@ namespace gl {
 
             m_thread_pool.WaitAll();
             break;
-        }
 
         default:
             assert(false && "Invalid Rendering Mode");
