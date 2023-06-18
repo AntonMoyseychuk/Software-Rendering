@@ -3,10 +3,11 @@
 #include "math_3d/math.hpp"
 
 #include "core/gl_api.hpp"
-#include "graphics/mesh.hpp"
+// #include "graphics/mesh.hpp"
+#include "graphics/not_crazy_mesh.hpp"
 
 #include "graphics/shaders/simple_shader.hpp"
-#include "graphics/shaders/model_shader.hpp"
+#include "graphics/shaders/gouraud_shader.hpp"
 
 #include <iostream>
 #include <memory>
@@ -92,14 +93,21 @@ namespace rasterization {
         // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
         // core.set_buffer_element_size(sizeof(cube[0]));
 
-        Mesh model("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
-        
-        m_VBO_IBO["model"] = {
-            core.create_vertex_buffer(model.positions.data(), model.positions.size() * sizeof(model.positions[0])),
-            core.create_index_buffer(model.vert_indexes.data(), model.vert_indexes.size())
-        };
-        core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-        core.set_buffer_element_size(sizeof(model.positions[0]));
+        try {
+            NotCrazyMesh model("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
+            const auto& buffer = model.GetBuffer();
+            
+            m_VBO_IBO["model"] = {
+                core.create_vertex_buffer(buffer->vertexes.data(), buffer->vertexes.size() * sizeof(buffer->vertexes[0])),
+                core.create_index_buffer(buffer->indexes.data(), buffer->indexes.size())
+            };
+            core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+            core.set_buffer_element_size(sizeof(buffer->vertexes[0]));
+        }
+        catch(const std::exception& e) {
+            std::cerr << e.what() << '\n';
+            abort();
+        }
     }
 
     void Application::Run() noexcept {
@@ -112,9 +120,10 @@ namespace rasterization {
         core.uniform("model", mat4f::IDENTITY);
         core.uniform("view", look_at_rh(vec3f::FORWARD() * 2.5f, vec3f::ZERO(), vec3f::UP()));
         
-        size_t model_shader = core.create_shader(std::make_shared<ModelShader>());
+        size_t model_shader = core.create_shader(std::make_shared<GouraudShader>());
         core.bind_shader(model_shader); 
-        core.uniform("light_dir", normalize(vec3f::BACKWARD() + vec3f::LEFT()));
+        core.uniform("light_position", 10.0f * (vec3f::BACKWARD() + vec3f::LEFT()));
+        core.uniform("light_intensity", 1.0f);
         core.uniform("polygon_color", color::GOLDEN);
         core.uniform("model", mat4f::IDENTITY);
         core.uniform("view", look_at_rh(vec3f::FORWARD() * 2.5f, vec3f::ZERO(), vec3f::UP()));

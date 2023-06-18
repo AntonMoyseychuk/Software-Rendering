@@ -5,6 +5,7 @@
 
 #include "math_3d/vec3.hpp"
 #include "math_3d/vec2.hpp"
+#include "math_3d/hash.hpp"
 
 namespace rasterization {
     class NotCrazyMesh final {
@@ -40,5 +41,14 @@ namespace rasterization {
     private:
         Buffer* m_buffer = nullptr;
         std::string m_error_msg, m_warn_message;
+    };
+}
+
+namespace std {
+    template<> struct hash<rasterization::NotCrazyMesh::Vertex> {
+        size_t operator()(const rasterization::NotCrazyMesh::Vertex& vertex) const {
+            return ((hash<math::vec3f>()(vertex.position) ^ (hash<math::vec3f>()(vertex.normal) << 1)) >> 1) 
+                ^ (hash<math::vec2f>()(vertex.texcoord) << 1);
+        }
     };
 }

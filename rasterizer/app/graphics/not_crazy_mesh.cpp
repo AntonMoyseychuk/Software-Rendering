@@ -6,6 +6,8 @@
 #define LINE_STRING(line) #line
 #define MESH_LOADER_ERROR(file, function, line) "[MESH LOAD ERROR]\nfile: " file "\nfunction: " function "\nline: " LINE_STRING(line)
 
+#include <iostream>
+
 namespace rasterization {
     std::unordered_map<std::string, NotCrazyMesh::Buffer> NotCrazyMesh::already_loaded_meshes;
 
@@ -16,6 +18,8 @@ namespace rasterization {
     }
 
     const NotCrazyMesh::Buffer* NotCrazyMesh::Load(const char *filename) noexcept {
+        using namespace math;
+        
         if (already_loaded_meshes.count(filename) == 1) {
             return &already_loaded_meshes[filename];
         }
@@ -30,15 +34,45 @@ namespace rasterization {
 
         Buffer buffer;
         
-        // std::unordered_map<Vertex, size_t> cached_vertex_indexes;
-        for (;;) {
-            for (;;) {
-                //...
+        std::unordered_map<Vertex, size_t> cached_vertex_indexes;
+        for (const auto& shape : shapes) {
+            size_t iter_number = 0;
+            for (const auto& index : shape.mesh.indices) {
+                Vertex v;
+                
+                v.position = {
+                    attribute.vertices[3 * index.vertex_index + 0], 
+                    attribute.vertices[3 * index.vertex_index + 1],
+                    attribute.vertices[3 * index.vertex_index + 2]
+                };
+
+                if (index.normal_index >= 0) {
+                    v.normal = {
+                        attribute.normals[3 * index.normal_index + 0], 
+                        attribute.normals[3 * index.normal_index + 1],
+                        attribute.normals[3 * index.normal_index + 2]
+                    };
+                }
+
+                // if (index.texcoord_index >= 0) {
+                //     v.texcoord = {
+                //         attribute.texcoords[3 * index.texcoord_index + 0], 
+                //         attribute.texcoords[3 * index.texcoord_index + 1]
+                //     };
+                // }
+
+                if (cached_vertex_indexes.count(v) == 0) {
+                    cached_vertex_indexes[v] = buffer.vertexes.size();
+                    buffer.vertexes.push_back(v);
+                }
+
+                buffer.indexes.push_back(cached_vertex_indexes[v]);
             }
         }
 
         already_loaded_meshes[filename] = buffer;
-        return &already_loaded_meshes[filename];
+        m_buffer = &already_loaded_meshes[filename];
+        return m_buffer;
     }
 
     const NotCrazyMesh::Buffer* NotCrazyMesh::GetBuffer() const noexcept {
