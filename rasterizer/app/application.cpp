@@ -123,7 +123,8 @@ namespace rasterization {
         size_t model_shader = core.create_shader(std::make_shared<GouraudShader>());
         core.bind_shader(model_shader); 
         core.uniform("light_position", 10.0f * (vec3f::BACKWARD() + vec3f::LEFT()));
-        core.uniform("light_intensity", 1.0f);
+        core.uniform("light_intensity", 1.2f);
+        core.uniform("light_color", color::WHITE);
         core.uniform("polygon_color", color::GOLDEN);
         core.uniform("model", mat4f::IDENTITY);
         core.uniform("view", look_at_rh(vec3f::FORWARD() * 2.5f, vec3f::ZERO(), vec3f::UP()));
