@@ -93,7 +93,7 @@ namespace rasterization {
         // core.set_buffer_element_size(sizeof(cube[0]));
 
         try {
-            Mesh model("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
+            Mesh model("..\\..\\..\\rasterizer\\app\\assets\\human.obj");
             const Mesh::Buffer* buffer = model.GetBuffer();
             
             m_VBO_IBO["model"] = {
