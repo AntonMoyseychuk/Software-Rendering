@@ -7,7 +7,7 @@
 #include "quaternion.hpp"
 
 #include "vec2.hpp"
-#include "vec2i.hpp"
+// #include "vec2i.hpp"
 #include "vec3.hpp"
 #include "vec4.hpp"
 #include "vec_operations.hpp"

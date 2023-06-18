@@ -9,7 +9,7 @@ namespace math {
     using color = vec4f;
 
     union vec4f {
-        vec4f() noexcept = default;
+        vec4f() noexcept;
         explicit vec4f(float value) noexcept;
         explicit vec4f(const __m128& mm_128) noexcept;
         explicit vec4f(const float* arr) noexcept;

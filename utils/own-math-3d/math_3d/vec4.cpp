@@ -30,6 +30,10 @@ namespace math {
     const color color::BLACK(0.0f, 0.0f, 0.0f, 0.0f);
     const color color::GREY(0.5f, 0.5f, 0.5f, 1.0f);
 
+    vec4f::vec4f() noexcept
+        : mm_128(_mm_set_ps1(0.0f))
+    {
+    }
 
     vec4f::vec4f(float value) noexcept
         : mm_128(_mm_set_ps1(value))

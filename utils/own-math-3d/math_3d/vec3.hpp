@@ -5,7 +5,7 @@ namespace math {
     union vec4f;
 
     union vec3f {
-        vec3f() noexcept = default;
+        vec3f() noexcept;
         explicit vec3f(float value) noexcept;
         explicit vec3f(const float* arr) noexcept;
         vec3f(float x, float y, float z) noexcept;

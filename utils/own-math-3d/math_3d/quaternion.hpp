@@ -1,9 +1,9 @@
 #pragma once
+#include "vec2.hpp"
 
 namespace math {
     union vec4f;
     union vec3f;
-    union vec2f;
 
     struct quaternion {
         quaternion() = default;

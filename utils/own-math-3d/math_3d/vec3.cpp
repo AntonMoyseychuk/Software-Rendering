@@ -15,6 +15,10 @@ namespace math {
     const vec3f vec3f::FORWARD(0.0f, 0.0f, 1.0f); 
     const vec3f vec3f::BACKWARD(0.0f, 0.0f, -1.0f);
 
+    vec3f::vec3f() noexcept
+        : x(0.0f), y(0.0f), z(0.0f)
+    {
+    }
 
     vec3f::vec3f(float value) noexcept
         : x(value), y(value), z(value)
