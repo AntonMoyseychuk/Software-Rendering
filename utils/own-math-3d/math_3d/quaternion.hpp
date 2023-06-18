@@ -8,6 +8,9 @@ namespace math {
 
         quaternion operator*(const quaternion& q) const noexcept;
 
+        bool operator==(const quaternion& q) const noexcept;
+        bool operator!=(const quaternion& q) const noexcept;
+
         float w, x, y, z;
     };
 

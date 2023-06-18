@@ -171,6 +171,14 @@ namespace math {
         return *this;
     }
 
+    bool mat4f::operator==(const mat4f &mat) const noexcept {
+        return vec_row0 == mat.vec_row0 && vec_row1 == mat.vec_row1 && vec_row2 == mat.vec_row2 && vec_row3 == mat.vec_row3;
+    }
+
+    bool mat4f::operator!=(const mat4f &mat) const noexcept {
+        return !this->operator==(mat);
+    }
+
     vec4f &mat4f::operator[](size_t i) noexcept {
         assert(i < raw_count);
         return vec_arr[i];

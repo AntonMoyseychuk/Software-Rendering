@@ -14,7 +14,15 @@ namespace math {
             w * q.z + x * q.y - y * q.x + z * q.w
         );
     }
-    
+
+    bool quaternion::operator==(const quaternion &q) const noexcept {
+        return is_tends_to(x, q.x) && is_tends_to(y, q.y) && is_tends_to(z, q.z) && is_tends_to(w, q.w);
+    }
+
+    bool quaternion::operator!=(const quaternion &q) const noexcept {
+        return !this->operator==(q);
+    }
+
     quaternion normalize(const quaternion &q) noexcept {
         const auto norm = std::sqrtf(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
         return quaternion(q.w / norm, q.x / norm, q.y / norm, q.z / norm);

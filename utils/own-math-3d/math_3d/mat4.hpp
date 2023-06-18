@@ -30,6 +30,9 @@ namespace math {
         mat4f operator*(const mat4f& mat) const noexcept; 
         mat4f& operator*=(const mat4f& mat) noexcept; 
 
+        bool operator==(const mat4f& mat) const noexcept;
+        bool operator!=(const mat4f& mat) const noexcept;
+
         vec4f& operator[](size_t i) noexcept;
         const vec4f& operator[](size_t i) const noexcept;
 
