@@ -25,20 +25,18 @@ namespace gl {
         using namespace math;
 
     #pragma region input-assembler    
-        const auto& vbo = buff_engine._get_binded_vertex_buffer();
-        const auto& ibo = buff_engine._get_binded_index_buffer();
+        const _buffer_engine::vertex_buffer& vbo = buff_engine._get_binded_vertex_buffer();
+        const _buffer_engine::index_buffer& ibo = buff_engine._get_binded_index_buffer();
         const std::vector<uint8_t>& local_coords = vbo.data;
         const std::vector<size_t>& indexes = ibo.data;
     #pragma endregion input-assembler
 
     #pragma region resizing-buffers
         const size_t vertex_count = local_coords.size();
-
-        static std::vector<bool> inside_clipping_space;
+        
         static std::vector<vs_intermediate_data> vs_intermediates;
 
         vs_intermediates.resize(vertex_count);
-        inside_clipping_space.resize(vertex_count);
         _resize_z_buffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
 
@@ -50,7 +48,7 @@ namespace gl {
             vs_intermediates[j].coord = shader_program.shader->gl_Position;
 
             const vec4f ndc = vs_intermediates[j].coord.xyz / vs_intermediates[j].coord.w;
-            inside_clipping_space[j] = _is_inside_clipping_space(ndc.xyz);
+            vs_intermediates[j].clipped = !_is_inside_clipping_space(ndc.xyz);
 
             vs_intermediates[j].coord = ndc * core.m_viewport;
             vs_intermediates[j].coord.x = std::floor(vs_intermediates[j].coord.x);
@@ -61,7 +59,7 @@ namespace gl {
         switch (mode) {
         case render_mode::POINTS:
             for (size_t i = 0; i < indexes.size(); ++i) {
-                if (inside_clipping_space[indexes[i]]) {
+                if (!vs_intermediates[indexes[i]].clipped) {
                     _render_pixel(vs_intermediates[indexes[i]].coord.xy, shader_program.shader->pixel(vs_intermediates[indexes[i]].vs_out));
                 }
             }    
@@ -95,7 +93,7 @@ namespace gl {
 
         case render_mode::TRIANGLES:
             for (size_t i = 2; i < indexes.size(); i += 3) {
-                if (inside_clipping_space[indexes[i - 2]] && inside_clipping_space[indexes[i - 1]] && inside_clipping_space[indexes[i]]) {
+                if (!vs_intermediates[indexes[i - 2]].clipped && !vs_intermediates[indexes[i - 1]].clipped && !vs_intermediates[indexes[i]].clipped) {
                     m_thread_pool.AddTask(&_render_engine::_render_triangle, this, 
                         std::cref(vs_intermediates[indexes[i - 2]]), 
                         std::cref(vs_intermediates[indexes[i - 1]]), 

@@ -46,12 +46,12 @@ namespace gl {
         void _render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept;
         void _render_line(const math::vec3f& pix0, const math::vec3f& pix1, const math::color& color) const noexcept;
 
-        struct _shader;
         struct vs_intermediate_data {
             vs_intermediate_data() = default;
-            vs_intermediate_data(const std::any& vs_out, const math::vec4f& coord) 
-                : vs_out(vs_out), coord(coord) {}
+            vs_intermediate_data(const std::any& vs_out, const math::vec4f& coord, bool clipped) 
+                : clipped(clipped), vs_out(vs_out), coord(coord) {}
 
+            bool clipped;
             std::any vs_out;
             math::vec4f coord;
         };
