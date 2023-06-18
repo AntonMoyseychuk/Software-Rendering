@@ -1,5 +1,6 @@
 #pragma once
 #include "window/window.hpp"
+#include "thread_pool/thread_pool.hpp"
 
 #include "math_3d/vec4.hpp"
 
@@ -24,7 +25,7 @@ namespace gl {
         void set_clear_color(const math::color& color) noexcept;
 
     private:
-        _render_engine() noexcept = default;
+        _render_engine() noexcept;
 
     private:
         void _resize_z_buffer(uint32_t width, uint32_t height) const noexcept;
@@ -58,6 +59,8 @@ namespace gl {
 
     private:
         mutable std::vector<float> m_z_buffer;
+
+        mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 
         win_framewrk::Window* m_window_ptr = nullptr;
         math::color m_clear_color = math::color::BLACK;

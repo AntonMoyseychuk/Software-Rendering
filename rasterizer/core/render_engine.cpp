@@ -19,6 +19,10 @@ namespace gl {
     static _buffer_engine& buff_engine = _buffer_engine::get();
     static _shader_engine& shader_engine = _shader_engine::get();
 
+    _render_engine::_render_engine() noexcept 
+    {
+    }
+
     void _render_engine::render(render_mode mode) const noexcept {
         using namespace math;
 
@@ -94,15 +98,15 @@ namespace gl {
         case render_mode::TRIANGLES: {
             for (size_t i = 2; i < indexes.size(); i += 3) {
                 if (inside_clipping_space[indexes[i - 2]] && inside_clipping_space[indexes[i - 1]] && inside_clipping_space[indexes[i]]) {
-                    // const vec3f normal = normalize(cross(
-                    //     screen_coords[indexes[i]].xyz - screen_coords[indexes[i - 2]].xyz,
-                    //     screen_coords[indexes[i - 1]].xyz - screen_coords[indexes[i]].xyz
-                    // ));
-                    
-                    // const float intensity = dot(normal, shader_program.shader->get_vec3_uniform("light_dir")) + 0.1f;
-                    _render_triangle(vs_intermediates[indexes[i - 2]], vs_intermediates[indexes[i - 1]], vs_intermediates[indexes[i]]);
+                    m_thread_pool.AddTask(&_render_engine::_render_triangle, this, 
+                        std::cref(vs_intermediates[indexes[i - 2]]), 
+                        std::cref(vs_intermediates[indexes[i - 1]]), 
+                        std::cref(vs_intermediates[indexes[i - 0]])
+                    );
                 }
             }
+
+            m_thread_pool.WaitAll();
             break;
         }
 
