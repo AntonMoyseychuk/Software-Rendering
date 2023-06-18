@@ -1,7 +1,6 @@
 #pragma once
-#include "thread_pool/thread_pool.hpp"
-
 #include <SDL.h>
+#include "thread_pool/thread_pool.hpp"
 
 #include <string>
 #include <vector>
