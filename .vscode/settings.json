@@ -88,6 +88,7 @@
         "any": "cpp",
         "resumable": "cpp",
         "cassert": "cpp",
-        "cstdalign": "cpp"
+        "cstdalign": "cpp",
+        "set": "cpp"
     }
 }
