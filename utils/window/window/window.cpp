@@ -30,16 +30,8 @@
 
 
 namespace win_framewrk {
-    std::unique_ptr<bool, Window::SDLDeinitializer> Window::is_sdl_initialized_ptr = nullptr;
-
     Window* Window::Get() noexcept {
         LOG_WIN_INFO(__FUNCTION__);
-
-        if (is_sdl_initialized_ptr == nullptr || *is_sdl_initialized_ptr == false) {
-            is_sdl_initialized_ptr.reset(new bool(_InitializeSDL()));
-        }
-
-        LOG_SDL_ERROR(*is_sdl_initialized_ptr, SDL_GetError());
         
         static Window window;
         return &window;
@@ -80,14 +72,21 @@ namespace win_framewrk {
         return SDL_MapRGBA(format, color.r, color.g, color.b, color.a);
     }
 
-    bool Window::_InitializeSDL() {
+    Window::Window() {
         LOG_WIN_INFO(__FUNCTION__);
-        
-        return SDL_Init(SDL_INIT_EVERYTHING) == 0;
+
+        LOG_SDL_ERROR(SDL_Init(SDL_INIT_EVERYTHING) == 0, SDL_GetError());
+    }
+
+    Window::~Window() {
+        LOG_WIN_INFO(__FUNCTION__);
+
+        SDL_DestroyWindow(m_window_ptr);
+        SDL_Quit();
     }
 
     bool Window::_UpdateSurface() const noexcept {
-        m_surface_ptr = SDL_GetWindowSurface(m_window_ptr.get());
+        m_surface_ptr = SDL_GetWindowSurface(m_window_ptr);
         return m_surface_ptr != nullptr;
     }
 
@@ -120,11 +119,11 @@ namespace win_framewrk {
         }
 
         m_width = width;
-        m_height = height;//
+        m_height = height;
 
-        m_window_ptr.reset(SDL_CreateWindow(title.data(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0));
+        m_window_ptr = SDL_CreateWindow(title.data(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
         LOG_SDL_ERROR(m_window_ptr != nullptr, SDL_GetError());
-        SDL_SetWindowResizable(m_window_ptr.get(), SDL_TRUE);
+        SDL_SetWindowResizable(m_window_ptr, SDL_TRUE);
 
         LOG_SDL_ERROR(_UpdateSurface() == true, SDL_GetError());
 
@@ -164,7 +163,7 @@ namespace win_framewrk {
 
     void Window::PresentPixelBuffer() const noexcept {
         LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
-        LOG_SDL_ERROR(SDL_UpdateWindowSurface(m_window_ptr.get()) == 0, SDL_GetError());
+        LOG_SDL_ERROR(SDL_UpdateWindowSurface(m_window_ptr) == 0, SDL_GetError());
         memset(m_surface_ptr->pixels, 0, sizeof(uint32_t) * m_surface_ptr->w * m_surface_ptr->h);
     }
 
@@ -220,7 +219,7 @@ namespace win_framewrk {
 
     void Window::SetTitle(const std::string_view title) noexcept {
         m_title = title;
-        SDL_SetWindowTitle(m_window_ptr.get(), m_title.c_str());
+        SDL_SetWindowTitle(m_window_ptr, m_title.c_str());
     }
 
     const std::string& Window::GetTitle() const noexcept {
@@ -229,7 +228,7 @@ namespace win_framewrk {
 
     void Window::SetWidth(uint32_t width) noexcept  {
         m_width = width;
-        SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
+        SDL_SetWindowSize(m_window_ptr, m_width, m_height);
 
         LOG_SDL_ERROR(_UpdateSurface() == true, SDL_GetError());
     }
@@ -240,7 +239,7 @@ namespace win_framewrk {
 
     void Window::SetHeight(uint32_t height) noexcept {
         m_height = height;
-        SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
+        SDL_SetWindowSize(m_window_ptr, m_width, m_height);
         
         LOG_SDL_ERROR(_UpdateSurface() == true, SDL_GetError());
     }
@@ -258,32 +257,14 @@ namespace win_framewrk {
     }
 
     const SDL_Window *Window::GetSDLWindowHandle() const noexcept {
-        return m_window_ptr.get();
+        return m_window_ptr;
     }
 
     SDL_Window *Window::GetSDLWindowHandle() noexcept {
-        return m_window_ptr.get();
+        return m_window_ptr;
     }
 
     void Window::SetResizeCallback(const std::function<void(uint32_t width, uint32_t height)> &callback) const noexcept {
         _ResizeCallback = callback;
-    }
-
-    void Window::SDLDeinitializer::operator()(bool *is_sdl_initialized_ptr) const {
-        LOG_WIN_INFO(__FUNCTION__);
-        
-        if (is_sdl_initialized_ptr) {
-            SDL_Quit();
-            *is_sdl_initialized_ptr = false;
-        }
-    }
-    
-    void Window::WindowDestroyer::operator()(SDL_Window *window) const {
-        LOG_WIN_INFO(__FUNCTION__);
-        
-        if (window != nullptr) {
-            SDL_DestroyWindow(window);
-            window = nullptr;
-        }
     }
 }

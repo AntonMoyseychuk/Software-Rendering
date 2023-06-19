@@ -4,8 +4,7 @@
 
 #include <string>
 #include <vector>
-#include <memory>
-#include <stdint.h>
+#include <cstdint>
 
 
 namespace win_framewrk {
@@ -105,10 +104,10 @@ namespace win_framewrk {
 
     private:
         static uint32_t _MapRGBA(SDL_PixelFormat* format, _InternalColor color) noexcept;
-        static bool _InitializeSDL();
 
     private:
-        Window() = default;
+        Window();
+        ~Window();
         
         bool _UpdateSurface() const noexcept;
 
@@ -121,19 +120,7 @@ namespace win_framewrk {
             SDL_Surface* surface, const uint32_t* in_pixels) noexcept;
 
     private:
-        struct SDLDeinitializer {
-            void operator()(bool* is_initialized) const;
-        };
-
-        struct WindowDestroyer {
-            void operator()(SDL_Window* window) const;
-        };
-
-    private:
-        static std::unique_ptr<bool, SDLDeinitializer> is_sdl_initialized_ptr;
-
-    private:
-        std::unique_ptr<SDL_Window, WindowDestroyer> m_window_ptr = nullptr;
+        SDL_Window* m_window_ptr = nullptr;
         mutable SDL_Surface* m_surface_ptr = nullptr;
         SDL_Event m_event;
 
