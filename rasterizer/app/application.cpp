@@ -43,57 +43,57 @@ namespace rasterization {
             { { 0.5f, -0.5f, 0.0f}, color::GREEN },
             { { 0.0f,  0.5f, 0.0f}, color::BLUE },
         };
-        const size_t ind[] = { 0, 1, 2, 0 };
+        const size_t triangle_indexes[] = { 0, 1, 2, 0 };
 
         m_VBO_IBO["triangle"] = {
             core.create_vertex_buffer(triangle, sizeof(triangle)),
-            core.create_index_buffer(ind, sizeof(ind) / sizeof(ind[0]))
+            core.create_index_buffer(triangle_indexes, sizeof(triangle_indexes) / sizeof(triangle_indexes[0]))
         };
         core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
         core.set_buffer_element_size(sizeof(triangle[0]));
 
-        // const vec3f cube[] = {
-        //     { -1.0f, -1.0f, 1.0f },
-        //     { -1.0f,  1.0f, 1.0f },
-        //     {  1.0f,  1.0f, 1.0f },
-        //     {  1.0f, -1.0f, 1.0f },
-        //
-        //     { -1.0f, -1.0f, -1.0f },
-        //     { -1.0f,  1.0f, -1.0f },
-        //     {  1.0f,  1.0f, -1.0f },
-        //     {  1.0f, -1.0f, -1.0f }
-        // };
-        // const size_t indexes[] = {
-        //     0, 1,
-        //     1, 2,
-        //     2, 3,
-        //     3, 0,
-        //
-        //     4, 5,
-        //     5, 6,
-        //     6, 7,
-        //     7, 4,
-        //
-        //     0, 4,
-        //     4, 5,
-        //     5, 1,
-        //     1, 0,
-        //
-        //     2, 6,
-        //     6, 7,
-        //     7, 3,
-        //     3, 2,
-        // };
-        //
-        // m_VBO_IBO["cube"] = {
-        //     core.create_vertex_buffer(cube, sizeof(cube)),
-        //     core.create_index_buffer(indexes, sizeof(indexes) / sizeof(size_t))
-        // };
-        // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
-        // core.set_buffer_element_size(sizeof(cube[0]));
+        const vec3f cube[] = {
+            { -1.0f, -1.0f, 1.0f },
+            { -1.0f,  1.0f, 1.0f },
+            {  1.0f,  1.0f, 1.0f },
+            {  1.0f, -1.0f, 1.0f },
+        
+            { -1.0f, -1.0f, -1.0f },
+            { -1.0f,  1.0f, -1.0f },
+            {  1.0f,  1.0f, -1.0f },
+            {  1.0f, -1.0f, -1.0f }
+        };
+        const size_t cube_indexes[] = {
+            0, 1,
+            1, 2,
+            2, 3,
+            3, 0,
+        
+            4, 5,
+            5, 6,
+            6, 7,
+            7, 4,
+        
+            0, 4,
+            4, 5,
+            5, 1,
+            1, 0,
+        
+            2, 6,
+            6, 7,
+            7, 3,
+            3, 2,
+        };
+        
+        m_VBO_IBO["cube"] = {
+            core.create_vertex_buffer(cube, sizeof(cube)),
+            core.create_index_buffer(cube_indexes, sizeof(cube_indexes) / sizeof(size_t))
+        };
+        core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
+        core.set_buffer_element_size(sizeof(cube[0]));
 
         try {
-            Mesh model("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
+            Mesh model("..\\..\\..\\rasterizer\\app\\assets\\human.obj");
             const Mesh::Buffer* buffer = model.GetBuffer();
             
             m_VBO_IBO["model"] = {
@@ -122,7 +122,7 @@ namespace rasterization {
         size_t model_shader = core.create_shader(std::make_shared<GouraudShader>());
         core.bind_shader(model_shader); 
         core.uniform("light_position", 10.0f * (vec3f::BACKWARD() + vec3f::LEFT()));
-        core.uniform("light_intensity", 1.2f);
+        core.uniform("light_intensity", 0.9f);
         core.uniform("light_color", color::WHITE);
         core.uniform("polygon_color", color::GOLDEN);
         core.uniform("model", mat4f::IDENTITY);
@@ -203,8 +203,10 @@ namespace rasterization {
             core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
             core.render(model_render_mode);
 
-            // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
-            // core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
+            // core.bind_shader(model_shader);
+            // core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
+            // core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
+            // core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
             // core.render(render_mode::LINES);
 
             core.swap_buffers(); 

@@ -34,13 +34,12 @@ namespace rasterization {
 
         const VSOutData data = std::any_cast<VSOutData>(vs_out);
 
-        const color light_color = get_vec4_uniform("light_color");
-        const vec3f light_dir = normalize(data.frag_position - get_vec3_uniform("light_position"));
-        
         const color ambient = 0.1f * data.polygon_color;
-        const color diffuse = std::max(dot(data.normal, light_dir), 0.0f) * get_float_uniform("light_intensity") * light_color * data.polygon_color;
-        const color specular = std::powf(std::max(dot(light_dir, data.normal), 0.0f), 50.0f) * light_color * data.polygon_color;
 
-        return ambient + diffuse + specular;
+        const vec3f light_dir = normalize(data.frag_position - get_vec3_uniform("light_position"));
+        const float diff = std::max(dot(light_dir, data.normal), 0.0f);
+        const color diffuse = diff * get_vec4_uniform("light_color") * get_float_uniform("light_intensity") * data.polygon_color;
+
+        return ambient + diffuse;
     }
 }
