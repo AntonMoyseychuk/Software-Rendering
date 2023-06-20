@@ -114,7 +114,7 @@ namespace math {
         }
 
         float length() const noexcept {
-            std::sqrtf(x * x + y * y);
+            return std::sqrtf(x * x + y * y);
         }
 
         Type& operator[](size_t i) noexcept {

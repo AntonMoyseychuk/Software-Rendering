@@ -43,9 +43,6 @@ namespace gl {
         static float _edge(const math::vec2f& v0, const math::vec2f& v1, const math::vec2f& p) noexcept;
 
     private:
-        void _render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept;
-        void _render_line(const math::vec3f& pix0, const math::vec3f& pix1, const math::color& color) const noexcept;
-
         struct vs_intermediate_data {
             vs_intermediate_data() = default;
             vs_intermediate_data(const std::any& vs_out, const math::vec4f& coord, bool clipped) 
@@ -55,10 +52,18 @@ namespace gl {
             std::any vs_out;
             math::vec4f coord;
         };
+        
+        void _render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept;
+
+        void _render_line(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept;
+        void _render_line_low(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept;
+        void _render_line_high(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept;
+
         void _render_triangle(const vs_intermediate_data& v0, const vs_intermediate_data& v1, const vs_intermediate_data& v2) const noexcept;
 
     private:
         mutable std::vector<float> m_z_buffer;
+        mutable std::vector<vs_intermediate_data> m_vs_intermediates;
 
         mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 

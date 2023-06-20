@@ -27,77 +27,63 @@ namespace gl {
     #pragma region input-assembler    
         const _buffer_engine::vertex_buffer& vbo = buff_engine._get_binded_vertex_buffer();
         const _buffer_engine::index_buffer& ibo = buff_engine._get_binded_index_buffer();
-        const std::vector<uint8_t>& local_coords = vbo.data;
-        const std::vector<size_t>& indexes = ibo.data;
     #pragma endregion input-assembler
 
     #pragma region resizing-buffers
-        const size_t vertex_count = local_coords.size();
-        
-        static std::vector<vs_intermediate_data> vs_intermediates;
+        const size_t vertex_count = vbo.data.size() / vbo.element_size;
 
-        vs_intermediates.resize(vertex_count);
+        m_vs_intermediates.resize(vertex_count);
         _resize_z_buffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
 
     #pragma region local-to-raster-coords
         const _shader_engine::shader_program& shader_program = shader_engine._get_binded_shader_program();
 
-        for (size_t i = 0, j = 0; i < local_coords.size(); i += vbo.element_size, ++j) {
-            vs_intermediates[j].vs_out = shader_program.shader->vertex(&local_coords[i]);
-            vs_intermediates[j].coord = shader_program.shader->gl_Position;
+        for (size_t i = 0, j = 0; i < vbo.data.size(); i += vbo.element_size, ++j) {
+            m_vs_intermediates[j].vs_out = shader_program.shader->vertex(&vbo.data[i]);
+            m_vs_intermediates[j].coord = shader_program.shader->gl_Position;
 
-            const vec4f ndc = vs_intermediates[j].coord.xyz / vs_intermediates[j].coord.w;
-            vs_intermediates[j].clipped = !_is_inside_clipping_space(ndc.xyz);
+            const vec4f ndc = m_vs_intermediates[j].coord.xyz / m_vs_intermediates[j].coord.w;
+            m_vs_intermediates[j].clipped = !_is_inside_clipping_space(ndc.xyz);
 
-            vs_intermediates[j].coord = ndc * core.m_viewport;
-            vs_intermediates[j].coord.x = std::floor(vs_intermediates[j].coord.x);
-            vs_intermediates[j].coord.y = std::floor(vs_intermediates[j].coord.y);
+            m_vs_intermediates[j].coord = ndc * core.m_viewport;
+            m_vs_intermediates[j].coord.x = std::floor(m_vs_intermediates[j].coord.x);
+            m_vs_intermediates[j].coord.y = std::floor(m_vs_intermediates[j].coord.y);
         }
     #pragma endregion local-to-raster-coords
 
         switch (mode) {
         case render_mode::POINTS:
-            for (size_t i = 0; i < indexes.size(); ++i) {
-                if (!vs_intermediates[indexes[i]].clipped) {
-                    _render_pixel(vs_intermediates[indexes[i]].coord.xy, shader_program.shader->pixel(vs_intermediates[indexes[i]].vs_out));
+            for (size_t i = 0; i < ibo.data.size(); ++i) {
+                if (!m_vs_intermediates[ibo.data[i]].clipped) {
+                    _render_pixel(m_vs_intermediates[ibo.data[i]].coord.xy, shader_program.shader->pixel(m_vs_intermediates[ibo.data[i]].vs_out));
                 }
             }    
             break;
         
-        // case render_mode::LINES: {
-        //     assert(false && "render_mode::LINES is not imlemented");
-        //     break;
-        //     // ASSERT_UNIFORM_VALIDITY(shader_program._uniform_buffer.vec4_uniforms, "line_color");
-        //     //
-        //     // for (size_t i = 1; i < indexes.size(); i += 2) {
-        //     //     if (is_inside_clipping_space(ndc_coords[indexes[i - 1]]) && is_inside_clipping_space(ndc_coords[indexes[i]])) {
-        //     //         _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program._uniform_buffer.vec4_uniforms.at("line_color"));
-        //     //     }
-        //     // }
-        //     // break;
-        // }
-        //
-        // case render_mode::LINE_STRIP: {
-        //     assert(false && "render_mode::LINE_STRIP is not imlemented");
-        //     break;
-        //     // ASSERT_UNIFORM_VALIDITY(shader_program._uniform_buffer.vec4_uniforms, "line_color");
-        //     //
-        //     // for (size_t i = 1; i < indexes.size(); ++i) {
-        //     //     if (is_inside_clipping_space(ndc_coords[indexes[i - 1]]) && is_inside_clipping_space(ndc_coords[indexes[i]])) {
-        //     //         _render_line(raster_coords[indexes[i - 1]], raster_coords[indexes[i]], shader_program._uniform_buffer.vec4_uniforms.at("line_color"));
-        //     //     }
-        //     // }
-        //     // break;
-        // }
+        case render_mode::LINES:
+            for (size_t i = 1; i < ibo.data.size(); i += 2) {
+                if (!m_vs_intermediates[ibo.data[i - 1]].clipped && !m_vs_intermediates[ibo.data[i]].clipped) {
+                    _render_line(m_vs_intermediates[ibo.data[i - 1]], m_vs_intermediates[ibo.data[i]]);
+                }
+            }
+            break;
+        
+        case render_mode::LINE_STRIP: 
+            for (size_t i = 1; i < ibo.data.size(); ++i) {
+                if (!m_vs_intermediates[ibo.data[i - 1]].clipped && !m_vs_intermediates[ibo.data[i]].clipped) {
+                    _render_line(m_vs_intermediates[ibo.data[i - 1]], m_vs_intermediates[ibo.data[i]]);
+                }
+            }
+            break;
 
         case render_mode::TRIANGLES:
-            for (size_t i = 2; i < indexes.size(); i += 3) {
-                if (!vs_intermediates[indexes[i - 2]].clipped && !vs_intermediates[indexes[i - 1]].clipped && !vs_intermediates[indexes[i]].clipped) {
+            for (size_t i = 2; i < ibo.data.size(); i += 3) {
+                if (!m_vs_intermediates[ibo.data[i - 2]].clipped && !m_vs_intermediates[ibo.data[i - 1]].clipped && !m_vs_intermediates[ibo.data[i]].clipped) {
                     m_thread_pool.AddTask(&_render_engine::_render_triangle, this, 
-                        std::cref(vs_intermediates[indexes[i - 2]]), 
-                        std::cref(vs_intermediates[indexes[i - 1]]), 
-                        std::cref(vs_intermediates[indexes[i - 0]])
+                        std::cref(m_vs_intermediates[ibo.data[i - 2]]), 
+                        std::cref(m_vs_intermediates[ibo.data[i - 1]]), 
+                        std::cref(m_vs_intermediates[ibo.data[i - 0]])
                     );
                 }
             }
@@ -115,45 +101,87 @@ namespace gl {
         m_window_ptr->SetPixelColor(pixel.x, pixel.y, R_G_B_A(color));
     }
 
-    void _render_engine::_render_line(const math::vec3f& pix0, const math::vec3f& pix1, const math::color& color) const noexcept {
+    void _render_engine::_render_line(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept {
+        if (math::abs(v1.coord.y - v0.coord.y) < math::abs(v1.coord.x - v0.coord.x)) {
+            (v1.coord.x < v0.coord.x) ? _render_line_low(v1, v0) :  _render_line_low(v0, v1);
+        } else {
+            (v1.coord.y < v0.coord.y) ? _render_line_high(v1, v0) : _render_line_high(v0, v1);
+        }
+    }
+
+    void _render_engine::_render_line_low(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept {
         using namespace math;
 
-        auto v0 = pix0;
-        auto v1 = pix1;
+        const auto& shader = shader_engine._get_binded_shader_program().shader;
+        
+        float dx = v1.coord.x - v0.coord.x;
+        float dy = v1.coord.y - v0.coord.y;
 
-        static std::vector<int32_t> values;
-        static std::vector<float> z_values;
+        float yi = 1.0f;
 
-        if (abs(v1.x - v0.x) > abs(v1.y - v0.y)) {
-            if (v0.x > v1.x) {
-                std::swap(v0, v1);
-            }
+        if (dy < 0.0f) {
+            yi = -1.0f;
+            dy = -dy;
+        }
 
-            interpolate<int32_t>(v0.x, v0.y, v1.x, v1.y, values);
-            interpolate<float>(v0.x, v0.z, v1.x, v1.z, z_values);
-            for (int32_t x = v0.x; x <= v1.x; ++x) {
-                const vec3f pixel(x, values[x - v0.x], z_values[x - v0.x]);
-                if (_test_and_update_depth(pixel)) {
-                    _render_pixel(pixel.xy, color);
-                }
-            }
-        } else {
-            if (v0.y > v1.y) {
-                std::swap(v0, v1);
-            }
-            
-            interpolate<int32_t>(v0.y, v0.x, v1.y, v1.x, values);
-            interpolate<float>(v0.y, v0.z, v1.y, v1.z, z_values);
-            for (int32_t y = v0.y; y <= v1.y; ++y) {
-                const vec3f pixel(values[y - v0.y], y, z_values[y - v0.y]);
-                if (_test_and_update_depth(pixel)) {
-                    _render_pixel(pixel.xy, color);
-                }
+        const color c0 = shader->pixel(v0.vs_out), c1 = shader->pixel(v1.vs_out);
+        const float v0_v1_dist = (v1.coord.xy - v0.coord.xy).length();
+
+        float D = (2.0f * dy) - dx;
+        float y = v0.coord.y;
+
+        for (float x = v0.coord.x; x <= v1.coord.x; ++x) {
+            const vec2f pixel(x, y);
+            const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
+            const float w1 = (v1.coord.xy - pixel).length() / v0_v1_dist;
+            _render_pixel(pixel, c0 * w1 + c1 * w0);
+
+            if (D > 0) {
+                y += yi;
+                D += 2.0f * (dy - dx);
+            } else {
+                D += 2.0f * dy;
             }
         }
     }
 
-    void _render_engine::_render_triangle(const vs_intermediate_data& v0, const vs_intermediate_data& v1, const const vs_intermediate_data& v2) const noexcept {
+    void _render_engine::_render_line_high(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept {
+        using namespace math;
+
+        const auto& shader = shader_engine._get_binded_shader_program().shader;
+        
+        float dx = v1.coord.x - v0.coord.x;
+        float dy = v1.coord.y - v0.coord.y;
+
+        float xi = 1.0f;
+
+        if (dx < 0.0f) {
+            xi = -1.0f;
+            dx = -dx;
+        }
+
+        const color c0 = shader->pixel(v0.vs_out), c1 = shader->pixel(v1.vs_out);
+        const float v0_v1_dist = (v1.coord.xy - v0.coord.xy).length();
+
+        float D = (2.0f * dx) - dy;
+        float x = v0.coord.x;
+
+        for (float y = v0.coord.y; y <= v1.coord.y; ++y) {
+            const vec2f pixel(x, y);
+            const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
+            const float w1 = (v1.coord.xy - pixel).length() / v0_v1_dist;
+            _render_pixel(pixel, c0 * w1 + c1 * w0);
+
+            if (D > 0) {
+                x += xi;
+                D += 2.0f * (dx - dy);
+            } else {
+                D += 2.0f * dx;
+            }
+        }
+    }
+
+    void _render_engine::_render_triangle(const vs_intermediate_data& v0, const vs_intermediate_data& v1, const vs_intermediate_data& v2) const noexcept {
         using namespace math;
 
         const auto& shader = shader_engine._get_binded_shader_program().shader;
