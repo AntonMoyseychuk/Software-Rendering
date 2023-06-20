@@ -42,7 +42,7 @@ namespace gl {
         for (size_t i = 0, j = 0; i < vbo.data.size(); i += vbo.element_size, ++j) {
             m_vs_intermediates[j].vs_out = shader_program.shader->vertex(&vbo.data[i]);
             m_vs_intermediates[j].coord = shader_program.shader->gl_Position;
-
+            
             const vec4f ndc = m_vs_intermediates[j].coord.xyz / m_vs_intermediates[j].coord.w;
             m_vs_intermediates[j].clipped = !_is_inside_clipping_space(ndc.xyz);
 
@@ -133,7 +133,7 @@ namespace gl {
         for (float x = v0.coord.x; x <= v1.coord.x; ++x) {
             const vec2f pixel(x, y);
             const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
-            const float w1 = (v1.coord.xy - pixel).length() / v0_v1_dist;
+            const float w1 = 1.0f - w0;
             _render_pixel(pixel, c0 * w1 + c1 * w0);
 
             if (D > 0) {
@@ -169,7 +169,7 @@ namespace gl {
         for (float y = v0.coord.y; y <= v1.coord.y; ++y) {
             const vec2f pixel(x, y);
             const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
-            const float w1 = (v1.coord.xy - pixel).length() / v0_v1_dist;
+            const float w1 = 1.0f - w0;
             _render_pixel(pixel, c0 * w1 + c1 * w0);
 
             if (D > 0) {

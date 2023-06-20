@@ -191,17 +191,17 @@ namespace rasterization {
             }
         #pragma endregion input
 
-            core.bind_shader(simple_shader);
-            core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
-            core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["triangle"].ibo);
-            core.render(model_render_mode);
-
-            // core.bind_shader(model_shader);
+            // core.bind_shader(simple_shader);
             // core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            // core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-            // core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
+            // core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
+            // core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["triangle"].ibo);
             // core.render(model_render_mode);
+
+            core.bind_shader(model_shader);
+            core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
+            core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+            core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
+            core.render(model_render_mode);
 
             // core.bind(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
             // core.bind(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
