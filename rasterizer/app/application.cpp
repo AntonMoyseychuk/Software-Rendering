@@ -93,7 +93,7 @@ namespace rasterization {
         core.set_buffer_element_size(sizeof(cube[0]));
 
         try {
-            Mesh model("..\\..\\..\\rasterizer\\app\\assets\\human.obj");
+            Mesh model("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
             const Mesh::Buffer* buffer = model.GetBuffer();
             
             m_VBO_IBO["model"] = {
@@ -122,7 +122,7 @@ namespace rasterization {
         size_t model_shader = core.create_shader(std::make_shared<GouraudShader>());
         core.bind_shader(model_shader); 
         core.uniform("light_position", 10.0f * (vec3f::BACKWARD() + vec3f::LEFT()));
-        core.uniform("light_intensity", 0.9f);
+        core.uniform("light_intensity", 1.1f);
         core.uniform("light_color", color::WHITE);
         core.uniform("polygon_color", color::GOLDEN);
         core.uniform("model", mat4f::IDENTITY);

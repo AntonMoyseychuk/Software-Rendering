@@ -220,12 +220,10 @@ namespace gl {
     }
 
     bool _render_engine::_test_and_update_depth(const math::vec3f& pixel) const noexcept {
-        const int64_t idx = pixel.x + pixel.y * m_window_ptr->GetWidth();
-        if (math::between<size_t>(idx, 0, m_z_buffer.size())) {
-            if (pixel.z <= m_z_buffer[idx]) {
-                m_z_buffer[static_cast<size_t>(idx)] = pixel.z;
-                return true; 
-            }
+        const size_t idx = pixel.x + pixel.y * m_window_ptr->GetWidth();
+        if (pixel.z <= m_z_buffer[idx]) {
+            m_z_buffer[idx] = pixel.z;
+            return true; 
         }
 
         return false;
