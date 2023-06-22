@@ -1,7 +1,4 @@
 #include "shader_engine.hpp"
-#include "shader_engine_macros.hpp"
-
-#include <cassert>
 
 namespace gl {
     _shader_engine &_shader_engine::get() noexcept {

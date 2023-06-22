@@ -3,13 +3,12 @@
 #include "core/gl_api.hpp"
 
 #include "core/buffer_engine.hpp"
-
 #include "core/shader_engine.hpp"
-#include "core/shader_engine_macros.hpp"
 
 #include "math_3d/vec_operations.hpp"
 #include "math_3d/mat_operations.hpp"
 
+#include "assert_macro.hpp"
 #include "math_3d/util.hpp"
 
 namespace gl {
@@ -92,7 +91,7 @@ namespace gl {
             break;
 
         default:
-            assert(false && "Invalid Rendering Mode");
+            ASSERT(false, "runtime", "invalid Rendering Mode");
             break;
         }
     }

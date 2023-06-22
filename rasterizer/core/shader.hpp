@@ -4,7 +4,9 @@
 #include <any>
 
 #include "math_3d/math.hpp"
+#include "assert_macro.hpp"
 
+#define ASSERT_UNIFORM_VALIDITY(container, uniform_name) ASSERT(container.find((uniform_name)) != container.cend(), "shader error", "invalid uniform name")
 
 namespace gl {
     struct _uniform_buffer final {

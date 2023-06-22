@@ -2,6 +2,10 @@
 #include <unordered_map>
 #include <vector>
 
+#include "assert_macro.hpp"
+
+#define ASSERT_BUFFER_ID_VALIDITY(container, buffer_id) ASSERT(container.find((buffer_id)) != container.cend(), "buffer engine error", "invalid buffer ID")
+
 namespace gl {
     enum class buffer_type : uint8_t { 
         VERTEX, INDEX

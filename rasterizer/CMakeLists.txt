@@ -1,6 +1,7 @@
 project(rasterizer)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 file(GLOB_RECURSE SRC_FILES 
     "${PROJECT_UTIL_DIR}/*.cpp"

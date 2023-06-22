@@ -1,5 +1,4 @@
 #include "shader.hpp"
-#include "shader_engine_macros.hpp"
 
 namespace gl {
     void _shader::geometry() const noexcept

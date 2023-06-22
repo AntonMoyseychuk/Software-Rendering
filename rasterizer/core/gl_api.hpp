@@ -54,6 +54,15 @@ namespace gl {
         void uniform(const std::string& uniform_name, int64_t value) const noexcept;
     #pragma endregion shader_engine_api
 
+    // #pragma region texture_engine_api
+    //     size_t create_unique_texture() const noexcept;
+    //     void texture_image_2D(size_t detail_level, /*tex_internal_format format,*/size_t width, size_t height, /*tex_format format,*/ const void* data) const noexcept;
+    //
+    //     void bind_texture(size_t texture_id) const noexcept;
+    //
+    //     void texture_parameter() const noexcept;
+    // #pragma endregion texture_engine_api
+
         void viewport(uint32_t width, uint32_t height) const noexcept;
 
     private:

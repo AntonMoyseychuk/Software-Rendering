@@ -1,9 +1,5 @@
 #include "buffer_engine.hpp"
-#include "buffer_engine_macros.hpp"
-
 #include "math_3d/util.hpp"
-
-#include <cassert>
 
 namespace gl {
     _buffer_engine &_buffer_engine::get() noexcept {
@@ -46,33 +42,33 @@ namespace gl {
     void _buffer_engine::bind_buffer(buffer_type type, size_t id) noexcept {
         switch (type) {
         case buffer_type::VERTEX:
-            assert(vbos.count(id) == 1);
+            ASSERT_BUFFER_ID_VALIDITY(vbos, id);
             binded_vbo = id;
             break;
         
         case buffer_type::INDEX:
-            assert(ibos.count(id) == 1);
+            ASSERT_BUFFER_ID_VALIDITY(ibos, id);
             binded_ibo = id;
             break;
 
         default:
-            assert(false && "invalid buffer_type");
+            ASSERT(false, "buffer engine error", "invalid buffer_type");
             break;
         }
     }
     
     void _buffer_engine::set_buffer_element_size(size_t size) noexcept {
-        assert(vbos.count(binded_vbo) == 1);
+        ASSERT_BUFFER_ID_VALIDITY(vbos, binded_vbo);
         vbos[binded_vbo].element_size = size;
     }
     
     const _buffer_engine::vertex_buffer &_buffer_engine::_get_binded_vertex_buffer() const noexcept {
-        ASSERT_BUFFER_VALIDITY(vbos, binded_vbo);
+        ASSERT_BUFFER_ID_VALIDITY(vbos, binded_vbo);
         return vbos.at(binded_vbo);
     }
     
     const _buffer_engine::index_buffer &_buffer_engine::_get_binded_index_buffer() const noexcept {
-        ASSERT_BUFFER_VALIDITY(ibos, binded_ibo);
+        ASSERT_BUFFER_ID_VALIDITY(ibos, binded_ibo);
         return ibos.at(binded_ibo);
     }
 }
