@@ -38,6 +38,9 @@ namespace rasterization {
             core.viewport(width, height);
         });
 
+
+
+
         const Vertex triangle[] = {
             { {-0.5f, -0.5f, 0.0f}, color::RED },
             { { 0.5f, -0.5f, 0.0f}, color::GREEN },
@@ -52,56 +55,26 @@ namespace rasterization {
         core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
         core.set_buffer_element_size(sizeof(triangle[0]));
 
-        const vec3f cube[] = {
-            { -1.0f, -1.0f, 1.0f },
-            { -1.0f,  1.0f, 1.0f },
-            {  1.0f,  1.0f, 1.0f },
-            {  1.0f, -1.0f, 1.0f },
-        
-            { -1.0f, -1.0f, -1.0f },
-            { -1.0f,  1.0f, -1.0f },
-            {  1.0f,  1.0f, -1.0f },
-            {  1.0f, -1.0f, -1.0f }
-        };
-        const size_t cube_indexes[] = {
-            0, 1,
-            1, 2,
-            2, 3,
-            3, 0,
-        
-            4, 5,
-            5, 6,
-            6, 7,
-            7, 4,
-        
-            0, 4,
-            4, 5,
-            5, 1,
-            1, 0,
-        
-            2, 6,
-            6, 7,
-            7, 3,
-            3, 2,
-        };
-        
-        m_VBO_IBO["cube"] = {
-            core.create_vertex_buffer(cube, sizeof(cube)),
-            core.create_index_buffer(cube_indexes, sizeof(cube_indexes) / sizeof(size_t))
-        };
-        core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
-        core.set_buffer_element_size(sizeof(cube[0]));
-
         try {
             Mesh model("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
-            const Mesh::Buffer* buffer = model.GetBuffer();
+            const Mesh::Content* model_buffer = model.GetContent();
             
             m_VBO_IBO["model"] = {
-                core.create_vertex_buffer(buffer->vertexes.data(), buffer->vertexes.size() * sizeof(buffer->vertexes[0])),
-                core.create_index_buffer(buffer->indexes.data(), buffer->indexes.size())
+                core.create_vertex_buffer(model_buffer->vertexes.data(), model_buffer->vertexes.size() * sizeof(model_buffer->vertexes[0])),
+                core.create_index_buffer(model_buffer->indexes.data(), model_buffer->indexes.size())
             };
             core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-            core.set_buffer_element_size(sizeof(buffer->vertexes[0]));
+            core.set_buffer_element_size(sizeof(model_buffer->vertexes[0]));
+
+            Mesh cube("..\\..\\..\\rasterizer\\app\\assets\\cube.obj");
+            const Mesh::Content* cube_buffer = cube.GetContent();
+
+            m_VBO_IBO["cube"] = {
+                core.create_vertex_buffer(cube_buffer->vertexes.data(), cube_buffer->vertexes.size() * sizeof(cube_buffer->vertexes[0])),
+                core.create_index_buffer(cube_buffer->indexes.data(), cube_buffer->indexes.size())
+            };
+            core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
+            core.set_buffer_element_size(sizeof(cube_buffer->vertexes[0]));
         }
         catch(const std::exception& e) {
             std::cerr << e.what() << '\n';
@@ -197,17 +170,17 @@ namespace rasterization {
             // core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["triangle"].ibo);
             // core.render(model_render_mode);
 
-            core.bind_shader(model_shader);
-            core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-            core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
-            core.render(model_render_mode);
-
             // core.bind_shader(model_shader);
             // core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            // core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
-            // core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
-            // core.render(render_mode::LINES);
+            // core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+            // core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
+            // core.render(model_render_mode);
+
+            core.bind_shader(model_shader);
+            core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
+            core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
+            core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
+            core.render(model_render_mode);
 
             core.swap_buffers(); 
             core.clear_depth_buffer();

@@ -6,8 +6,17 @@
 #define LINE_STRING(line) #line
 #define MESH_LOADER_ERROR(file, function, line) "[MESH LOAD ERROR]\nfile: " file "\nfunction: " function "\nline: " LINE_STRING(line)
 
+namespace std {
+    template<> struct hash<rasterization::Mesh::Vertex> {
+        size_t operator()(const rasterization::Mesh::Vertex& vertex) const {
+            return ((hash<math::vec3f>()(vertex.position) ^ (hash<math::vec3f>()(vertex.normal) << 1)) >> 1) 
+                ^ (hash<math::vec2f>()(vertex.texcoord) << 1);
+        }
+    };
+}
+
 namespace rasterization {
-    std::unordered_map<std::string, Mesh::Buffer> Mesh::already_loaded_meshes;
+    std::unordered_map<std::string, Mesh::Content> Mesh::already_loaded_meshes;
 
     Mesh::Mesh(const char *filename) {
         if (!Load(filename)) {
@@ -15,7 +24,7 @@ namespace rasterization {
         }
     }
 
-    const Mesh::Buffer* Mesh::Load(const char *filename) noexcept {
+    const Mesh::Content* Mesh::Load(const char *filename) noexcept {
         using namespace math;
         
         if (already_loaded_meshes.count(filename) == 1) {
@@ -30,7 +39,7 @@ namespace rasterization {
             return nullptr;
         }
 
-        Buffer buffer;
+        Content buffer;
         
         std::unordered_map<Vertex, size_t> cached_vertex_indexes;
         for (const auto& shape : shapes) {
@@ -52,12 +61,12 @@ namespace rasterization {
                     };
                 }
 
-                // if (index.texcoord_index >= 0) {
-                //     v.texcoord = {
-                //         attribute.texcoords[3 * index.texcoord_index + 0], 
-                //         attribute.texcoords[3 * index.texcoord_index + 1]
-                //     };
-                // }
+                if (index.texcoord_index >= 0) {
+                    v.texcoord = {
+                        attribute.texcoords[2 * index.texcoord_index + 0], 
+                        attribute.texcoords[2 * index.texcoord_index + 1]
+                    };
+                }
 
                 if (cached_vertex_indexes.count(v) == 0) {
                     cached_vertex_indexes[v] = buffer.vertexes.size();
@@ -69,11 +78,11 @@ namespace rasterization {
         }
 
         already_loaded_meshes[filename] = buffer;
-        m_buffer = &already_loaded_meshes[filename];
-        return m_buffer;
+        m_content = &already_loaded_meshes[filename];
+        return m_content;
     }
 
-    const Mesh::Buffer* Mesh::GetBuffer() const noexcept {
-        return m_buffer;
+    const Mesh::Content* Mesh::GetContent() const noexcept {
+        return m_content;
     }
 }

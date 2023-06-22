@@ -8,7 +8,7 @@
 #include "math_3d/hash.hpp"
 
 namespace rasterization {
-    class Mesh final {
+    class Mesh {
     public:
         struct Vertex {
             Vertex() noexcept = default;
@@ -22,7 +22,7 @@ namespace rasterization {
             math::vec2f texcoord;
         };
     
-        struct Buffer {
+        struct Content {
             std::vector<Vertex> vertexes;
             std::vector<size_t> indexes;
         };
@@ -31,24 +31,15 @@ namespace rasterization {
         Mesh() noexcept = default;
         Mesh(const char* filename);
 
-        const Buffer* Load(const char* filename) noexcept;
+        const Content* Load(const char* filename) noexcept;
 
-        const Buffer* GetBuffer() const noexcept;
-
-    private:
-        static std::unordered_map<std::string, Buffer> already_loaded_meshes;
+        const Content* GetContent() const noexcept;
 
     private:
-        Buffer* m_buffer = nullptr;
+        static std::unordered_map<std::string, Content> already_loaded_meshes;
+
+    private:
+        Content* m_content = nullptr;
         std::string m_error_msg, m_warn_message;
-    };
-}
-
-namespace std {
-    template<> struct hash<rasterization::Mesh::Vertex> {
-        size_t operator()(const rasterization::Mesh::Vertex& vertex) const {
-            return ((hash<math::vec3f>()(vertex.position) ^ (hash<math::vec3f>()(vertex.normal) << 1)) >> 1) 
-                ^ (hash<math::vec2f>()(vertex.texcoord) << 1);
-        }
     };
 }
