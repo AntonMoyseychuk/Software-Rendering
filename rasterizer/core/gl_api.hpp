@@ -47,6 +47,11 @@ namespace gl {
         void uniform(const std::string& uniform_name, const math::vec3f& vec) const noexcept;
         void uniform(const std::string& uniform_name, const math::vec2f& vec) const noexcept;
         void uniform(const std::string& uniform_name, float value) const noexcept;
+        void uniform(const std::string& uniform_name, double value) const noexcept;
+        void uniform(const std::string& uniform_name, int8_t value) const noexcept;
+        void uniform(const std::string& uniform_name, int16_t value) const noexcept;
+        void uniform(const std::string& uniform_name, int32_t value) const noexcept;
+        void uniform(const std::string& uniform_name, int64_t value) const noexcept;
     #pragma endregion shader_engine_api
 
         void viewport(uint32_t width, uint32_t height) const noexcept;

@@ -19,6 +19,11 @@ namespace gl {
         void uniform(const std::string& uniform_name, const math::vec3f& vec) noexcept;
         void uniform(const std::string& uniform_name, const math::vec2f& vec) noexcept;
         void uniform(const std::string& uniform_name, float value) noexcept;
+        void uniform(const std::string& uniform_name, double value) noexcept;
+        void uniform(const std::string& uniform_name, int8_t value) noexcept;
+        void uniform(const std::string& uniform_name, int16_t value) noexcept;
+        void uniform(const std::string& uniform_name, int32_t value) noexcept;
+        void uniform(const std::string& uniform_name, int64_t value) noexcept;
 
     private:
         _shader_engine() = default;

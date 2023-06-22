@@ -38,7 +38,7 @@ namespace rasterization {
 
         const vec3f light_dir = normalize(data.frag_position - get_vec3_uniform("light_position"));
         const float diff = std::max(dot(light_dir, data.normal), 0.0f);
-        const color diffuse = diff * get_vec4_uniform("light_color") * get_float_uniform("light_intensity") * data.polygon_color;
+        const color diffuse = diff * get_vec4_uniform("light_color") * get_f32_uniform("light_intensity") * data.polygon_color;
 
         return ambient + diffuse;
     }

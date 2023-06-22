@@ -8,14 +8,19 @@
 
 namespace gl {
     struct _uniform_buffer final {
-        std::unordered_map<std::string, math::mat4f> mat4_uniforms;
-        std::unordered_map<std::string, math::vec4f> vec4_uniforms;
-        std::unordered_map<std::string, math::vec3f> vec3_uniforms;
-        std::unordered_map<std::string, math::vec2f> vec2_uniforms;
+        std::unordered_map<std::string, math::mat4f> u_mat4;
+        std::unordered_map<std::string, math::vec4f> u_vec4;
+        std::unordered_map<std::string, math::vec3f> u_vec3;
+        std::unordered_map<std::string, math::vec2f> u_vec2;
 
-        std::unordered_map<std::string, math::quaternion> quaternion_uniforms;
+        std::unordered_map<std::string, math::quaternion> u_quaternion;
 
-        std::unordered_map<std::string, float> float_uniforms;
+        std::unordered_map<std::string, float> u_f32;
+        std::unordered_map<std::string, double> u_f64;
+        std::unordered_map<std::string, int8_t> u_i8;
+        std::unordered_map<std::string, int16_t> u_i16;
+        std::unordered_map<std::string, int32_t> u_i32;
+        std::unordered_map<std::string, int64_t> u_i64;
     };
 
     struct _shader {
@@ -36,7 +41,12 @@ namespace gl {
         const math::vec4f& get_vec4_uniform(const std::string& name) const noexcept;
         const math::vec3f& get_vec3_uniform(const std::string& name) const noexcept;
         const math::vec2f& get_vec2_uniform(const std::string& name) const noexcept;
-        float get_float_uniform(const std::string& name) const noexcept;
+        float              get_f32_uniform(const std::string& name) const noexcept;
+        double             get_f64_uniform(const std::string& name) const noexcept;
+        int8_t             get_i8_uniform(const std::string& name) const noexcept;
+        int16_t            get_i16_uniform(const std::string& name) const noexcept;
+        int32_t            get_i32_uniform(const std::string& name) const noexcept;
+        int64_t            get_i64_uniform(const std::string& name) const noexcept;
 
         mutable math::vec4f gl_Position;
 

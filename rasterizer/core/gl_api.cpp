@@ -103,5 +103,25 @@ namespace gl {
     void gl_api::uniform(const std::string &uniform_name, float value) const noexcept {
         m_shader_engine.uniform(uniform_name, value);
     }
+
+    void gl_api::uniform(const std::string &uniform_name, double value) const noexcept {
+        m_shader_engine.uniform(uniform_name, value);
+    }
+
+    void gl_api::uniform(const std::string &uniform_name, int8_t value) const noexcept {
+        m_shader_engine.uniform(uniform_name, value);
+    }
+
+    void gl_api::uniform(const std::string &uniform_name, int16_t value) const noexcept {
+        m_shader_engine.uniform(uniform_name, value);
+    }
+
+    void gl_api::uniform(const std::string &uniform_name, int32_t value) const noexcept {
+        m_shader_engine.uniform(uniform_name, value);
+    }
+
+    void gl_api::uniform(const std::string &uniform_name, int64_t value) const noexcept {
+        m_shader_engine.uniform(uniform_name, value);
+    }
 #pragma endregion shader_engine_api
 }
