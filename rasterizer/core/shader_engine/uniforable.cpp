@@ -1,61 +1,57 @@
-#include "shader.hpp"
+#include "uniforable.hpp"
 
 namespace gl {
-    void _shader::geometry() const noexcept
-    {
-    }
-
-    const math::quaternion &_shader::get_quaternion_uniform(const std::string &name) const noexcept {
+    const math::quaternion &_uniforable::get_quaternion_uniform(const std::string &name) const noexcept {
         ASSERT_UNIFORM_VALIDITY(m_uniforms.u_quaternion, name);
         return m_uniforms.u_quaternion.at(name);
     }
 
-    const math::mat4f &_shader::get_mat4_uniform(const std::string &name) const noexcept {
+    const math::mat4f &_uniforable::get_mat4_uniform(const std::string &name) const noexcept {
         ASSERT_UNIFORM_VALIDITY(m_uniforms.u_mat4, name);
         return m_uniforms.u_mat4.at(name);
     }
     
-    const math::vec4f &_shader::get_vec4_uniform(const std::string &name) const noexcept {
+    const math::vec4f &_uniforable::get_vec4_uniform(const std::string &name) const noexcept {
         ASSERT_UNIFORM_VALIDITY(m_uniforms.u_vec4, name);
         return m_uniforms.u_vec4.at(name);
     }
     
-    const math::vec3f &_shader::get_vec3_uniform(const std::string &name) const noexcept {
+    const math::vec3f &_uniforable::get_vec3_uniform(const std::string &name) const noexcept {
         ASSERT_UNIFORM_VALIDITY(m_uniforms.u_vec3, name);
         return m_uniforms.u_vec3.at(name);
     }
 
-    const math::vec2f &_shader::get_vec2_uniform(const std::string &name) const noexcept {
+    const math::vec2f &_uniforable::get_vec2_uniform(const std::string &name) const noexcept {
         ASSERT_UNIFORM_VALIDITY(m_uniforms.u_vec2, name);
         return m_uniforms.u_vec2.at(name);
     }
 
-    float _shader::get_f32_uniform(const std::string &name) const noexcept {
+    float _uniforable::get_f32_uniform(const std::string &name) const noexcept {
         ASSERT_UNIFORM_VALIDITY(m_uniforms.u_f32, name);
         return m_uniforms.u_f32.at(name);
     }
 
-    double _shader::get_f64_uniform(const std::string &name) const noexcept {
+    double _uniforable::get_f64_uniform(const std::string &name) const noexcept {
         ASSERT_UNIFORM_VALIDITY(m_uniforms.u_f64, name);
         return m_uniforms.u_f64.at(name);
     }
 
-    int8_t _shader::get_i8_uniform(const std::string &name) const noexcept {
+    int8_t _uniforable::get_i8_uniform(const std::string &name) const noexcept {
         ASSERT_UNIFORM_VALIDITY(m_uniforms.u_i8, name);
         return m_uniforms.u_i8.at(name);
     }
 
-    int16_t _shader::get_i16_uniform(const std::string &name) const noexcept {
+    int16_t _uniforable::get_i16_uniform(const std::string &name) const noexcept {
         ASSERT_UNIFORM_VALIDITY(m_uniforms.u_i16, name);
         return m_uniforms.u_i16.at(name);
     }
 
-    int32_t _shader::get_i32_uniform(const std::string &name) const noexcept {
+    int32_t _uniforable::get_i32_uniform(const std::string &name) const noexcept {
         ASSERT_UNIFORM_VALIDITY(m_uniforms.u_i32, name);
         return m_uniforms.u_i32.at(name);
     }
 
-    int64_t _shader::get_i64_uniform(const std::string &name) const noexcept {
+    int64_t _uniforable::get_i64_uniform(const std::string &name) const noexcept {
         ASSERT_UNIFORM_VALIDITY(m_uniforms.u_i64, name);
         return m_uniforms.u_i64.at(name);
     }

@@ -39,8 +39,6 @@ namespace rasterization {
         });
 
 
-
-
         const Vertex triangle[] = {
             { {-0.5f, -0.5f, 0.0f}, color::RED },
             { { 0.5f, -0.5f, 0.0f}, color::GREEN },

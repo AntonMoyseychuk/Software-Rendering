@@ -1,5 +1,5 @@
 #pragma once
-#include "core/shader.hpp"
+#include "core/shader_engine/shader.hpp"
 
 namespace rasterization {
     struct SimpleShader : public gl::_shader {

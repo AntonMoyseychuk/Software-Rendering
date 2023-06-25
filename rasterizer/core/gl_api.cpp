@@ -1,8 +1,5 @@
 #include "gl_api.hpp"
-#include "math_3d/util.hpp"
-#include "math_3d/mat_operations.hpp"
 
-#include <cassert>
 
 namespace gl {
     gl_api &gl_api::get() noexcept {

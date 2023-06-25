@@ -2,13 +2,13 @@
 
 #include "core/gl_api.hpp"
 
-#include "core/buffer_engine.hpp"
-#include "core/shader_engine.hpp"
+#include "core/buffer_engine/buffer_engine.hpp"
+#include "core/shader_engine/shader_engine.hpp"
 
 #include "math_3d/vec_operations.hpp"
 #include "math_3d/mat_operations.hpp"
 
-#include "assert_macro.hpp"
+#include "core/assert_macro.hpp"
 #include "math_3d/util.hpp"
 
 namespace gl {

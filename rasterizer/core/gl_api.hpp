@@ -1,7 +1,7 @@
 #pragma once
-#include "buffer_engine.hpp"
-#include "render_engine.hpp"
-#include "shader_engine.hpp"
+#include "buffer_engine/buffer_engine.hpp"
+#include "render_engine/render_engine.hpp"
+#include "shader_engine/shader_engine.hpp"
 
 
 namespace gl {
