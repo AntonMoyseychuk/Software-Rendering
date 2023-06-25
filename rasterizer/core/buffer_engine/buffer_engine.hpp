@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "assert_macro.hpp"
+#include "core/assert_macro.hpp"
 
 #define ASSERT_BUFFER_ID_VALIDITY(container, buffer_id) ASSERT(container.find((buffer_id)) != container.cend(), "buffer engine error", "invalid buffer ID")
 

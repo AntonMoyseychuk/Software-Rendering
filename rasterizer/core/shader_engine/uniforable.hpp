@@ -10,6 +10,9 @@
 namespace gl {
     struct _uniforable {
         friend struct _shader_engine;
+
+        _uniforable() = default;
+        virtual ~_uniforable() = default;
     
     protected:
         const math::quaternion& get_quaternion_uniform(const std::string& name) const noexcept;
