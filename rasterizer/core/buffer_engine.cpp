@@ -8,11 +8,10 @@ namespace gl {
     }
     
     size_t _buffer_engine::create_vertex_buffer(const void *buffer, size_t size) noexcept {
-        const auto cend = vbos.cend();
         size_t id;
         do {
             id = math::random((size_t)0, SIZE_MAX - 1) + 1;
-        } while (vbos.find(id) != cend);
+        } while (vbos.count(id) != 0);
 
         vbos[id] = vertex_buffer { std::vector<uint8_t>((uint8_t*)buffer, (uint8_t*)buffer + size), 0 };
     
@@ -20,11 +19,10 @@ namespace gl {
     }
 
     size_t _buffer_engine::create_index_buffer(const size_t *buffer, size_t count) noexcept {
-        const auto cend = ibos.cend();
         size_t id;
         do {
             id = math::random((size_t)0, SIZE_MAX - 1) + 1;
-        } while (ibos.find(id) != cend);
+        } while (ibos.count(id) != 0);
 
         ibos[id] = index_buffer {
             std::vector<size_t>(buffer, buffer + count)

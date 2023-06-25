@@ -1,10 +1,9 @@
 #include "application.hpp"
 
 #include "math_3d/math.hpp"
-#include "core/gl_api.hpp"
 
+#include "core/gl_api.hpp"
 #include "graphics/mesh.hpp"
-#include "graphics/texture.hpp"
 
 #include "graphics/shaders/simple_shader.hpp"
 #include "graphics/shaders/gouraud_shader.hpp"
@@ -39,9 +38,7 @@ namespace rasterization {
             core.viewport(width, height);
         });
 
-        Texture texture("..\\..\\..\\rasterizer\\app\\assets\\crate-texture.jpg");
-        const auto* content = texture.GetContent();
-        size_t t = core.create_texture(content->width, content->height, (gl::texture_format)content->channel_count, content->data.data());
+
 
 
         const Vertex triangle[] = {
