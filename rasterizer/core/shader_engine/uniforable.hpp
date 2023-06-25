@@ -9,6 +9,8 @@
 
 namespace gl {
     struct _uniforable {
+        friend struct _shader_engine;
+    
     protected:
         const math::quaternion& get_quaternion_uniform(const std::string& name) const noexcept;
         const math::mat4f& get_mat4_uniform(const std::string& name) const noexcept;

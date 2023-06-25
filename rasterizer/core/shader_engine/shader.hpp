@@ -13,7 +13,6 @@ namespace gl {
 
         virtual void geometry() const noexcept;
 
-        friend struct _shader_engine;
         friend struct _render_engine;
 
     protected:
