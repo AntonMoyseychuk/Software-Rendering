@@ -39,16 +39,16 @@ namespace gl {
 
     protected:
         const math::quaternion& get_quaternion_uniform(const std::string& name) const noexcept;
-        const math::mat4f& get_mat4_uniform(const std::string& name) const noexcept;
-        const math::vec4f& get_vec4_uniform(const std::string& name) const noexcept;
-        const math::vec3f& get_vec3_uniform(const std::string& name) const noexcept;
-        const math::vec2f& get_vec2_uniform(const std::string& name) const noexcept;
-        float              get_f32_uniform(const std::string& name) const noexcept;
-        double             get_f64_uniform(const std::string& name) const noexcept;
-        int8_t             get_i8_uniform(const std::string& name) const noexcept;
-        int16_t            get_i16_uniform(const std::string& name) const noexcept;
-        int32_t            get_i32_uniform(const std::string& name) const noexcept;
-        int64_t            get_i64_uniform(const std::string& name) const noexcept;
+        const math::mat4f&      get_mat4_uniform(const std::string& name) const noexcept;
+        const math::vec4f&      get_vec4_uniform(const std::string& name) const noexcept;
+        const math::vec3f&      get_vec3_uniform(const std::string& name) const noexcept;
+        const math::vec2f&      get_vec2_uniform(const std::string& name) const noexcept;
+        float                   get_f32_uniform(const std::string& name) const noexcept;
+        double                  get_f64_uniform(const std::string& name) const noexcept;
+        int8_t                  get_i8_uniform(const std::string& name) const noexcept;
+        int16_t                 get_i16_uniform(const std::string& name) const noexcept;
+        int32_t                 get_i32_uniform(const std::string& name) const noexcept;
+        int64_t                 get_i64_uniform(const std::string& name) const noexcept;
 
         mutable math::vec4f gl_Position;
 

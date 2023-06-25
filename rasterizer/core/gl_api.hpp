@@ -2,6 +2,7 @@
 #include "buffer_engine.hpp"
 #include "render_engine.hpp"
 #include "shader_engine.hpp"
+#include "texture_engine.hpp"
 
 
 namespace gl {
@@ -39,7 +40,7 @@ namespace gl {
 
     #pragma region shader_engine_api
         size_t create_shader(const std::shared_ptr<_shader>& shader) const noexcept;
-        void bind_shader(size_t shader_id) const noexcept;
+        void bind_shader(size_t id) const noexcept;
 
         void uniform(const std::string& uniform_name, const math::quaternion& q) const noexcept;
         void uniform(const std::string& uniform_name, const math::mat4f& mat) const noexcept;
@@ -54,14 +55,12 @@ namespace gl {
         void uniform(const std::string& uniform_name, int64_t value) const noexcept;
     #pragma endregion shader_engine_api
 
-    // #pragma region texture_engine_api
-    //     size_t create_unique_texture() const noexcept;
-    //     void texture_image_2D(size_t detail_level, /*tex_internal_format format,*/size_t width, size_t height, /*tex_format format,*/ const void* data) const noexcept;
-    //
-    //     void bind_texture(size_t texture_id) const noexcept;
-    //
-    //     void texture_parameter() const noexcept;
-    // #pragma endregion texture_engine_api
+    #pragma region texture_engine_api
+        size_t create_texture(size_t width, size_t height, texture_format format, const void* data) const noexcept;
+        void bind_texture(size_t id) const noexcept;
+    
+        // void texture_parameter() const noexcept;
+    #pragma endregion texture_engine_api
 
         void viewport(uint32_t width, uint32_t height) const noexcept;
 
@@ -72,6 +71,7 @@ namespace gl {
         _buffer_engine& m_buf_engine;
         _render_engine& m_render_engine;
         _shader_engine& m_shader_engine;
+        _texture_engine& m_texture_engine;
 
         mutable math::mat4f m_viewport;
     };
