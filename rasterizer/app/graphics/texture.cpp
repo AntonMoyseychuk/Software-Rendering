@@ -11,13 +11,14 @@ namespace rasterization {
 
     Texture::Texture(const char *filename) {
         if (!Load(filename)) {
-            throw std::runtime_error(stbi_failure_reason());
+            throw std::runtime_error(std::string(stbi_failure_reason()) + " " + filename);
         }
     }
     
     const Texture::Content* Texture::Load(const char *filename) noexcept {
         if (already_loaded_textures.find(filename) != already_loaded_textures.cend()) {
-            return &already_loaded_textures[filename];
+            m_content = &already_loaded_textures[filename];
+            return m_content;
         }
         
         Content content;

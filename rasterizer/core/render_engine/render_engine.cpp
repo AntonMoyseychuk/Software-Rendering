@@ -196,9 +196,9 @@ namespace gl {
                 const vec2f p(x, y);
                 
                 const float area = _edge(v0.coord.xy, v1.coord.xy, v2.coord.xy);
-                const float w0 = _edge(v1.coord.xy, v2.coord.xy, p) / area;
-                const float w1 = _edge(v2.coord.xy, v0.coord.xy, p) / area;
-                const float w2 = 1.0f - w0 - w1;
+                const float   w0 = _edge(v1.coord.xy, v2.coord.xy, p) / area;
+                const float   w1 = _edge(v2.coord.xy, v0.coord.xy, p) / area;
+                const float   w2 = 1.0f - w0 - w1;
                 
                 if (w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) {
                     prev_pixel_was_inside = true;

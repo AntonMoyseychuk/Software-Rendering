@@ -17,9 +17,6 @@ namespace gl {
         virtual void geometry() const noexcept;
 
     protected:
-        math::color texture(const math::vec2f& tex_coord) const noexcept;
-
-    protected:
         mutable math::vec4f gl_Position;
     };
 }

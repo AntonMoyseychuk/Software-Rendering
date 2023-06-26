@@ -13,7 +13,7 @@ namespace raytracing::gfx {
         using namespace math;
 
         const auto reflected = reflect(int_data.casted_ray.direction, int_data.normal);
-        scattered_ray = Ray(int_data.point, reflected + reflection_index * vec3f(random_unit_vector_in_hemisphere(vec4f(int_data.normal))));
+        scattered_ray = Ray(int_data.point, reflected + reflection_index * random_unit_vector_in_hemisphere(vec4f(int_data.normal)).xyz);
         
         attenuation = color;
 

@@ -9,8 +9,8 @@ namespace raytracing::gfx {
             m_right(math::normalize(math::cross(up, -m_forward))),
             m_up(math::cross(-m_forward, m_right)),
             m_radius(1.0f),
-            m_thi_radians(math::angle(math::normalize(math::vec3f(m_forward.x, 0.0f, m_forward.z)), math::vec3f::FORWARD)),
-            m_theta_radians(math::angle(m_forward, math::vec3f::UP)),
+            m_thi_radians(math::angle(math::normalize(math::vec3f(m_forward.x, 0.0f, m_forward.z)), math::vec3f::FORWARD())),
+            m_theta_radians(math::angle(m_forward, math::vec3f::UP())),
             m_tan_fov_div2(tanf(math::to_radians(fov_degrees) / 2.0f)), 
             m_aspect_ratio(aspect_ratio)
     {
@@ -35,7 +35,7 @@ namespace raytracing::gfx {
                 is_tends_to(forward_y, 0.0f) ? 0.0f : forward_y,
                 is_tends_to(forward_z, 0.0f) ? 0.0f : forward_z
             ));
-            m_right = cross(vec3f::UP, -m_forward);
+            m_right = cross(vec3f::UP(), -m_forward);
             m_up = cross(-m_forward, m_right);
 
             this->_RecalculateRays();

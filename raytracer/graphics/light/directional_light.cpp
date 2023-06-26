@@ -42,7 +42,7 @@ namespace raytracing::gfx {
     }
 
     void DirectionalLigth::Rotate(const math::mat4f &rotation_mat) noexcept {
-        m_direction = math::vec3f(m_direction * rotation_mat);
+        m_direction = (m_direction * rotation_mat).xyz;
     }
 
     void DirectionalLigth::SetDirection(const math::vec3f &direction) noexcept {

@@ -32,10 +32,10 @@ namespace raytracing::gfx {
         void _RecalculateRays() const noexcept;
 
     private:
-        math::vec3f m_position = math::vec3f::ZERO;
-        math::vec3f m_forward = math::vec3f::BACKWARD;
-        math::vec3f m_right = math::vec3f::RIGHT;
-        math::vec3f m_up = math::vec3f::UP;
+        math::vec3f m_position = math::vec3f::ZERO();
+        math::vec3f m_forward = math::vec3f::BACKWARD();
+        math::vec3f m_right = math::vec3f::RIGHT();
+        math::vec3f m_up = math::vec3f::UP();
         const float m_radius = 1.0f;
         float m_thi_radians = math::MATH_PI;
         float m_theta_radians = math::MATH_PI_DIV_2;

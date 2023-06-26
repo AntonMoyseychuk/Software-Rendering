@@ -45,7 +45,7 @@ namespace raytracing::app {
         m_renderer.SetAntialiasingLevel(AntialiasingLevel::X4);
         m_renderer.SetReflectionDepth(3);
 
-        auto camera = std::make_shared<Camera>(vec3f(0.0f), vec3f(0.0f, 0.0f, -5.0f), vec3f::UP, 90.0f, (float)width / height);
+        auto camera = std::make_shared<Camera>(vec3f::ZERO(), 5.0f * vec3f::BACKWARD(), vec3f::UP(), 90.0f, (float)width / height);
         camera->SetViewportSize(vec2f(width, height) * static_cast<float>(m_renderer.GetAntialiasingLevel()));
 
         m_scene.SetCamera(camera);
@@ -166,21 +166,21 @@ namespace raytracing::app {
         if (drawable != nullptr) {
             if (m_window->IsKeyPressed(Key::SPASE)) {
                 if (m_window->IsKeyPressed(Key::W)) {
-                    drawable->MoveFor(vec3f::UP * 2.0f * dt);
+                    drawable->MoveFor(vec3f::UP() * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::S)) {
-                    drawable->MoveFor(vec3f::DOWN * 2.0f * dt);
+                    drawable->MoveFor(vec3f::DOWN() * 2.0f * dt);
                 }
                 
                 if (m_window->IsKeyPressed(Key::A)) {
-                    drawable->MoveFor(vec3f::LEFT * 2.0f * dt);
+                    drawable->MoveFor(vec3f::LEFT() * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::D)) {
-                    drawable->MoveFor(vec3f::RIGHT * 2.0f * dt);
+                    drawable->MoveFor(vec3f::RIGHT() * 2.0f * dt);
                 }
 
                 if (m_window->IsKeyPressed(Key::Z)) {
-                    drawable->MoveFor(vec3f::BACKWARD * 2.0f * dt);
+                    drawable->MoveFor(vec3f::BACKWARD() * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::X)) {
-                    drawable->MoveFor(vec3f::FORWARD * 2.0f * dt);
+                    drawable->MoveFor(vec3f::FORWARD() * 2.0f * dt);
                 }
                 
                 if (dynamic_cast<gfx::Triangle*>(drawable) != nullptr) {
@@ -215,27 +215,27 @@ namespace raytracing::app {
         if ((point_light = dynamic_cast<gfx::PointLigth*>(light)) != nullptr) {
             if (m_window->IsKeyPressed(Key::LSHIFT)) {
                 if (m_window->IsKeyPressed(Key::W)) {
-                    point_light->MoveFor(math::vec3f::UP * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::UP() * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::S)) {
-                    point_light->MoveFor(math::vec3f::DOWN * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::DOWN() * 2.0f * dt);
                 }
 
                 if (m_window->IsKeyPressed(Key::A)) {
-                    point_light->MoveFor(math::vec3f::LEFT * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::LEFT() * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::D)) {
-                    point_light->MoveFor(math::vec3f::RIGHT * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::RIGHT() * 2.0f * dt);
                 }
 
                 if (m_window->IsKeyPressed(Key::Z)) {
-                    point_light->MoveFor(math::vec3f::BACKWARD * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::BACKWARD() * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::X)) {
-                    point_light->MoveFor(math::vec3f::FORWARD * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::FORWARD() * 2.0f * dt);
                 }
                 
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                    point_light->MoveFor(math::vec3f::BACKWARD * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::BACKWARD() * 2.0f * dt);
                 } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                    point_light->MoveFor(math::vec3f::FORWARD * 2.0f * dt);
+                    point_light->MoveFor(math::vec3f::FORWARD() * 2.0f * dt);
                 }
             }
         }
