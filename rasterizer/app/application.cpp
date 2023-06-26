@@ -4,6 +4,7 @@
 
 #include "core/gl_api.hpp"
 #include "graphics/mesh.hpp"
+#include "graphics/texture.hpp"
 
 #include "graphics/shaders/simple_shader.hpp"
 #include "graphics/shaders/gouraud_shader.hpp"
@@ -38,6 +39,11 @@ namespace rasterization {
             core.viewport(width, height);
         });
 
+        Texture texture("..\\..\\..\\rasterizer\\app\\assets\\a.png");
+        const auto tex_content = texture.GetContent();
+        size_t texture_id = core.create_texture(tex_content->width, tex_content->height, tex_content->channel_count, tex_content->data.data());
+        core.bind_texture(texture_id);
+
 
         const Vertex triangle[] = {
             { {-0.5f, -0.5f, 0.0f}, color::RED },
@@ -54,7 +60,7 @@ namespace rasterization {
         core.set_buffer_element_size(sizeof(triangle[0]));
 
         try {
-            Mesh model("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
+            Mesh model("..\\..\\..\\rasterizer\\app\\assets\\human.obj");
             const Mesh::Content* model_buffer = model.GetContent();
             
             m_VBO_IBO["model"] = {
@@ -168,17 +174,17 @@ namespace rasterization {
             // core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["triangle"].ibo);
             // core.render(model_render_mode);
 
-            core.bind_shader(model_shader);
-            core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-            core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
-            core.render(model_render_mode);
-
             // core.bind_shader(model_shader);
             // core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            // core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
-            // core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
+            // core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+            // core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
             // core.render(model_render_mode);
+
+            core.bind_shader(model_shader);
+            core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
+            core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
+            core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
+            core.render(model_render_mode);
 
             core.swap_buffers(); 
             core.clear_depth_buffer();

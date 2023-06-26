@@ -38,6 +38,6 @@ namespace gl {
 
     public:
         std::unordered_map<shader_id, shader_program> shader_programs;
-        size_t binded_shader = 0;
+        shader_id binded_shader = 0;
     };
 }

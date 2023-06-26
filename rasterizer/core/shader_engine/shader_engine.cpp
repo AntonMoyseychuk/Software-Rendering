@@ -10,7 +10,7 @@ namespace gl {
         size_t id;
         do {
             id = math::random((size_t)0, SIZE_MAX - 1) + 1;
-        } while (shader_programs.count(id) != 0);
+        } while (shader_programs.find(id) != shader_programs.cend());
 
         shader_programs[id] = shader_program { shader };
 

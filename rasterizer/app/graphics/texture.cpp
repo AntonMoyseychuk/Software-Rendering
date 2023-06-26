@@ -16,10 +16,10 @@ namespace rasterization {
     }
     
     const Texture::Content* Texture::Load(const char *filename) noexcept {
-        if (already_loaded_textures.count(filename) == 1) {
+        if (already_loaded_textures.find(filename) != already_loaded_textures.cend()) {
             return &already_loaded_textures[filename];
         }
-
+        
         Content content;
         uint8_t* data = stbi_load(filename, &content.width, &content.height, &content.channel_count, 0);
         if (data == nullptr) {

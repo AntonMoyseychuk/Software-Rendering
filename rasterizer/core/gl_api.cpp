@@ -8,7 +8,7 @@ namespace gl {
     }
 
     gl_api::gl_api() noexcept 
-        : m_buf_engine(_buffer_engine::get()), m_render_engine(_render_engine::get()), m_shader_engine(_shader_engine::get())
+        : m_buf_engine(_buffer_engine::get()), m_render_engine(_render_engine::get()), m_shader_engine(_shader_engine::get()), m_texture_engine(_texture_engine::get())
     {
     }
 
@@ -121,4 +121,12 @@ namespace gl {
         m_shader_engine.uniform(uniform_name, value);
     }
 #pragma endregion shader_engine_api
+
+    size_t gl_api::create_texture(uint32_t width, uint32_t height, uint8_t channel_count, const void *data) const noexcept {
+        return m_texture_engine.create_texture(width, height, channel_count, data);
+    }
+    
+    void gl_api::bind_texture(size_t id) const noexcept {
+        m_texture_engine.bind_texture(id);
+    }
 }

@@ -1,10 +1,13 @@
 #pragma once
 #include "uniform_buffer.hpp"
+#include "core/texture_engine/texture_engine.hpp"
 
 #include <any>
 
 namespace gl {
     struct _shader : public _uniform_buffer {
+        friend struct _render_engine;
+    
         _shader() = default;
         virtual ~_shader() = default;
 
@@ -13,7 +16,8 @@ namespace gl {
 
         virtual void geometry() const noexcept;
 
-        friend struct _render_engine;
+    protected:
+        math::color texture(const math::vec2f& tex_coord) const noexcept;
 
     protected:
         mutable math::vec4f gl_Position;
