@@ -6,7 +6,7 @@
 #include "graphics/ray.hpp"
 #include "graphics/intersection_data.hpp"
 
-#include "math_3d/vector.hpp"
+#include "math_3d/vec3.hpp"
 
 #include <vector>
 #include <memory>

@@ -1,17 +1,17 @@
 #include "camera.hpp"
+#include "math_3d/math.hpp"
 
-#include <iostream>
 
 namespace raytracing::gfx {
     Camera::Camera(const math::vec3f &position, const math::vec3f &look_at, const math::vec3f &up, float fov_degrees, float aspect_ratio)
         : m_position(position),
-            m_forward(math::Normalize(look_at - position)),
-            m_right(math::Normalize(math::Cross(up, -m_forward))),
-            m_up(math::Cross(-m_forward, m_right)),
+            m_forward(math::normalize(look_at - position)),
+            m_right(math::normalize(math::cross(up, -m_forward))),
+            m_up(math::cross(-m_forward, m_right)),
             m_radius(1.0f),
-            m_thi_radians(math::Angle(math::Normalize(math::vec3f(m_forward.x, 0.0f, m_forward.z)), math::VECTOR_FORWARD)),
-            m_theta_radians(math::Angle(math::Normalize(math::vec3f(m_forward.x, m_forward.y, 0.0f)), math::VECTOR_UP)),
-            m_tan_fov_div2(tanf(math::ToRadians(fov_degrees) / 2.0f)), 
+            m_thi_radians(math::angle(math::normalize(math::vec3f(m_forward.x, 0.0f, m_forward.z)), math::vec3f::FORWARD())),
+            m_theta_radians(math::angle(m_forward, math::vec3f::UP())),
+            m_tan_fov_div2(tanf(math::to_radians(fov_degrees) / 2.0f)), 
             m_aspect_ratio(aspect_ratio)
     {
     }
@@ -21,7 +21,7 @@ namespace raytracing::gfx {
     }
     
     void Camera::Rotate(float angle_radians, const math::vec2f& axis) noexcept {
-        if (!math::IsTendsTo(angle_radians, 0.0f)) {
+        if (!math::is_tends_to(angle_radians, 0.0f)) {
             using namespace math;
 
             m_thi_radians += axis.y * angle_radians;
@@ -30,13 +30,13 @@ namespace raytracing::gfx {
             const auto forward_x = m_radius * std::sinf(m_theta_radians) * std::sinf(m_thi_radians);
             const auto forward_y = m_radius * std::cosf(m_theta_radians);
             const auto forward_z = m_radius * std::sinf(m_theta_radians) * std::cosf(m_thi_radians);
-            m_forward = Normalize(vec3f(
-                IsTendsTo(forward_x, 0.0f) ? 0.0f : forward_x,
-                IsTendsTo(forward_y, 0.0f) ? 0.0f : forward_y,
-                IsTendsTo(forward_z, 0.0f) ? 0.0f : forward_z
+            m_forward = normalize(vec3f(
+                is_tends_to(forward_x, 0.0f) ? 0.0f : forward_x,
+                is_tends_to(forward_y, 0.0f) ? 0.0f : forward_y,
+                is_tends_to(forward_z, 0.0f) ? 0.0f : forward_z
             ));
-            m_right = Cross(VECTOR_UP, -m_forward);
-            m_up = Cross(-m_forward, m_right);
+            m_right = cross(vec3f::UP(), -m_forward);
+            m_up = cross(-m_forward, m_right);
 
             this->_RecalculateRays();
         }
@@ -62,10 +62,10 @@ namespace raytracing::gfx {
         return m_aspect_ratio;
     }
 
-    void Camera::SetViewportSize(const math::vec2ui &new_size) const noexcept {
+    void Camera::SetViewportSize(const math::vec2f& new_size) const noexcept {
         if (m_ray_cache_size != new_size) {
             m_ray_cache_size = new_size;
-            m_ray_cache.resize(new_size.x * new_size.y);
+            m_ray_cache.resize(uint32_t(new_size.x) * uint32_t(new_size.y));
             
             this->_RecalculateRays();
         }
@@ -92,17 +92,19 @@ namespace raytracing::gfx {
     // }
 
     void Camera::_RecalculateRays() const noexcept {
-        const auto dx = 2.0f / m_ray_cache_size.x;
-        const auto dy = 2.0f / m_ray_cache_size.y;
+        const float dx = 2.0f / m_ray_cache_size.x;
+        const float dy = 2.0f / m_ray_cache_size.y;
 
-        for (std::size_t y = 0; y < m_ray_cache_size.y; ++y) {
-            for (std::size_t x = 0; x < m_ray_cache_size.x; ++x) {
+        const size_t width = m_ray_cache_size.x, height = m_ray_cache_size.y;
+
+        for (size_t y = 0; y < height; ++y) {
+            for (size_t x = 0; x < width; ++x) {
                 const float pixel_x = m_forward.x + (-1.0f + (x * dx)) * m_aspect_ratio * m_tan_fov_div2;
                 const float pixel_y = m_forward.y + (1.0f - (y * dy)) * m_tan_fov_div2;
 
-                const auto ray_dir = math::Normalize(m_forward + m_right * pixel_x + m_up * pixel_y);
+                const auto ray_dir = math::normalize(m_forward + m_right * pixel_x + m_up * pixel_y);
 
-                m_ray_cache[x + y * m_ray_cache_size.x] = Ray(m_position, ray_dir);
+                m_ray_cache[x + y * width] = Ray(m_position, ray_dir);
             }
         }
     }

@@ -1,5 +1,4 @@
 #include "scene.hpp"
-#include "math_3d/math.hpp"
 
 namespace raytracing::gfx {
     void Scene::AddDrawble(std::shared_ptr<IDrawable> drawable) noexcept {

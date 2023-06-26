@@ -12,12 +12,12 @@ namespace raytracing::gfx {
         std::optional<IntersectionData> IsIntersect(const Ray& ray) const noexcept override;
         void MoveFor(const math::vec3f& dist) noexcept override;
 
-        const Vertex& operator[](const std::size_t index) const noexcept;
-        Vertex& operator[](const std::size_t index) noexcept;
+        const Vertex& operator[](const size_t index) const noexcept;
+        Vertex& operator[](const size_t index) noexcept;
 
     private:
-        Vertex m_v0 = { math::VECTOR_LEFT };
-        Vertex m_v1 = { math::VECTOR_UP };
-        Vertex m_v2 = { math::VECTOR_RIGHT };
+        Vertex m_v0 = { math::vec3f::LEFT() };
+        Vertex m_v1 = { math::vec3f::UP() };
+        Vertex m_v2 = { math::vec3f::RIGHT() };
     };
 }

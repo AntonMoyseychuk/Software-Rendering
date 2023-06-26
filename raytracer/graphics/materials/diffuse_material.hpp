@@ -4,8 +4,8 @@
 namespace raytracing::gfx {
     struct Diffuse : public IColoredMaterial {
         Diffuse() = default;
-        Diffuse(math::Color color);
+        Diffuse(const math::color& color);
         
-        bool Scatter(const IntersectionData& int_data, math::Color& attenuation, Ray& scattered_ray) const noexcept override;        
+        bool Scatter(const IntersectionData& int_data, math::color& attenuation, Ray& scattered_ray) const noexcept override;        
     };
 }

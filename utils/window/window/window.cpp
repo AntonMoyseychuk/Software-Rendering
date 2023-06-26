@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <execution> 
 
-#if defined(_DEBUG)
+#ifdef _DEBUG
     #include <iostream>
     #define LOG(tag, msg) std::cerr << '[' << (tag) << "]\t" << (msg) << '\n'
 
@@ -30,16 +30,8 @@
 
 
 namespace win_framewrk {
-    std::unique_ptr<bool, Window::SDLDeinitializer> Window::is_sdl_initialized_ptr = nullptr;
-
     Window* Window::Get() noexcept {
         LOG_WIN_INFO(__FUNCTION__);
-
-        if (is_sdl_initialized_ptr == nullptr || *is_sdl_initialized_ptr == false) {
-            is_sdl_initialized_ptr.reset(new bool(_InitializeSDL()));
-        }
-
-        LOG_SDL_ERROR(*is_sdl_initialized_ptr, SDL_GetError());
         
         static Window window;
         return &window;
@@ -61,8 +53,6 @@ namespace win_framewrk {
     }
 
     Window &Window::operator=(Window &&window) noexcept {
-        LOG_WIN_INFO(__FUNCTION__);
-
         m_title = std::move(window.m_title);
         m_width = window.m_width;
         m_height = window.m_height;
@@ -78,35 +68,38 @@ namespace win_framewrk {
         return *this;
     }
         
-    std::uint32_t Window::_MapRGBA(SDL_PixelFormat *format, _InternalColor color) noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
+    uint32_t Window::_MapRGBA(SDL_PixelFormat *format, _InternalColor color) noexcept {
         return SDL_MapRGBA(format, color.r, color.g, color.b, color.a);
     }
 
-    bool Window::_InitializeSDL() {
+    Window::Window() {
         LOG_WIN_INFO(__FUNCTION__);
-        
-        return SDL_Init(SDL_INIT_EVERYTHING) == 0;
+
+        LOG_SDL_ERROR(SDL_Init(SDL_INIT_EVERYTHING) == 0, SDL_GetError());
+    }
+
+    Window::~Window() {
+        LOG_WIN_INFO(__FUNCTION__);
+
+        SDL_DestroyWindow(m_window_ptr);
+        SDL_Quit();
     }
 
     bool Window::_UpdateSurface() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
-        m_surface_ptr = SDL_GetWindowSurface(m_window_ptr.get());
+        m_surface_ptr = SDL_GetWindowSurface(m_window_ptr);
         return m_surface_ptr != nullptr;
     }
 
-    void Window::_OnResize(std::uint32_t new_width, std::uint32_t new_height) noexcept {
+    void Window::_OnResize(uint32_t new_width, uint32_t new_height) noexcept {
         LOG_WIN_EVENT("SDL_WINDOWEVENT_RESIZED", 
-            "New size -> [" + std::to_string(new_width) + ", " + std::to_string(new_width) + "]");
+            "New size -> [" + std::to_string(new_width) + ", " + std::to_string(new_height) + "]");
             
         m_width = new_width;
         m_height = new_height;
+
+        if (_ResizeCallback) {
+            _ResizeCallback(new_width, new_height);
+        }
 
         LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
     }
@@ -117,7 +110,7 @@ namespace win_framewrk {
     }
 
 
-    bool Window::Init(const std::string& title, std::uint32_t width, std::uint32_t height) {
+    bool Window::Init(const std::string& title, uint32_t width, uint32_t height) {
         LOG_WIN_INFO(__FUNCTION__);
 
         if (m_window_ptr != nullptr) {
@@ -126,11 +119,11 @@ namespace win_framewrk {
         }
 
         m_width = width;
-        m_height = height;//
+        m_height = height;
 
-        m_window_ptr.reset(SDL_CreateWindow(title.data(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0));
+        m_window_ptr = SDL_CreateWindow(title.data(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
         LOG_SDL_ERROR(m_window_ptr != nullptr, SDL_GetError());
-        SDL_SetWindowResizable(m_window_ptr.get(), SDL_TRUE);
+        SDL_SetWindowResizable(m_window_ptr, SDL_TRUE);
 
         LOG_SDL_ERROR(_UpdateSurface() == true, SDL_GetError());
 
@@ -138,59 +131,43 @@ namespace win_framewrk {
     }
 
     bool Window::IsOpen() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
         return !m_is_quit;
     }
     
-    void Window::_ThreadBufferFillingFunc(
-        std::uint32_t x0, 
-        std::uint32_t y0, 
-        std::uint32_t x_end, 
-        std::uint32_t y_end, 
-        SDL_Surface* surface, 
-        const std::uint32_t* in_pixels
+    void Window::_ThreadBufferFillingFunc(uint32_t x0, uint32_t y0, uint32_t x_end, uint32_t y_end, 
+        SDL_Surface* surface, const uint32_t* in_pixels
     ) noexcept {
-        
-        const auto lenght = x_end - x0;
-        auto buffer = static_cast<std::uint32_t*>(surface->pixels);
 
-        for (std::size_t y = y0; y < y_end; ++y) {
-            for (std::size_t x = x0; x < x_end; ++x) {
+        const auto lenght = x_end - x0;
+        auto buffer = static_cast<uint32_t*>(surface->pixels);
+
+        for (size_t y = y0; y < y_end; ++y) {
+            for (size_t x = x0; x < x_end; ++x) {
                 buffer[x + y * lenght] = _MapRGBA(surface->format, _InternalColor(in_pixels[x + y * lenght]));
             }
         }
     }
 
-    void Window::FillPixelBuffer(const std::vector<std::uint32_t>& in_pixels) const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
-        const std::uint32_t step = 1;
-        for (std::uint32_t y = 0; y < m_height; y += step) {
+    void Window::FillPixelBuffer(const std::vector<uint32_t>& in_pixels) const noexcept {
+        const uint32_t step = m_height & 1 ? 1 : 2;
+        for (uint32_t y = 0; y < m_height; y += step) {
             m_thread_pool.AddTask(&Window::_ThreadBufferFillingFunc, 0, y, m_width, y + step, m_surface_ptr, in_pixels.data());
         }
 
         m_thread_pool.WaitAll();
     }
 
-    void Window::PresentPixelBuffer() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
+    void Window::FillPixelBuffer(uint8_t r, uint8_t g, uint8_t b, uint8_t a) const noexcept {
+        LOG_SDL_ERROR(SDL_FillRect(m_surface_ptr, NULL, SDL_MapRGBA(m_surface_ptr->format, r, g, b, a)) == 0, SDL_GetError());
+    }
 
+    void Window::PresentPixelBuffer() const noexcept {
         LOG_SDL_ERROR(_UpdateSurface(), SDL_GetError());
-        LOG_SDL_ERROR(SDL_UpdateWindowSurface(m_window_ptr.get()) == 0, SDL_GetError());
+        LOG_SDL_ERROR(SDL_UpdateWindowSurface(m_window_ptr) == 0, SDL_GetError());
         memset(m_surface_ptr->pixels, 0, sizeof(uint32_t) * m_surface_ptr->w * m_surface_ptr->h);
     }
 
     void Window::PollEvent() noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         while (SDL_PollEvent(&m_event)) {
             switch (m_event.type)  {
             case SDL_QUIT:
@@ -207,27 +184,18 @@ namespace win_framewrk {
     }
 
     bool Window::IsKeyPressed(Key key) const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-        
-        static const std::uint8_t* keyboard = SDL_GetKeyboardState(nullptr);
+        static const uint8_t* keyboard = SDL_GetKeyboardState(nullptr);
 
         return keyboard[static_cast<SDL_Scancode>(key)];
     }
 
-    std::uint32_t Window::GetPixelColor(std::size_t x, std::size_t y) noexcept
-    {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-        
-        if (x >= static_cast<std::size_t>(m_surface_ptr->w) || y >= static_cast<std::size_t>(m_surface_ptr->h)) {
+    uint32_t Window::GetPixelColor(size_t x, size_t y) noexcept {
+        if (x >= static_cast<size_t>(m_surface_ptr->w) || y >= static_cast<size_t>(m_surface_ptr->h)) {
             return 0;
         }
     
-        auto pixels = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
-        std::uint8_t r, g, b, a;
+        const uint32_t* pixels = static_cast<uint32_t*>(m_surface_ptr->pixels);
+        uint8_t r, g, b, a;
         SDL_GetRGBA(pixels[y * m_surface_ptr->w + x], m_surface_ptr->format, &r, &g, &b, &a);
 
         #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -237,128 +205,66 @@ namespace win_framewrk {
         #endif
     }
 
-    void Window::SetPixelColor(
-        std::size_t x, 
-        std::size_t y, 
-        std::uint8_t r, 
-        std::uint8_t g, 
-        std::uint8_t b, 
-        std::uint8_t a
-    ) noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
+    void Window::SetPixelColor(size_t x, size_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) noexcept {
         if (x < m_width && y < m_height) {
-            auto buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
-            buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, _InternalColor(r, g, b, a));
+            auto buffer = static_cast<uint32_t*>(m_surface_ptr->pixels);
+            buffer[x + y * m_width] = SDL_MapRGBA(m_surface_ptr->format, r, g, b, a);
         }
     }
 
-    void Window::SetPixelColor(std::size_t x, std::size_t y, std::uint32_t color) noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
-        if (x < m_width && y < m_height) {
-            auto buffer = static_cast<std::uint32_t*>(m_surface_ptr->pixels);
-            buffer[x + y * m_width] = _MapRGBA(m_surface_ptr->format, _InternalColor(color));
-        }
+    void Window::SetPixelColor(size_t x, size_t y, uint32_t color) noexcept {
+        const _InternalColor packed_color(color);
+        SetPixelColor(x, y, packed_color.r, packed_color.g, packed_color.b, packed_color.a);
     }
 
     void Window::SetTitle(const std::string_view title) noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         m_title = title;
-        SDL_SetWindowTitle(m_window_ptr.get(), m_title.c_str());
+        SDL_SetWindowTitle(m_window_ptr, m_title.c_str());
     }
 
     const std::string& Window::GetTitle() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
         return m_title;
     }
 
-    void Window::SetWidth(std::uint32_t width) noexcept  {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
+    void Window::SetWidth(uint32_t width) noexcept  {
         m_width = width;
-        SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
+        SDL_SetWindowSize(m_window_ptr, m_width, m_height);
 
         LOG_SDL_ERROR(_UpdateSurface() == true, SDL_GetError());
     }
 
-    std::uint32_t Window::GetWidth() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
+    uint32_t Window::GetWidth() const noexcept {
         return m_width;
     }
 
-    void Window::SetHeight(std::uint32_t height) noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
+    void Window::SetHeight(uint32_t height) noexcept {
         m_height = height;
-        SDL_SetWindowSize(m_window_ptr.get(), m_width, m_height);
+        SDL_SetWindowSize(m_window_ptr, m_width, m_height);
         
         LOG_SDL_ERROR(_UpdateSurface() == true, SDL_GetError());
     }
 
-    std::uint32_t Window::GetHeight() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
+    uint32_t Window::GetHeight() const noexcept {
         return m_height;
     }
 
     const SDL_Surface* Window::GetSDLSurfaceHandle() const noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         return m_surface_ptr;
     }
 
     SDL_Surface* Window::GetSDLSurfaceHandle() noexcept {
-        #if defined(LOG_ALL)
-            LOG_WIN_INFO(__FUNCTION__);
-        #endif
-
         return m_surface_ptr;
     }
 
     const SDL_Window *Window::GetSDLWindowHandle() const noexcept {
-        return m_window_ptr.get();
+        return m_window_ptr;
     }
 
     SDL_Window *Window::GetSDLWindowHandle() noexcept {
-        return m_window_ptr.get();
+        return m_window_ptr;
     }
 
-    void Window::SDLDeinitializer::operator()(bool *is_sdl_initialized_ptr) const {
-        LOG_WIN_INFO(__FUNCTION__);
-        
-        if (is_sdl_initialized_ptr) {
-            SDL_Quit();
-            *is_sdl_initialized_ptr = false;
-        }
-    }
-    
-    void Window::WindowDestroyer::operator()(SDL_Window *window) const {
-        LOG_WIN_INFO(__FUNCTION__);
-        
-        if (window != nullptr) {
-            SDL_DestroyWindow(window);
-            window = nullptr;
-        }
+    void Window::SetResizeCallback(const std::function<void(uint32_t width, uint32_t height)> &callback) const noexcept {
+        _ResizeCallback = callback;
     }
 }

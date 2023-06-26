@@ -1,4 +1,5 @@
 #include "intersection_data.hpp"
+#include "math_3d/vec_operations.hpp"
 
 namespace raytracing::gfx {
     IntersectionData::IntersectionData(
@@ -12,7 +13,7 @@ namespace raytracing::gfx {
     }
     
     void IntersectionData::SetFaceNormal(const Ray& ray, const math::vec3f& outward_normal) noexcept {
-        is_front_face = math::Dot(ray.direction, outward_normal) < 0.0f;
+        is_front_face = math::dot(ray.direction, outward_normal) < 0.0f;
         normal = is_front_face ? outward_normal : -outward_normal;
     }
 }

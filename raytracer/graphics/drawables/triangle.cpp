@@ -1,11 +1,17 @@
 #include "triangle.hpp"
 
+#include "math_3d/vec_operations.hpp"
+#include "math_3d/math.hpp"
+
+#include <cassert>
+
 namespace raytracing::gfx {
     Triangle::Triangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, std::shared_ptr<IMaterial> material)
         : IDrawable(math::vec3f(), material), m_v0(v0), m_v1(v1), m_v2(v2)
     {
-        const auto e = v1.position - v0.position, mid_e = v0.position + math::Normalize(e) * (e.Length() / 2.0f);
-        const auto mediana = mid_e - v2.position, center = v2.position + math::Normalize(mediana) * (mediana.Length() * 2.0f / 3.0f);
+        const math::vec3f e = v1.position - v0.position;
+        const math::vec3f mid_e = v0.position + math::normalize(e) * (e.length() / 2.0f);
+        const auto mediana = mid_e - v2.position, center = v2.position + math::normalize(mediana) * (mediana.length() * 2.0f / 3.0f);
         m_position = center;
     }
 
@@ -42,10 +48,10 @@ namespace raytracing::gfx {
         const auto e0 = m_v2.position - m_v0.position;
         const auto e1 = m_v1.position - m_v2.position;
 
-        const auto normal_not_normalized = Cross(e0, m_v1.position - m_v0.position);
-        const auto normal = Normalize(normal_not_normalized);
-        const auto dot_raydir_normal = Dot(ray.direction, normal);
-        if (IsTendsTo(dot_raydir_normal, 0.0f)) { //parallel
+        const auto normal_not_normalized = cross(e0, m_v1.position - m_v0.position);
+        const auto normal = normalize(normal_not_normalized);
+        const auto dot_raydir_normal = dot(ray.direction, normal);
+        if (is_tends_to(dot_raydir_normal, 0.0f)) { //parallel
             return {};
         }
 
@@ -58,7 +64,7 @@ namespace raytracing::gfx {
         // Ax + Bx + Cx + D = 0
         // ray = O + R * t
         const auto D = -(normal.x * m_v0.position.x + normal.y * m_v0.position.y + normal.z * m_v0.position.z);
-        const auto t = -(Dot(normal, ray.origin) + D) / dot_raydir_normal;
+        const auto t = -(dot(normal, ray.origin) + D) / dot_raydir_normal;
         if (t < 0.0f) {
             return {};
         }
@@ -66,18 +72,18 @@ namespace raytracing::gfx {
         const auto hit_point = ray.origin + ray.direction * t;
 
         const auto v0_hit = hit_point - m_v0.position;
-        auto C = Cross(e0, v0_hit);
-        if (Dot(normal, Normalize(C)) <= 0.0f) {
+        auto C = cross(e0, v0_hit);
+        if (dot(normal, normalize(C)) <= 0.0f) {
             return {};
         }
-        const auto u = C.Length() / normal_not_normalized.Length();
+        const auto u = C.length() / normal_not_normalized.length();
 
         const auto v2_hit = hit_point - m_v2.position;
-        C = Cross(e1, v2_hit);
-        if (Dot(normal, Normalize(C)) <= 0.0f) {
+        C = cross(e1, v2_hit);
+        if (dot(normal, normalize(C)) <= 0.0f) {
             return {};
         }
-        const auto v = C.Length() / normal_not_normalized.Length();
+        const auto v = C.length() / normal_not_normalized.length();
 
         auto w = 1.0f - u - v;
         if (w < 0.0f) {
@@ -100,12 +106,12 @@ namespace raytracing::gfx {
         m_v2.position += dist;
     }
     
-    const Vertex& Triangle::operator[](const std::size_t index) const noexcept {
+    const Vertex& Triangle::operator[](const size_t index) const noexcept {
         assert(index < 3 && "index must be 0 <= index < 3");
         return *(&m_v0 + index);
     }
     
-    Vertex& Triangle::operator[](const std::size_t index) noexcept {
+    Vertex& Triangle::operator[](const size_t index) noexcept {
         assert(index < 3 && "index must be 0 <= index < 3");
         return *(&m_v0 + index);
     }

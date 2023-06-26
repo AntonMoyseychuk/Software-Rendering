@@ -1,5 +1,5 @@
 #pragma once
-#include "math_3d/vector_operations.hpp"
+#include "math_3d/vec3.hpp"
 
 namespace raytracing::gfx {
     struct Ray {

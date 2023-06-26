@@ -1,24 +1,27 @@
 #include "directional_light.hpp"
-#include "math_3d/vector_operations.hpp"
+#include "math_3d/vec_operations.hpp"
+#include "math_3d/const.hpp"
 
 #include "graphics/materials/glaring_material.hpp"
 
 namespace raytracing::gfx {
-    DirectionalLigth::DirectionalLigth(const math::vec3f &direction, math::Color color, float intensity)
-        : ILight(color, intensity), m_direction(math::Normalize(direction)) 
+    DirectionalLigth::DirectionalLigth(const math::vec3f &direction, const math::color& color, float intensity)
+        : ILight(color, intensity), m_direction(math::normalize(direction)) 
     {
     }
     
     bool DirectionalLigth::ComputeIllumination(const IntersectionData& int_data, const std::list<std::shared_ptr<IDrawable>>& drawables,
         float& out_intensity) const noexcept 
     {
-        const auto cos_angle = math::Dot(math::Normalize(int_data.normal), -m_direction); // angle = (0, PI)
+        using namespace math;
+
+        const auto cos_angle = dot(normalize(int_data.normal), -m_direction); // angle = (0, PI)
                 
         if (cos_angle < 0.0f) {
             return false;
         } // angle = (0, PI_DIV_2)
 
-        const auto ray_to_light = gfx::Ray(int_data.point + math::vec3f(math::MATH_EPSILON), -m_direction);
+        const auto ray_to_light = gfx::Ray(int_data.point + vec3f(MATH_EPSILON), -m_direction);
         for (const auto& drawable : drawables) {
             if (drawable->IsIntersect(ray_to_light)) {
                 return false;
@@ -29,8 +32,8 @@ namespace raytracing::gfx {
 
         const IGlaringMaterial* glaring = dynamic_cast<IGlaringMaterial*>(int_data.material.get());
         if (glaring && glaring->specular_index > 0.0f) {
-            const auto reflected_vec = math::Reflect(int_data.casted_ray.direction, int_data.normal);
-            const auto r_dot_v = math::Dot(reflected_vec, -int_data.casted_ray.direction);
+            const vec3f reflected_vec = reflect(int_data.casted_ray.direction, int_data.normal);
+            const float r_dot_v = dot(reflected_vec, -int_data.casted_ray.direction);
             if (r_dot_v > 0.0f) {
                 out_intensity += m_intensity * powf(r_dot_v, glaring->specular_index);
             }
@@ -39,14 +42,14 @@ namespace raytracing::gfx {
     }
 
     void DirectionalLigth::Rotate(const math::mat4f &rotation_mat) noexcept {
-        m_direction = math::vec3f(m_direction * rotation_mat);
+        m_direction = (m_direction * rotation_mat).xyz;
     }
 
     void DirectionalLigth::SetDirection(const math::vec3f &direction) noexcept {
-        m_direction = math::Normalize(direction);
+        m_direction = math::normalize(direction);
     }
     
-    const math::vec3f &DirectionalLigth::GetDirection() const noexcept {
+    const math::vec3f& DirectionalLigth::GetDirection() const noexcept {
         return m_direction;
     }
 }
