@@ -8,11 +8,11 @@
 #define ASSERT_UNIFORM_VALIDITY(container, uniform_name) ASSERT(container.find((uniform_name)) != container.cend(), "unifrom buffer error", "invalid uniform name")
 
 namespace gl {
-    struct _uniforable {
+    struct _uniform_buffer {
         friend struct _shader_engine;
 
-        _uniforable() = default;
-        virtual ~_uniforable() = default;
+        _uniform_buffer() = default;
+        virtual ~_uniform_buffer() = default;
     
     protected:
         const math::quaternion& get_quaternion_uniform(const std::string& name) const noexcept;
@@ -28,7 +28,7 @@ namespace gl {
         int64_t            get_i64_uniform(const std::string& name) const noexcept;
 
     private:
-        struct uniform_buffer {
+        struct {
             std::unordered_map<std::string, math::mat4f> u_mat4;
             std::unordered_map<std::string, math::vec4f> u_vec4;
             std::unordered_map<std::string, math::vec3f> u_vec3;

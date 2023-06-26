@@ -1,10 +1,10 @@
 #pragma once
-#include "uniforable.hpp"
+#include "uniform_buffer.hpp"
 
 #include <any>
 
 namespace gl {
-    struct _shader : public _uniforable {
+    struct _shader : public _uniform_buffer {
         _shader() = default;
         virtual ~_shader() = default;
 
