@@ -36,9 +36,9 @@ namespace gl {
 
             std::unordered_map<std::string, math::quaternion> u_quaternion;
 
-            std::unordered_map<std::string, float> u_f32;
-            std::unordered_map<std::string, double> u_f64;
-            std::unordered_map<std::string, int8_t> u_i8;
+            std::unordered_map<std::string, float  > u_f32;
+            std::unordered_map<std::string, double > u_f64;
+            std::unordered_map<std::string, int8_t >  u_i8;
             std::unordered_map<std::string, int16_t> u_i16;
             std::unordered_map<std::string, int32_t> u_i32;
             std::unordered_map<std::string, int64_t> u_i64;
