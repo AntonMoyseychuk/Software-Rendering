@@ -1,5 +1,6 @@
 #pragma once
 #include "uniform_buffer.hpp"
+#include "core/texture_engine/texture_engine.hpp"
 
 #include <any>
 
@@ -16,7 +17,8 @@ namespace gl {
         virtual void geometry() const noexcept;
 
     protected:
-        math::color texture(const math::vec2f& texcoord) const noexcept;
+        const _texture& sampler_2D() const noexcept;
+        math::color texture(const _texture& texture, const math::vec2f& texcoord) const noexcept;
 
     protected:
         mutable math::vec4f gl_Position;

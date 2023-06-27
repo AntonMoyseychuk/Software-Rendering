@@ -60,7 +60,7 @@ namespace gl {
         void _render_line_low(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept;
         void _render_line_high(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept;
 
-        void _render_triangle(const vs_intermediate_data& v0, const vs_intermediate_data& v1, const vs_intermediate_data& v2) const noexcept;
+        void _render_polygon(const vs_intermediate_data& v0, const vs_intermediate_data& v1, const vs_intermediate_data& v2) const noexcept;
 
     private:
         mutable std::vector<float> m_z_buffer;

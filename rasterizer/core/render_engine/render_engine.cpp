@@ -80,7 +80,7 @@ namespace gl {
                     const vec3f& v1 = m_vs_intermediates[ibo.data[i - 1]].coord.xyz; 
                     const vec3f& v2 = m_vs_intermediates[ibo.data[i - 0]].coord.xyz;
                     if (!_is_back_face(v0, v1, v2)) {
-                        m_thread_pool.AddTask(&_render_engine::_render_triangle, this, 
+                        m_thread_pool.AddTask(&_render_engine::_render_polygon, this, 
                             std::cref(m_vs_intermediates[ibo.data[i - 2]]), 
                             std::cref(m_vs_intermediates[ibo.data[i - 1]]), 
                             std::cref(m_vs_intermediates[ibo.data[i - 0]])
@@ -182,33 +182,34 @@ namespace gl {
         }
     }
 
-    void _render_engine::_render_triangle(const vs_intermediate_data& v0, const vs_intermediate_data& v1, const vs_intermediate_data& v2) const noexcept {
+    void _render_engine::_render_polygon(const vs_intermediate_data& v0, const vs_intermediate_data& v1, const vs_intermediate_data& v2) const noexcept {
         using namespace math;
         using namespace std;
 
         const auto& shader = shader_engine._get_binded_shader_program().shader;
 
-        const vec2i bboxmin(round(min(min(v0.coord.x, v1.coord.x), v2.coord.x)), round(min(min(v0.coord.y, v1.coord.y), v2.coord.y)));
-        const vec2i bboxmax(round(max(max(v0.coord.x, v1.coord.x), v2.coord.x)), round(max(max(v0.coord.y, v1.coord.y), v2.coord.y)));
+        const vec2f bboxmin(round(min(min(v0.coord.x, v1.coord.x), v2.coord.x)), round(min(min(v0.coord.y, v1.coord.y), v2.coord.y)));
+        const vec2f bboxmax(round(max(max(v0.coord.x, v1.coord.x), v2.coord.x)), round(max(max(v0.coord.y, v1.coord.y), v2.coord.y)));
 
         const color c0 = shader->pixel(v0.vs_out), c1 = shader->pixel(v1.vs_out), c2 = shader->pixel(v2.vs_out);
 
         for (float y = bboxmin.y; y <= bboxmax.y; ++y) {
             bool prev_pixel_was_inside = false;
+            
             for (float x = bboxmin.x; x <= bboxmax.x; ++x) {
-                const vec2f p(x, y);
+                vec3f pixel(x, y, 0.0);
                 
                 const double area = _edge(v0.coord.xy, v1.coord.xy, v2.coord.xy);
-                const double   w0 = _edge(v1.coord.xy, v2.coord.xy, p) / area;
-                const double   w1 = _edge(v2.coord.xy, v0.coord.xy, p) / area;
+                const double   w0 = _edge(v1.coord.xy, v2.coord.xy, pixel.xy) / area;
+                const double   w1 = _edge(v2.coord.xy, v0.coord.xy, pixel.xy) / area;
                 const double   w2 = 1.0 - w0 - w1;
                 
                 if (w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) {
                     prev_pixel_was_inside = true;
 
-                    const double invert_z = (1.0 / v0.coord.z) * w0 + (1.0 / v1.coord.z) * w1 + (1.0 / v2.coord.z) * w2;
-                    if (_test_and_update_depth(vec3f(p, 1.0 / invert_z))) {
-                        _render_pixel(p, w0 * c0 + w1 * c1 + w2 * c2);
+                    pixel.z = 1.0 / ((1.0 / v0.coord.z) * w0 + (1.0 / v1.coord.z) * w1 + (1.0 / v2.coord.z) * w2);
+                    if (_test_and_update_depth(pixel)) {
+                        _render_pixel(pixel.xy, w0 * c0 + w1 * c1 + w2 * c2);
                     }
                 } else if (prev_pixel_was_inside) {
                     break;
