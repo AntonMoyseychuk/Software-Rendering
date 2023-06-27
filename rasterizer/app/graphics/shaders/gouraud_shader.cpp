@@ -9,7 +9,6 @@ namespace rasterization {
 
     struct VSOutData {
         math::vec3f frag_position;
-        math::color polygon_color;
         math::vec3f normal;
     };
 
@@ -22,7 +21,6 @@ namespace rasterization {
         VSOutData out;
         out.frag_position = (v->position * model_matrix).xyz;
         out.normal = (v->normal * transpose(inverse(model_matrix))).xyz;
-        out.polygon_color = get_vec4_uniform("polygon_color");
 
         gl_Position = v->position * model_matrix * get_mat4_uniform("view") * get_mat4_uniform("projection");
 
@@ -34,11 +32,13 @@ namespace rasterization {
 
         const VSOutData data = std::any_cast<VSOutData>(vs_out);
 
-        const color ambient = 0.1f * data.polygon_color;
+        // const color polygon_color = texture(data.texcoord);
+        const color polygon_color = get_vec4_uniform("polygon_color");
+        const color ambient = 0.1f * polygon_color;
 
         const vec3f light_dir = normalize(data.frag_position - get_vec3_uniform("light_position"));
         const float diff = std::max(dot(light_dir, data.normal), 0.0f);
-        const color diffuse = diff * get_vec4_uniform("light_color") * get_f32_uniform("light_intensity") * data.polygon_color;
+        const color diffuse = diff * get_vec4_uniform("light_color") * get_f32_uniform("light_intensity") * polygon_color;
 
         return ambient + diffuse;
     }

@@ -54,7 +54,7 @@ namespace rasterization {
         core.set_buffer_element_size(sizeof(triangle[0]));
 
         try {
-            Mesh model("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
+            Mesh model("..\\..\\..\\rasterizer\\app\\assets\\human.obj");
             const Mesh::Content* model_buffer = model.GetContent();
             
             m_VBO_IBO["model"] = {
@@ -88,7 +88,9 @@ namespace rasterization {
         size_t simple_shader = core.create_shader(std::make_shared<SimpleShader>());
         core.bind_shader(simple_shader); 
         core.uniform("model", mat4f::IDENTITY);
-        core.uniform("view", look_at_rh(vec3f::FORWARD() * 2.5f, vec3f::ZERO(), vec3f::UP()));
+
+        mat4f view = look_at_rh(vec3f::FORWARD() * 2.5f, vec3f::ZERO(), vec3f::UP());
+        core.uniform("view", view);
         
         size_t model_shader = core.create_shader(std::make_shared<GouraudShader>());
         core.bind_shader(model_shader); 
@@ -109,7 +111,7 @@ namespace rasterization {
             std::cout << "FPS: " << std::to_string(1.0f / dt) << "\ttime: " << dt << "\tms\n";
 
         #pragma region input
-            const float angle = to_radians(dt) * 45.0f;
+            const float angle = to_radians(dt) * 60.0f;
             const float distance = dt * 3.0f;
             
             if (m_window->IsKeyPressed(Key::NUMBER_1)) {
@@ -122,44 +124,86 @@ namespace rasterization {
                 model_render_mode = render_mode::TRIANGLES;
             }
 
-            if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
-                rotation = rotate_y(rotation, -angle);
-                core.uniform("model", rotation * translation);
-            } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
-                rotation = rotate_y(rotation, angle);
-                core.uniform("model", rotation * translation);
-            }
+            if (m_window->IsKeyPressed(Key::LALT)) {
+                if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
+                    view = rotate_y(view, -angle);
+                    core.uniform("view", view);
+                } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
+                    view = rotate_y(view, angle);
+                    core.uniform("view", view);
+                }
 
-            if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                rotation = rotate_x(rotation, -angle);
-                core.uniform("model", rotation * translation);
-            } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                rotation = rotate_x(rotation, angle);
-                core.uniform("model", rotation * translation);
-            }
+                if (m_window->IsKeyPressed(Key::UP_ARROW)) {
+                    view = rotate_x(view, -angle);
+                    core.uniform("view", view);
+                } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
+                    view = rotate_x(view, angle);
+                    core.uniform("view", view);
+                }
 
-            if (m_window->IsKeyPressed(Key::D)) {
-                translation = translate(translation, vec3f::RIGHT() * distance);
-                core.uniform("model", rotation * translation);
-            } else if (m_window->IsKeyPressed(Key::A)) {
-                translation = translate(translation, vec3f::LEFT() * distance);
-                core.uniform("model", rotation * translation);
-            }
+                if (m_window->IsKeyPressed(Key::D)) {
+                    view = translate(view, vec3f::LEFT() * distance);
+                    core.uniform("view", view);
+                } else if (m_window->IsKeyPressed(Key::A)) {
+                    view = translate(view, vec3f::RIGHT() * distance);
+                    core.uniform("view", view);
+                }
 
-            if (m_window->IsKeyPressed(Key::W)) {
-                translation = translate(translation, vec3f::UP() * distance);
-                core.uniform("model", rotation * translation);
-            } else if (m_window->IsKeyPressed(Key::S)) {
-                translation = translate(translation, vec3f::DOWN() * distance);
-                core.uniform("model", rotation * translation);
-            }
+                if (m_window->IsKeyPressed(Key::W)) {
+                    view = translate(view, vec3f::FORWARD() * distance);
+                    core.uniform("view", view);
+                } else if (m_window->IsKeyPressed(Key::S)) {
+                    view = translate(view, vec3f::BACKWARD() * distance);
+                    core.uniform("view", view);
+                }
 
-            if (m_window->IsKeyPressed(Key::Z)) {
-                translation = translate(translation, vec3f::BACKWARD() * distance);
-                core.uniform("model", rotation * translation);
-            } else if (m_window->IsKeyPressed(Key::X)) {
-                translation = translate(translation, vec3f::FORWARD() * distance);
-                core.uniform("model", rotation * translation);
+                if (m_window->IsKeyPressed(Key::SPASE)) {
+                    view = translate(view, vec3f::DOWN() * distance);
+                    core.uniform("view", view);
+                } else if (m_window->IsKeyPressed(Key::LCTRL)) {
+                    view = translate(view, vec3f::UP() * distance);
+                    core.uniform("view", view);
+                }
+            } else {
+                if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
+                    rotation = rotate_y(rotation, -angle);
+                    core.uniform("model", rotation * translation);
+                } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
+                    rotation = rotate_y(rotation, angle);
+                    core.uniform("model", rotation * translation);
+                }
+
+                if (m_window->IsKeyPressed(Key::UP_ARROW)) {
+                    rotation = rotate_x(rotation, -angle);
+                    core.uniform("model", rotation * translation);
+                } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
+                    rotation = rotate_x(rotation, angle);
+                    core.uniform("model", rotation * translation);
+                }
+
+                if (m_window->IsKeyPressed(Key::D)) {
+                    translation = translate(translation, vec3f::RIGHT() * distance);
+                    core.uniform("model", rotation * translation);
+                } else if (m_window->IsKeyPressed(Key::A)) {
+                    translation = translate(translation, vec3f::LEFT() * distance);
+                    core.uniform("model", rotation * translation);
+                }
+
+                if (m_window->IsKeyPressed(Key::W)) {
+                    translation = translate(translation, vec3f::UP() * distance);
+                    core.uniform("model", rotation * translation);
+                } else if (m_window->IsKeyPressed(Key::S)) {
+                    translation = translate(translation, vec3f::DOWN() * distance);
+                    core.uniform("model", rotation * translation);
+                }
+
+                if (m_window->IsKeyPressed(Key::Z)) {
+                    translation = translate(translation, vec3f::BACKWARD() * distance);
+                    core.uniform("model", rotation * translation);
+                } else if (m_window->IsKeyPressed(Key::X)) {
+                    translation = translate(translation, vec3f::FORWARD() * distance);
+                    core.uniform("model", rotation * translation);
+                }
             }
         #pragma endregion input
 

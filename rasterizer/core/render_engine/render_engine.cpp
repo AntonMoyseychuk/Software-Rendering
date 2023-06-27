@@ -79,11 +79,16 @@ namespace gl {
         case render_mode::TRIANGLES:
             for (size_t i = 2; i < ibo.data.size(); i += 3) {
                 if (!m_vs_intermediates[ibo.data[i - 2]].clipped && !m_vs_intermediates[ibo.data[i - 1]].clipped && !m_vs_intermediates[ibo.data[i]].clipped) {
-                    m_thread_pool.AddTask(&_render_engine::_render_triangle, this, 
-                        std::cref(m_vs_intermediates[ibo.data[i - 2]]), 
-                        std::cref(m_vs_intermediates[ibo.data[i - 1]]), 
-                        std::cref(m_vs_intermediates[ibo.data[i - 0]])
-                    );
+                    const vec3f& v0 = m_vs_intermediates[ibo.data[i - 0]].coord.xyz;
+                    const vec3f& v1 = m_vs_intermediates[ibo.data[i - 1]].coord.xyz; 
+                    const vec3f& v2 = m_vs_intermediates[ibo.data[i - 2]].coord.xyz;
+                    if (!_is_back_face(v0, v1, v2)) {
+                        m_thread_pool.AddTask(&_render_engine::_render_triangle, this, 
+                            std::cref(m_vs_intermediates[ibo.data[i - 2]]), 
+                            std::cref(m_vs_intermediates[ibo.data[i - 1]]), 
+                            std::cref(m_vs_intermediates[ibo.data[i - 0]])
+                        );
+                    }
                 }
             }
 
@@ -230,6 +235,13 @@ namespace gl {
 
     bool _render_engine::_is_inside_clipping_space(const math::vec3f &point) noexcept {
         return math::abs(point.x) <= 1.0f && math::abs(point.y) <= 1.0f && point.z <= -1.0f;
+    }
+
+    bool _render_engine::_is_back_face(const math::vec3f &v0, const math::vec3f &v1, const math::vec3f &v2) noexcept {
+        static const math::vec3f& forward = math::vec3f::FORWARD();
+        
+        const math::vec3f n = normalize(cross(v1 - v0, v2 - v0));
+        return dot(n, forward) <= 0.0f;
     }
 
     float _render_engine::_edge(const math::vec2f &v0, const math::vec2f &v1, const math::vec2f &p) noexcept {

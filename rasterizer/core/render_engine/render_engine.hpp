@@ -33,6 +33,7 @@ namespace gl {
 
     private:
         static bool _is_inside_clipping_space(const math::vec3f& point) noexcept;
+        static bool _is_back_face(const math::vec3f& v0, const math::vec3f& v1, const math::vec3f& v2) noexcept;
         
         /**
          * returns:
