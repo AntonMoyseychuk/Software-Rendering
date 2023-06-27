@@ -34,12 +34,17 @@ namespace rasterization {
 
         // const color polygon_color = texture(data.texcoord);
         const color polygon_color = get_vec4_uniform("polygon_color");
-        const color ambient = 0.1f * polygon_color;
+        const color ambient = 0.05f * polygon_color;
 
         const vec3f light_dir = normalize(data.frag_position - get_vec3_uniform("light_position"));
-        const float diff = std::max(dot(light_dir, data.normal), 0.0f);
+        const float diff = std::max(dot(-light_dir, data.normal), 0.0f);
         const color diffuse = diff * get_vec4_uniform("light_color") * get_f32_uniform("light_intensity") * polygon_color;
 
-        return ambient + diffuse;
+        const vec3f view_dir = normalize(data.frag_position - get_vec3_uniform("camera_position"));
+        const vec3f reflected = normalize(reflect(light_dir, data.normal));
+        const float spec = std::max(std::powf(dot(reflected, -view_dir), 50.0f), 0.0f);
+        const color specular = spec * get_f32_uniform("light_intensity") * polygon_color;
+
+        return ambient + diffuse + specular;
     }
 }

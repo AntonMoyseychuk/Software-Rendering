@@ -5,9 +5,6 @@
 #include "core/buffer_engine/buffer_engine.hpp"
 #include "core/shader_engine/shader_engine.hpp"
 
-#include "math_3d/vec_operations.hpp"
-#include "math_3d/mat_operations.hpp"
-
 #include "core/assert_macro.hpp"
 #include "math_3d/util.hpp"
 
@@ -187,29 +184,30 @@ namespace gl {
 
     void _render_engine::_render_triangle(const vs_intermediate_data& v0, const vs_intermediate_data& v1, const vs_intermediate_data& v2) const noexcept {
         using namespace math;
+        using namespace std;
 
         const auto& shader = shader_engine._get_binded_shader_program().shader;
 
-        const vec2i bboxmin(std::min(std::min(v0.coord.x, v1.coord.x), v2.coord.x), std::min(std::min(v0.coord.y, v1.coord.y), v2.coord.y));
-        const vec2i bboxmax(std::max(std::max(v0.coord.x, v1.coord.x), v2.coord.x), std::max(std::max(v0.coord.y, v1.coord.y), v2.coord.y));
+        const vec2i bboxmin(round(min(min(v0.coord.x, v1.coord.x), v2.coord.x)), round(min(min(v0.coord.y, v1.coord.y), v2.coord.y)));
+        const vec2i bboxmax(round(max(max(v0.coord.x, v1.coord.x), v2.coord.x)), round(max(max(v0.coord.y, v1.coord.y), v2.coord.y)));
 
         const color c0 = shader->pixel(v0.vs_out), c1 = shader->pixel(v1.vs_out), c2 = shader->pixel(v2.vs_out);
 
-        for (size_t y = bboxmin.y; y <= bboxmax.y; ++y) {
+        for (float y = bboxmin.y; y <= bboxmax.y; ++y) {
             bool prev_pixel_was_inside = false;
-            for (size_t x = bboxmin.x; x <= bboxmax.x; ++x) {
+            for (float x = bboxmin.x; x <= bboxmax.x; ++x) {
                 const vec2f p(x, y);
                 
-                const float area = _edge(v0.coord.xy, v1.coord.xy, v2.coord.xy);
-                const float   w0 = _edge(v1.coord.xy, v2.coord.xy, p) / area;
-                const float   w1 = _edge(v2.coord.xy, v0.coord.xy, p) / area;
-                const float   w2 = 1.0f - w0 - w1;
+                const double area = _edge(v0.coord.xy, v1.coord.xy, v2.coord.xy);
+                const double   w0 = _edge(v1.coord.xy, v2.coord.xy, p) / area;
+                const double   w1 = _edge(v2.coord.xy, v0.coord.xy, p) / area;
+                const double   w2 = 1.0 - w0 - w1;
                 
                 if (w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) {
                     prev_pixel_was_inside = true;
 
-                    const float invert_z = (1.0f / v0.coord.z) * w0 + (1.0f / v1.coord.z) * w1 + (1.0f / v2.coord.z) * w2;
-                    if (_test_and_update_depth(vec3f(p, 1.0f / invert_z))) {
+                    const double invert_z = (1.0 / v0.coord.z) * w0 + (1.0 / v1.coord.z) * w1 + (1.0 / v2.coord.z) * w2;
+                    if (_test_and_update_depth(vec3f(p, 1.0 / invert_z))) {
                         _render_pixel(p, w0 * c0 + w1 * c1 + w2 * c2);
                     }
                 } else if (prev_pixel_was_inside) {
@@ -224,7 +222,7 @@ namespace gl {
     }
 
     bool _render_engine::_test_and_update_depth(const math::vec3f& pixel) const noexcept {
-        const size_t idx = pixel.x + pixel.y * m_window_ptr->GetWidth();
+        const size_t idx = std::round(pixel.x + pixel.y * m_window_ptr->GetWidth());
         if (pixel.z <= m_z_buffer[idx]) {
             m_z_buffer[idx] = pixel.z;
             return true; 
@@ -244,7 +242,7 @@ namespace gl {
         return dot(n, backward) <= 0.0f;
     }
 
-    float _render_engine::_edge(const math::vec2f &v0, const math::vec2f &v1, const math::vec2f &p) noexcept {
+    double _render_engine::_edge(const math::vec2f &v0, const math::vec2f &v1, const math::vec2f &p) noexcept {
         return (p.x - v0.x) * (v1.y - v0.y) - (p.y - v0.y) * (v1.x - v0.x);
     }
 

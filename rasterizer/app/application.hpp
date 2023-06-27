@@ -1,6 +1,9 @@
 #pragma once
 #include "window/window.hpp"
 
+#include "math_3d/vec_operations.hpp"
+#include "math_3d/mat_operations.hpp"
+
 #include <string>
 #include <chrono>
 
@@ -18,11 +21,26 @@ namespace rasterization {
     private:
         win_framewrk::Window* m_window;
 
-        struct VBO_IBO {
+        struct Object {
             size_t vbo;
             size_t ibo;
         };
-        std::unordered_map<std::string, VBO_IBO> m_VBO_IBO;
+        std::unordered_map<std::string, Object> m_objects;
+
+        struct Transform {
+            math::mat4f translation;
+            math::mat4f rotation;
+            math::mat4f scale;
+        } m_obj_transform;
+
+        math::mat4f m_view_matrix;
+        math::mat4f m_proj_matrix;
+
+        math::vec3f m_camera_position;
+        math::vec3f m_light_position;
+
+        size_t m_simple_shader = 0;
+        size_t m_gouraud_shader = 0;
 
         mutable std::chrono::steady_clock::time_point m_last_frame;
         mutable float m_fps_lock;

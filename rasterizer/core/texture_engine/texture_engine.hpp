@@ -3,6 +3,8 @@
 
 #include "texture.hpp"
 
+#define ASSERT_TEXTURE_ID_VALIDITY(container, texture_id) ASSERT(container.find((texture_id)) != container.cend(), "texture engine error", "invalid texture ID")
+
 namespace gl {
     struct _texture_engine {
         static _texture_engine& get() noexcept;

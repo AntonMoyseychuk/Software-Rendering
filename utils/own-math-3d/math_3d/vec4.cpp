@@ -21,6 +21,7 @@ namespace math {
     const color color::MAGENTA(1.0f, 0.0f, 1.0f, 1.0f);
     const color color::CYAN(0.0f, 1.0f, 1.0f, 0.0f);
     const color color::ORANGE(1.0f, 0.4f, 0.0, 1.0f);
+    const color color::TANGERINE(1.0f, 155.0f / 255.0f, 0.0, 1.0f);
     const color color::LIME(0.0f, 1.0f, 0.0f, 1.0f);
     const color color::PURPLE(0.5f, 0.0f, 0.5f, 1.0f);
     const color color::INDIGO(75.0f / 255.0f, 0.0f, 130.0f / 255.0f, 1.0f);

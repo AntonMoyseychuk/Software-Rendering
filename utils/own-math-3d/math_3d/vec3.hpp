@@ -211,5 +211,6 @@ namespace math {
     }
     
     using vec3f = vec3<float>;
+    using vec3d = vec3<double>;
     using vec3i = vec3<int32_t>;
 }

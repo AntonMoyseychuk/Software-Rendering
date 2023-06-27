@@ -41,7 +41,7 @@ namespace gl {
          *    0: point is on the edge
          *  < 0: point is to the left of the edge
         */
-        static float _edge(const math::vec2f& v0, const math::vec2f& v1, const math::vec2f& p) noexcept;
+        static double _edge(const math::vec2f& v0, const math::vec2f& v1, const math::vec2f& p) noexcept;
 
     private:
         struct vs_intermediate_data {

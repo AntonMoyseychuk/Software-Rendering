@@ -68,6 +68,7 @@ namespace math {
         static const color MAGENTA;
         static const color CYAN;
         static const color ORANGE;
+        static const color TANGERINE;
         static const color LIME;
         static const color PURPLE;
         static const color INDIGO;

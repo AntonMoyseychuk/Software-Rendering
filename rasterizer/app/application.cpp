@@ -46,38 +46,62 @@ namespace rasterization {
         };
         const size_t triangle_indexes[] = { 0, 1, 2, 0 };
 
-        m_VBO_IBO["triangle"] = {
+        m_objects["triangle"] = {
             core.create_vertex_buffer(triangle, sizeof(triangle)),
             core.create_index_buffer(triangle_indexes, sizeof(triangle_indexes) / sizeof(triangle_indexes[0]))
         };
-        core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
+        core.bind_buffer(buffer_type::VERTEX, m_objects["triangle"].vbo);
         core.set_buffer_element_size(sizeof(triangle[0]));
 
         try {
             Mesh model("..\\..\\..\\rasterizer\\app\\assets\\human.obj");
             const Mesh::Content* model_buffer = model.GetContent();
             
-            m_VBO_IBO["model"] = {
+            m_objects["model"] = {
                 core.create_vertex_buffer(model_buffer->vertexes.data(), model_buffer->vertexes.size() * sizeof(model_buffer->vertexes[0])),
                 core.create_index_buffer(model_buffer->indexes.data(), model_buffer->indexes.size())
             };
-            core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
+            core.bind_buffer(buffer_type::VERTEX, m_objects["model"].vbo);
             core.set_buffer_element_size(sizeof(model_buffer->vertexes[0]));
 
             Mesh cube("..\\..\\..\\rasterizer\\app\\assets\\cube.obj");
             const Mesh::Content* cube_buffer = cube.GetContent();
 
-            m_VBO_IBO["cube"] = {
+            m_objects["cube"] = {
                 core.create_vertex_buffer(cube_buffer->vertexes.data(), cube_buffer->vertexes.size() * sizeof(cube_buffer->vertexes[0])),
                 core.create_index_buffer(cube_buffer->indexes.data(), cube_buffer->indexes.size())
             };
-            core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
+            core.bind_buffer(buffer_type::VERTEX, m_objects["cube"].vbo);
             core.set_buffer_element_size(sizeof(cube_buffer->vertexes[0]));
         }
         catch(const std::exception& e) {
             std::cerr << e.what() << '\n';
             abort();
         }
+
+        m_camera_position = 2.5f * vec3f::FORWARD();
+
+        m_view_matrix = look_at_rh(m_camera_position, vec3f::ZERO(), vec3f::UP());
+        m_proj_matrix = perspective(math::to_radians(90.0f), float(width) / height, 1.0f, 100.0f);
+
+        m_simple_shader = core.create_shader(std::make_shared<SimpleShader>());
+        core.bind_shader(m_simple_shader);
+        core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+        core.uniform("view", m_view_matrix);
+        core.uniform("projection", m_proj_matrix);
+
+        m_light_position = 10.0f * (vec3f::FORWARD() + vec3f::RIGHT());
+
+        m_gouraud_shader = core.create_shader(std::make_shared<GouraudShader>());
+        core.bind_shader(m_gouraud_shader); 
+        core.uniform("light_position", m_light_position);
+        core.uniform("camera_position", m_camera_position);
+        core.uniform("light_intensity", 1.1f);
+        core.uniform("light_color", color::WHITE);
+        core.uniform("polygon_color", color::TANGERINE);
+        core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+        core.uniform("view", m_view_matrix);
+        core.uniform("projection", m_proj_matrix);
     }
 
     void Application::Run() noexcept {
@@ -85,24 +109,6 @@ namespace rasterization {
         using namespace math;
         using namespace win_framewrk;
 
-        size_t simple_shader = core.create_shader(std::make_shared<SimpleShader>());
-        core.bind_shader(simple_shader); 
-        core.uniform("model", mat4f::IDENTITY);
-
-        mat4f view = look_at_rh(vec3f::FORWARD() * 2.5f, vec3f::ZERO(), vec3f::UP());
-        core.uniform("view", view);
-        
-        size_t model_shader = core.create_shader(std::make_shared<GouraudShader>());
-        core.bind_shader(model_shader); 
-        core.uniform("light_position", 10.0f * (vec3f::BACKWARD() + vec3f::LEFT()));
-        core.uniform("view_position", vec3f::ZERO());
-        core.uniform("light_intensity", 1.1f);
-        core.uniform("light_color", color::WHITE);
-        core.uniform("polygon_color", color::GOLDEN);
-        core.uniform("model", mat4f::IDENTITY);
-        core.uniform("view", look_at_rh(vec3f::FORWARD() * 2.5f, vec3f::ZERO(), vec3f::UP()));
-
-        mat4f rotation, translation;
         render_mode model_render_mode = render_mode::TRIANGLES;
         while (m_window->IsOpen()) {
             m_window->PollEvent();
@@ -126,103 +132,103 @@ namespace rasterization {
 
             if (m_window->IsKeyPressed(Key::LALT)) {
                 if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
-                    view = rotate_y(view, -angle);
-                    core.uniform("view", view);
+                    m_view_matrix = rotate_y(m_view_matrix, -angle);
+                    core.uniform("view", m_view_matrix);
                 } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
-                    view = rotate_y(view, angle);
-                    core.uniform("view", view);
+                    m_view_matrix = rotate_y(m_view_matrix, angle);
+                    core.uniform("view", m_view_matrix);
                 }
 
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                    view = rotate_x(view, -angle);
-                    core.uniform("view", view);
+                    m_view_matrix = rotate_x(m_view_matrix, -angle);
+                    core.uniform("view", m_view_matrix);
                 } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                    view = rotate_x(view, angle);
-                    core.uniform("view", view);
+                    m_view_matrix = rotate_x(m_view_matrix, angle);
+                    core.uniform("view", m_view_matrix);
                 }
 
                 if (m_window->IsKeyPressed(Key::D)) {
-                    view = translate(view, vec3f::LEFT() * distance);
-                    core.uniform("view", view);
+                    m_view_matrix = translate(m_view_matrix, vec3f::LEFT() * distance);
+                    core.uniform("view", m_view_matrix);
                 } else if (m_window->IsKeyPressed(Key::A)) {
-                    view = translate(view, vec3f::RIGHT() * distance);
-                    core.uniform("view", view);
+                    m_view_matrix = translate(m_view_matrix, vec3f::RIGHT() * distance);
+                    core.uniform("view", m_view_matrix);
                 }
 
                 if (m_window->IsKeyPressed(Key::W)) {
-                    view = translate(view, vec3f::FORWARD() * distance);
-                    core.uniform("view", view);
+                    m_view_matrix = translate(m_view_matrix, vec3f::FORWARD() * distance);
+                    core.uniform("view", m_view_matrix);
                 } else if (m_window->IsKeyPressed(Key::S)) {
-                    view = translate(view, vec3f::BACKWARD() * distance);
-                    core.uniform("view", view);
+                    m_view_matrix = translate(m_view_matrix, vec3f::BACKWARD() * distance);
+                    core.uniform("view", m_view_matrix);
                 }
 
                 if (m_window->IsKeyPressed(Key::SPASE)) {
-                    view = translate(view, vec3f::DOWN() * distance);
-                    core.uniform("view", view);
+                    m_view_matrix = translate(m_view_matrix, vec3f::DOWN() * distance);
+                    core.uniform("view", m_view_matrix);
                 } else if (m_window->IsKeyPressed(Key::LCTRL)) {
-                    view = translate(view, vec3f::UP() * distance);
-                    core.uniform("view", view);
+                    m_view_matrix = translate(m_view_matrix, vec3f::UP() * distance);
+                    core.uniform("view", m_view_matrix);
                 }
             } else {
                 if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
-                    rotation = rotate_y(rotation, -angle);
-                    core.uniform("model", rotation * translation);
+                    m_obj_transform.rotation = rotate_y(m_obj_transform.rotation, -angle);
+                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
                 } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
-                    rotation = rotate_y(rotation, angle);
-                    core.uniform("model", rotation * translation);
+                    m_obj_transform.rotation = rotate_y(m_obj_transform.rotation, angle);
+                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
                 }
 
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                    rotation = rotate_x(rotation, -angle);
-                    core.uniform("model", rotation * translation);
+                    m_obj_transform.rotation = rotate_x(m_obj_transform.rotation, -angle);
+                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
                 } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                    rotation = rotate_x(rotation, angle);
-                    core.uniform("model", rotation * translation);
+                    m_obj_transform.rotation = rotate_x(m_obj_transform.rotation, angle);
+                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
                 }
 
                 if (m_window->IsKeyPressed(Key::D)) {
-                    translation = translate(translation, vec3f::RIGHT() * distance);
-                    core.uniform("model", rotation * translation);
+                    m_obj_transform.translation = translate(m_obj_transform.translation, vec3f::RIGHT() * distance);
+                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
                 } else if (m_window->IsKeyPressed(Key::A)) {
-                    translation = translate(translation, vec3f::LEFT() * distance);
-                    core.uniform("model", rotation * translation);
+                    m_obj_transform.translation = translate(m_obj_transform.translation, vec3f::LEFT() * distance);
+                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
                 }
 
                 if (m_window->IsKeyPressed(Key::W)) {
-                    translation = translate(translation, vec3f::UP() * distance);
-                    core.uniform("model", rotation * translation);
+                    m_obj_transform.translation = translate(m_obj_transform.translation, vec3f::UP() * distance);
+                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
                 } else if (m_window->IsKeyPressed(Key::S)) {
-                    translation = translate(translation, vec3f::DOWN() * distance);
-                    core.uniform("model", rotation * translation);
+                    m_obj_transform.translation = translate(m_obj_transform.translation, vec3f::DOWN() * distance);
+                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
                 }
 
                 if (m_window->IsKeyPressed(Key::Z)) {
-                    translation = translate(translation, vec3f::BACKWARD() * distance);
-                    core.uniform("model", rotation * translation);
+                    m_obj_transform.translation = translate(m_obj_transform.translation, vec3f::BACKWARD() * distance);
+                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
                 } else if (m_window->IsKeyPressed(Key::X)) {
-                    translation = translate(translation, vec3f::FORWARD() * distance);
-                    core.uniform("model", rotation * translation);
+                    m_obj_transform.translation = translate(m_obj_transform.translation, vec3f::FORWARD() * distance);
+                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
                 }
             }
         #pragma endregion input
 
-            // core.bind_shader(simple_shader);
-            // core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            // core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["triangle"].vbo);
-            // core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["triangle"].ibo);
-            // core.render(model_render_mode);
-
-            core.bind_shader(model_shader);
+            core.bind_shader(m_simple_shader);
             core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["model"].vbo);
-            core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["model"].ibo);
+            core.bind_buffer(buffer_type::VERTEX, m_objects["triangle"].vbo);
+            core.bind_buffer(buffer_type::INDEX, m_objects["triangle"].ibo);
             core.render(model_render_mode);
 
-            // core.bind_shader(model_shader);
+            // core.bind_shader(m_gouraud_shader);
+            // core.uniform("projection", perspective(math::to_radians(90.0f), (float)m_window->GetWidth() / m_window->GetHeight(), 1.0f, 100.0f));
+            // core.bind_buffer(buffer_type::VERTEX, m_objects["model"].vbo);
+            // core.bind_buffer(buffer_type::INDEX, m_objects["model"].ibo);
+            // core.render(model_render_mode);
+
+            // core.bind_shader(m_gouraud_shader);
             // core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            // core.bind_buffer(buffer_type::VERTEX, m_VBO_IBO["cube"].vbo);
-            // core.bind_buffer(buffer_type::INDEX, m_VBO_IBO["cube"].ibo);
+            // core.bind_buffer(buffer_type::VERTEX, m_objects["cube"].vbo);
+            // core.bind_buffer(buffer_type::INDEX, m_objects["cube"].ibo);
             // core.render(model_render_mode);
 
             core.swap_buffers(); 
