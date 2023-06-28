@@ -35,7 +35,7 @@ namespace rasterization {
 
         core.viewport(width, height);
 
-        m_window->SetResizeCallback([](uint32_t width, uint32_t height){
+        m_window->SetResizeCallback([](uint32_t width, uint32_t height) {
             core.viewport(width, height);
         });
 

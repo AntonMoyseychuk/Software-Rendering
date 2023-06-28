@@ -8,11 +8,11 @@
 #define ASSERT_UNIFORM_VALIDITY(container, uniform_name) ASSERT(container.find((uniform_name)) != container.cend(), "unifrom buffer error", "invalid uniform name")
 
 namespace gl {
-    struct _uniform_buffer {
+    struct _uniform_buffer_api {
         friend struct _shader_engine;
 
-        _uniform_buffer() = default;
-        virtual ~_uniform_buffer() = default;
+        _uniform_buffer_api() = default;
+        virtual ~_uniform_buffer_api() = default;
     
     protected:
         const math::quaternion& get_quaternion_uniform(const std::string& name) const noexcept;

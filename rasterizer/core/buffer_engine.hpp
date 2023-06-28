@@ -2,10 +2,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "core/assert_macro.hpp"
-
-#define ASSERT_BUFFER_ID_VALIDITY(container, buffer_id) ASSERT(container.find((buffer_id)) != container.cend(), "buffer engine error", "invalid buffer ID")
-
 namespace gl {
     enum class buffer_type : uint8_t { 
         VERTEX, INDEX
@@ -31,8 +27,6 @@ namespace gl {
         _buffer_engine() = default;
 
     public:
-        using buffer_id = size_t;
-
         struct vertex_buffer {
             std::vector<uint8_t> data;
             size_t element_size;
@@ -44,10 +38,13 @@ namespace gl {
         };
         const index_buffer& _get_binded_index_buffer() const noexcept;
 
-        std::unordered_map<buffer_id, vertex_buffer> vbos;
-        std::unordered_map<buffer_id, index_buffer> ibos;
+        using buffer_id = size_t;
 
-        buffer_id binded_vbo = 0;
-        buffer_id binded_ibo = 0;
+    private:
+        std::unordered_map<buffer_id, vertex_buffer> m_vbos;
+        std::unordered_map<buffer_id, index_buffer> m_ibos;
+
+        buffer_id m_binded_vbo = 0;
+        buffer_id m_binded_ibo = 0;
     };
 }

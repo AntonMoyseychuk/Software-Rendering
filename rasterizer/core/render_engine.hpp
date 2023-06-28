@@ -1,8 +1,7 @@
 #pragma once
+#include "math_3d/math.hpp"
 #include "window/window.hpp"
 #include "thread_pool/thread_pool.hpp"
-
-#include "math_3d/math.hpp"
 
 #include <any>
 

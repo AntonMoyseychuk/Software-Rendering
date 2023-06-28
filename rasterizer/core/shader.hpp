@@ -1,11 +1,11 @@
 #pragma once
-#include "uniform_buffer.hpp"
+#include "uniform_buffer_api.hpp"
 #include "texture_engine.hpp"
 
 #include <any>
 
 namespace gl {
-    struct _shader : public _uniform_buffer {
+    struct _shader : public _uniform_buffer_api {
         friend struct _render_engine;
     
         _shader() = default;

@@ -7,9 +7,7 @@ namespace gl {
 
     const _texture &_shader::sampler_2D() const noexcept {
         static _texture_engine& engine = _texture_engine::get();
-
-        ASSERT_TEXTURE_ID_VALIDITY(engine.textures, engine.binded_texture);
-        return engine.textures[engine.binded_texture];
+        return engine._get_binded_texture();
     }
 
     math::color _shader::texture(const _texture &texture, const math::vec2f &texcoord) const noexcept {
