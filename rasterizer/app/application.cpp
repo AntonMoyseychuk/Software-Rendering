@@ -46,32 +46,42 @@ namespace rasterization {
         };
         const size_t triangle_indexes[] = { 0, 1, 2, 0 };
 
-        m_objects["triangle"] = {
+        m_objects[ObjectID::TRIANGLE] = {
             core.create_vertex_buffer(triangle, sizeof(triangle)),
             core.create_index_buffer(triangle_indexes, sizeof(triangle_indexes) / sizeof(triangle_indexes[0]))
         };
-        core.bind_buffer(buffer_type::VERTEX, m_objects["triangle"].vbo);
+        core.bind_buffer(buffer_type::VERTEX, m_objects[ObjectID::TRIANGLE].vbo);
         core.set_buffer_element_size(sizeof(triangle[0]));
 
         try {
-            Mesh model("..\\..\\..\\rasterizer\\app\\assets\\human.obj");
-            const Mesh::Content* model_buffer = model.GetContent();
+            Mesh head("..\\..\\..\\rasterizer\\app\\assets\\human.obj");
+            const Mesh::Content* head_buffer = head.GetContent();
             
-            m_objects["model"] = {
-                core.create_vertex_buffer(model_buffer->vertexes.data(), model_buffer->vertexes.size() * sizeof(model_buffer->vertexes[0])),
-                core.create_index_buffer(model_buffer->indexes.data(), model_buffer->indexes.size())
+            m_objects[ObjectID::HEAD] = {
+                core.create_vertex_buffer(head_buffer->vertexes.data(), head_buffer->vertexes.size() * sizeof(head_buffer->vertexes[0])),
+                core.create_index_buffer(head_buffer->indexes.data(), head_buffer->indexes.size())
             };
-            core.bind_buffer(buffer_type::VERTEX, m_objects["model"].vbo);
-            core.set_buffer_element_size(sizeof(model_buffer->vertexes[0]));
+            core.bind_buffer(buffer_type::VERTEX, m_objects[ObjectID::HEAD].vbo);
+            core.set_buffer_element_size(sizeof(head_buffer->vertexes[0]));
+
+            Mesh suzanne("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
+            const Mesh::Content* suzanne_buffer = head.GetContent();
+            
+            m_objects[ObjectID::SUZANNE] = {
+                core.create_vertex_buffer(suzanne_buffer->vertexes.data(), suzanne_buffer->vertexes.size() * sizeof(suzanne_buffer->vertexes[0])),
+                core.create_index_buffer(suzanne_buffer->indexes.data(), suzanne_buffer->indexes.size())
+            };
+            core.bind_buffer(buffer_type::VERTEX, m_objects[ObjectID::SUZANNE].vbo);
+            core.set_buffer_element_size(sizeof(suzanne_buffer->vertexes[0]));
 
             Mesh cube("..\\..\\..\\rasterizer\\app\\assets\\cube.obj");
             const Mesh::Content* cube_buffer = cube.GetContent();
 
-            m_objects["cube"] = {
+            m_objects[ObjectID::CUBE] = {
                 core.create_vertex_buffer(cube_buffer->vertexes.data(), cube_buffer->vertexes.size() * sizeof(cube_buffer->vertexes[0])),
                 core.create_index_buffer(cube_buffer->indexes.data(), cube_buffer->indexes.size())
             };
-            core.bind_buffer(buffer_type::VERTEX, m_objects["cube"].vbo);
+            core.bind_buffer(buffer_type::VERTEX, m_objects[ObjectID::CUBE].vbo);
             core.set_buffer_element_size(sizeof(cube_buffer->vertexes[0]));
         }
         catch(const std::exception& e) {
@@ -86,7 +96,7 @@ namespace rasterization {
 
         m_simple_shader = core.create_shader(std::make_shared<SimpleShader>());
         core.bind_shader(m_simple_shader);
-        core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+        core.uniform("model", m_objects[m_curr_obj].transform.scale * m_objects[m_curr_obj].transform.rotation * m_objects[m_curr_obj].transform.translation);
         core.uniform("view", m_view_matrix);
         core.uniform("projection", m_proj_matrix);
 
@@ -99,7 +109,7 @@ namespace rasterization {
         core.uniform("light_intensity", 1.1f);
         core.uniform("light_color", color::WHITE);
         core.uniform("polygon_color", color::TANGERINE);
-        core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+        core.uniform("model", m_objects[m_curr_obj].transform.scale * m_objects[m_curr_obj].transform.rotation * m_objects[m_curr_obj].transform.translation);
         core.uniform("view", m_view_matrix);
         core.uniform("projection", m_proj_matrix);
     }
@@ -172,64 +182,51 @@ namespace rasterization {
                 }
             } else {
                 if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
-                    m_obj_transform.rotation = rotate_y(m_obj_transform.rotation, -angle);
-                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+                    m_objects[m_curr_obj].transform.rotation = rotate_y(m_objects[m_curr_obj].transform.rotation, -angle);
+                    core.uniform("model", m_objects[m_curr_obj].transform.scale * m_objects[m_curr_obj].transform.rotation * m_objects[m_curr_obj].transform.translation);
                 } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
-                    m_obj_transform.rotation = rotate_y(m_obj_transform.rotation, angle);
-                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+                    m_objects[m_curr_obj].transform.rotation = rotate_y(m_objects[m_curr_obj].transform.rotation, angle);
+                    core.uniform("model", m_objects[m_curr_obj].transform.scale * m_objects[m_curr_obj].transform.rotation * m_objects[m_curr_obj].transform.translation);
                 }
 
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
-                    m_obj_transform.rotation = rotate_x(m_obj_transform.rotation, -angle);
-                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+                    m_objects[m_curr_obj].transform.rotation = rotate_x(m_objects[m_curr_obj].transform.rotation, -angle);
+                    core.uniform("model", m_objects[m_curr_obj].transform.scale * m_objects[m_curr_obj].transform.rotation * m_objects[m_curr_obj].transform.translation);
                 } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
-                    m_obj_transform.rotation = rotate_x(m_obj_transform.rotation, angle);
-                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+                    m_objects[m_curr_obj].transform.rotation = rotate_x(m_objects[m_curr_obj].transform.rotation, angle);
+                    core.uniform("model", m_objects[m_curr_obj].transform.scale * m_objects[m_curr_obj].transform.rotation * m_objects[m_curr_obj].transform.translation);
                 }
 
                 if (m_window->IsKeyPressed(Key::D)) {
-                    m_obj_transform.translation = translate(m_obj_transform.translation, vec3f::RIGHT() * distance);
-                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+                    m_objects[m_curr_obj].transform.translation = translate(m_objects[m_curr_obj].transform.translation, vec3f::RIGHT() * distance);
+                    core.uniform("model", m_objects[m_curr_obj].transform.scale * m_objects[m_curr_obj].transform.rotation * m_objects[m_curr_obj].transform.translation);
                 } else if (m_window->IsKeyPressed(Key::A)) {
-                    m_obj_transform.translation = translate(m_obj_transform.translation, vec3f::LEFT() * distance);
-                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+                    m_objects[m_curr_obj].transform.translation = translate(m_objects[m_curr_obj].transform.translation, vec3f::LEFT() * distance);
+                    core.uniform("model", m_objects[m_curr_obj].transform.scale * m_objects[m_curr_obj].transform.rotation * m_objects[m_curr_obj].transform.translation);
                 }
 
                 if (m_window->IsKeyPressed(Key::W)) {
-                    m_obj_transform.translation = translate(m_obj_transform.translation, vec3f::UP() * distance);
-                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+                    m_objects[m_curr_obj].transform.translation = translate(m_objects[m_curr_obj].transform.translation, vec3f::UP() * distance);
+                    core.uniform("model", m_objects[m_curr_obj].transform.scale * m_objects[m_curr_obj].transform.rotation * m_objects[m_curr_obj].transform.translation);
                 } else if (m_window->IsKeyPressed(Key::S)) {
-                    m_obj_transform.translation = translate(m_obj_transform.translation, vec3f::DOWN() * distance);
-                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+                    m_objects[m_curr_obj].transform.translation = translate(m_objects[m_curr_obj].transform.translation, vec3f::DOWN() * distance);
+                    core.uniform("model", m_objects[m_curr_obj].transform.scale * m_objects[m_curr_obj].transform.rotation * m_objects[m_curr_obj].transform.translation);
                 }
 
                 if (m_window->IsKeyPressed(Key::Z)) {
-                    m_obj_transform.translation = translate(m_obj_transform.translation, vec3f::BACKWARD() * distance);
-                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+                    m_objects[m_curr_obj].transform.translation = translate(m_objects[m_curr_obj].transform.translation, vec3f::BACKWARD() * distance);
+                    core.uniform("model", m_objects[m_curr_obj].transform.scale * m_objects[m_curr_obj].transform.rotation * m_objects[m_curr_obj].transform.translation);
                 } else if (m_window->IsKeyPressed(Key::X)) {
-                    m_obj_transform.translation = translate(m_obj_transform.translation, vec3f::FORWARD() * distance);
-                    core.uniform("model", m_obj_transform.scale * m_obj_transform.rotation * m_obj_transform.translation);
+                    m_objects[m_curr_obj].transform.translation = translate(m_objects[m_curr_obj].transform.translation, vec3f::FORWARD() * distance);
+                    core.uniform("model", m_objects[m_curr_obj].transform.scale * m_objects[m_curr_obj].transform.rotation * m_objects[m_curr_obj].transform.translation);
                 }
             }
         #pragma endregion input
-
-            // core.bind_shader(m_simple_shader);
-            // core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            // core.bind_buffer(buffer_type::VERTEX, m_objects["triangle"].vbo);
-            // core.bind_buffer(buffer_type::INDEX, m_objects["triangle"].ibo);
-            // core.render(model_render_mode);
-
             core.bind_shader(m_gouraud_shader);
             core.uniform("projection", perspective(math::to_radians(90.0f), (float)m_window->GetWidth() / m_window->GetHeight(), 1.0f, 100.0f));
-            core.bind_buffer(buffer_type::VERTEX, m_objects["model"].vbo);
-            core.bind_buffer(buffer_type::INDEX, m_objects["model"].ibo);
+            core.bind_buffer(buffer_type::VERTEX, m_objects[m_curr_obj].vbo);
+            core.bind_buffer(buffer_type::INDEX, m_objects[m_curr_obj].ibo);
             core.render(model_render_mode);
-
-            // core.bind_shader(m_gouraud_shader);
-            // core.uniform("projection", perspective(math::to_radians(90.0f), float(m_window->GetWidth()) / m_window->GetHeight(), 1.0f, 100.0f));
-            // core.bind_buffer(buffer_type::VERTEX, m_objects["cube"].vbo);
-            // core.bind_buffer(buffer_type::INDEX, m_objects["cube"].ibo);
-            // core.render(model_render_mode);
 
             core.swap_buffers(); 
             core.clear_depth_buffer();

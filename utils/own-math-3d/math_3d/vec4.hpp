@@ -5,6 +5,13 @@
 #include <immintrin.h>
 
 namespace math {
+    #define R_G_B_A(color) \
+        static_cast<uint8_t>(math::clamp((color).r * 255, 0.0f, 255.0f)), \
+        static_cast<uint8_t>(math::clamp((color).g * 255, 0.0f, 255.0f)), \
+        static_cast<uint8_t>(math::clamp((color).b * 255, 0.0f, 255.0f)), \
+        static_cast<uint8_t>(math::clamp((color).a * 255, 0.0f, 255.0f))
+
+
     union vec4f;
     using color = vec4f;
 
@@ -150,10 +157,4 @@ namespace math {
     vec4f operator*(float value, const vec4f& vec) noexcept;
 
     vec4f normalize(const vec4f& vec) noexcept;
-
-    #define R_G_B_A(color) \
-        static_cast<uint8_t>(math::clamp((color).r * 255, 0.0f, 255.0f)), \
-        static_cast<uint8_t>(math::clamp((color).g * 255, 0.0f, 255.0f)), \
-        static_cast<uint8_t>(math::clamp((color).b * 255, 0.0f, 255.0f)), \
-        static_cast<uint8_t>(math::clamp((color).a * 255, 0.0f, 255.0f))                                
 }

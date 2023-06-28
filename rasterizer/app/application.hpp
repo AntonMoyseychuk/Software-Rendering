@@ -8,6 +8,10 @@
 #include <chrono>
 
 namespace rasterization {
+    enum class ObjectID {
+        TRIANGLE, HEAD, SUZANNE, CUBE
+    };
+
     class Application {
     public:
         Application(const std::string& title, std::uint32_t width, std::uint32_t height, size_t fps_lock = 60);
@@ -24,19 +28,22 @@ namespace rasterization {
         struct Object {
             size_t vbo;
             size_t ibo;
+
+            struct Transform {
+                math::mat4f translation;
+                math::mat4f rotation;
+                math::mat4f scale;
+            } transform;
         };
-        std::unordered_map<std::string, Object> m_objects;
+        std::unordered_map<ObjectID, Object> m_objects;
 
-        struct Transform {
-            math::mat4f translation;
-            math::mat4f rotation;
-            math::mat4f scale;
-        } m_obj_transform;
-
-        math::mat4f m_view_matrix;
-        math::mat4f m_proj_matrix;
+        ObjectID m_curr_obj = ObjectID::HEAD;
 
         math::vec3f m_camera_position;
+        math::mat4f m_view_matrix;
+
+        math::mat4f m_proj_matrix;
+
         math::vec3f m_light_position;
 
         size_t m_simple_shader = 0;

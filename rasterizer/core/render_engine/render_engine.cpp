@@ -219,7 +219,7 @@ namespace gl {
     }
 
     void _render_engine::_resize_z_buffer(uint32_t width, uint32_t height) const noexcept {
-        m_z_buffer.resize(width * height, std::numeric_limits<float>::max());
+        m_z_buffer.resize(width * height, math::MATH_INFINITY);
     }
 
     bool _render_engine::_test_and_update_depth(const math::vec3f& pixel) const noexcept {
@@ -273,7 +273,7 @@ namespace gl {
     }
 
     void _render_engine::clear_depth_buffer() const noexcept {
-        std::fill(m_z_buffer.begin(), m_z_buffer.end(), std::numeric_limits<float>::max());
+        std::fill(m_z_buffer.begin(), m_z_buffer.end(), math::MATH_INFINITY);
     }
 
     void _render_engine::set_clear_color(const math::color& color) noexcept {

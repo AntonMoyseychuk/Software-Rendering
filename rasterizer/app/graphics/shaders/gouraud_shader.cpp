@@ -40,11 +40,15 @@ namespace rasterization {
         const float diff = std::max(dot(-light_dir, data.normal), 0.0f);
         const color diffuse = diff * get_vec4_uniform("light_color") * get_f32_uniform("light_intensity") * polygon_color;
 
-        // const vec3f view_dir = normalize(data.frag_position - get_vec3_uniform("camera_position"));
-        // const vec3f reflected = normalize(reflect(light_dir, data.normal));
-        // const float spec = std::max(std::powf(dot(reflected, -view_dir), 20.0f), 0.0f);
-        // const color specular = spec * get_f32_uniform("light_intensity") * polygon_color;
+        if (between(diff, 0.0f, 0.05f)) {
+            return ambient + diffuse;
+        }
 
-        return ambient + diffuse;
+        const vec3f view_dir = normalize(data.frag_position - get_vec3_uniform("camera_position"));
+        const vec3f reflected = normalize(reflect(light_dir, data.normal));
+        const float spec = std::max(std::powf(dot(reflected, -view_dir), 150.0f), 0.0f);
+        const color specular = spec * polygon_color;
+
+        return ambient + diffuse + specular;
     }
 }
