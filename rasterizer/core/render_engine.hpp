@@ -2,7 +2,7 @@
 #include "window/window.hpp"
 #include "thread_pool/thread_pool.hpp"
 
-#include "math_3d/vec4.hpp"
+#include "math_3d/math.hpp"
 
 #include <any>
 
@@ -15,8 +15,10 @@ namespace gl {
 
         static _render_engine& get() noexcept;
         
-        bool bind_window(win_framewrk::Window* window) noexcept;
+        bool bind_window(win_framewrk::Window* window) const noexcept;
         const win_framewrk::Window* is_window_binded() const noexcept;
+
+        void viewport(uint32_t width, uint32_t height) const noexcept;
 
         void render(render_mode mode) const noexcept;
         void swap_buffers() const noexcept;
@@ -68,7 +70,9 @@ namespace gl {
 
         mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 
-        win_framewrk::Window* m_window_ptr = nullptr;
+        mutable math::mat4f m_viewport;
+
+        mutable win_framewrk::Window* m_window_ptr = nullptr;
         math::color m_clear_color = math::color::BLACK;
     };
 }

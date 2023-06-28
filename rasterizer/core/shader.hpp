@@ -1,6 +1,6 @@
 #pragma once
 #include "uniform_buffer.hpp"
-#include "core/texture_engine/texture_engine.hpp"
+#include "texture_engine.hpp"
 
 #include <any>
 

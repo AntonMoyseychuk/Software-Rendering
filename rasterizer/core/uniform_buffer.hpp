@@ -3,7 +3,7 @@
 #include <unordered_map>
 
 #include "math_3d/math.hpp"
-#include "core/assert_macro.hpp"
+#include "assert_macro.hpp"
 
 #define ASSERT_UNIFORM_VALIDITY(container, uniform_name) ASSERT(container.find((uniform_name)) != container.cend(), "unifrom buffer error", "invalid uniform name")
 

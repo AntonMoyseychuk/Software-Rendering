@@ -1,15 +1,11 @@
 #include "render_engine.hpp"
 
-#include "core/gl_api.hpp"
+#include "buffer_engine.hpp"
+#include "shader_engine.hpp"
 
-#include "core/buffer_engine/buffer_engine.hpp"
-#include "core/shader_engine/shader_engine.hpp"
-
-#include "core/assert_macro.hpp"
-#include "math_3d/util.hpp"
+#include "assert_macro.hpp"
 
 namespace gl {
-    static gl_api& core = gl_api::get();
     static _buffer_engine& buff_engine = _buffer_engine::get();
     static _shader_engine& shader_engine = _shader_engine::get();
 
@@ -42,7 +38,7 @@ namespace gl {
             const vec4f ndc = m_vs_intermediates[j].coord.xyz / m_vs_intermediates[j].coord.w;
             m_vs_intermediates[j].clipped = !_is_inside_clipping_space(ndc.xyz);
 
-            m_vs_intermediates[j].coord = ndc * core.m_viewport;
+            m_vs_intermediates[j].coord = ndc * m_viewport;
             m_vs_intermediates[j].coord.x = std::floor(m_vs_intermediates[j].coord.x);
             m_vs_intermediates[j].coord.y = std::floor(m_vs_intermediates[j].coord.y);
         }
@@ -252,8 +248,7 @@ namespace gl {
         return renderer;
     }
 
-    bool _render_engine::bind_window(win_framewrk::Window *window) noexcept
-    {
+    bool _render_engine::bind_window(win_framewrk::Window *window) const noexcept {
         if (window == nullptr) {
             return false;
         }
@@ -265,6 +260,10 @@ namespace gl {
 
     const win_framewrk::Window *_render_engine::is_window_binded() const noexcept {
         return m_window_ptr;
+    }
+
+    void _render_engine::viewport(uint32_t width, uint32_t height) const noexcept {
+        m_viewport = math::viewport(width, height);
     }
 
     void _render_engine::swap_buffers() const noexcept {

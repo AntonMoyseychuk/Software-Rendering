@@ -243,8 +243,9 @@ namespace rasterization {
         #pragma endregion input
             core.bind_shader(m_gouraud_shader);
             core.uniform("projection", perspective(math::to_radians(90.0f), (float)m_window->GetWidth() / m_window->GetHeight(), 1.0f, 100.0f));
-            core.bind_buffer(buffer_type::VERTEX, m_objects["diablo"].vbo);
-            core.bind_buffer(buffer_type::INDEX, m_objects["diablo"].ibo);
+            const Object& object = m_objects["head"];
+            core.bind_buffer(buffer_type::VERTEX, object.vbo);
+            core.bind_buffer(buffer_type::INDEX, object.ibo);
             core.render(model_render_mode);
 
             core.swap_buffers(); 
