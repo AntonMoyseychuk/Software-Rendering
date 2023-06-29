@@ -23,15 +23,29 @@ namespace gl {
     protected:
         template<typename InType>
         const InType& in(const std::string& tag) const noexcept {
+            ASSERT(m_intermediate.find(tag) != m_intermediate.cend(), "shader error", 
+                "invalid IN variable tag");
+            ASSERT(std::holds_alternative<InType>(m_intermediate[tag]), "shader error", 
+                ("the IN variable \"" + tag + "\" has different type").c_str());
             
+            return std::get<InType>(m_intermediate.at(tag));
         }
 
         template<typename OutType>
         void out(const OutType& var, const std::string& tag) const noexcept {
-            
+            if (m_intermediate.find(tag) != m_intermediate.cend()) {
+                ASSERT(std::holds_alternative<OutType>(m_intermediate[tag]), "shader error", 
+                    "redefinition a variable with the same name but different types"
+                );
+            }
+
+            m_intermediate[tag] = var;
         }
 
     protected:
         mutable math::vec4f gl_Position;
+
+    private:
+        mutable std::unordered_map<std::string, uniform_type> m_intermediate;
     };
 }
