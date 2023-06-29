@@ -1,4 +1,7 @@
 #include "uniform_buffer_api.hpp"
+#include "assert_macro.hpp"
+
+#define ASSERT_UNIFORM_VALIDITY(container, uniform_name) ASSERT(container.find((uniform_name)) != container.cend(), "unifrom buffer error", "invalid uniform name")
 
 namespace gl {
     const math::quaternion &_uniform_buffer_api::get_quaternion_uniform(const std::string &name) const noexcept {

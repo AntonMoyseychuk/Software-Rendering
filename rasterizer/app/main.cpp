@@ -4,9 +4,7 @@
 // #define CLOCK_NOW() std::chrono::steady_clock::now()
 // #define DURATION(begin, end) std::chrono::duration<float, std::milli>((end) - (begin)).count()
 
-// #include "math_3d/mat_operations.hpp"
-// #include "math_3d/vec_operations.hpp"
-// #include "math_3d/util.hpp"
+// #include "math_3d/math.hpp"
 
 int main(int argc, char* argv[]) {
     rasterization::Application app("rasterizer", 720, 640, SIZE_MAX);

@@ -1,4 +1,5 @@
 #include "shader.hpp"
+#include "assert_macro.hpp"
 
 namespace gl {
     void _shader::geometry() const noexcept
