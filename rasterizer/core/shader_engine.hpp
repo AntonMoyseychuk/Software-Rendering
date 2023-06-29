@@ -17,7 +17,7 @@ namespace gl {
         template<typename Uniform>
         void uniform(const Uniform& uniform, const std::string& uniform_tag) noexcept {
             ASSERT_SHADER_PROGRAM_ID_VALIDITY(m_shader_programs, m_binded_shader);
-            m_shader_programs[m_binded_shader].shader->set_uniform(uniform, uniform_tag);
+            m_shader_programs[m_binded_shader].shader->_set_uniform(uniform, uniform_tag);
         }
 
     private:
