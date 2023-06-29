@@ -26,11 +26,11 @@ namespace gl {
             return std::get<Uniform>(var);
         }
 
-    // private:
-    //     template <typename Uniform>
-    //     void set_uniform(const Uniform& uniform, const std::string& tag) noexcept {
-    //         m_uniforms.u[tag] = uniform;
-    //     }
+    private:
+        template <typename Uniform>
+        void set_uniform(const Uniform& uniform, const std::string& tag) noexcept {
+            m_uniforms.u[tag] = uniform;
+        }
 
     private:
         template<typename... Args2>

@@ -115,22 +115,22 @@ namespace rasterization {
 
         m_simple_shader = core.create_shader(std::make_shared<SimpleShader>());
         core.bind_shader(m_simple_shader);
-        core.uniform("model", transform.scale * transform.rotation * transform.translation);
-        core.uniform("view", m_view_matrix);
-        core.uniform("projection", m_proj_matrix);
+        core.uniform(transform.scale * transform.rotation * transform.translation, "model");
+        core.uniform(m_view_matrix, "view");
+        core.uniform(m_proj_matrix, "projection");
 
         m_light_position = 10.0f * (vec3f::FORWARD() + vec3f::RIGHT());
 
         m_gouraud_shader = core.create_shader(std::make_shared<GouraudShader>());
         core.bind_shader(m_gouraud_shader); 
-        core.uniform("light_position", m_light_position);
-        core.uniform("camera_position", m_camera_position);
-        core.uniform("light_intensity", 1.1f);
-        core.uniform("light_color", color::WHITE);
-        core.uniform("polygon_color", color::TANGERINE);
-        core.uniform("model", transform.scale * transform.rotation * transform.translation);
-        core.uniform("view", m_view_matrix);
-        core.uniform("projection", m_proj_matrix);
+        core.uniform(m_light_position, "light_position");
+        core.uniform(m_camera_position, "camera_position");
+        core.uniform(1.1f, "light_intensity");
+        core.uniform(color::WHITE, "light_color");
+        core.uniform(color::TANGERINE, "polygon_color");
+        core.uniform(transform.scale * transform.rotation * transform.translation, "model");
+        core.uniform(m_view_matrix, "view");
+        core.uniform(m_proj_matrix, "projection");
     }
 
     void Application::Run() noexcept {
@@ -162,87 +162,87 @@ namespace rasterization {
             if (m_window->IsKeyPressed(Key::LALT)) {
                 if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
                     m_view_matrix = rotate_y(m_view_matrix, -angle);
-                    core.uniform("view", m_view_matrix);
+                    core.uniform(m_view_matrix, "view");
                 } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
                     m_view_matrix = rotate_y(m_view_matrix, angle);
-                    core.uniform("view", m_view_matrix);
+                    core.uniform(m_view_matrix, "view");
                 }
 
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
                     m_view_matrix = rotate_x(m_view_matrix, -angle);
-                    core.uniform("view", m_view_matrix);
+                    core.uniform(m_view_matrix, "view");
                 } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
                     m_view_matrix = rotate_x(m_view_matrix, angle);
-                    core.uniform("view", m_view_matrix);
+                    core.uniform(m_view_matrix, "view");
                 }
 
                 if (m_window->IsKeyPressed(Key::D)) {
                     m_view_matrix = translate(m_view_matrix, vec3f::LEFT() * distance);
-                    core.uniform("view", m_view_matrix);
+                    core.uniform(m_view_matrix, "view");
                 } else if (m_window->IsKeyPressed(Key::A)) {
                     m_view_matrix = translate(m_view_matrix, vec3f::RIGHT() * distance);
-                    core.uniform("view", m_view_matrix);
+                    core.uniform(m_view_matrix, "view");
                 }
 
                 if (m_window->IsKeyPressed(Key::W)) {
                     m_view_matrix = translate(m_view_matrix, vec3f::FORWARD() * distance);
-                    core.uniform("view", m_view_matrix);
+                    core.uniform(m_view_matrix, "view");
                 } else if (m_window->IsKeyPressed(Key::S)) {
                     m_view_matrix = translate(m_view_matrix, vec3f::BACKWARD() * distance);
-                    core.uniform("view", m_view_matrix);
+                    core.uniform(m_view_matrix, "view");
                 }
 
                 if (m_window->IsKeyPressed(Key::SPASE)) {
                     m_view_matrix = translate(m_view_matrix, vec3f::DOWN() * distance);
-                    core.uniform("view", m_view_matrix);
+                    core.uniform(m_view_matrix, "view");
                 } else if (m_window->IsKeyPressed(Key::LCTRL)) {
                     m_view_matrix = translate(m_view_matrix, vec3f::UP() * distance);
-                    core.uniform("view", m_view_matrix);
+                    core.uniform(m_view_matrix, "view");
                 }
             } else {
                 if (m_window->IsKeyPressed(Key::RIGHT_ARROW)) {
                     transform.rotation = rotate_y(transform.rotation, -angle);
-                    core.uniform("model", transform.scale * transform.rotation * transform.translation);
+                    core.uniform(transform.scale * transform.rotation * transform.translation, "model");
                 } else if (m_window->IsKeyPressed(Key::LEFT_ARROW)) {
                     transform.rotation = rotate_y(transform.rotation, angle);
-                    core.uniform("model", transform.scale * transform.rotation * transform.translation);
+                    core.uniform(transform.scale * transform.rotation * transform.translation, "model");
                 }
 
                 if (m_window->IsKeyPressed(Key::UP_ARROW)) {
                     transform.rotation = rotate_x(transform.rotation, -angle);
-                    core.uniform("model", transform.scale * transform.rotation * transform.translation);
+                    core.uniform(transform.scale * transform.rotation * transform.translation, "model");
                 } else if (m_window->IsKeyPressed(Key::DOWN_ARROW)) {
                     transform.rotation = rotate_x(transform.rotation, angle);
-                    core.uniform("model", transform.scale * transform.rotation * transform.translation);
+                    core.uniform(transform.scale * transform.rotation * transform.translation, "model");
                 }
 
                 if (m_window->IsKeyPressed(Key::D)) {
                     transform.translation = translate(transform.translation, vec3f::RIGHT() * distance);
-                    core.uniform("model", transform.scale * transform.rotation * transform.translation);
+                    core.uniform(transform.scale * transform.rotation * transform.translation, "model");
                 } else if (m_window->IsKeyPressed(Key::A)) {
                     transform.translation = translate(transform.translation, vec3f::LEFT() * distance);
-                    core.uniform("model", transform.scale * transform.rotation * transform.translation);
+                    core.uniform(transform.scale * transform.rotation * transform.translation, "model");
                 }
 
                 if (m_window->IsKeyPressed(Key::W)) {
                     transform.translation = translate(transform.translation, vec3f::UP() * distance);
-                    core.uniform("model", transform.scale * transform.rotation * transform.translation);
+                    core.uniform(transform.scale * transform.rotation * transform.translation, "model");
                 } else if (m_window->IsKeyPressed(Key::S)) {
                     transform.translation = translate(transform.translation, vec3f::DOWN() * distance);
-                    core.uniform("model", transform.scale * transform.rotation * transform.translation);
+                    core.uniform(transform.scale * transform.rotation * transform.translation, "model");
                 }
 
                 if (m_window->IsKeyPressed(Key::Z)) {
                     transform.translation = translate(transform.translation, vec3f::BACKWARD() * distance);
-                    core.uniform("model", transform.scale * transform.rotation * transform.translation);
+                    core.uniform(transform.scale * transform.rotation * transform.translation, "model");
                 } else if (m_window->IsKeyPressed(Key::X)) {
                     transform.translation = translate(transform.translation, vec3f::FORWARD() * distance);
-                    core.uniform("model", transform.scale * transform.rotation * transform.translation);
+                    core.uniform(transform.scale * transform.rotation * transform.translation, "model");
                 }
             }
         #pragma endregion input
             core.bind_shader(m_gouraud_shader);
-            core.uniform("projection", perspective(math::to_radians(90.0f), (float)m_window->GetWidth() / m_window->GetHeight(), 1.0f, 100.0f));
+            core.uniform(perspective(math::to_radians(90.0f), (float)m_window->GetWidth() / m_window->GetHeight(), 1.0f, 100.0f), "projection");
             const Object& object = m_objects["head"];
             core.bind_buffer(buffer_type::VERTEX, object.vbo);
             core.bind_buffer(buffer_type::INDEX, object.ibo);
