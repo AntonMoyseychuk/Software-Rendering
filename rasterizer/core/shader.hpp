@@ -5,7 +5,9 @@
 #include <any>
 
 namespace gl {
-    struct _shader : public _uniform_buffer_api {
+    struct _shader : public _uniform_buffer_api<bool, int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, float, double, 
+        math::vec2f, math::vec3f, math::vec4f, math::quaternion, math::mat4f> 
+    {
         friend struct _render_engine;
     
         _shader() = default;

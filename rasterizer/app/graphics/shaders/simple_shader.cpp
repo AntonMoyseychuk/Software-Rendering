@@ -10,7 +10,7 @@ namespace rasterization {
         using namespace math;
         
         const VSInData* v = (const VSInData*)vertex;
-        gl_Position = v->position * get_mat4_uniform("model") * get_mat4_uniform("view") * get_mat4_uniform("projection");
+        gl_Position = v->position * get_uniform<mat4f>("model") * get_uniform<mat4f>("view") * get_uniform<mat4f>("projection");
 
         return v->color;
     }
