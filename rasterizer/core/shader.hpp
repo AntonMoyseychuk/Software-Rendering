@@ -20,17 +20,16 @@ namespace gl {
         const _texture& sampler_2D() const noexcept;
         math::color texture(const _texture& texture, const math::vec2f& texcoord) const noexcept;
 
-    // protected:
-    //     template<typename InType>
-    //     void in(InType& var, const std::string& tag) const noexcept {
-    //         static _shader_engine& engine = _shader_engine::get();
-    //     }
+    protected:
+        template<typename InType>
+        const InType& in(const std::string& tag) const noexcept {
+            
+        }
 
-    //     template<typename OutType>
-    //     void out(const OutType& var, const std::string& tag) const noexcept {
-    //         static _shader_engine& engine = _shader_engine::get();
-    //         engine.m_intermediates
-    //     }
+        template<typename OutType>
+        void out(const OutType& var, const std::string& tag) const noexcept {
+            
+        }
 
     protected:
         mutable math::vec4f gl_Position;

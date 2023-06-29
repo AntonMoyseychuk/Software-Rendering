@@ -29,11 +29,11 @@ namespace gl {
     #pragma endregion resizing-buffers
 
     #pragma region local-to-raster-coords
-        const _shader_engine::shader_program& shader_program = shader_engine._get_binded_shader_program();
+        const auto& shader_ptr = shader_engine._get_binded_shader_program().shader;
         
         for (size_t i = 0, j = 0; j < vertex_count; i += vbo.element_size, ++j) {
-            m_vs_intermediates[j].vs_out = shader_program.shader->vertex(&vbo.data[i]);
-            m_vs_intermediates[j].coord = shader_program.shader->gl_Position;
+            m_vs_intermediates[j].vs_out = shader_ptr->vertex(&vbo.data[i]);
+            m_vs_intermediates[j].coord = shader_ptr->gl_Position;
             
             const vec4f ndc = m_vs_intermediates[j].coord.xyz / m_vs_intermediates[j].coord.w;
             m_vs_intermediates[j].clipped = !_is_inside_clipping_space(ndc.xyz);
@@ -48,7 +48,7 @@ namespace gl {
         case render_mode::POINTS:
             for (size_t i = 0; i < vertex_count; ++i) {
                 if (!m_vs_intermediates[i].clipped) {
-                    _render_pixel(m_vs_intermediates[i].coord.xy, shader_program.shader->pixel(m_vs_intermediates[i].vs_out));
+                    _render_pixel(m_vs_intermediates[i].coord.xy, shader_ptr->pixel(m_vs_intermediates[i].vs_out));
                 }
             }    
             break;
