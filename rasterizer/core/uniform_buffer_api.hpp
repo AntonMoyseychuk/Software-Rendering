@@ -8,9 +8,26 @@
 
 
 namespace gl {
-    template<typename... Args>
     struct _uniform_buffer_api {
         friend struct _shader_engine;
+
+        using uniform_type = std::variant<
+            int8_t, 
+            uint8_t, 
+            int16_t, 
+            uint16_t, 
+            int32_t, 
+            uint32_t, 
+            int64_t, 
+            uint64_t, 
+            float, 
+            double, 
+            math::vec2f, 
+            math::vec3f, 
+            math::vec4f, 
+            math::quaternion, 
+            math::mat4f
+        >;
 
         _uniform_buffer_api() = default;
         virtual ~_uniform_buffer_api() = default;
@@ -33,11 +50,10 @@ namespace gl {
         }
 
     private:
-        template<typename... Args2>
         struct uniform_buffer {
-            std::unordered_map<std::string, std::variant<Args2...>> u;
+            std::unordered_map<std::string, uniform_type> u;
         };
 
-        uniform_buffer<Args...> m_uniforms;
+        uniform_buffer m_uniforms;
     };
 }

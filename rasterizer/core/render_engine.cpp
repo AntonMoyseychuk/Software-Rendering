@@ -30,7 +30,7 @@ namespace gl {
 
     #pragma region local-to-raster-coords
         const _shader_engine::shader_program& shader_program = shader_engine._get_binded_shader_program();
-
+        
         for (size_t i = 0, j = 0; j < vertex_count; i += vbo.element_size, ++j) {
             m_vs_intermediates[j].vs_out = shader_program.shader->vertex(&vbo.data[i]);
             m_vs_intermediates[j].coord = shader_program.shader->gl_Position;

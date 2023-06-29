@@ -2,10 +2,6 @@
 #include "assert_macro.hpp"
 
 namespace gl {
-    void _shader::geometry() const noexcept
-    {
-    }
-
     const _texture &_shader::sampler_2D() const noexcept {
         static _texture_engine& engine = _texture_engine::get();
         return engine._get_binded_texture();
