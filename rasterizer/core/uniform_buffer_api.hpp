@@ -20,12 +20,14 @@ namespace gl {
     protected:
         template <typename Uniform>
         const Uniform& get_uniform(const std::string& tag) const noexcept {
+            using namespace std;
+
             ASSERT(m_uniforms.u.find((tag)) != m_uniforms.u.cend(), "unifrom buffer error", "invalid uniform tag");
             
             const auto& var = m_uniforms.u.at(tag);
-            ASSERT(std::holds_alternative<Uniform>(var), "unifrom buffer error", "invalid Uniform type passed");
+            ASSERT(holds_alternative<Uniform>(var), "unifrom buffer error", string("invalid Uniform type passed - ") + typeid(Uniform).name());
 
-            return std::get<Uniform>(var);
+            return get<Uniform>(var);
         }
 
     private:

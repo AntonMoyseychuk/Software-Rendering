@@ -173,5 +173,7 @@ namespace math {
     }
 
     using vec2f = vec2<float>;
+    using vec2d = vec2<double>;
     using vec2i = vec2<int32_t>;
+    using vec2ui = vec2<uint32_t>;
 }
