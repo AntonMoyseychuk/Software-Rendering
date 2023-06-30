@@ -2,7 +2,7 @@
 #include "shader.hpp"
 #include "assert_macro.hpp"
 
-#define ASSERT_SHADER_PROGRAM_ID_VALIDITY(container, id) ASSERT(container.find((id)) != container.cend(), "shader engine error", "invalid shader program ID")
+#define _ASSERT_SHADER_PROGRAM_ID_VALIDITY(container, id) ASSERT(container.find((id)) != container.cend(), "shader engine error", "invalid shader program ID")
 
 namespace gl {
     struct _shader_engine final {
@@ -16,7 +16,7 @@ namespace gl {
 
         template<typename Uniform>
         void uniform(const Uniform& uniform, const std::string& uniform_tag) noexcept {
-            ASSERT_SHADER_PROGRAM_ID_VALIDITY(m_shader_programs, m_binded_shader);
+            _ASSERT_SHADER_PROGRAM_ID_VALIDITY(m_shader_programs, m_binded_shader);
             m_shader_programs[m_binded_shader].shader->_set_uniform(uniform, uniform_tag);
         }
 

@@ -18,12 +18,12 @@ namespace gl {
     }
 
     void _shader_engine::bind_shader(size_t id) noexcept {
-        ASSERT_SHADER_PROGRAM_ID_VALIDITY(m_shader_programs, id);
+        _ASSERT_SHADER_PROGRAM_ID_VALIDITY(m_shader_programs, id);
         m_binded_shader = id;
     }
 
     const _shader_engine::shader_program &_shader_engine::_get_binded_shader_program() const noexcept {
-        ASSERT_SHADER_PROGRAM_ID_VALIDITY(m_shader_programs, m_binded_shader);
+        _ASSERT_SHADER_PROGRAM_ID_VALIDITY(m_shader_programs, m_binded_shader);
         return m_shader_programs.at(m_binded_shader);
     }
 }

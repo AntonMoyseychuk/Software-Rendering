@@ -13,14 +13,9 @@ namespace rasterization {
         gl_Position = v->position * get_uniform<mat4f>("model") * get_uniform<mat4f>("view") * get_uniform<mat4f>("projection");
 
         out(v->color, "color");
-        // return v->color;
     }
     
     math::color SimpleShader::pixel() const noexcept {
-        using namespace math;
-        
-        return in<color>("color");;
-
-        // return std::any_cast<color>(vs_out);
+        return in<math::color>("color");
     }
 }

@@ -14,14 +14,14 @@ namespace gl {
 
         static _render_engine& get() noexcept;
         
-        bool bind_window(win_framewrk::Window* window) const noexcept;
+        bool bind_window(win_framewrk::Window* window) noexcept;
         const win_framewrk::Window* is_window_binded() const noexcept;
 
-        void viewport(uint32_t width, uint32_t height) const noexcept;
+        void viewport(uint32_t width, uint32_t height) noexcept;
 
-        void render(render_mode mode) const noexcept;
-        void swap_buffers() const noexcept;
-        void clear_depth_buffer() const noexcept;
+        void render(render_mode mode) noexcept;
+        void swap_buffers() noexcept;
+        void clear_depth_buffer() noexcept;
 
         void set_clear_color(const math::color& color) noexcept;
 
@@ -29,8 +29,8 @@ namespace gl {
         _render_engine() noexcept;
 
     private:
-        void _resize_z_buffer(uint32_t width, uint32_t height) const noexcept;
-        bool _test_and_update_depth(const math::vec3f& pixel) const noexcept;
+        void _resize_z_buffer(uint32_t width, uint32_t height) noexcept;
+        bool _test_and_update_depth(const math::vec3f& pixel) noexcept;
 
     private:
         static bool _is_inside_clipping_space(const math::vec3f& point) noexcept;
@@ -45,33 +45,35 @@ namespace gl {
         static double _edge(const math::vec2f& v0, const math::vec2f& v1, const math::vec2f& p) noexcept;
 
     private:
-        struct intermediate_data {
-            intermediate_data() = default;
-            intermediate_data(const _shader::intermediate_buffer_type& data, const math::vec4f& coord, bool clipped) 
+        #if 1
+        struct shader_data {
+            shader_data() = default;
+            shader_data(const _shader::in_out_data& data, const math::vec4f& coord, bool clipped) 
                 : clipped(clipped), data(data), coord(coord) {}
 
             bool clipped;
-            _shader::intermediate_buffer_type data;
+            _shader::in_out_data data;
             math::vec4f coord;
         };
+        #endif
         
         void _render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept;
 
-        void _render_line(const intermediate_data& v0, const intermediate_data& v1) const noexcept;
-        void _render_line_low(const intermediate_data& v0, const intermediate_data& v1) const noexcept;
-        void _render_line_high(const intermediate_data& v0, const intermediate_data& v1) const noexcept;
+        void _render_line(const shader_data& v0, const shader_data& v1) const noexcept;
+        void _render_line_low(const shader_data& v0, const shader_data& v1) const noexcept;
+        void _render_line_high(const shader_data& v0, const shader_data& v1) const noexcept;
 
-        void _render_polygon(const intermediate_data& v0, const intermediate_data& v1, const intermediate_data& v2) const noexcept;
+        void _render_polygon(const shader_data& v0, const shader_data& v1, const shader_data& v2) noexcept;
 
     private:
-        mutable std::vector<float> m_z_buffer;
-        mutable std::vector<intermediate_data> m_vs_intermediates;
+        std::vector<float> m_z_buffer;
+        std::vector<shader_data> m_shader_data;
 
-        mutable util::ThreadPool m_thread_pool = { 1 };
+        util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 
-        mutable math::mat4f m_viewport;
+        math::mat4f m_viewport;
 
-        mutable win_framewrk::Window* m_window_ptr = nullptr;
+        win_framewrk::Window* m_window_ptr = nullptr;
         math::color m_clear_color = math::color::BLACK;
     };
 }

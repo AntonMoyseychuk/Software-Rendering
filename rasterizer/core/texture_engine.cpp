@@ -2,7 +2,7 @@
 #include "math_3d/util.hpp"
 #include "assert_macro.hpp"
 
-#define ASSERT_TEXTURE_ID_VALIDITY(container, id) ASSERT(container.find((id)) != container.cend(), "texture engine error", "invalid texture ID")
+#define _ASSERT_TEXTURE_ID_VALIDITY(container, id) ASSERT(container.find((id)) != container.cend(), "texture engine error", "invalid texture ID")
 
 namespace gl {
     _texture_engine &_texture_engine::get() noexcept {
@@ -22,12 +22,12 @@ namespace gl {
     }
     
     void _texture_engine::bind_texture(size_t id) noexcept {
-        ASSERT_TEXTURE_ID_VALIDITY(m_textures, id);
+        _ASSERT_TEXTURE_ID_VALIDITY(m_textures, id);
         m_binded_texture = id;
     }
     
     const _texture &_texture_engine::_get_binded_texture() const noexcept {
-        ASSERT_TEXTURE_ID_VALIDITY(m_textures, m_binded_texture);
+        _ASSERT_TEXTURE_ID_VALIDITY(m_textures, m_binded_texture);
         return m_textures.at(m_binded_texture);
     }
 }

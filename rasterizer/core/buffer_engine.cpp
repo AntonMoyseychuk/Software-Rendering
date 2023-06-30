@@ -3,7 +3,7 @@
 
 #include "core/assert_macro.hpp"
 
-#define ASSERT_BUFFER_ID_VALIDITY(container, id) ASSERT(container.find((id)) != container.cend(), "buffer engine error", "invalid buffer ID")
+#define _ASSERT_BUFFER_ID_VALIDITY(container, id) ASSERT(container.find((id)) != container.cend(), "buffer engine error", "invalid buffer ID")
 
 namespace gl {
     _buffer_engine &_buffer_engine::get() noexcept {
@@ -46,12 +46,12 @@ namespace gl {
     void _buffer_engine::bind_buffer(buffer_type type, size_t id) noexcept {
         switch (type) {
         case buffer_type::VERTEX:
-            ASSERT_BUFFER_ID_VALIDITY(m_vbos, id);
+            _ASSERT_BUFFER_ID_VALIDITY(m_vbos, id);
             m_binded_vbo = id;
             break;
         
         case buffer_type::INDEX:
-            ASSERT_BUFFER_ID_VALIDITY(m_ibos, id);
+            _ASSERT_BUFFER_ID_VALIDITY(m_ibos, id);
             m_binded_ibo = id;
             break;
 
@@ -62,17 +62,17 @@ namespace gl {
     }
     
     void _buffer_engine::set_buffer_element_size(size_t size) noexcept {
-        ASSERT_BUFFER_ID_VALIDITY(m_vbos, m_binded_vbo);
+        _ASSERT_BUFFER_ID_VALIDITY(m_vbos, m_binded_vbo);
         m_vbos[m_binded_vbo].element_size = size;
     }
     
     const _buffer_engine::vertex_buffer &_buffer_engine::_get_binded_vertex_buffer() const noexcept {
-        ASSERT_BUFFER_ID_VALIDITY(m_vbos, m_binded_vbo);
+        _ASSERT_BUFFER_ID_VALIDITY(m_vbos, m_binded_vbo);
         return m_vbos.at(m_binded_vbo);
     }
     
     const _buffer_engine::index_buffer &_buffer_engine::_get_binded_index_buffer() const noexcept {
-        ASSERT_BUFFER_ID_VALIDITY(m_ibos, m_binded_ibo);
+        _ASSERT_BUFFER_ID_VALIDITY(m_ibos, m_binded_ibo);
         return m_ibos.at(m_binded_ibo);
     }
 }

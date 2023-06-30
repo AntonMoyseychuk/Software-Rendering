@@ -102,6 +102,15 @@ namespace rasterization {
             };
             core.bind_buffer(buffer_type::VERTEX, m_objects["diablo"].vbo);
             core.set_buffer_element_size(sizeof(diablo_buffer->vertexes[0]));
+
+
+            
+
+            Texture texture("..\\..\\..\\rasterizer\\app\\assets\\head_texture.tga");
+            const Texture::Content* texture_content = texture.GetContent();
+
+            size_t t = core.create_texture(texture_content->width, texture_content->height, texture_content->channel_count, texture_content->data.data());
+            core.bind_texture(t);
         }
         catch(const std::exception& e) {
             std::cerr << e.what() << '\n';
@@ -241,9 +250,10 @@ namespace rasterization {
                 }
             }
         #pragma endregion input
+            
             core.bind_shader(m_gouraud_shader);
             core.uniform(perspective(math::to_radians(90.0f), (float)m_window->GetWidth() / m_window->GetHeight(), 1.0f, 100.0f), "projection");
-            const Object& object = m_objects["diablo"];
+            const Object& object = m_objects["head"];
             core.bind_buffer(buffer_type::VERTEX, object.vbo);
             core.bind_buffer(buffer_type::INDEX, object.ibo);
             core.render(model_render_mode);
