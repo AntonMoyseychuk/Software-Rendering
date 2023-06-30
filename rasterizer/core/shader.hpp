@@ -32,7 +32,7 @@ namespace gl {
             #ifdef _DEBUG
                 if (m_intermediate.find(tag) != m_intermediate.cend()) {
                     ASSERT(std::holds_alternative<OutType>(m_intermediate[tag]), "shader error", 
-                        "redefinition a variable with the same name but different types"
+                        "redefinition a variable with the name" + tag + " but different type"
                     );
                 }
             #endif
@@ -47,7 +47,7 @@ namespace gl {
     private:
         using in_out_data = std::unordered_map<std::string, uniform_type>;
 
-        mutable in_out_data m_intermediate;
+        mutable in_out_data m_intermediate;        
     #endif
     };
 }
