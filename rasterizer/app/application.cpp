@@ -68,7 +68,7 @@ namespace rasterization {
 
 
             Mesh suzanne("..\\..\\..\\rasterizer\\app\\assets\\suzanne.obj");
-            const Mesh::Content* suzanne_buffer = head.GetContent();
+            const Mesh::Content* suzanne_buffer = suzanne.GetContent();
             
             m_objects["suzanne"] = {
                 core.create_vertex_buffer(suzanne_buffer->vertexes.data(), suzanne_buffer->vertexes.size() * sizeof(suzanne_buffer->vertexes[0])),
@@ -243,7 +243,7 @@ namespace rasterization {
         #pragma endregion input
             core.bind_shader(m_gouraud_shader);
             core.uniform(perspective(math::to_radians(90.0f), (float)m_window->GetWidth() / m_window->GetHeight(), 1.0f, 100.0f), "projection");
-            const Object& object = m_objects["head"];
+            const Object& object = m_objects["diablo"];
             core.bind_buffer(buffer_type::VERTEX, object.vbo);
             core.bind_buffer(buffer_type::INDEX, object.ibo);
             core.render(model_render_mode);

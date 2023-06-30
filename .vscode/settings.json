@@ -89,6 +89,7 @@
         "resumable": "cpp",
         "cassert": "cpp",
         "cstdalign": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "valarray": "cpp"
     }
 }

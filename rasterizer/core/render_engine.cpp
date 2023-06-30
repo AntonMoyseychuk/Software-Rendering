@@ -1,7 +1,5 @@
 #include "render_engine.hpp"
-
 #include "buffer_engine.hpp"
-#include "shader_engine.hpp"
 
 #include "assert_macro.hpp"
 
@@ -32,7 +30,8 @@ namespace gl {
         const auto& shader_ptr = shader_engine._get_binded_shader_program().shader;
         
         for (size_t i = 0, j = 0; j < vertex_count; i += vbo.element_size, ++j) {
-            m_vs_intermediates[j].vs_out = shader_ptr->vertex(&vbo.data[i]);
+            shader_ptr->vertex(&vbo.data[i]);
+            m_vs_intermediates[j].data = shader_ptr->m_intermediate;
             m_vs_intermediates[j].coord = shader_ptr->gl_Position;
             
             const vec4f ndc = m_vs_intermediates[j].coord.xyz / m_vs_intermediates[j].coord.w;
@@ -48,7 +47,8 @@ namespace gl {
         case render_mode::POINTS:
             for (size_t i = 0; i < vertex_count; ++i) {
                 if (!m_vs_intermediates[i].clipped) {
-                    _render_pixel(m_vs_intermediates[i].coord.xy, shader_ptr->pixel(m_vs_intermediates[i].vs_out));
+                    shader_ptr->m_intermediate = m_vs_intermediates[i].data;
+                    _render_pixel(m_vs_intermediates[i].coord.xy, shader_ptr->pixel());
                 }
             }    
             break;
@@ -81,6 +81,7 @@ namespace gl {
                             std::cref(m_vs_intermediates[ibo.data[i - 1]]), 
                             std::cref(m_vs_intermediates[ibo.data[i - 0]])
                         );
+                        m_thread_pool.WaitAll(); //
                     }
                 }
             }
@@ -98,7 +99,7 @@ namespace gl {
         m_window_ptr->SetPixelColor(pixel.x, pixel.y, R_G_B_A(color));
     }
 
-    void _render_engine::_render_line(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept {
+    void _render_engine::_render_line(const intermediate_data& v0, const intermediate_data& v1) const noexcept {
         if (math::abs(v1.coord.y - v0.coord.y) < math::abs(v1.coord.x - v0.coord.x)) {
             (v1.coord.x < v0.coord.x) ? _render_line_low(v1, v0) :  _render_line_low(v0, v1);
         } else {
@@ -106,7 +107,7 @@ namespace gl {
         }
     }
 
-    void _render_engine::_render_line_low(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept {
+    void _render_engine::_render_line_low(const intermediate_data& v0, const intermediate_data& v1) const noexcept {
         using namespace math;
 
         const auto& shader = shader_engine._get_binded_shader_program().shader;
@@ -121,7 +122,6 @@ namespace gl {
             dy = -dy;
         }
 
-        const color c0 = shader->pixel(v0.vs_out), c1 = shader->pixel(v1.vs_out);
         const float v0_v1_dist = (v1.coord.xy - v0.coord.xy).length();
 
         float D = (2.0f * dy) - dx;
@@ -129,9 +129,31 @@ namespace gl {
 
         for (float x = v0.coord.x; x <= v1.coord.x; ++x) {
             const vec2f pixel(x, y);
+            
             const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
             const float w1 = 1.0f - w0;
-            _render_pixel(pixel, c0 * w1 + c1 * w0);
+
+            _shader::intermediate_buffer_type intermediate;
+            for (const auto& node : v0.data.buffer) {
+                if (std::holds_alternative<vec2f>(node.second)) {
+                    const vec2f& vec0 = std::get<vec2f>(node.second);
+                    const vec2f& vec1 = std::get<vec2f>(v1.data.buffer.at(node.first));
+                    intermediate.buffer[node.first] = vec0 * w1 + vec1 * w0;
+                } else if (std::holds_alternative<vec3f>(node.second)) {
+                    const vec3f& vec0 = std::get<vec3f>(node.second);
+                    const vec3f& vec1 = std::get<vec3f>(v1.data.buffer.at(node.first));
+                    intermediate.buffer[node.first] = vec0 * w1 + vec1 * w0;
+                } else if (std::holds_alternative<vec4f>(node.second)) {
+                    const vec4f& vec0 = std::get<vec4f>(node.second);
+                    const vec4f& vec1 = std::get<vec4f>(v1.data.buffer.at(node.first));
+                    intermediate.buffer[node.first] = vec0 * w1 + vec1 * w0;
+                } else {
+                    intermediate.buffer[node.first] = node.second;
+                }
+            }
+
+            shader->m_intermediate.buffer = intermediate.buffer;
+            _render_pixel(pixel, shader->pixel());
 
             if (D > 0) {
                 y += yi;
@@ -142,7 +164,7 @@ namespace gl {
         }
     }
 
-    void _render_engine::_render_line_high(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept {
+    void _render_engine::_render_line_high(const intermediate_data& v0, const intermediate_data& v1) const noexcept {
         using namespace math;
 
         const auto& shader = shader_engine._get_binded_shader_program().shader;
@@ -157,7 +179,6 @@ namespace gl {
             dx = -dx;
         }
 
-        const color c0 = shader->pixel(v0.vs_out), c1 = shader->pixel(v1.vs_out);
         const float v0_v1_dist = (v1.coord.xy - v0.coord.xy).length();
 
         float D = (2.0f * dx) - dy;
@@ -167,7 +188,28 @@ namespace gl {
             const vec2f pixel(x, y);
             const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
             const float w1 = 1.0f - w0;
-            _render_pixel(pixel, c0 * w1 + c1 * w0);
+
+            _shader::intermediate_buffer_type intermediate;
+            for (const auto& node : v0.data.buffer) {
+                if (std::holds_alternative<vec2f>(node.second)) {
+                    const vec2f& vec0 = std::get<vec2f>(node.second);
+                    const vec2f& vec1 = std::get<vec2f>(v1.data.buffer.at(node.first));
+                    intermediate.buffer[node.first] = vec0 * w1 + vec1 * w0;
+                } else if (std::holds_alternative<vec3f>(node.second)) {
+                    const vec3f& vec0 = std::get<vec3f>(node.second);
+                    const vec3f& vec1 = std::get<vec3f>(v1.data.buffer.at(node.first));
+                    intermediate.buffer[node.first] = vec0 * w1 + vec1 * w0;
+                } else if (std::holds_alternative<vec4f>(node.second)) {
+                    const vec4f& vec0 = std::get<vec4f>(node.second);
+                    const vec4f& vec1 = std::get<vec4f>(v1.data.buffer.at(node.first));
+                    intermediate.buffer[node.first] = vec0 * w1 + vec1 * w0;
+                } else {
+                    intermediate.buffer[node.first] = node.second;
+                }
+            }
+
+            shader->m_intermediate.buffer = intermediate.buffer;
+            _render_pixel(pixel, shader->pixel());
 
             if (D > 0) {
                 x += xi;
@@ -178,7 +220,7 @@ namespace gl {
         }
     }
 
-    void _render_engine::_render_polygon(const vs_intermediate_data& v0, const vs_intermediate_data& v1, const vs_intermediate_data& v2) const noexcept {
+    void _render_engine::_render_polygon(const intermediate_data& v0, const intermediate_data& v1, const intermediate_data& v2) const noexcept {
         using namespace math;
         using namespace std;
 
@@ -187,7 +229,7 @@ namespace gl {
         const vec2f bboxmin(round(min(min(v0.coord.x, v1.coord.x), v2.coord.x)), round(min(min(v0.coord.y, v1.coord.y), v2.coord.y)));
         const vec2f bboxmax(round(max(max(v0.coord.x, v1.coord.x), v2.coord.x)), round(max(max(v0.coord.y, v1.coord.y), v2.coord.y)));
 
-        const color c0 = shader->pixel(v0.vs_out), c1 = shader->pixel(v1.vs_out), c2 = shader->pixel(v2.vs_out);
+        // const color c0 = shader->pixel(v0.vs_out), c1 = shader->pixel(v1.vs_out), c2 = shader->pixel(v2.vs_out);
 
         for (float y = bboxmin.y; y <= bboxmax.y; ++y) {
             bool prev_pixel_was_inside = false;
@@ -203,9 +245,32 @@ namespace gl {
                 if (w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) {
                     prev_pixel_was_inside = true;
 
-                    pixel.z = 1.0 / ((1.0 / v0.coord.z) * w0 + (1.0 / v1.coord.z) * w1 + (1.0 / v2.coord.z) * w2);
+                    pixel.z = 1.0f / ((1.0f / v0.coord.z) * w0 + (1.0f / v1.coord.z) * w1 + (1.0f / v2.coord.z) * w2);
                     if (_test_and_update_depth(pixel)) {
-                        _render_pixel(pixel.xy, w0 * c0 + w1 * c1 + w2 * c2);
+                        _shader::intermediate_buffer_type intermediate;
+                        for (const auto& node : v0.data.buffer) {
+                            if (std::holds_alternative<vec2f>(node.second)) {
+                                const vec2f& vec0 = std::get<vec2f>(node.second);
+                                const vec2f& vec1 = std::get<vec2f>(v1.data.buffer.at(node.first));
+                                const vec2f& vec2 = std::get<vec2f>(v2.data.buffer.at(node.first));
+                                intermediate.buffer[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
+                            } else if (std::holds_alternative<vec3f>(node.second)) {
+                                const vec3f& vec0 = std::get<vec3f>(node.second);
+                                const vec3f& vec1 = std::get<vec3f>(v1.data.buffer.at(node.first));
+                                const vec3f& vec2 = std::get<vec3f>(v2.data.buffer.at(node.first));
+                                intermediate.buffer[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
+                            } else if (std::holds_alternative<vec4f>(node.second)) {
+                                const vec4f& vec0 = std::get<vec4f>(node.second);
+                                const vec4f& vec1 = std::get<vec4f>(v1.data.buffer.at(node.first));
+                                const vec4f& vec2 = std::get<vec4f>(v2.data.buffer.at(node.first));
+                                intermediate.buffer[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
+                            } else {
+                                intermediate.buffer[node.first] = node.second;
+                            }
+                        }
+
+                        shader->m_intermediate.buffer = intermediate.buffer;
+                        _render_pixel(pixel.xy, shader->pixel());
                     }
                 } else if (prev_pixel_was_inside) {
                     break;

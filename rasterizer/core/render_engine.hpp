@@ -3,7 +3,7 @@
 #include "window/window.hpp"
 #include "thread_pool/thread_pool.hpp"
 
-#include <any>
+#include "shader_engine.hpp"
 
 namespace gl {
     enum class render_mode : uint8_t { POINTS, LINES, LINE_STRIP, TRIANGLES };
@@ -45,29 +45,29 @@ namespace gl {
         static double _edge(const math::vec2f& v0, const math::vec2f& v1, const math::vec2f& p) noexcept;
 
     private:
-        struct vs_intermediate_data {
-            vs_intermediate_data() = default;
-            vs_intermediate_data(const std::any& vs_out, const math::vec4f& coord, bool clipped) 
-                : clipped(clipped), vs_out(vs_out), coord(coord) {}
+        struct intermediate_data {
+            intermediate_data() = default;
+            intermediate_data(const _shader::intermediate_buffer_type& data, const math::vec4f& coord, bool clipped) 
+                : clipped(clipped), data(data), coord(coord) {}
 
             bool clipped;
-            std::any vs_out;
+            _shader::intermediate_buffer_type data;
             math::vec4f coord;
         };
         
         void _render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept;
 
-        void _render_line(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept;
-        void _render_line_low(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept;
-        void _render_line_high(const vs_intermediate_data& v0, const vs_intermediate_data& v1) const noexcept;
+        void _render_line(const intermediate_data& v0, const intermediate_data& v1) const noexcept;
+        void _render_line_low(const intermediate_data& v0, const intermediate_data& v1) const noexcept;
+        void _render_line_high(const intermediate_data& v0, const intermediate_data& v1) const noexcept;
 
-        void _render_polygon(const vs_intermediate_data& v0, const vs_intermediate_data& v1, const vs_intermediate_data& v2) const noexcept;
+        void _render_polygon(const intermediate_data& v0, const intermediate_data& v1, const intermediate_data& v2) const noexcept;
 
     private:
         mutable std::vector<float> m_z_buffer;
-        mutable std::vector<vs_intermediate_data> m_vs_intermediates;
+        mutable std::vector<intermediate_data> m_vs_intermediates;
 
-        mutable util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
+        mutable util::ThreadPool m_thread_pool = { 1 };
 
         mutable math::mat4f m_viewport;
 
