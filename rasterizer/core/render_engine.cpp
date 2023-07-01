@@ -33,9 +33,8 @@ namespace gl {
         const auto shader_ptr = shader_engine._get_binded_shader_program().shader;
         
         for (size_t i = 0, j = 0; j < vertex_count; i += vbo.element_size, ++j) {
-            shader_ptr->vertex(&vbo.data[i]);
-            m_pipeline_data[j].data = std::move(shader_ptr->m_pack);
-            m_pipeline_data[j].coord = shader_ptr->gl_Position;
+            m_pipeline_data[j].coord = std::move(shader_ptr->vertex(&vbo.data[i]));
+            m_pipeline_data[j].in_out_data = std::move(shader_ptr->m_in_out_data);
             
             const vec4f ndc = m_pipeline_data[j].coord.xyz / m_pipeline_data[j].coord.w;
             m_pipeline_data[j].clipped = !_is_inside_clipping_space(ndc.xyz);
@@ -50,7 +49,7 @@ namespace gl {
         case render_mode::POINTS:
             for (size_t i = 0; i < vertex_count; ++i) {
                 if (!m_pipeline_data[i].clipped) {
-                    shader_ptr->m_pack = std::move(m_pipeline_data[i].data);
+                    shader_ptr->m_in_out_data = std::move(m_pipeline_data[i].in_out_data);
                     _render_pixel(m_pipeline_data[i].coord.xy, shader_ptr->pixel());
                 }
             }    
@@ -130,26 +129,23 @@ namespace gl {
             const float w1 = 1.0f - w0;
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////
-            decltype(shader->m_pack) intermediate;
-            for (const auto& node : v0.data) {
+            for (const auto& node : v0.in_out_data) {
                 if (std::holds_alternative<vec2f>(node.second)) {
                     const vec2f& vec0 = std::get<vec2f>(node.second);
-                    const vec2f& vec1 = std::get<vec2f>(v1.data.at(node.first));
-                    intermediate[node.first] = vec0 * w1 + vec1 * w0;
+                    const vec2f& vec1 = std::get<vec2f>(v1.in_out_data.at(node.first));
+                    shader->m_in_out_data[node.first] = vec0 * w1 + vec1 * w0;
                 } else if (std::holds_alternative<vec3f>(node.second)) {
                     const vec3f& vec0 = std::get<vec3f>(node.second);
-                    const vec3f& vec1 = std::get<vec3f>(v1.data.at(node.first));
-                    intermediate[node.first] = vec0 * w1 + vec1 * w0;
+                    const vec3f& vec1 = std::get<vec3f>(v1.in_out_data.at(node.first));
+                    shader->m_in_out_data[node.first] = vec0 * w1 + vec1 * w0;
                 } else if (std::holds_alternative<vec4f>(node.second)) {
                     const vec4f& vec0 = std::get<vec4f>(node.second);
-                    const vec4f& vec1 = std::get<vec4f>(v1.data.at(node.first));
-                    intermediate[node.first] = vec0 * w1 + vec1 * w0;
+                    const vec4f& vec1 = std::get<vec4f>(v1.in_out_data.at(node.first));
+                    shader->m_in_out_data[node.first] = vec0 * w1 + vec1 * w0;
                 } else {
-                    intermediate[node.first] = node.second;
+                    shader->m_in_out_data[node.first] = node.second;
                 }
             }
-
-            shader->m_pack = intermediate;
             _render_pixel(pixel, shader->pixel());
             /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -188,26 +184,23 @@ namespace gl {
             const float w1 = 1.0f - w0;
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////
-            decltype(shader->m_pack) intermediate;
-            for (const auto& node : v0.data) {
+            for (const auto& node : v0.in_out_data) {
                 if (std::holds_alternative<vec2f>(node.second)) {
                     const vec2f& vec0 = std::get<vec2f>(node.second);
-                    const vec2f& vec1 = std::get<vec2f>(v1.data.at(node.first));
-                    intermediate[node.first] = vec0 * w1 + vec1 * w0;
+                    const vec2f& vec1 = std::get<vec2f>(v1.in_out_data.at(node.first));
+                    shader->m_in_out_data[node.first] = vec0 * w1 + vec1 * w0;
                 } else if (std::holds_alternative<vec3f>(node.second)) {
                     const vec3f& vec0 = std::get<vec3f>(node.second);
-                    const vec3f& vec1 = std::get<vec3f>(v1.data.at(node.first));
-                    intermediate[node.first] = vec0 * w1 + vec1 * w0;
+                    const vec3f& vec1 = std::get<vec3f>(v1.in_out_data.at(node.first));
+                    shader->m_in_out_data[node.first] = vec0 * w1 + vec1 * w0;
                 } else if (std::holds_alternative<vec4f>(node.second)) {
                     const vec4f& vec0 = std::get<vec4f>(node.second);
-                    const vec4f& vec1 = std::get<vec4f>(v1.data.at(node.first));
-                    intermediate[node.first] = vec0 * w1 + vec1 * w0;
+                    const vec4f& vec1 = std::get<vec4f>(v1.in_out_data.at(node.first));
+                    shader->m_in_out_data[node.first] = vec0 * w1 + vec1 * w0;
                 } else {
-                    intermediate[node.first] = node.second;
+                    shader->m_in_out_data[node.first] = node.second;
                 }
             }
-
-            shader->m_pack = intermediate;
             _render_pixel(pixel, shader->pixel());
             /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -246,29 +239,26 @@ namespace gl {
                     pixel.z = 1.0f / ((1.0f / v0.coord.z) * w0 + (1.0f / v1.coord.z) * w1 + (1.0f / v2.coord.z) * w2);
                     if (_test_and_update_depth(pixel)) {
                         /////////////////////////////////////////////////////////////////////////////////////////////////////
-                        decltype(shader->m_pack) intermediate;
-                        for (const auto& node : v0.data) {
+                        for (const auto& node : v0.in_out_data) {
                             if (std::holds_alternative<vec2f>(node.second)) {
                                 const vec2f& vec0 = std::get<vec2f>(node.second);
-                                const vec2f& vec1 = std::get<vec2f>(v1.data.at(node.first));
-                                const vec2f& vec2 = std::get<vec2f>(v2.data.at(node.first));
-                                intermediate[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
+                                const vec2f& vec1 = std::get<vec2f>(v1.in_out_data.at(node.first));
+                                const vec2f& vec2 = std::get<vec2f>(v2.in_out_data.at(node.first));
+                                shader->m_in_out_data[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
                             } else if (std::holds_alternative<vec3f>(node.second)) {
                                 const vec3f& vec0 = std::get<vec3f>(node.second);
-                                const vec3f& vec1 = std::get<vec3f>(v1.data.at(node.first));
-                                const vec3f& vec2 = std::get<vec3f>(v2.data.at(node.first));
-                                intermediate[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
+                                const vec3f& vec1 = std::get<vec3f>(v1.in_out_data.at(node.first));
+                                const vec3f& vec2 = std::get<vec3f>(v2.in_out_data.at(node.first));
+                                shader->m_in_out_data[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
                             } else if (std::holds_alternative<vec4f>(node.second)) {
                                 const vec4f& vec0 = std::get<vec4f>(node.second);
-                                const vec4f& vec1 = std::get<vec4f>(v1.data.at(node.first));
-                                const vec4f& vec2 = std::get<vec4f>(v2.data.at(node.first));
-                                intermediate[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
+                                const vec4f& vec1 = std::get<vec4f>(v1.in_out_data.at(node.first));
+                                const vec4f& vec2 = std::get<vec4f>(v2.in_out_data.at(node.first));
+                                shader->m_in_out_data[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
                             } else {
-                                intermediate[node.first] = node.second;
+                                shader->m_in_out_data[node.first] = node.second;
                             }
                         }
-
-                        shader->m_pack = intermediate;
                         _render_pixel(pixel.xy, shader->pixel());
                         /////////////////////////////////////////////////////////////////////////////////////////////////////
                     }

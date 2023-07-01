@@ -49,8 +49,7 @@ namespace gl {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         struct pipeline_data {
             bool clipped = false;
-            bool interpolated = false;
-            _shader_engine::pipeline_pack_type data;
+            _shader_engine::pipeline_pack_type in_out_data;
             math::vec4f coord;
         };
         /////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -57,9 +57,11 @@ namespace gl {
     public:
         using uniform_type = std::variant<int32_t, uint32_t, int64_t, uint64_t, float, double, 
             math::vec2f, math::vec3f, math::vec4f, math::mat4f>;
-
         using uniforms_pack_type = std::unordered_map<std::string, uniform_type>;
-        using pipeline_pack_type = uniforms_pack_type;
+
+        using pipelined_data_type = std::variant<math::vec2f, math::vec3f, math::vec4f>;
+        using pipeline_pack_type = std::unordered_map<std::string, pipelined_data_type>;
+
         struct shader_program final {
             uniforms_pack_type uniforms;
             std::shared_ptr<_shader> shader;

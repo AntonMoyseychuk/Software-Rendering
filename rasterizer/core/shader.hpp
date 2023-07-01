@@ -11,12 +11,9 @@ namespace gl {
         _shader() = default;
         virtual ~_shader() = default;
 
-        virtual void vertex(const void* vertex) const noexcept = 0;
+        virtual math::vec4f vertex(const void* vertex) const noexcept = 0;
         virtual math::color pixel() const noexcept = 0;
 
         virtual void geometry() const noexcept { /*TODO*/ }
-
-    protected:
-        mutable math::vec4f gl_Position;
     };
 }

@@ -18,7 +18,7 @@ namespace math {
     union vec4f {
         vec4f() noexcept;
         explicit vec4f(float value) noexcept;
-        explicit vec4f(const __m128& mm_128) noexcept;
+        explicit vec4f(const __m128& xmm) noexcept;
         explicit vec4f(const float* arr) noexcept;
         vec4f(float x, float y, float z, float w = 1.0f) noexcept;
         vec4f(const vec4f& vec) noexcept;
@@ -151,7 +151,7 @@ namespace math {
 
         float arr[4];
         
-        __m128 mm_128;
+        __m128 xmm;
     };
 
     vec4f operator*(float value, const vec4f& vec) noexcept;

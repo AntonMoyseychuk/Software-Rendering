@@ -7,7 +7,7 @@ namespace rasterization {
         math::vec2f texcoord;
     };
 
-    void GouraudShader::vertex(const void *vertex) const noexcept {
+    math::vec4f GouraudShader::vertex(const void *vertex) const noexcept {
         using namespace math;
         const VSInData* v = (const VSInData*)vertex;
         
@@ -17,7 +17,7 @@ namespace rasterization {
         out(v->normal * transpose(inverse(model_matrix)), "normal");
         out(v->texcoord, "texcoord");
 
-        gl_Position = v->position * model_matrix * get_uniform<mat4f>("view") * get_uniform<mat4f>("projection");
+        return v->position * model_matrix * get_uniform<mat4f>("view") * get_uniform<mat4f>("projection");
     }
     
     math::color GouraudShader::pixel() const noexcept {
