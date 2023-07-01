@@ -26,7 +26,6 @@ namespace gl {
         _resize_z_buffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
 
-    #if 1
     #pragma region local-to-raster-coords
         const auto shader_ptr = shader_engine._get_binded_shader_program().shader;
         
@@ -43,7 +42,6 @@ namespace gl {
             m_shader_data[j].coord.y = std::floor(m_shader_data[j].coord.y);
         }
     #pragma endregion local-to-raster-coords
-    #endif
 
         switch (mode) {
         case render_mode::POINTS:
@@ -72,7 +70,7 @@ namespace gl {
             break;
 
         case render_mode::TRIANGLES:
-            #if 1
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
             for (size_t i = 2; i < ibo.data.size(); i += 3) {
                 const auto& data0 = m_shader_data[ibo.data[i - 2]], &data1 = m_shader_data[ibo.data[i - 1]], &data2 = m_shader_data[ibo.data[i]];
                 if (!data0.clipped && !data1.clipped && !data2.clipped) {
@@ -83,7 +81,7 @@ namespace gl {
             }
 
             // m_thread_pool.WaitAll();
-            #endif
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
             break;
 
         default:
@@ -130,8 +128,8 @@ namespace gl {
             const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
             const float w1 = 1.0f - w0;
 
-            #if 1
-            _shader::in_out_data intermediate;
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            _shader::shader_intermediate_data intermediate;
             for (const auto& node : v0.data) {
                 if (std::holds_alternative<vec2f>(node.second)) {
                     const vec2f& vec0 = std::get<vec2f>(node.second);
@@ -152,7 +150,7 @@ namespace gl {
 
             shader->m_intermediate = intermediate;
             _render_pixel(pixel, shader->pixel());
-            #endif
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             if (D > 0) {
                 y += yi;
@@ -188,8 +186,8 @@ namespace gl {
             const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
             const float w1 = 1.0f - w0;
 
-            #if 1
-            _shader::in_out_data intermediate;
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            _shader::shader_intermediate_data intermediate;
             for (const auto& node : v0.data) {
                 if (std::holds_alternative<vec2f>(node.second)) {
                     const vec2f& vec0 = std::get<vec2f>(node.second);
@@ -210,7 +208,7 @@ namespace gl {
 
             shader->m_intermediate = intermediate;
             _render_pixel(pixel, shader->pixel());
-            #endif
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             if (D > 0) {
                 x += xi;
@@ -246,8 +244,8 @@ namespace gl {
 
                     pixel.z = 1.0f / ((1.0f / v0.coord.z) * w0 + (1.0f / v1.coord.z) * w1 + (1.0f / v2.coord.z) * w2);
                     if (_test_and_update_depth(pixel)) {
-                        #if 1
-                        _shader::in_out_data intermediate;
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////
+                        _shader::shader_intermediate_data intermediate;
                         for (const auto& node : v0.data) {
                             if (std::holds_alternative<vec2f>(node.second)) {
                                 const vec2f& vec0 = std::get<vec2f>(node.second);
@@ -271,7 +269,7 @@ namespace gl {
 
                         shader->m_intermediate = intermediate;
                         _render_pixel(pixel.xy, shader->pixel());
-                        #endif
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////
                     }
                 } else if (prev_pixel_was_inside) {
                     break;

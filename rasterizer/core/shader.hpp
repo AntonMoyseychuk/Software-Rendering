@@ -1,10 +1,11 @@
 #pragma once
 #include "shader_uniform_api.hpp"
-#include "texture_engine.hpp"
+#include "shader_texture_api.hpp"
 
 namespace gl {
-    struct _shader : public _shader_uniform_api {
-        friend struct _render_engine;
+    class _shader : public _shader_uniform_api, public _shader_texture_api {
+    public:
+        friend class _render_engine;
     
         _shader() = default;
         virtual ~_shader() = default;
@@ -12,11 +13,7 @@ namespace gl {
         virtual void vertex(const void* vertex) const noexcept = 0;
         virtual math::color pixel() const noexcept = 0;
 
-        // TODO: virtual void geometry() const noexcept {}
-
-    protected:
-        const _texture& sampler_2D() const noexcept;
-        math::color texture(const _texture& texture, const math::vec2f& texcoord) const noexcept;
+        virtual void geometry() const noexcept { /*TODO*/ }
 
     protected:
         template<typename InType>
@@ -43,11 +40,11 @@ namespace gl {
     protected:
         mutable math::vec4f gl_Position;
 
-    #if 1
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
     private:
-        using in_out_data = std::unordered_map<std::string, uniform_type>;
+        using shader_intermediate_data = std::unordered_map<std::string, uniform_type>;
 
-        mutable in_out_data m_intermediate;        
-    #endif
+        mutable shader_intermediate_data m_intermediate;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
     };
 }

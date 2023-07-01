@@ -1,5 +1,7 @@
 #include "shader_engine.hpp"
 
+#define _ASSERT_SHADER_PROGRAM_ID_VALIDITY(container, id) ASSERT(container.find((id)) != container.cend(), "shader engine error", "invalid shader program ID")
+
 namespace gl {
     _shader_engine &_shader_engine::get() noexcept {
         static _shader_engine engine;

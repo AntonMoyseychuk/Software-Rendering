@@ -7,7 +7,8 @@ namespace gl {
         VERTEX, INDEX
     };
 
-    struct _buffer_engine final {
+    class _buffer_engine final {
+    public:
         _buffer_engine(const _buffer_engine& engine) = delete;
         _buffer_engine& operator=(const _buffer_engine& engine) = delete;
 

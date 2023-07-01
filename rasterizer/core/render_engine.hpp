@@ -8,7 +8,8 @@
 namespace gl {
     enum class render_mode : uint8_t { POINTS, LINES, LINE_STRIP, TRIANGLES };
 
-    struct _render_engine final {
+    class _render_engine final {
+    public:
         _render_engine(const _render_engine& engine) = delete;
         _render_engine& operator=(const _render_engine& engine) = delete;
 
@@ -45,17 +46,17 @@ namespace gl {
         static double _edge(const math::vec2f& v0, const math::vec2f& v1, const math::vec2f& p) noexcept;
 
     private:
-        #if 1
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
         struct shader_data {
             shader_data() = default;
-            shader_data(const _shader::in_out_data& data, const math::vec4f& coord, bool clipped) 
+            shader_data(const _shader::shader_intermediate_data& data, const math::vec4f& coord, bool clipped) 
                 : clipped(clipped), data(data), coord(coord) {}
 
             bool clipped;
-            _shader::in_out_data data;
+            _shader::shader_intermediate_data data;
             math::vec4f coord;
         };
-        #endif
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
         
         void _render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept;
 

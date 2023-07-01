@@ -1,13 +1,15 @@
-#include "shader.hpp"
+#include"shader_texture_api.hpp"
+#include "texture_engine.hpp"
+
 #include "assert_macro.hpp"
 
 namespace gl {
-    const _texture &_shader::sampler_2D() const noexcept {
+    const _texture &_shader_texture_api::sampler_2D() const noexcept {
         static _texture_engine& engine = _texture_engine::get();
         return engine._get_binded_texture();
     }
-
-    math::color _shader::texture(const _texture &texture, const math::vec2f &texcoord) const noexcept {
+    
+    math::color _shader_texture_api::texture(const _texture &texture, const math::vec2f &texcoord) const noexcept {
         using namespace math;
 
         ASSERT(between(texcoord.x, 0.0f, 1.0f) && between(texcoord.y, 0.0f, 1.0f), "shader error", "invalid texture coordinates");

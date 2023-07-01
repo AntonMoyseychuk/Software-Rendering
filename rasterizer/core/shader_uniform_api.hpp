@@ -10,8 +10,9 @@
 #define _ASSERT_UNIFORM_TYPE_VALIDITY(type, uniform) ASSERT(std::holds_alternative<type>(uniform), "unifrom buffer api error", std::string("invalid Uniform type passed - ") + typeid(Uniform).name())
 
 namespace gl {
-    struct _shader_uniform_api {
-        friend struct _shader_engine;
+    class _shader_uniform_api {
+    public:
+        friend class _shader_engine;
 
         _shader_uniform_api() = default;
         virtual ~_shader_uniform_api() = default;
@@ -47,4 +48,7 @@ namespace gl {
     private:
         uniform_pack m_uniforms;
     };
+
+    #undef _ASSERT_UNIFORM_ID_VALIDITY
+    #undef _ASSERT_UNIFORM_TYPE_VALIDITY
 }
