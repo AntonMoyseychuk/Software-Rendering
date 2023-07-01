@@ -1,6 +1,7 @@
 #include "texture_engine.hpp"
+
 #include "math_3d/util.hpp"
-#include "assert_macro.hpp"
+#include "core/assert_macro.hpp"
 
 #define _ASSERT_TEXTURE_ID_VALIDITY(container, id) ASSERT(container.find((id)) != container.cend(), "texture engine error", "invalid texture ID")
 

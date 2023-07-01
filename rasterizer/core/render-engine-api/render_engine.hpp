@@ -3,7 +3,7 @@
 #include "window/window.hpp"
 #include "thread_pool/thread_pool.hpp"
 
-#include "shader_engine.hpp"
+#include "core/shader-engine-api/shader_engine.hpp"
 
 namespace gl {
     enum class render_mode : uint8_t { POINTS, LINES, LINE_STRIP, TRIANGLES };
@@ -46,13 +46,11 @@ namespace gl {
         static double _edge(const math::vec2f& v0, const math::vec2f& v1, const math::vec2f& p) noexcept;
 
     private:
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
         struct pipeline_data {
             bool clipped = false;
             _shader_engine::pipeline_pack_type in_out_data;
             math::vec4f coord;
         };
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
         
         void _render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept;
 

@@ -1,7 +1,7 @@
-#include"shader_texture_api.hpp"
-#include "texture_engine.hpp"
+#include "shader_texture_api.hpp"
+#include "core/texture-engine-api/texture_engine.hpp"
 
-#include "assert_macro.hpp"
+#include "core/assert_macro.hpp"
 
 namespace gl {
     const _texture &_shader_texture_api::sampler_2D() const noexcept {

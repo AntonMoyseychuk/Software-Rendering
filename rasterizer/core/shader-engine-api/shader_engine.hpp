@@ -1,6 +1,6 @@
 #pragma once
 #include "math_3d/math.hpp"
-#include "assert_macro.hpp"
+#include "core/assert_macro.hpp"
 
 #include <unordered_map>
 #include <variant>

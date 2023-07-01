@@ -1,10 +1,10 @@
 #include "render_engine.hpp"
-#include "buffer_engine.hpp"
+#include "core/buffer-engine-api/buffer_engine.hpp"
 
-#include "shader.hpp"
-#include "shader_engine.hpp"
+#include "core/shader-engine-api/shader.hpp"
+#include "core/shader-engine-api/shader_engine.hpp"
 
-#include "assert_macro.hpp"
+#include "core/assert_macro.hpp"
 
 namespace gl {
     static _buffer_engine& buff_engine = _buffer_engine::get();
@@ -33,8 +33,7 @@ namespace gl {
         const auto shader_ptr = shader_engine._get_binded_shader_program().shader;
         
         for (size_t i = 0, j = 0; j < vertex_count; i += vbo.element_size, ++j) {
-            m_pipeline_data[j].coord = std::move(shader_ptr->vertex(&vbo.data[i]));
-            m_pipeline_data[j].in_out_data = std::move(shader_ptr->m_in_out_data);
+            m_pipeline_data[j].coord = std::move(shader_ptr->vertex(&vbo.data[i], m_pipeline_data[j].in_out_data));
             
             const vec4f ndc = m_pipeline_data[j].coord.xyz / m_pipeline_data[j].coord.w;
             m_pipeline_data[j].clipped = !_is_inside_clipping_space(ndc.xyz);
@@ -49,8 +48,7 @@ namespace gl {
         case render_mode::POINTS:
             for (size_t i = 0; i < vertex_count; ++i) {
                 if (!m_pipeline_data[i].clipped) {
-                    shader_ptr->m_in_out_data = std::move(m_pipeline_data[i].in_out_data);
-                    _render_pixel(m_pipeline_data[i].coord.xy, shader_ptr->pixel());
+                    _render_pixel(m_pipeline_data[i].coord.xy, shader_ptr->pixel(m_pipeline_data[i].in_out_data));
                 }
             }    
             break;
@@ -58,30 +56,40 @@ namespace gl {
         case render_mode::LINES:
             for (size_t i = 1; i < ibo.data.size(); i += 2) {
                 if (!m_pipeline_data[ibo.data[i - 1]].clipped && !m_pipeline_data[ibo.data[i]].clipped) {
-                    _render_line(m_pipeline_data[ibo.data[i - 1]], m_pipeline_data[ibo.data[i]]);
+                    m_thread_pool.AddTask(&_render_engine::_render_line, this, std::cref(m_pipeline_data[ibo.data[i - 1]]), std::cref(m_pipeline_data[ibo.data[i]]));
                 }
             }
+
+            m_thread_pool.WaitAll();
             break;
         
         case render_mode::LINE_STRIP: 
             for (size_t i = 1; i < ibo.data.size(); ++i) {
                 if (!m_pipeline_data[ibo.data[i - 1]].clipped && !m_pipeline_data[ibo.data[i]].clipped) {
-                    _render_line(m_pipeline_data[ibo.data[i - 1]], m_pipeline_data[ibo.data[i]]);
+                    m_thread_pool.AddTask(&_render_engine::_render_line, this, std::cref(m_pipeline_data[ibo.data[i - 1]]), std::cref(m_pipeline_data[ibo.data[i]]));
                 }
             }
+
+            m_thread_pool.WaitAll();
             break;
 
         case render_mode::TRIANGLES:
+            #define PIPELINE_DATA0 m_pipeline_data[ibo.data[i - 2]]
+            #define PIPELINE_DATA1 m_pipeline_data[ibo.data[i - 1]]
+            #define PIPELINE_DATA2 m_pipeline_data[ibo.data[i - 0]]
+
             for (size_t i = 2; i < ibo.data.size(); i += 3) {
-                const auto& data0 = m_pipeline_data[ibo.data[i - 2]], &data1 = m_pipeline_data[ibo.data[i - 1]], &data2 = m_pipeline_data[ibo.data[i]];
-                if (!data0.clipped && !data1.clipped && !data2.clipped) {
-                    if (!_is_back_face(data0.coord.xyz, data1.coord.xyz, data2.coord.xyz)) {
-                        m_thread_pool.Wait(m_thread_pool.AddTask(&_render_engine::_render_polygon, this, std::cref(data0), std::cref(data1), std::cref(data2)));
+                if (!PIPELINE_DATA0.clipped && !PIPELINE_DATA1.clipped && !PIPELINE_DATA2.clipped) {
+                    if (!_is_back_face(PIPELINE_DATA0.coord.xyz, PIPELINE_DATA1.coord.xyz, PIPELINE_DATA2.coord.xyz)) {
+                        m_thread_pool.AddTask(&_render_engine::_render_polygon, this, std::cref(PIPELINE_DATA0), std::cref(PIPELINE_DATA1), std::cref(PIPELINE_DATA2));
                     }
                 }
             }
+            #undef PIPELINE_DATA0
+            #undef PIPELINE_DATA1
+            #undef PIPELINE_DATA2
 
-            // m_thread_pool.WaitAll();
+            m_thread_pool.WaitAll();
             break;
 
         default:
@@ -122,6 +130,8 @@ namespace gl {
         float D = (2.0f * dy) - dx;
         float y = v0.coord.y;
 
+        _shader_engine::pipeline_pack_type pack;
+
         for (float x = v0.coord.x; x <= v1.coord.x; ++x) {
             const vec2f pixel(x, y);
             
@@ -129,24 +139,25 @@ namespace gl {
             const float w1 = 1.0f - w0;
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////
+            pack.clear();
             for (const auto& node : v0.in_out_data) {
                 if (std::holds_alternative<vec2f>(node.second)) {
                     const vec2f& vec0 = std::get<vec2f>(node.second);
                     const vec2f& vec1 = std::get<vec2f>(v1.in_out_data.at(node.first));
-                    shader->m_in_out_data[node.first] = vec0 * w1 + vec1 * w0;
+                    pack[node.first] = vec0 * w1 + vec1 * w0;
                 } else if (std::holds_alternative<vec3f>(node.second)) {
                     const vec3f& vec0 = std::get<vec3f>(node.second);
                     const vec3f& vec1 = std::get<vec3f>(v1.in_out_data.at(node.first));
-                    shader->m_in_out_data[node.first] = vec0 * w1 + vec1 * w0;
+                    pack[node.first] = vec0 * w1 + vec1 * w0;
                 } else if (std::holds_alternative<vec4f>(node.second)) {
                     const vec4f& vec0 = std::get<vec4f>(node.second);
                     const vec4f& vec1 = std::get<vec4f>(v1.in_out_data.at(node.first));
-                    shader->m_in_out_data[node.first] = vec0 * w1 + vec1 * w0;
+                    pack[node.first] = vec0 * w1 + vec1 * w0;
                 } else {
-                    shader->m_in_out_data[node.first] = node.second;
+                    pack[node.first] = node.second;
                 }
             }
-            _render_pixel(pixel, shader->pixel());
+            _render_pixel(pixel, shader->pixel(pack));
             /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             if (D > 0) {
@@ -178,30 +189,33 @@ namespace gl {
         float D = (2.0f * dx) - dy;
         float x = v0.coord.x;
 
+        _shader_engine::pipeline_pack_type pack;
+
         for (float y = v0.coord.y; y <= v1.coord.y; ++y) {
             const vec2f pixel(x, y);
             const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
             const float w1 = 1.0f - w0;
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////
+            pack.clear();
             for (const auto& node : v0.in_out_data) {
                 if (std::holds_alternative<vec2f>(node.second)) {
                     const vec2f& vec0 = std::get<vec2f>(node.second);
                     const vec2f& vec1 = std::get<vec2f>(v1.in_out_data.at(node.first));
-                    shader->m_in_out_data[node.first] = vec0 * w1 + vec1 * w0;
+                    pack[node.first] = vec0 * w1 + vec1 * w0;
                 } else if (std::holds_alternative<vec3f>(node.second)) {
                     const vec3f& vec0 = std::get<vec3f>(node.second);
                     const vec3f& vec1 = std::get<vec3f>(v1.in_out_data.at(node.first));
-                    shader->m_in_out_data[node.first] = vec0 * w1 + vec1 * w0;
+                    pack[node.first] = vec0 * w1 + vec1 * w0;
                 } else if (std::holds_alternative<vec4f>(node.second)) {
                     const vec4f& vec0 = std::get<vec4f>(node.second);
                     const vec4f& vec1 = std::get<vec4f>(v1.in_out_data.at(node.first));
-                    shader->m_in_out_data[node.first] = vec0 * w1 + vec1 * w0;
+                    pack[node.first] = vec0 * w1 + vec1 * w0;
                 } else {
-                    shader->m_in_out_data[node.first] = node.second;
+                    pack[node.first] = node.second;
                 }
             }
-            _render_pixel(pixel, shader->pixel());
+            _render_pixel(pixel, shader->pixel(pack));
             /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             if (D > 0) {
@@ -222,6 +236,8 @@ namespace gl {
         const vec2f bboxmin(round(min(min(v0.coord.x, v1.coord.x), v2.coord.x)), round(min(min(v0.coord.y, v1.coord.y), v2.coord.y)));
         const vec2f bboxmax(round(max(max(v0.coord.x, v1.coord.x), v2.coord.x)), round(max(max(v0.coord.y, v1.coord.y), v2.coord.y)));
 
+        _shader_engine::pipeline_pack_type pack;
+
         for (float y = bboxmin.y; y <= bboxmax.y; ++y) {
             bool prev_pixel_was_inside = false;
             
@@ -239,27 +255,28 @@ namespace gl {
                     pixel.z = 1.0f / ((1.0f / v0.coord.z) * w0 + (1.0f / v1.coord.z) * w1 + (1.0f / v2.coord.z) * w2);
                     if (_test_and_update_depth(pixel)) {
                         /////////////////////////////////////////////////////////////////////////////////////////////////////
+                        pack.clear();
                         for (const auto& node : v0.in_out_data) {
                             if (std::holds_alternative<vec2f>(node.second)) {
                                 const vec2f& vec0 = std::get<vec2f>(node.second);
                                 const vec2f& vec1 = std::get<vec2f>(v1.in_out_data.at(node.first));
                                 const vec2f& vec2 = std::get<vec2f>(v2.in_out_data.at(node.first));
-                                shader->m_in_out_data[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
+                                pack[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
                             } else if (std::holds_alternative<vec3f>(node.second)) {
                                 const vec3f& vec0 = std::get<vec3f>(node.second);
                                 const vec3f& vec1 = std::get<vec3f>(v1.in_out_data.at(node.first));
                                 const vec3f& vec2 = std::get<vec3f>(v2.in_out_data.at(node.first));
-                                shader->m_in_out_data[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
+                                pack[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
                             } else if (std::holds_alternative<vec4f>(node.second)) {
                                 const vec4f& vec0 = std::get<vec4f>(node.second);
                                 const vec4f& vec1 = std::get<vec4f>(v1.in_out_data.at(node.first));
                                 const vec4f& vec2 = std::get<vec4f>(v2.in_out_data.at(node.first));
-                                shader->m_in_out_data[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
+                                pack[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
                             } else {
-                                shader->m_in_out_data[node.first] = node.second;
+                                pack[node.first] = node.second;
                             }
                         }
-                        _render_pixel(pixel.xy, shader->pixel());
+                        _render_pixel(pixel.xy, shader->pixel(pack));
                         /////////////////////////////////////////////////////////////////////////////////////////////////////
                     }
                 } else if (prev_pixel_was_inside) {

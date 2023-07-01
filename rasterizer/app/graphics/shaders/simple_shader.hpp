@@ -3,7 +3,7 @@
 
 namespace rasterization {
     struct SimpleShader : public gl::_shader {
-        math::vec4f vertex(const void* vertex) const noexcept override;
-        math::color pixel() const noexcept override;
+        math::vec4f vertex(const void* vertex, pipeline_data& pack) const noexcept override;
+        math::color pixel(const pipeline_data& pack) const noexcept override;
     };
 }

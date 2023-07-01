@@ -6,13 +6,11 @@
 namespace gl {
     class _shader : public _shader_uniform_api, public _shader_texture_api, public _shader_pipeline_api {
     public:
-        friend class _render_engine;
-    
         _shader() = default;
         virtual ~_shader() = default;
 
-        virtual math::vec4f vertex(const void* vertex) const noexcept = 0;
-        virtual math::color pixel() const noexcept = 0;
+        virtual math::vec4f vertex(const void* vertex, pipeline_data& pack) const noexcept = 0;
+        virtual math::color pixel(const pipeline_data& pack) const noexcept = 0;
 
         virtual void geometry() const noexcept { /*TODO*/ }
     };
