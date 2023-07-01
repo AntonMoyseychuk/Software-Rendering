@@ -106,7 +106,7 @@ namespace rasterization {
 
             
 
-            Texture texture("..\\..\\..\\rasterizer\\app\\assets\\head_texture.tga");
+            Texture texture("..\\..\\..\\rasterizer\\app\\assets\\head.tga");
             const Texture::Content* texture_content = texture.GetContent();
 
             size_t t = core.create_texture(texture_content->width, texture_content->height, texture_content->channel_count, texture_content->data.data());
@@ -128,13 +128,13 @@ namespace rasterization {
         core.uniform(m_view_matrix, "view");
         core.uniform(m_proj_matrix, "projection");
 
-        m_light_position = 10.0f * (vec3f::FORWARD() + vec3f::RIGHT());
+        m_light_position = 10.0f * vec3f::FORWARD() + 7.0f * vec3f::RIGHT();
 
         m_gouraud_shader = core.create_shader(std::make_shared<GouraudShader>());
         core.bind_shader(m_gouraud_shader); 
         core.uniform(m_light_position, "light_position");
         core.uniform(m_camera_position, "camera_position");
-        core.uniform(1.1f, "light_intensity");
+        core.uniform(1.0f, "light_intensity");
         core.uniform(color::WHITE, "light_color");
         core.uniform(color::TANGERINE, "polygon_color");
         core.uniform(transform.scale * transform.rotation * transform.translation, "model");

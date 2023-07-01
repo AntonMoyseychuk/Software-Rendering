@@ -7,7 +7,6 @@ namespace gl {
     class _shader_uniform_api {
     public:
         _shader_uniform_api() = default;
-        virtual ~_shader_uniform_api() = default;
     
     protected:
         template <typename Uniform>

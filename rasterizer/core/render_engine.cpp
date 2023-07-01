@@ -34,7 +34,7 @@ namespace gl {
         
         for (size_t i = 0, j = 0; j < vertex_count; i += vbo.element_size, ++j) {
             shader_ptr->vertex(&vbo.data[i]);
-            m_pipeline_data[j].data = shader_ptr->m_intermediate;
+            m_pipeline_data[j].data = std::move(shader_ptr->m_pack);
             m_pipeline_data[j].coord = shader_ptr->gl_Position;
             
             const vec4f ndc = m_pipeline_data[j].coord.xyz / m_pipeline_data[j].coord.w;
@@ -50,7 +50,7 @@ namespace gl {
         case render_mode::POINTS:
             for (size_t i = 0; i < vertex_count; ++i) {
                 if (!m_pipeline_data[i].clipped) {
-                    shader_ptr->m_intermediate = m_pipeline_data[i].data;
+                    shader_ptr->m_pack = std::move(m_pipeline_data[i].data);
                     _render_pixel(m_pipeline_data[i].coord.xy, shader_ptr->pixel());
                 }
             }    
@@ -130,7 +130,7 @@ namespace gl {
             const float w1 = 1.0f - w0;
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////
-            decltype(shader->m_intermediate) intermediate; intermediate;
+            decltype(shader->m_pack) intermediate;
             for (const auto& node : v0.data) {
                 if (std::holds_alternative<vec2f>(node.second)) {
                     const vec2f& vec0 = std::get<vec2f>(node.second);
@@ -149,7 +149,7 @@ namespace gl {
                 }
             }
 
-            shader->m_intermediate = intermediate;
+            shader->m_pack = intermediate;
             _render_pixel(pixel, shader->pixel());
             /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -188,7 +188,7 @@ namespace gl {
             const float w1 = 1.0f - w0;
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////
-            decltype(shader->m_intermediate) intermediate;
+            decltype(shader->m_pack) intermediate;
             for (const auto& node : v0.data) {
                 if (std::holds_alternative<vec2f>(node.second)) {
                     const vec2f& vec0 = std::get<vec2f>(node.second);
@@ -207,7 +207,7 @@ namespace gl {
                 }
             }
 
-            shader->m_intermediate = intermediate;
+            shader->m_pack = intermediate;
             _render_pixel(pixel, shader->pixel());
             /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -246,7 +246,7 @@ namespace gl {
                     pixel.z = 1.0f / ((1.0f / v0.coord.z) * w0 + (1.0f / v1.coord.z) * w1 + (1.0f / v2.coord.z) * w2);
                     if (_test_and_update_depth(pixel)) {
                         /////////////////////////////////////////////////////////////////////////////////////////////////////
-                        decltype(shader->m_intermediate) intermediate;
+                        decltype(shader->m_pack) intermediate;
                         for (const auto& node : v0.data) {
                             if (std::holds_alternative<vec2f>(node.second)) {
                                 const vec2f& vec0 = std::get<vec2f>(node.second);
@@ -268,7 +268,7 @@ namespace gl {
                             }
                         }
 
-                        shader->m_intermediate = intermediate;
+                        shader->m_pack = intermediate;
                         _render_pixel(pixel.xy, shader->pixel());
                         /////////////////////////////////////////////////////////////////////////////////////////////////////
                     }

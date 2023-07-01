@@ -25,7 +25,7 @@ namespace rasterization {
 
         const color polygon_color = texture(sampler_2D(), in<vec2f>("texcoord"));
         // const color polygon_color = get_uniform<vec4f>("polygon_color");
-        const color ambient = 0.05f * polygon_color;
+        const color ambient = 0.1f * polygon_color;
 
         const vec3f light_dir = normalize(in<vec4f>("frag_position").xyz - get_uniform<vec3f>("light_position"));
         const float diff = std::max(dot(-light_dir, in<vec4f>("normal").xyz), 0.0f);

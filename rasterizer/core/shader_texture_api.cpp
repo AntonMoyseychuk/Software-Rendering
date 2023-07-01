@@ -14,7 +14,8 @@ namespace gl {
 
         ASSERT(between(texcoord.x, 0.0f, 1.0f) && between(texcoord.y, 0.0f, 1.0f), "shader error", "invalid texture coordinates");
 
-        const size_t color_start = static_cast<size_t>(texcoord.x * texture.width + texcoord.y + texture.height) * texture.channel_count;
+        const size_t x = texcoord.x * (texture.width - 1), y = (1.0f - texcoord.y) * (texture.height - 1);
+        const size_t color_start = (x + y * texture.width) * texture.channel_count;
         return color {
             texture.data[color_start + 0] / 255.0f,
             texture.data[color_start + 1] / 255.0f,

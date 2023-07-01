@@ -7,7 +7,6 @@ namespace gl {
     class _shader_texture_api {
     public:
         _shader_texture_api() = default;
-        virtual ~_shader_texture_api() = default;
 
     protected:
         const _texture& sampler_2D() const noexcept;
