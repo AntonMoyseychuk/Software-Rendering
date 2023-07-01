@@ -2,6 +2,9 @@
 #include "shader_uniform_api.hpp"
 #include "shader_texture_api.hpp"
 
+#include <unordered_map>
+#include <variant>
+
 namespace gl {
     class _shader : public _shader_uniform_api, public _shader_texture_api {
     public:
@@ -42,9 +45,10 @@ namespace gl {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     private:
-        using shader_intermediate_data = std::unordered_map<std::string, uniform_type>;
+        // using shader_intermediate_data = std::unordered_map<std::string, uniform_type>;
 
-        mutable shader_intermediate_data m_intermediate;
+        mutable std::unordered_map<std::string, std::variant<int32_t, uint32_t, int64_t, uint64_t, float, double, 
+            math::vec2f, math::vec3f, math::vec4f, math::mat4f>> m_intermediate;
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     };
 }

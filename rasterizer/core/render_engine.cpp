@@ -1,6 +1,9 @@
 #include "render_engine.hpp"
 #include "buffer_engine.hpp"
 
+#include "shader.hpp"
+#include "shader_engine.hpp"
+
 #include "assert_macro.hpp"
 
 namespace gl {
@@ -22,7 +25,7 @@ namespace gl {
     #pragma region resizing-buffers
         const size_t vertex_count = vbo.data.size() / vbo.element_size;
 
-        m_shader_data.resize(vertex_count);
+        m_pipeline_data.resize(vertex_count);
         _resize_z_buffer(m_window_ptr->GetWidth(), m_window_ptr->GetHeight());
     #pragma endregion resizing-buffers
 
@@ -31,48 +34,47 @@ namespace gl {
         
         for (size_t i = 0, j = 0; j < vertex_count; i += vbo.element_size, ++j) {
             shader_ptr->vertex(&vbo.data[i]);
-            m_shader_data[j].data = shader_ptr->m_intermediate;
-            m_shader_data[j].coord = shader_ptr->gl_Position;
+            m_pipeline_data[j].data = shader_ptr->m_intermediate;
+            m_pipeline_data[j].coord = shader_ptr->gl_Position;
             
-            const vec4f ndc = m_shader_data[j].coord.xyz / m_shader_data[j].coord.w;
-            m_shader_data[j].clipped = !_is_inside_clipping_space(ndc.xyz);
+            const vec4f ndc = m_pipeline_data[j].coord.xyz / m_pipeline_data[j].coord.w;
+            m_pipeline_data[j].clipped = !_is_inside_clipping_space(ndc.xyz);
 
-            m_shader_data[j].coord = ndc * m_viewport;
-            m_shader_data[j].coord.x = std::floor(m_shader_data[j].coord.x);
-            m_shader_data[j].coord.y = std::floor(m_shader_data[j].coord.y);
+            m_pipeline_data[j].coord = ndc * m_viewport;
+            m_pipeline_data[j].coord.x = std::floor(m_pipeline_data[j].coord.x);
+            m_pipeline_data[j].coord.y = std::floor(m_pipeline_data[j].coord.y);
         }
     #pragma endregion local-to-raster-coords
 
         switch (mode) {
         case render_mode::POINTS:
             for (size_t i = 0; i < vertex_count; ++i) {
-                if (!m_shader_data[i].clipped) {
-                    shader_ptr->m_intermediate = m_shader_data[i].data;
-                    _render_pixel(m_shader_data[i].coord.xy, shader_ptr->pixel());
+                if (!m_pipeline_data[i].clipped) {
+                    shader_ptr->m_intermediate = m_pipeline_data[i].data;
+                    _render_pixel(m_pipeline_data[i].coord.xy, shader_ptr->pixel());
                 }
             }    
             break;
         
         case render_mode::LINES:
             for (size_t i = 1; i < ibo.data.size(); i += 2) {
-                if (!m_shader_data[ibo.data[i - 1]].clipped && !m_shader_data[ibo.data[i]].clipped) {
-                    _render_line(m_shader_data[ibo.data[i - 1]], m_shader_data[ibo.data[i]]);
+                if (!m_pipeline_data[ibo.data[i - 1]].clipped && !m_pipeline_data[ibo.data[i]].clipped) {
+                    _render_line(m_pipeline_data[ibo.data[i - 1]], m_pipeline_data[ibo.data[i]]);
                 }
             }
             break;
         
         case render_mode::LINE_STRIP: 
             for (size_t i = 1; i < ibo.data.size(); ++i) {
-                if (!m_shader_data[ibo.data[i - 1]].clipped && !m_shader_data[ibo.data[i]].clipped) {
-                    _render_line(m_shader_data[ibo.data[i - 1]], m_shader_data[ibo.data[i]]);
+                if (!m_pipeline_data[ibo.data[i - 1]].clipped && !m_pipeline_data[ibo.data[i]].clipped) {
+                    _render_line(m_pipeline_data[ibo.data[i - 1]], m_pipeline_data[ibo.data[i]]);
                 }
             }
             break;
 
         case render_mode::TRIANGLES:
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
             for (size_t i = 2; i < ibo.data.size(); i += 3) {
-                const auto& data0 = m_shader_data[ibo.data[i - 2]], &data1 = m_shader_data[ibo.data[i - 1]], &data2 = m_shader_data[ibo.data[i]];
+                const auto& data0 = m_pipeline_data[ibo.data[i - 2]], &data1 = m_pipeline_data[ibo.data[i - 1]], &data2 = m_pipeline_data[ibo.data[i]];
                 if (!data0.clipped && !data1.clipped && !data2.clipped) {
                     if (!_is_back_face(data0.coord.xyz, data1.coord.xyz, data2.coord.xyz)) {
                         m_thread_pool.Wait(m_thread_pool.AddTask(&_render_engine::_render_polygon, this, std::cref(data0), std::cref(data1), std::cref(data2)));
@@ -81,7 +83,6 @@ namespace gl {
             }
 
             // m_thread_pool.WaitAll();
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
             break;
 
         default:
@@ -94,7 +95,7 @@ namespace gl {
         m_window_ptr->SetPixelColor(pixel.x, pixel.y, R_G_B_A(color));
     }
 
-    void _render_engine::_render_line(const shader_data& v0, const shader_data& v1) const noexcept {
+    void _render_engine::_render_line(const pipeline_data& v0, const pipeline_data& v1) const noexcept {
         if (math::abs(v1.coord.y - v0.coord.y) < math::abs(v1.coord.x - v0.coord.x)) {
             (v1.coord.x < v0.coord.x) ? _render_line_low(v1, v0) :  _render_line_low(v0, v1);
         } else {
@@ -102,7 +103,7 @@ namespace gl {
         }
     }
 
-    void _render_engine::_render_line_low(const shader_data& v0, const shader_data& v1) const noexcept {
+    void _render_engine::_render_line_low(const pipeline_data& v0, const pipeline_data& v1) const noexcept {
         using namespace math;
 
         const auto& shader = shader_engine._get_binded_shader_program().shader;
@@ -129,7 +130,7 @@ namespace gl {
             const float w1 = 1.0f - w0;
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////
-            _shader::shader_intermediate_data intermediate;
+            decltype(shader->m_intermediate) intermediate; intermediate;
             for (const auto& node : v0.data) {
                 if (std::holds_alternative<vec2f>(node.second)) {
                     const vec2f& vec0 = std::get<vec2f>(node.second);
@@ -161,7 +162,7 @@ namespace gl {
         }
     }
 
-    void _render_engine::_render_line_high(const shader_data& v0, const shader_data& v1) const noexcept {
+    void _render_engine::_render_line_high(const pipeline_data& v0, const pipeline_data& v1) const noexcept {
         using namespace math;
 
         const auto& shader = shader_engine._get_binded_shader_program().shader;
@@ -187,7 +188,7 @@ namespace gl {
             const float w1 = 1.0f - w0;
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////
-            _shader::shader_intermediate_data intermediate;
+            decltype(shader->m_intermediate) intermediate;
             for (const auto& node : v0.data) {
                 if (std::holds_alternative<vec2f>(node.second)) {
                     const vec2f& vec0 = std::get<vec2f>(node.second);
@@ -219,7 +220,7 @@ namespace gl {
         }
     }
 
-    void _render_engine::_render_polygon(const shader_data& v0, const shader_data& v1, const shader_data& v2) noexcept {
+    void _render_engine::_render_polygon(const pipeline_data& v0, const pipeline_data& v1, const pipeline_data& v2) noexcept {
         using namespace math;
         using namespace std;
 
@@ -245,7 +246,7 @@ namespace gl {
                     pixel.z = 1.0f / ((1.0f / v0.coord.z) * w0 + (1.0f / v1.coord.z) * w1 + (1.0f / v2.coord.z) * w2);
                     if (_test_and_update_depth(pixel)) {
                         /////////////////////////////////////////////////////////////////////////////////////////////////////
-                        _shader::shader_intermediate_data intermediate;
+                        decltype(shader->m_intermediate) intermediate;
                         for (const auto& node : v0.data) {
                             if (std::holds_alternative<vec2f>(node.second)) {
                                 const vec2f& vec0 = std::get<vec2f>(node.second);

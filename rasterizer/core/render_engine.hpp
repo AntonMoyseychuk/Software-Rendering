@@ -47,28 +47,25 @@ namespace gl {
 
     private:
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        struct shader_data {
-            shader_data() = default;
-            shader_data(const _shader::shader_intermediate_data& data, const math::vec4f& coord, bool clipped) 
-                : clipped(clipped), data(data), coord(coord) {}
-
-            bool clipped;
-            _shader::shader_intermediate_data data;
+        struct pipeline_data {
+            bool clipped = false;
+            bool interpolated = false;
+            _shader_engine::pipeline_pack_type data;
             math::vec4f coord;
         };
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         
         void _render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept;
 
-        void _render_line(const shader_data& v0, const shader_data& v1) const noexcept;
-        void _render_line_low(const shader_data& v0, const shader_data& v1) const noexcept;
-        void _render_line_high(const shader_data& v0, const shader_data& v1) const noexcept;
+        void _render_line(const pipeline_data& v0, const pipeline_data& v1) const noexcept;
+        void _render_line_low(const pipeline_data& v0, const pipeline_data& v1) const noexcept;
+        void _render_line_high(const pipeline_data& v0, const pipeline_data& v1) const noexcept;
 
-        void _render_polygon(const shader_data& v0, const shader_data& v1, const shader_data& v2) noexcept;
+        void _render_polygon(const pipeline_data& v0, const pipeline_data& v1, const pipeline_data& v2) noexcept;
 
     private:
         std::vector<float> m_z_buffer;
-        std::vector<shader_data> m_shader_data;
+        std::vector<pipeline_data> m_pipeline_data;
 
         util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 
