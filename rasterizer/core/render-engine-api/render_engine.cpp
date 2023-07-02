@@ -4,7 +4,7 @@
 #include "core/shader-engine-api/shader.hpp"
 #include "core/shader-engine-api/shader_engine.hpp"
 
-#include "core/assert_macro.hpp"
+#include "core/assert_macro.hpp"   
 
 namespace gl {
     static _buffer_engine& buff_engine = _buffer_engine::get();
@@ -74,20 +74,17 @@ namespace gl {
             break;
 
         case render_mode::TRIANGLES:
-            #define PIPELINE_DATA0 m_pipeline_data[ibo.data[i - 2]]
-            #define PIPELINE_DATA1 m_pipeline_data[ibo.data[i - 1]]
-            #define PIPELINE_DATA2 m_pipeline_data[ibo.data[i - 0]]
 
             for (size_t i = 2; i < ibo.data.size(); i += 3) {
+                const auto& PIPELINE_DATA0 = m_pipeline_data[ibo.data[i - 2]];
+                const auto& PIPELINE_DATA1 = m_pipeline_data[ibo.data[i - 1]];
+                const auto& PIPELINE_DATA2 = m_pipeline_data[ibo.data[i - 0]];
                 if (!PIPELINE_DATA0.clipped && !PIPELINE_DATA1.clipped && !PIPELINE_DATA2.clipped) {
                     if (!_is_back_face(PIPELINE_DATA0.coord.xyz, PIPELINE_DATA1.coord.xyz, PIPELINE_DATA2.coord.xyz)) {
                         m_thread_pool.AddTask(&_render_engine::_render_polygon, this, std::cref(PIPELINE_DATA0), std::cref(PIPELINE_DATA1), std::cref(PIPELINE_DATA2));
                     }
                 }
             }
-            #undef PIPELINE_DATA0
-            #undef PIPELINE_DATA1
-            #undef PIPELINE_DATA2
 
             m_thread_pool.WaitAll();
             break;
@@ -102,7 +99,7 @@ namespace gl {
         m_window_ptr->SetPixelColor(pixel.x, pixel.y, R_G_B_A(color));
     }
 
-    void _render_engine::_render_line(const pipeline_data& v0, const pipeline_data& v1) const noexcept {
+    void _render_engine::_render_line(const pipeline_metadata& v0, const pipeline_metadata& v1) const noexcept {
         if (math::abs(v1.coord.y - v0.coord.y) < math::abs(v1.coord.x - v0.coord.x)) {
             (v1.coord.x < v0.coord.x) ? _render_line_low(v1, v0) :  _render_line_low(v0, v1);
         } else {
@@ -110,7 +107,7 @@ namespace gl {
         }
     }
 
-    void _render_engine::_render_line_low(const pipeline_data& v0, const pipeline_data& v1) const noexcept {
+    void _render_engine::_render_line_low(const pipeline_metadata& v0, const pipeline_metadata& v1) const noexcept {
         using namespace math;
 
         const auto& shader = shader_engine._get_binded_shader_program().shader;
@@ -138,27 +135,12 @@ namespace gl {
             const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
             const float w1 = 1.0f - w0;
 
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
             pack.clear();
-            for (const auto& node : v0.in_out_data) {
-                if (std::holds_alternative<vec2f>(node.second)) {
-                    const vec2f& vec0 = std::get<vec2f>(node.second);
-                    const vec2f& vec1 = std::get<vec2f>(v1.in_out_data.at(node.first));
-                    pack[node.first] = vec0 * w1 + vec1 * w0;
-                } else if (std::holds_alternative<vec3f>(node.second)) {
-                    const vec3f& vec0 = std::get<vec3f>(node.second);
-                    const vec3f& vec1 = std::get<vec3f>(v1.in_out_data.at(node.first));
-                    pack[node.first] = vec0 * w1 + vec1 * w0;
-                } else if (std::holds_alternative<vec4f>(node.second)) {
-                    const vec4f& vec0 = std::get<vec4f>(node.second);
-                    const vec4f& vec1 = std::get<vec4f>(v1.in_out_data.at(node.first));
-                    pack[node.first] = vec0 * w1 + vec1 * w0;
-                } else {
-                    pack[node.first] = node.second;
-                }
+            for (auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(); it0 != v0.in_out_data.cend(); ++it0, ++it1) {
+                pack[it0->first] = _interpolate2(w1, w0, it0->second, it1->second);
             }
             _render_pixel(pixel, shader->pixel(pack));
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            
 
             if (D > 0) {
                 y += yi;
@@ -169,7 +151,7 @@ namespace gl {
         }
     }
 
-    void _render_engine::_render_line_high(const pipeline_data& v0, const pipeline_data& v1) const noexcept {
+    void _render_engine::_render_line_high(const pipeline_metadata& v0, const pipeline_metadata& v1) const noexcept {
         using namespace math;
 
         const auto& shader = shader_engine._get_binded_shader_program().shader;
@@ -196,27 +178,11 @@ namespace gl {
             const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
             const float w1 = 1.0f - w0;
 
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
             pack.clear();
-            for (const auto& node : v0.in_out_data) {
-                if (std::holds_alternative<vec2f>(node.second)) {
-                    const vec2f& vec0 = std::get<vec2f>(node.second);
-                    const vec2f& vec1 = std::get<vec2f>(v1.in_out_data.at(node.first));
-                    pack[node.first] = vec0 * w1 + vec1 * w0;
-                } else if (std::holds_alternative<vec3f>(node.second)) {
-                    const vec3f& vec0 = std::get<vec3f>(node.second);
-                    const vec3f& vec1 = std::get<vec3f>(v1.in_out_data.at(node.first));
-                    pack[node.first] = vec0 * w1 + vec1 * w0;
-                } else if (std::holds_alternative<vec4f>(node.second)) {
-                    const vec4f& vec0 = std::get<vec4f>(node.second);
-                    const vec4f& vec1 = std::get<vec4f>(v1.in_out_data.at(node.first));
-                    pack[node.first] = vec0 * w1 + vec1 * w0;
-                } else {
-                    pack[node.first] = node.second;
-                }
+            for (auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(); it0 != v0.in_out_data.cend(); ++it0, ++it1) {
+                pack[it0->first] = _interpolate2(w1, w0, it0->second, it1->second);
             }
             _render_pixel(pixel, shader->pixel(pack));
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             if (D > 0) {
                 x += xi;
@@ -227,7 +193,7 @@ namespace gl {
         }
     }
 
-    void _render_engine::_render_polygon(const pipeline_data& v0, const pipeline_data& v1, const pipeline_data& v2) noexcept {
+    void _render_engine::_render_polygon(const pipeline_metadata& v0, const pipeline_metadata& v1, const pipeline_metadata& v2) noexcept {
         using namespace math;
         using namespace std;
 
@@ -237,6 +203,7 @@ namespace gl {
         const vec2f bboxmax(round(max(max(v0.coord.x, v1.coord.x), v2.coord.x)), round(max(max(v0.coord.y, v1.coord.y), v2.coord.y)));
 
         pipeline_pack_type pack;
+        const double area = _edge(v0.coord.xy, v1.coord.xy, v2.coord.xy);
 
         for (float y = bboxmin.y; y <= bboxmax.y; ++y) {
             bool prev_pixel_was_inside = false;
@@ -244,45 +211,57 @@ namespace gl {
             for (float x = bboxmin.x; x <= bboxmax.x; ++x) {
                 vec3f pixel(x, y, 0.0);
                 
-                const double area = _edge(v0.coord.xy, v1.coord.xy, v2.coord.xy);
-                const double   w0 = _edge(v1.coord.xy, v2.coord.xy, pixel.xy) / area;
-                const double   w1 = _edge(v2.coord.xy, v0.coord.xy, pixel.xy) / area;
-                const double   w2 = 1.0 - w0 - w1;
+                const double w0 = _edge(v1.coord.xy, v2.coord.xy, pixel.xy) / area;
+                const double w1 = _edge(v2.coord.xy, v0.coord.xy, pixel.xy) / area;
+                const double w2 = 1.0 - w0 - w1;
                 
                 if (w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) {
                     prev_pixel_was_inside = true;
 
                     pixel.z = 1.0f / ((1.0f / v0.coord.z) * w0 + (1.0f / v1.coord.z) * w1 + (1.0f / v2.coord.z) * w2);
                     if (_test_and_update_depth(pixel)) {
-                        /////////////////////////////////////////////////////////////////////////////////////////////////////
                         pack.clear();
-                        for (const auto& node : v0.in_out_data) {
-                            if (std::holds_alternative<vec2f>(node.second)) {
-                                const vec2f& vec0 = std::get<vec2f>(node.second);
-                                const vec2f& vec1 = std::get<vec2f>(v1.in_out_data.at(node.first));
-                                const vec2f& vec2 = std::get<vec2f>(v2.in_out_data.at(node.first));
-                                pack[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
-                            } else if (std::holds_alternative<vec3f>(node.second)) {
-                                const vec3f& vec0 = std::get<vec3f>(node.second);
-                                const vec3f& vec1 = std::get<vec3f>(v1.in_out_data.at(node.first));
-                                const vec3f& vec2 = std::get<vec3f>(v2.in_out_data.at(node.first));
-                                pack[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
-                            } else if (std::holds_alternative<vec4f>(node.second)) {
-                                const vec4f& vec0 = std::get<vec4f>(node.second);
-                                const vec4f& vec1 = std::get<vec4f>(v1.in_out_data.at(node.first));
-                                const vec4f& vec2 = std::get<vec4f>(v2.in_out_data.at(node.first));
-                                pack[node.first] = vec0 * w0 + vec1 * w1 + vec2 * w2;
-                            } else {
-                                pack[node.first] = node.second;
-                            }
+
+                        auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(), &it2 = v2.in_out_data.cbegin();
+                        for (; it0 != v0.in_out_data.cend(); ++it0, ++it1, ++it2) {
+                            pack[it0->first] = _interpolate3(w0, w1, w2, it0->second, it1->second, it2->second);
                         }
                         _render_pixel(pixel.xy, shader->pixel(pack));
-                        /////////////////////////////////////////////////////////////////////////////////////////////////////
                     }
                 } else if (prev_pixel_was_inside) {
                     break;
                 }
             }
+        }
+    }
+
+    _render_engine::pipeline_data_type _render_engine::_interpolate2(float w0, float w1, const pipeline_data_type &var0, const pipeline_data_type &var1) noexcept {
+        using namespace math;
+
+        ASSERT(var0.index() == var1.index(), "shader engine error", "var0 and var1 have different types");
+
+        if (std::holds_alternative<vec2f>(var0)) {
+            return std::get<vec2f>(var0) * w0 + std::get<vec2f>(var1) * w1;
+        } else if (std::holds_alternative<vec3f>(var0)) {
+            return std::get<vec3f>(var0) * w0 + std::get<vec3f>(var1) * w1;
+        } else {
+            return std::get<vec4f>(var0) * w0 + std::get<vec4f>(var1) * w1;
+        }
+    }
+
+    _render_engine::pipeline_data_type _render_engine::_interpolate3(float w0, float w1, float w2, 
+        const pipeline_data_type &var0, const pipeline_data_type &var1, const pipeline_data_type &var2) noexcept
+    {
+        using namespace math;
+
+        ASSERT(var0.index() == var1.index() && var0.index() == var2.index(), "shader engine error", "var0, var1 and var2 have different types");
+
+        if (std::holds_alternative<vec2f>(var0)) {
+            return std::get<vec2f>(var0) * w0 + std::get<vec2f>(var1) * w1 + std::get<vec2f>(var2) * w2;
+        } else if (std::holds_alternative<vec3f>(var0)) {
+            return std::get<vec3f>(var0) * w0 + std::get<vec3f>(var1) * w1 + std::get<vec3f>(var2) * w2;
+        } else {
+            return std::get<vec4f>(var0) * w0 + std::get<vec4f>(var1) * w1 + std::get<vec4f>(var2) * w2;
         }
     }
 

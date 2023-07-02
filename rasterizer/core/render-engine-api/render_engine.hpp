@@ -50,7 +50,7 @@ namespace gl {
         static double _edge(const math::vec2f& v0, const math::vec2f& v1, const math::vec2f& p) noexcept;
 
     private:
-        struct pipeline_data {
+        struct pipeline_metadata {
             bool clipped = false;
             pipeline_pack_type in_out_data;
             math::vec4f coord;
@@ -58,15 +58,20 @@ namespace gl {
         
         void _render_pixel(const math::vec2f& pixel, const math::color& color) const noexcept;
 
-        void _render_line(const pipeline_data& v0, const pipeline_data& v1) const noexcept;
-        void _render_line_low(const pipeline_data& v0, const pipeline_data& v1) const noexcept;
-        void _render_line_high(const pipeline_data& v0, const pipeline_data& v1) const noexcept;
+        void _render_line(const pipeline_metadata& v0, const pipeline_metadata& v1) const noexcept;
+        void _render_line_low(const pipeline_metadata& v0, const pipeline_metadata& v1) const noexcept;
+        void _render_line_high(const pipeline_metadata& v0, const pipeline_metadata& v1) const noexcept;
 
-        void _render_polygon(const pipeline_data& v0, const pipeline_data& v1, const pipeline_data& v2) noexcept;
+        void _render_polygon(const pipeline_metadata& v0, const pipeline_metadata& v1, const pipeline_metadata& v2) noexcept;
+
+    private:
+        static pipeline_data_type _interpolate2(float w0, float w1, const pipeline_data_type& var0, const pipeline_data_type& var1) noexcept;
+        static pipeline_data_type _interpolate3(float w0, float w1, float w2, 
+            const pipeline_data_type& var0, const pipeline_data_type& var1, const pipeline_data_type& var2) noexcept;
 
     private:
         std::vector<float> m_z_buffer;
-        std::vector<pipeline_data> m_pipeline_data;
+        std::vector<pipeline_metadata> m_pipeline_data;
 
         util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 

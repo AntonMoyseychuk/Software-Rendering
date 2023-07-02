@@ -1,8 +1,8 @@
 #pragma once
-#include "render_engine_api.hpp"
-#include "buffer_engine_api.hpp"
-#include "shader_engine_api.hpp"
-#include "texture_engine_api.hpp"
+#include "core/render-engine-api/render_engine_api.hpp"
+#include "core/buffer-engine-api/buffer_engine_api.hpp"
+#include "core/shader-engine-api/shader_engine_api.hpp"
+#include "core/texture-engine-api/texture_engine_api.hpp"
 
 
 namespace gl {
