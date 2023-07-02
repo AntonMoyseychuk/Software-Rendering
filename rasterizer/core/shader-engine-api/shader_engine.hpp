@@ -54,8 +54,8 @@ namespace gl {
     private:
         _shader_engine() = default;
 
-    public:
-        using uniform_type = std::variant<int32_t, uint32_t, int64_t, uint64_t, float, double, 
+    private:
+        using uniform_type = std::variant<bool, int32_t, uint32_t, int64_t, uint64_t, float, double, 
             math::vec2f, math::vec3f, math::vec4f, math::mat4f>;
         using uniforms_pack_type = std::unordered_map<std::string, uniform_type>;
 
@@ -63,9 +63,10 @@ namespace gl {
             uniforms_pack_type uniforms;
             std::shared_ptr<_shader> shader;
         };
-        const shader_program& _get_binded_shader_program() const noexcept;
-
         using shader_id = size_t;
+        
+    public:
+        const shader_program& _get_binded_shader_program() const noexcept;
 
     private:
         std::unordered_map<shader_id, shader_program> m_shader_programs;

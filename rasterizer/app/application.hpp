@@ -29,7 +29,7 @@ namespace rasterization {
             math::mat4f translation;
             math::mat4f rotation;
             math::mat4f scale;
-        } transform;
+        } m_transform;
         std::unordered_map<std::string, Object> m_objects;
 
         math::vec3f m_camera_position;
