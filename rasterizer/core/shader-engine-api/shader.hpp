@@ -9,8 +9,8 @@ namespace gl {
         _shader() = default;
         virtual ~_shader() = default;
 
-        virtual math::vec4f vertex(const void* vertex, pipeline_data& pack) const noexcept = 0;
-        virtual math::color pixel(const pipeline_data& pack) const noexcept = 0;
+        virtual math::vec4f vertex(const void* vertex, pd& _pd) const noexcept = 0;
+        virtual math::color pixel(const pd& _pd) const noexcept = 0;
 
         virtual void geometry() const noexcept { /*TODO*/ }
     };

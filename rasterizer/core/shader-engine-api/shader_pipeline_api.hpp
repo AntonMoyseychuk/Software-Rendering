@@ -1,5 +1,5 @@
 #pragma once
-#include "shader_engine.hpp"
+#include "core/render-engine-api/render_engine.hpp"
 
 namespace gl {
     class _shader_pipeline_api {
@@ -7,27 +7,27 @@ namespace gl {
         _shader_pipeline_api() = default;
 
     protected:
-        using pipeline_data = _shader_engine::pipeline_pack_type;
+        using pd = _render_engine::pipeline_pack_type;
         
         template<typename InType>
-        const InType& in(const std::string& tag, const pipeline_data& pack) const noexcept {
-            ASSERT(pack.find(tag) != pack.cend(), "shader error", "invalid IN variable tag");
-            ASSERT(std::holds_alternative<InType>(pack[tag]), "shader error", "the IN variable \"" + tag + "\" has different type");
+        const InType& in(const std::string& tag, const pd& _pd) const noexcept {
+            ASSERT(_pd.find(tag) != _pd.cend(), "shader error", "invalid IN variable tag");
+            ASSERT(std::holds_alternative<InType>(_pd[tag]), "shader error", "the IN variable \"" + tag + "\" has different type");
             
-            return std::get<InType>(pack.at(tag));
+            return std::get<InType>(_pd.at(tag));
         }
 
         template<typename OutType>
-        void out(const OutType& var, const std::string& tag, pipeline_data& pack) const noexcept {
+        void out(const OutType& var, const std::string& tag, pd& _pd) const noexcept {
             #ifdef _DEBUG
-                if (pack.find(tag) != pack.cend()) {
-                    ASSERT(std::holds_alternative<OutType>(pack[tag]), "shader error", 
+                if (_pd.find(tag) != _pd.cend()) {
+                    ASSERT(std::holds_alternative<OutType>(_pd[tag]), "shader error", 
                         "redefinition a variable with the name" + tag + " but different type"
                     );
                 }
             #endif
 
-            pack[tag] = var;
+            _pd[tag] = var;
         }
     };
 }

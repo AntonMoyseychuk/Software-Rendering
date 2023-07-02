@@ -3,13 +3,17 @@
 #include "window/window.hpp"
 #include "thread_pool/thread_pool.hpp"
 
-#include "core/shader-engine-api/shader_engine.hpp"
+#include <unordered_map>
+#include <variant>
 
 namespace gl {
     enum class render_mode : uint8_t { POINTS, LINES, LINE_STRIP, TRIANGLES };
 
     class _render_engine final {
     public:
+        using pipeline_data_type = std::variant<math::vec2f, math::vec3f, math::vec4f>;
+        using pipeline_pack_type = std::unordered_map<std::string, pipeline_data_type>;
+
         _render_engine(const _render_engine& engine) = delete;
         _render_engine& operator=(const _render_engine& engine) = delete;
 
@@ -48,7 +52,7 @@ namespace gl {
     private:
         struct pipeline_data {
             bool clipped = false;
-            _shader_engine::pipeline_pack_type in_out_data;
+            pipeline_pack_type in_out_data;
             math::vec4f coord;
         };
         

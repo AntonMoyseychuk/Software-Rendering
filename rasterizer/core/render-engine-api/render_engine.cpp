@@ -130,7 +130,7 @@ namespace gl {
         float D = (2.0f * dy) - dx;
         float y = v0.coord.y;
 
-        _shader_engine::pipeline_pack_type pack;
+        pipeline_pack_type pack;
 
         for (float x = v0.coord.x; x <= v1.coord.x; ++x) {
             const vec2f pixel(x, y);
@@ -189,7 +189,7 @@ namespace gl {
         float D = (2.0f * dx) - dy;
         float x = v0.coord.x;
 
-        _shader_engine::pipeline_pack_type pack;
+        pipeline_pack_type pack;
 
         for (float y = v0.coord.y; y <= v1.coord.y; ++y) {
             const vec2f pixel(x, y);
@@ -236,7 +236,7 @@ namespace gl {
         const vec2f bboxmin(round(min(min(v0.coord.x, v1.coord.x), v2.coord.x)), round(min(min(v0.coord.y, v1.coord.y), v2.coord.y)));
         const vec2f bboxmax(round(max(max(v0.coord.x, v1.coord.x), v2.coord.x)), round(max(max(v0.coord.y, v1.coord.y), v2.coord.y)));
 
-        _shader_engine::pipeline_pack_type pack;
+        pipeline_pack_type pack;
 
         for (float y = bboxmin.y; y <= bboxmax.y; ++y) {
             bool prev_pixel_was_inside = false;
