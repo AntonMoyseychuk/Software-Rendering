@@ -23,10 +23,6 @@ namespace rasterization {
     math::color GouraudShader::pixel(const pd& _pd) const noexcept {
         using namespace math;
 
-        if (get_uniform<bool>("is_wireframe")) {
-            return get_uniform<vec4f>("polygon_color");
-        }
-
         const color polygon_color = texture(sampler_2D(), in<vec2f>("texcoord", _pd));
         const color ambient = 0.1f * polygon_color;
 
