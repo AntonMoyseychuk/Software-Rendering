@@ -11,7 +11,8 @@ namespace rasterization {
 
     Texture::Texture(const char *filename) {
         if (!Load(filename)) {
-            throw std::runtime_error(std::string(stbi_failure_reason()) + " " + filename);
+            using namespace std::string_literals;
+            throw std::runtime_error(stbi_failure_reason() + " "s + filename);
         }
     }
     

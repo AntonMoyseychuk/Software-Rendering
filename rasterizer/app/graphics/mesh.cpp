@@ -20,7 +20,8 @@ namespace rasterization {
 
     Mesh::Mesh(const char *filename) {
         if (!Load(filename)) {
-            throw std::runtime_error(MESH_LOADER_ERROR(__FILE__, __FUNCTION__, __LINE__) + std::string("\nerror: ") + m_error_msg + "\nwarning: " + m_warn_message);
+            using namespace std::string_literals;
+            throw std::runtime_error(MESH_LOADER_ERROR(__FILE__, __FUNCTION__, __LINE__) + "\nerror: "s + m_error_msg + "\nwarning: " + m_warn_message);
         }
     }
 

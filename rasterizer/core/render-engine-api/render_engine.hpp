@@ -65,9 +65,29 @@ namespace gl {
         void _render_polygon(const pipeline_metadata& v0, const pipeline_metadata& v1, const pipeline_metadata& v2) noexcept;
 
     private:
-        static pipeline_data_type _interpolate2(float w0, float w1, const pipeline_data_type& var0, const pipeline_data_type& var1) noexcept;
-        static pipeline_data_type _interpolate3(float w0, float w1, float w2, 
-            const pipeline_data_type& var0, const pipeline_data_type& var1, const pipeline_data_type& var2) noexcept;
+        struct barycentric_interpolator {
+            pipeline_data_type operator()(const math::vec2f& vec0, const math::vec2f& vec1) const noexcept {
+                return static_cast<float>(w0) * vec0 + static_cast<float>(w1) * vec1;
+            }
+            pipeline_data_type operator()(const math::vec3f& vec0, const math::vec3f& vec1) const noexcept {
+                return static_cast<float>(w0) * vec0 + static_cast<float>(w1) * vec1;
+            }
+            pipeline_data_type operator()(const math::vec4f& vec0, const math::vec4f& vec1) const noexcept {
+                return static_cast<float>(w0) * vec0 + static_cast<float>(w1) * vec1;
+            }
+
+            pipeline_data_type operator()(const math::vec2f& vec0, const math::vec2f& vec1, const math::vec2f& vec2) const noexcept {
+                return static_cast<float>(w0) * vec0 + static_cast<float>(w1) * vec1 + static_cast<float>(w2) * vec2;
+            }
+            pipeline_data_type operator()(const math::vec3f& vec0, const math::vec3f& vec1, const math::vec3f& vec2) const noexcept {
+                return static_cast<float>(w0) * vec0 + static_cast<float>(w1) * vec1 + static_cast<float>(w2) * vec2;
+            }
+            pipeline_data_type operator()(const math::vec4f& vec0, const math::vec4f& vec1, const math::vec4f& vec2) const noexcept {
+                return static_cast<float>(w0) * vec0 + static_cast<float>(w1) * vec1 + static_cast<float>(w2) * vec2;
+            }
+
+            double w0, w1, w2;
+        };
 
     private:
         std::vector<float> m_z_buffer;

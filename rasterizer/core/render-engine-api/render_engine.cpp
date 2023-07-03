@@ -137,7 +137,7 @@ namespace gl {
 
             pack.clear();
             for (auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(); it0 != v0.in_out_data.cend(); ++it0, ++it1) {
-                pack[it0->first] = _interpolate2(w1, w0, it0->second, it1->second);
+                pack[it0->first] = std::visit(barycentric_interpolator{w1, w0}, it0->second, it1->second);
             }
             _render_pixel(pixel, shader->pixel(pack));
             
@@ -180,7 +180,7 @@ namespace gl {
 
             pack.clear();
             for (auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(); it0 != v0.in_out_data.cend(); ++it0, ++it1) {
-                pack[it0->first] = _interpolate2(w1, w0, it0->second, it1->second);
+                pack[it0->first] = std::visit(barycentric_interpolator{w1, w0}, it0->second, it1->second);
             }
             _render_pixel(pixel, shader->pixel(pack));
 
@@ -224,7 +224,7 @@ namespace gl {
 
                         auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(), &it2 = v2.in_out_data.cbegin();
                         for (; it0 != v0.in_out_data.cend(); ++it0, ++it1, ++it2) {
-                            pack[it0->first] = _interpolate3(w0, w1, w2, it0->second, it1->second, it2->second);
+                            pack[it0->first] = std::visit(barycentric_interpolator{w0, w1, w2}, it0->second, it1->second, it2->second);
                         }
                         _render_pixel(pixel.xy, shader->pixel(pack));
                     }
@@ -232,36 +232,6 @@ namespace gl {
                     break;
                 }
             }
-        }
-    }
-
-    _render_engine::pipeline_data_type _render_engine::_interpolate2(float w0, float w1, const pipeline_data_type &var0, const pipeline_data_type &var1) noexcept {
-        using namespace math;
-
-        ASSERT(var0.index() == var1.index(), "shader engine error", "var0 and var1 have different types");
-
-        if (std::holds_alternative<vec2f>(var0)) {
-            return std::get<vec2f>(var0) * w0 + std::get<vec2f>(var1) * w1;
-        } else if (std::holds_alternative<vec3f>(var0)) {
-            return std::get<vec3f>(var0) * w0 + std::get<vec3f>(var1) * w1;
-        } else {
-            return std::get<vec4f>(var0) * w0 + std::get<vec4f>(var1) * w1;
-        }
-    }
-
-    _render_engine::pipeline_data_type _render_engine::_interpolate3(float w0, float w1, float w2, 
-        const pipeline_data_type &var0, const pipeline_data_type &var1, const pipeline_data_type &var2) noexcept
-    {
-        using namespace math;
-
-        ASSERT(var0.index() == var1.index() && var0.index() == var2.index(), "shader engine error", "var0, var1 and var2 have different types");
-
-        if (std::holds_alternative<vec2f>(var0)) {
-            return std::get<vec2f>(var0) * w0 + std::get<vec2f>(var1) * w1 + std::get<vec2f>(var2) * w2;
-        } else if (std::holds_alternative<vec3f>(var0)) {
-            return std::get<vec3f>(var0) * w0 + std::get<vec3f>(var1) * w1 + std::get<vec3f>(var2) * w2;
-        } else {
-            return std::get<vec4f>(var0) * w0 + std::get<vec4f>(var1) * w1 + std::get<vec4f>(var2) * w2;
         }
     }
 
@@ -291,7 +261,7 @@ namespace gl {
     }
 
     double _render_engine::_edge(const math::vec2f &v0, const math::vec2f &v1, const math::vec2f &p) noexcept {
-        return (p.x - v0.x) * (v1.y - v0.y) - (p.y - v0.y) * (v1.x - v0.x);
+        return static_cast<double>((p.x - v0.x) * (v1.y - v0.y) - (p.y - v0.y) * (v1.x - v0.x));
     }
 
     _render_engine &_render_engine::get() noexcept {
