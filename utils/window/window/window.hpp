@@ -43,6 +43,16 @@ namespace win_framewrk {
         RALT = SDL_Scancode::SDL_SCANCODE_RALT,
     };
 
+    struct MouseState {
+        enum class PressedButton : uint32_t {
+            NONE, LEFT, MIDDLE, RIGHT
+        };
+
+
+        int32_t x, y;
+        PressedButton pressed_button = PressedButton::NONE;
+    };
+
     class Window {
     private:
         union _InternalColor {
@@ -71,6 +81,7 @@ namespace win_framewrk {
         void PollEvent() noexcept;
 
         bool IsKeyPressed(Key key) const noexcept;
+        bool IsMousePressed(MouseState& state) const noexcept;
 
         Window(Window&& window);
         Window& operator=(Window&& window) noexcept;

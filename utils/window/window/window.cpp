@@ -175,7 +175,7 @@ namespace win_framewrk {
                 break;
 
             case SDL_WINDOWEVENT:
-                if(m_event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                if (m_event.window.event == SDL_WINDOWEVENT_RESIZED) {
                     this->_OnResize(m_event.window.data1, m_event.window.data2);
                 }
                 break;
@@ -187,6 +187,13 @@ namespace win_framewrk {
         static const uint8_t* keyboard = SDL_GetKeyboardState(nullptr);
 
         return keyboard[static_cast<SDL_Scancode>(key)];
+    }
+
+    bool Window::IsMousePressed(MouseState &state) const noexcept {
+        const uint32_t s = SDL_GetMouseState(&state.x, &state.y);
+
+        state.pressed_button = static_cast<MouseState::PressedButton>(s != 0 ? SDL_BUTTON(s) : 0);
+        return state.pressed_button != MouseState::PressedButton::NONE;
     }
 
     uint32_t Window::GetPixelColor(size_t x, size_t y) noexcept {

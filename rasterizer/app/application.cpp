@@ -157,13 +157,24 @@ namespace rasterization {
         using namespace win_framewrk;
 
         render_mode model_render_mode = render_mode::TRIANGLES;
+
+        MouseState prev_mouse_state, curr_mouse_state;
+        m_window->IsMousePressed(prev_mouse_state);
         while (m_window->IsOpen()) {
             m_window->PollEvent();
 
             const float dt = _LockFPS();
             std::cout << "FPS: " << std::to_string(1.0f / dt) << "\ttime: " << dt << "\tms\n";
-
+  
         #pragma region input
+            if (m_window->IsMousePressed(curr_mouse_state) && curr_mouse_state.pressed_button == MouseState::PressedButton::LEFT) {
+                m_transform.rotation = rotate_y(m_transform.rotation, (prev_mouse_state.x - curr_mouse_state.x) * dt);
+                m_transform.rotation = rotate_x(m_transform.rotation, -(prev_mouse_state.y - curr_mouse_state.y) * dt);
+                core.uniform(m_transform.scale * m_transform.rotation * m_transform.translation, "model");
+            }
+            prev_mouse_state = curr_mouse_state;
+
+        
             const float angle = to_radians(dt) * 60.0f;
             const float distance = dt * 3.0f;
             
@@ -259,7 +270,7 @@ namespace rasterization {
                 }
             }
         #pragma endregion input
-            
+         
             core.bind_shader(m_gouraud_shader);
             core.uniform(perspective(math::to_radians(90.0f), (float)m_window->GetWidth() / m_window->GetHeight(), 1.0f, 100.0f), "projection");
             const Object& object = m_objects["head"];
