@@ -10,7 +10,7 @@ namespace gl {
         void bind_shader(size_t id) const noexcept;
 
         template<typename Uniform>
-        void uniform(const Uniform& uniform, const std::string& uniform_tag) noexcept {
+        void uniform(const Uniform& uniform, const std::string& uniform_tag) const noexcept {
             m_shader_engine.uniform(uniform, uniform_tag);
         }
     

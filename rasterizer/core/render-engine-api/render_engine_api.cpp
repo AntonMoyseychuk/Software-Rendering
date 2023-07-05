@@ -6,7 +6,7 @@ namespace gl {
     {
     }
 
-    bool _render_engine_api::bind_window(win_framewrk::Window *window) noexcept {
+    bool _render_engine_api::bind_window(win_framewrk::Window *window) const noexcept {
         return m_render_engine.bind_window(window);
     }
 
@@ -26,7 +26,7 @@ namespace gl {
         m_render_engine.clear_depth_buffer();
     }
 
-    void _render_engine_api::set_clear_color(const math::color &color) noexcept {
+    void _render_engine_api::set_clear_color(const math::color &color) const noexcept {
         m_render_engine.set_clear_color(color);
     }
 

@@ -4,9 +4,9 @@
 #include "core/assert_macro.hpp"
 
 namespace gl {
-    const _texture &_shader_texture_api::sampler_2D() const noexcept {
+    const _texture &_shader_texture_api::sampler_2D(size_t slot) const noexcept {
         static _texture_engine& engine = _texture_engine::get();
-        return engine._get_binded_texture();
+        return engine._get_slot(slot);
     }
     
     math::color _shader_texture_api::texture(const _texture &texture, const math::vec2f &texcoord) const noexcept {

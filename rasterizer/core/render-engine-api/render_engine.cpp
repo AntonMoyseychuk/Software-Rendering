@@ -250,7 +250,7 @@ namespace gl {
     }
 
     bool _render_engine::_is_inside_clipping_space(const math::vec3f &point) noexcept {
-        return math::abs(point.x) <= 1.0f && math::abs(point.y) <= 1.0f && point.z <= -1.0f;
+        return math::abs(point.x) <= 1.0f && math::abs(point.y) <= 1.0f && point.z <= -0.25f;
     }
 
     bool _render_engine::_is_back_face(const math::vec3f &v0, const math::vec3f &v1, const math::vec3f &v2) noexcept {

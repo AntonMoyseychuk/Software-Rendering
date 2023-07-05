@@ -23,19 +23,23 @@ namespace rasterization {
     math::color GouraudShader::pixel(const pd& _pd) const noexcept {
         using namespace math;
 
-        const color polygon_color = texture(sampler_2D(), in<vec2f>("texcoord", _pd));
+
+        const vec3f& frag_position = in<vec4f>("frag_position", _pd).xyz;
+        const vec3f& normal = in<vec4f>("normal", _pd).xyz;
+
+        const color polygon_color = texture(sampler_2D(0), in<vec2f>("texcoord", _pd));
         const color ambient = 0.1f * polygon_color;
 
-        const vec3f light_dir = normalize(in<vec4f>("frag_position", _pd).xyz - get_uniform<vec3f>("light_position"));
-        const float diff = std::max(dot(-light_dir, in<vec4f>("normal", _pd).xyz), 0.0f);
+        const vec3f light_dir = normalize(frag_position - get_uniform<vec3f>("light_position"));
+        const float diff = std::max(dot(-light_dir, normal), 0.0f);
         const color diffuse = diff * get_uniform<vec4f>("light_color") * get_uniform<float>("light_intensity") * polygon_color;
 
         if (between(diff, 0.0f, 0.05f)) {
             return ambient + diffuse;
         }
 
-        const vec3f view_dir = normalize(in<vec4f>("frag_position", _pd).xyz - get_uniform<vec3f>("camera_position"));
-        const vec3f reflected = normalize(reflect(light_dir, in<vec4f>("normal", _pd).xyz));
+        const vec3f view_dir = normalize(frag_position - get_uniform<vec3f>("camera_position"));
+        const vec3f reflected = normalize(reflect(light_dir, normal));
         const float spec = std::max(std::powf(dot(reflected, -view_dir), 50.0f), 0.0f);
         const color specular = spec * polygon_color;
 

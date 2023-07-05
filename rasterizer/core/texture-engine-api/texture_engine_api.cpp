@@ -13,4 +13,8 @@ namespace gl {
     void _texture_engine_api::bind_texture(size_t id) const noexcept {
         m_tex_engine.bind_texture(id);
     }
+    
+    void _texture_engine_api::activate_texture(size_t slot) const noexcept {
+        m_tex_engine.activate_texture(slot);
+    }
 }

@@ -53,6 +53,31 @@ namespace rasterization {
         core.bind_buffer(buffer_type::VERTEX, m_objects["triangle"].vbo);
         core.set_buffer_element_size(sizeof(triangle[0]));
 
+
+        m_camera_position = 2.5f * vec3f::FORWARD();
+        m_light_position = 10.0f * vec3f::FORWARD() + 7.0f * vec3f::RIGHT();
+
+        m_view_matrix = look_at_rh(m_camera_position, vec3f::ZERO(), vec3f::UP());
+        m_proj_matrix = perspective(math::to_radians(90.0f), float(width) / height, 1.0f, 100.0f);
+
+        m_simple_shader = core.create_shader(std::make_shared<SimpleShader>());
+        core.bind_shader(m_simple_shader);
+        core.uniform(m_transform.scale * m_transform.rotation * m_transform.translation, "model");
+        core.uniform(m_view_matrix, "view");
+        core.uniform(m_proj_matrix, "projection");
+
+        m_gouraud_shader = core.create_shader(std::make_shared<GouraudShader>());
+        core.bind_shader(m_gouraud_shader); 
+        core.uniform(m_light_position, "light_position");
+        core.uniform(m_camera_position, "camera_position");
+        core.uniform(1.0f, "light_intensity");
+        core.uniform(color::WHITE, "light_color");
+        core.uniform(color::TANGERINE, "polygon_color");
+        core.uniform(m_transform.scale * m_transform.rotation * m_transform.translation, "model");
+        core.uniform(m_view_matrix, "view");
+        core.uniform(m_proj_matrix, "projection");
+
+
         try {
             Mesh head("..\\..\\..\\rasterizer\\app\\assets\\human.obj");
             const Mesh::Content* head_buffer = head.GetContent();
@@ -109,37 +134,21 @@ namespace rasterization {
             Texture texture("..\\..\\..\\rasterizer\\app\\assets\\head.tga");
             const Texture::Content* texture_content = texture.GetContent();
 
-            size_t t = core.create_texture(texture_content->width, texture_content->height, texture_content->channel_count, texture_content->data.data());
-            core.bind_texture(t);
+            size_t colored_texture = core.create_texture(texture_content->width, texture_content->height, texture_content->channel_count, texture_content->data.data());
+            core.bind_texture(colored_texture);
+            core.activate_texture(0);
+
+            texture.Load("..\\..\\..\\rasterizer\\app\\assets\\head_nm.tga");
+            texture_content = texture.GetContent();
+
+            size_t normal_texture = core.create_texture(texture_content->width, texture_content->height, texture_content->channel_count, texture_content->data.data());
+            core.bind_texture(normal_texture);
+            core.activate_texture(1);
         }
         catch(const std::exception& e) {
             std::cerr << e.what() << '\n';
             abort();
         }
-
-        m_camera_position = 2.5f * vec3f::FORWARD();
-
-        m_view_matrix = look_at_rh(m_camera_position, vec3f::ZERO(), vec3f::UP());
-        m_proj_matrix = perspective(math::to_radians(90.0f), float(width) / height, 1.0f, 100.0f);
-
-        m_simple_shader = core.create_shader(std::make_shared<SimpleShader>());
-        core.bind_shader(m_simple_shader);
-        core.uniform(m_transform.scale * m_transform.rotation * m_transform.translation, "model");
-        core.uniform(m_view_matrix, "view");
-        core.uniform(m_proj_matrix, "projection");
-
-        m_light_position = 10.0f * vec3f::FORWARD() + 7.0f * vec3f::RIGHT();
-
-        m_gouraud_shader = core.create_shader(std::make_shared<GouraudShader>());
-        core.bind_shader(m_gouraud_shader); 
-        core.uniform(m_light_position, "light_position");
-        core.uniform(m_camera_position, "camera_position");
-        core.uniform(1.0f, "light_intensity");
-        core.uniform(color::WHITE, "light_color");
-        core.uniform(color::TANGERINE, "polygon_color");
-        core.uniform(m_transform.scale * m_transform.rotation * m_transform.translation, "model");
-        core.uniform(m_view_matrix, "view");
-        core.uniform(m_proj_matrix, "projection");
     }
 
     void Application::Run() noexcept {

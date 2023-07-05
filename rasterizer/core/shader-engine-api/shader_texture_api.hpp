@@ -9,7 +9,7 @@ namespace gl {
         _shader_texture_api() = default;
 
     protected:
-        const _texture& sampler_2D() const noexcept;
+        const _texture& sampler_2D(size_t slot) const noexcept;
         math::color texture(const _texture& texture, const math::vec2f& texcoord) const noexcept;
     };
 }
