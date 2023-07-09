@@ -160,6 +160,7 @@ namespace rasterization {
 
         MouseState prev_mouse_state, curr_mouse_state;
         m_window->IsMousePressed(prev_mouse_state);
+        
         while (m_window->IsOpen()) {
             m_window->PollEvent();
 

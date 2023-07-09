@@ -7,7 +7,7 @@
 
 namespace math {
     template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
-    union vec2 {
+    struct vec2 {
         using type = typename Type;
 
         vec2() noexcept
@@ -154,11 +154,13 @@ namespace math {
             return down;
         }
 
-        struct {
-            Type x, y;
-        };
+        union {
+            struct {
+                Type x, y;
+            };
 
-        Type arr[2];
+            Type arr[2];
+        };
     };
 
     template <typename Type>

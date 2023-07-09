@@ -1,7 +1,9 @@
 #pragma once
-#include "math_3d/math.hpp"
 #include "window/window.hpp"
 #include "thread_pool/thread_pool.hpp"
+
+#include "math_3d/math.hpp"
+#include "core/assert_macro.hpp"
 
 #include <unordered_map>
 #include <variant>
@@ -11,7 +13,7 @@ namespace gl {
 
     class _render_engine final {
     public:
-        using pipeline_data_type = std::variant<math::vec2f, math::vec3f, math::vec4f>;
+        using pipeline_data_type = std::variant<math::vec2f, math::vec3f, math::vec4f, math::mat4f>;
         using pipeline_pack_type = std::unordered_map<std::string, pipeline_data_type>;
 
         _render_engine(const _render_engine& engine) = delete;
@@ -65,28 +67,79 @@ namespace gl {
         void _render_polygon(const pipeline_metadata& v0, const pipeline_metadata& v1, const pipeline_metadata& v2) noexcept;
 
     private:
+        template <size_t N>
         struct barycentric_interpolator {
-            pipeline_data_type operator()(const math::vec2f& vec0, const math::vec2f& vec1) const noexcept {
-                return static_cast<float>(w0) * vec0 + static_cast<float>(w1) * vec1;
-            }
-            pipeline_data_type operator()(const math::vec3f& vec0, const math::vec3f& vec1) const noexcept {
-                return static_cast<float>(w0) * vec0 + static_cast<float>(w1) * vec1;
-            }
-            pipeline_data_type operator()(const math::vec4f& vec0, const math::vec4f& vec1) const noexcept {
-                return static_cast<float>(w0) * vec0 + static_cast<float>(w1) * vec1;
+            static_assert(math::between(N, static_cast<size_t>(2), static_cast<size_t>(4)));
+        };
+
+        template<>
+        struct barycentric_interpolator<3> {
+            barycentric_interpolator(const math::vec3d& w, const pipeline_data_type& v0, const pipeline_data_type& v1) 
+                : w(w), v0(v0), v1(v1) {}
+
+            pipeline_data_type operator()(const math::vec2f& v2) const noexcept {
+                ASSERT(std::holds_alternative<math::vec2f>(v0), "render engine error", "type of v0 is not \'vec2f\'");
+                ASSERT(std::holds_alternative<math::vec2f>(v1), "render engine error", "type of v1 is not \'vec2f\'");
+
+                return std::get<math::vec2f>(v0) * w.x + std::get<math::vec2f>(v1) * w.y + v2 * w.z;
             }
 
-            pipeline_data_type operator()(const math::vec2f& vec0, const math::vec2f& vec1, const math::vec2f& vec2) const noexcept {
-                return static_cast<float>(w0) * vec0 + static_cast<float>(w1) * vec1 + static_cast<float>(w2) * vec2;
-            }
-            pipeline_data_type operator()(const math::vec3f& vec0, const math::vec3f& vec1, const math::vec3f& vec2) const noexcept {
-                return static_cast<float>(w0) * vec0 + static_cast<float>(w1) * vec1 + static_cast<float>(w2) * vec2;
-            }
-            pipeline_data_type operator()(const math::vec4f& vec0, const math::vec4f& vec1, const math::vec4f& vec2) const noexcept {
-                return static_cast<float>(w0) * vec0 + static_cast<float>(w1) * vec1 + static_cast<float>(w2) * vec2;
+            pipeline_data_type operator()(const math::vec3f& v2) const noexcept {
+                ASSERT(std::holds_alternative<math::vec3f>(v0), "render engine error", "type of v0 is not \'vec3f\'");
+                ASSERT(std::holds_alternative<math::vec3f>(v1), "render engine error", "type of v1 is not \'vec3f\'");
+
+                return std::get<math::vec3f>(v0) * w.x + std::get<math::vec3f>(v1) * w.y + v2 * w.z;
             }
 
-            double w0, w1, w2;
+            pipeline_data_type operator()(const math::vec4f& v2) const noexcept {
+                ASSERT(std::holds_alternative<math::vec4f>(v0), "render engine error", "type of v0 is not \'vec4f\'");
+                ASSERT(std::holds_alternative<math::vec4f>(v1), "render engine error", "type of v1 is not \'vec4f\'");
+
+                return std::get<math::vec4f>(v0) * w.x + std::get<math::vec4f>(v1) * w.y + v2 * w.z;
+            }
+
+            pipeline_data_type operator()(const math::mat4f& v2) const noexcept {
+                ASSERT(std::holds_alternative<math::mat4f>(v0), "render engine error", "type of v0 is not \'mat4f\'");
+                ASSERT(std::holds_alternative<math::mat4f>(v1), "render engine error", "type of v1 is not \'mat4f\'");
+
+                return v2;
+            }
+
+            math::vec3d w;
+            const pipeline_data_type &v0, &v1;
+        };
+
+        template<>
+        struct barycentric_interpolator<2> {
+            barycentric_interpolator(const math::vec2d& w, const pipeline_data_type& v0) 
+                : w(w), v0(v0) {}
+
+            pipeline_data_type operator()(const math::vec2f& v1) const noexcept {
+                ASSERT(std::holds_alternative<math::vec2f>(v0), "render engine error", "type of v0 is not \'vec2f\'");
+
+                return std::get<math::vec2f>(v0) * w.x + v1 * w.y;
+            }
+
+            pipeline_data_type operator()(const math::vec3f& v1) const noexcept {
+                ASSERT(std::holds_alternative<math::vec3f>(v0), "render engine error", "type of v0 is not \'vec3f\'");
+
+                return std::get<math::vec3f>(v0) * w.x + v1 * w.y;
+            }
+
+            pipeline_data_type operator()(const math::vec4f& v1) const noexcept {
+                ASSERT(std::holds_alternative<math::vec4f>(v0), "render engine error", "type of v0 is not \'vec4f\'");
+
+                return std::get<math::vec4f>(v0) * w.x + v1 * w.y;
+            }
+
+            pipeline_data_type operator()(const math::mat4f& v1) const noexcept {
+                ASSERT(std::holds_alternative<math::mat4f>(v0), "render engine error", "type of v0 is not \'mat4f\'");
+
+                return v1;
+            }
+
+            math::vec2d w;
+            const pipeline_data_type &v0;
         };
 
     private:

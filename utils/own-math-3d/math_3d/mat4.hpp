@@ -2,7 +2,7 @@
 #include "vec4.hpp"
 
 namespace math {
-    union mat4f {
+    struct mat4f {
         mat4f() noexcept;
         mat4f(float v00, float v01, float v02, float v03,
             float v04, float v05, float v06, float v07,
@@ -43,34 +43,35 @@ namespace math {
 
         static const mat4f IDENTITY;
 
-        struct {
-            float v00, v01, v02, v03;
-            float v04, v05, v06, v07;
-            float v08, v09, v10, v11;
-            float v12, v13, v14, v15;
-        };
+        union {
+            struct {
+                float v00, v01, v02, v03;
+                float v04, v05, v06, v07;
+                float v08, v09, v10, v11;
+                float v12, v13, v14, v15;
+            };
 
-        struct {
-            vec4f vec_row0;
-            vec4f vec_row1;
-            vec4f vec_row2;
-            vec4f vec_row3;
-        };
+            struct {
+                vec4f vec_row0;
+                vec4f vec_row1;
+                vec4f vec_row2;
+                vec4f vec_row3;
+            };
 
-        struct {
-            __m128 mm_row0;
-            __m128 mm_row1;
-            __m128 mm_row2;
-            __m128 mm_row3;
-        };
+            struct {
+                __m128 mm_row0;
+                __m128 mm_row1;
+                __m128 mm_row2;
+                __m128 mm_row3;
+            };
 
-        float arr[16];
-        vec4f vec_arr[4];
-        __m128 mm_arr[4];
+            float arr[16];
+            vec4f vec_arr[4];
+            __m128 mm_arr[4];
+        };
     };
 
     mat4f operator*(float value, const mat4f& mat) noexcept;
-    vec4f operator*(const vec3f& vec, const mat4f& mat) noexcept;
     vec4f operator*(const vec4f& vec, const mat4f& mat) noexcept;
 
     mat4f inverse(const mat4f& mat) noexcept;

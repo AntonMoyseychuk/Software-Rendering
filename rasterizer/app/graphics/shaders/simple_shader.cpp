@@ -12,7 +12,7 @@ namespace rasterization {
         const VSInData* v = (const VSInData*)vertex;
 
         out(v->color, "color", _pd);
-        return v->position * get_uniform<mat4f>("model") * get_uniform<mat4f>("view") * get_uniform<mat4f>("projection");
+        return vec4f(v->position, 1.0f) * get_uniform<mat4f>("model") * get_uniform<mat4f>("view") * get_uniform<mat4f>("projection");
     }
     
     math::color SimpleShader::pixel(const pd& _pd) const noexcept {

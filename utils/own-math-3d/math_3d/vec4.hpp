@@ -12,23 +12,20 @@ namespace math {
         static_cast<uint8_t>(math::clamp((color).a * 255, 0.0f, 255.0f))
 
 
-    union vec4f;
-    using color = vec4f;
-
-    union vec4f {
+    struct vec4f {
         vec4f() noexcept;
         explicit vec4f(float value) noexcept;
         explicit vec4f(const __m128& xmm) noexcept;
         explicit vec4f(const float* arr) noexcept;
-        vec4f(float x, float y, float z, float w = 1.0f) noexcept;
+        vec4f(float x, float y, float z, float w) noexcept;
         vec4f(const vec4f& vec) noexcept;
 
         vec4f(const vec2f& xy, const vec2f& zw) noexcept;
-        vec4f(const vec2f& xy, float z = 0.0f, float w = 1.0f) noexcept;
-        vec4f(float x, const vec2f& yz, float w = 1.0f) noexcept;
+        vec4f(const vec2f& xy, float z, float w) noexcept;
+        vec4f(float x, const vec2f& yz, float w) noexcept;
         vec4f(float x, float y, const vec2f& zw) noexcept;
 
-        vec4f(const vec3f& xyz, float w = 1.0f) noexcept;
+        vec4f(const vec3f& xyz, float w) noexcept;
         vec4f(float x, const vec3f& yzw) noexcept;
 
         vec4f& operator=(const vec2f& vec) noexcept;
@@ -68,93 +65,96 @@ namespace math {
         static const vec4f FORWARD; 
         static const vec4f BACKWARD;
 
-        static const color RED;
-        static const color GREEN;
-        static const color BLUE;
-        static const color YELLOW;
-        static const color MAGENTA;
-        static const color CYAN;
-        static const color ORANGE;
-        static const color TANGERINE;
-        static const color LIME;
-        static const color PURPLE;
-        static const color INDIGO;
-        static const color GOLDEN;
-        static const color SKY_BLUE;
-        static const color WHITE;
-        static const color BLACK;
-        static const color GREY;
+        static const vec4f RED;
+        static const vec4f GREEN;
+        static const vec4f BLUE;
+        static const vec4f YELLOW;
+        static const vec4f MAGENTA;
+        static const vec4f CYAN;
+        static const vec4f ORANGE;
+        static const vec4f TANGERINE;
+        static const vec4f LIME;
+        static const vec4f PURPLE;
+        static const vec4f INDIGO;
+        static const vec4f GOLDEN;
+        static const vec4f SKY_BLUE;
+        static const vec4f WHITE;
+        static const vec4f BLACK;
+        static const vec4f GREY;
 
-        struct {
-            float x, y, z, w;
-        };
+        union {
+            struct {
+                float x, y, z, w;
+            };
 
-        struct {
-            vec2f xy;
-            float _ignore_0;
-            float _ignore_1;
-        };
-        
-        struct {
-            float _ignore_2;
-            vec2f yz;
-            float _ignore_3;
-        };
+            struct {
+                vec2f xy;
+                float _ignore_0;
+                float _ignore_1;
+            };
+            
+            struct {
+                float _ignore_2;
+                vec2f yz;
+                float _ignore_3;
+            };
 
-        struct {
-            float _ignore_4;
-            float _ignore_5;
-            vec2f zw;
-        };
+            struct {
+                float _ignore_4;
+                float _ignore_5;
+                vec2f zw;
+            };
 
-        struct {
-            vec3f xyz;
-            float _ignore_6;
-        };
+            struct {
+                vec3f xyz;
+                float _ignore_6;
+            };
 
-        struct {
-            float _ignore_7;
-            vec3f yzw;
-        };
+            struct {
+                float _ignore_7;
+                vec3f yzw;
+            };
 
-        struct {
-            float r, g, b, a;
-        };
+            struct {
+                float r, g, b, a;
+            };
 
-        struct {
-            vec2f rg;
-            float _ignore_8;
-            float _ignore_9;
-        };
-        
-        struct {
-            float _ignore_10;
-            vec2f gb;
-            float _ignore_11;
-        };
+            struct {
+                vec2f rg;
+                float _ignore_8;
+                float _ignore_9;
+            };
+            
+            struct {
+                float _ignore_10;
+                vec2f gb;
+                float _ignore_11;
+            };
 
-        struct {
-            float _ignore_12;
-            float _ignore_13;
-            vec2f ba;
-        };
+            struct {
+                float _ignore_12;
+                float _ignore_13;
+                vec2f ba;
+            };
 
-        struct {
-            vec3f rgb;
-            float _ignore_14;
-        };
+            struct {
+                vec3f rgb;
+                float _ignore_14;
+            };
 
-        struct {
-            float _ignore_15;
-            vec3f gba;
-        };
+            struct {
+                float _ignore_15;
+                vec3f gba;
+            };
 
-        float arr[4];
-        
-        __m128 xmm;
+            float arr[4];
+            
+            __m128 xmm;
+        };
     };
 
-    vec4f operator*(float value, const vec4f& vec) noexcept;
+    using color = vec4f;
 
+    vec4f operator*(float value, const vec4f& vec) noexcept;
     vec4f normalize(const vec4f& vec) noexcept;
 }

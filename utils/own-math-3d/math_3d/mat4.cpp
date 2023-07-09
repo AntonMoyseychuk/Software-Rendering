@@ -255,10 +255,6 @@ namespace math {
         return mat * value;
     }
 
-    vec4f operator*(const vec3f &vec, const mat4f& mat) noexcept {
-        return vec4f(vec, 1.0f) * mat;
-    }
-
     vec4f operator*(const vec4f &vec, const mat4f& mat) noexcept {
         const mat4f transposed = transpose(mat);
         return vec4f(

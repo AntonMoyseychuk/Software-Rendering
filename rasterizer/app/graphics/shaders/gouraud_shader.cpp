@@ -13,11 +13,11 @@ namespace rasterization {
         
         const mat4f& model_matrix = get_uniform<mat4f>("model");
 
-        out(v->position * model_matrix, "frag_position", _pd);
-        out(v->normal * transpose(inverse(model_matrix)), "normal", _pd);
+        out(vec4f(v->position, 1.0f) * model_matrix, "frag_position", _pd);
+        // out(v->normal * transpose(inverse(model_matrix)), "normal", _pd);
         out(v->texcoord, "texcoord", _pd);
 
-        return v->position * model_matrix * get_uniform<mat4f>("view") * get_uniform<mat4f>("projection");
+        return vec4f(v->position, 1.0f) * model_matrix * get_uniform<mat4f>("view") * get_uniform<mat4f>("projection");
     }
     
     math::color GouraudShader::pixel(const pd& _pd) const noexcept {
@@ -25,7 +25,9 @@ namespace rasterization {
 
 
         const vec3f& frag_position = in<vec4f>("frag_position", _pd).xyz;
-        const vec3f& normal = in<vec4f>("normal", _pd).xyz;
+        // const vec3f& normal = in<vec4f>("normal", _pd).xyz;
+        const vec3f normal = ((2.0f * texture(sampler_2D(1), in<vec2f>("texcoord", _pd)) - vec4f(1.0f)) * transpose(inverse(get_uniform<mat4f>("model")))).xyz;
+        float len = normal.length();
 
         const color polygon_color = texture(sampler_2D(0), in<vec2f>("texcoord", _pd));
         const color ambient = 0.1f * polygon_color;

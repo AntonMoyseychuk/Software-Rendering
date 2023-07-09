@@ -3,7 +3,7 @@
 
 namespace math {
     template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
-    union vec3 {
+    struct vec3 {
         using type = typename Type;
 
         vec3() noexcept
@@ -23,10 +23,6 @@ namespace math {
             : x(vec.x), y(vec.y), z(vec.z)
         {}
         template<typename Right>
-        explicit vec3(const vec2<Right>& vec) noexcept
-            : x(vec.x), y(vec.y), z(0)
-        {}
-        template<typename Right>
         vec3(const vec2<Right>& xy, Type z) noexcept
             : xy(xy), z(z)
         {}
@@ -35,13 +31,7 @@ namespace math {
             : x(x), yz(yz)
         {}
 
-        template<typename Right>
-        vec3& operator=(const vec2<Right>& vec) noexcept {
-            x = vec.x;
-            y = vec.y;
-            z = 0;
-            return *this;
-        }
+        
         template<typename Right>
         vec3& operator=(const vec3<Right>& vec) noexcept {
             x = vec.x;
@@ -182,21 +172,24 @@ namespace math {
             return backward;
         }
 
-        struct {
-            Type x, y, z;
-        };
 
-        struct {
-            vec2<Type> xy;
-            Type _ignore_0;
-        };
+        union {
+            struct {
+                Type x, y, z;
+            };
 
-        struct {
-            Type _ignore_1;
-            vec2<Type> yz;
-        };
+            struct {
+                vec2<Type> xy;
+                Type _ignore_0;
+            };
 
-        Type arr[3];
+            struct {
+                Type _ignore_1;
+                vec2<Type> yz;
+            };
+
+            Type arr[3];
+        };
     };
 
     template <typename Type>

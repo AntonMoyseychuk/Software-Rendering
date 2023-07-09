@@ -35,7 +35,7 @@ namespace gl {
         for (size_t i = 0, j = 0; j < vertex_count; i += vbo.element_size, ++j) {
             m_pipeline_data[j].coord = std::move(shader_ptr->vertex(&vbo.data[i], m_pipeline_data[j].in_out_data));
             
-            const vec4f ndc = m_pipeline_data[j].coord.xyz / m_pipeline_data[j].coord.w;
+            const vec4f ndc = m_pipeline_data[j].coord / m_pipeline_data[j].coord.w;
             m_pipeline_data[j].clipped = !_is_inside_clipping_space(ndc.xyz);
 
             m_pipeline_data[j].coord = ndc * m_viewport;
@@ -137,7 +137,7 @@ namespace gl {
 
             pack.clear();
             for (auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(); it0 != v0.in_out_data.cend(); ++it0, ++it1) {
-                pack[it0->first] = std::visit(barycentric_interpolator{w1, w0}, it0->second, it1->second);
+                pack[it0->first] = std::visit(barycentric_interpolator<2>(vec2d(w1, w0), it0->second), it1->second);
             }
             _render_pixel(pixel, shader->pixel(pack));
             
@@ -180,7 +180,7 @@ namespace gl {
 
             pack.clear();
             for (auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(); it0 != v0.in_out_data.cend(); ++it0, ++it1) {
-                pack[it0->first] = std::visit(barycentric_interpolator{w1, w0}, it0->second, it1->second);
+                pack[it0->first] = std::visit(barycentric_interpolator<2>(vec2d(w1, w0), it0->second), it1->second);
             }
             _render_pixel(pixel, shader->pixel(pack));
 
@@ -224,7 +224,7 @@ namespace gl {
 
                         auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(), &it2 = v2.in_out_data.cbegin();
                         for (; it0 != v0.in_out_data.cend(); ++it0, ++it1, ++it2) {
-                            pack[it0->first] = std::visit(barycentric_interpolator{w0, w1, w2}, it0->second, it1->second, it2->second);
+                            pack[it0->first] = std::visit(barycentric_interpolator<3>(vec3d(w0, w1, w2), it0->second, it1->second), it2->second);
                         }
                         _render_pixel(pixel.xy, shader->pixel(pack));
                     }
