@@ -38,7 +38,7 @@ namespace gl {
             const vec4f ndc = m_pipeline_data[j].coord / m_pipeline_data[j].coord.w;
             m_pipeline_data[j].clipped = !_is_inside_clipping_space(ndc.xyz);
 
-            m_pipeline_data[j].coord = ndc * m_viewport;
+            m_pipeline_data[j].coord = ndc * m_viewport.matrix;
             m_pipeline_data[j].coord.x = std::floor(m_pipeline_data[j].coord.x);
             m_pipeline_data[j].coord.y = std::floor(m_pipeline_data[j].coord.y);
         }
@@ -55,9 +55,7 @@ namespace gl {
         
         case render_mode::LINES:
             for (size_t i = 1; i < ibo.data.size(); i += 2) {
-                if (!m_pipeline_data[ibo.data[i - 1]].clipped && !m_pipeline_data[ibo.data[i]].clipped) {
-                    m_thread_pool.AddTask(&_render_engine::_render_line, this, std::cref(m_pipeline_data[ibo.data[i - 1]]), std::cref(m_pipeline_data[ibo.data[i]]));
-                }
+                m_thread_pool.AddTask(&_render_engine::_render_line, this, std::cref(m_pipeline_data[ibo.data[i - 1]]), std::cref(m_pipeline_data[ibo.data[i]]));
             }
 
             m_thread_pool.WaitAll();
@@ -65,9 +63,7 @@ namespace gl {
         
         case render_mode::LINE_STRIP: 
             for (size_t i = 1; i < ibo.data.size(); ++i) {
-                if (!m_pipeline_data[ibo.data[i - 1]].clipped && !m_pipeline_data[ibo.data[i]].clipped) {
-                    m_thread_pool.AddTask(&_render_engine::_render_line, this, std::cref(m_pipeline_data[ibo.data[i - 1]]), std::cref(m_pipeline_data[ibo.data[i]]));
-                }
+                m_thread_pool.AddTask(&_render_engine::_render_line, this, std::cref(m_pipeline_data[ibo.data[i - 1]]), std::cref(m_pipeline_data[ibo.data[i]]));
             }
 
             m_thread_pool.WaitAll();
@@ -79,10 +75,8 @@ namespace gl {
                 const auto& PIPELINE_DATA0 = m_pipeline_data[ibo.data[i - 2]];
                 const auto& PIPELINE_DATA1 = m_pipeline_data[ibo.data[i - 1]];
                 const auto& PIPELINE_DATA2 = m_pipeline_data[ibo.data[i - 0]];
-                if (!PIPELINE_DATA0.clipped && !PIPELINE_DATA1.clipped && !PIPELINE_DATA2.clipped) {
-                    if (!_is_back_face(PIPELINE_DATA0.coord.xyz, PIPELINE_DATA1.coord.xyz, PIPELINE_DATA2.coord.xyz)) {
-                        m_thread_pool.AddTask(&_render_engine::_render_polygon, this, std::cref(PIPELINE_DATA0), std::cref(PIPELINE_DATA1), std::cref(PIPELINE_DATA2));
-                    }
+                if (!_is_back_face(PIPELINE_DATA0.coord.xyz, PIPELINE_DATA1.coord.xyz, PIPELINE_DATA2.coord.xyz)) {
+                    m_thread_pool.AddTask(&_render_engine::_render_polygon, this, std::cref(PIPELINE_DATA0), std::cref(PIPELINE_DATA1), std::cref(PIPELINE_DATA2));
                 }
             }
 
@@ -132,21 +126,23 @@ namespace gl {
         for (float x = v0.coord.x; x <= v1.coord.x; ++x) {
             const vec2f pixel(x, y);
             
-            const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
-            const float w1 = 1.0f - w0;
+            if (_is_inside_viewport_space(pixel)) {
+                const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
+                const float w1 = 1.0f - w0;
 
-            pack.clear();
-            for (auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(); it0 != v0.in_out_data.cend(); ++it0, ++it1) {
-                pack[it0->first] = std::visit(barycentric_interpolator<2>(vec2d(w1, w0), it0->second), it1->second);
-            }
-            _render_pixel(pixel, shader->pixel(pack));
-            
+                pack.clear();
+                for (auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(); it0 != v0.in_out_data.cend(); ++it0, ++it1) {
+                    pack[it0->first] = std::visit(barycentric_interpolator<2>(vec2d(w1, w0), it0->second), it1->second);
+                }
+                _render_pixel(pixel, shader->pixel(pack));
+                
 
-            if (D > 0) {
-                y += yi;
-                D += 2.0f * (dy - dx);
-            } else {
-                D += 2.0f * dy;
+                if (D > 0) {
+                    y += yi;
+                    D += 2.0f * (dy - dx);
+                } else {
+                    D += 2.0f * dy;
+                }
             }
         }
     }
@@ -175,20 +171,23 @@ namespace gl {
 
         for (float y = v0.coord.y; y <= v1.coord.y; ++y) {
             const vec2f pixel(x, y);
-            const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
-            const float w1 = 1.0f - w0;
+            
+            if (_is_inside_viewport_space(pixel)) {
+                const float w0 = (pixel - v0.coord.xy).length() / v0_v1_dist;
+                const float w1 = 1.0f - w0;
 
-            pack.clear();
-            for (auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(); it0 != v0.in_out_data.cend(); ++it0, ++it1) {
-                pack[it0->first] = std::visit(barycentric_interpolator<2>(vec2d(w1, w0), it0->second), it1->second);
-            }
-            _render_pixel(pixel, shader->pixel(pack));
+                pack.clear();
+                for (auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(); it0 != v0.in_out_data.cend(); ++it0, ++it1) {
+                    pack[it0->first] = std::visit(barycentric_interpolator<2>(vec2d(w1, w0), it0->second), it1->second);
+                }
+                _render_pixel(pixel, shader->pixel(pack));
 
-            if (D > 0) {
-                x += xi;
-                D += 2.0f * (dx - dy);
-            } else {
-                D += 2.0f * dx;
+                if (D > 0) {
+                    x += xi;
+                    D += 2.0f * (dx - dy);
+                } else {
+                    D += 2.0f * dx;
+                }
             }
         }
     }
@@ -205,32 +204,42 @@ namespace gl {
         pipeline_pack_type pack;
         const double area = _edge(v0.coord.xy, v1.coord.xy, v2.coord.xy);
 
+        bool prev_y_was_inside = false;
         for (float y = bboxmin.y; y <= bboxmax.y; ++y) {
-            bool prev_pixel_was_inside = false;
-            
-            for (float x = bboxmin.x; x <= bboxmax.x; ++x) {
-                vec3f pixel(x, y, 0.0);
-                
-                const double w0 = _edge(v1.coord.xy, v2.coord.xy, pixel.xy) / area;
-                const double w1 = _edge(v2.coord.xy, v0.coord.xy, pixel.xy) / area;
-                const double w2 = 1.0 - w0 - w1;
-                
-                if (w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) {
-                    prev_pixel_was_inside = true;
+            if (_is_inside_viewport_space_vertic(y)) {
+                prev_y_was_inside = true;
 
-                    pixel.z = 1.0f / ((1.0f / v0.coord.z) * w0 + (1.0f / v1.coord.z) * w1 + (1.0f / v2.coord.z) * w2);
-                    if (_test_and_update_depth(pixel)) {
-                        pack.clear();
+                bool prev_x_was_inside = false;
+                for (float x = bboxmin.x; x <= bboxmax.x; ++x) {
+                    if (_is_inside_viewport_space_horiz(x)) {
+                        prev_x_was_inside = true;
 
-                        auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(), &it2 = v2.in_out_data.cbegin();
-                        for (; it0 != v0.in_out_data.cend(); ++it0, ++it1, ++it2) {
-                            pack[it0->first] = std::visit(barycentric_interpolator<3>(vec3d(w0, w1, w2), it0->second, it1->second), it2->second);
+                        vec3f pixel(x, y, 0.0);
+                    
+                        const double w0 = _edge(v1.coord.xy, v2.coord.xy, pixel.xy) / area;
+                        const double w1 = _edge(v2.coord.xy, v0.coord.xy, pixel.xy) / area;
+                        const double w2 = 1.0 - w0 - w1;
+                        
+                        if (w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) {
+                            prev_x_was_inside = true;
+
+                            pixel.z = 1.0f / ((1.0f / v0.coord.z) * w0 + (1.0f / v1.coord.z) * w1 + (1.0f / v2.coord.z) * w2);
+                            if (_test_and_update_depth(pixel)) {
+                                pack.clear();
+
+                                auto& it0 = v0.in_out_data.cbegin(), &it1 = v1.in_out_data.cbegin(), &it2 = v2.in_out_data.cbegin();
+                                for (; it0 != v0.in_out_data.cend(); ++it0, ++it1, ++it2) {
+                                    pack[it0->first] = std::visit(barycentric_interpolator<3>(vec3d(w0, w1, w2), it0->second, it1->second), it2->second);
+                                }
+                                _render_pixel(pixel.xy, shader->pixel(pack));
+                            }
                         }
-                        _render_pixel(pixel.xy, shader->pixel(pack));
+                    } else if (prev_x_was_inside) {
+                        break;
                     }
-                } else if (prev_pixel_was_inside) {
-                    break;
                 }
+            } else if (prev_y_was_inside) {
+                break;
             }
         }
     }
@@ -249,11 +258,23 @@ namespace gl {
         return false;
     }
 
-    bool _render_engine::_is_inside_clipping_space(const math::vec3f &point) noexcept {
-        return math::abs(point.x) <= 1.0f && math::abs(point.y) <= 1.0f && point.z <= -0.25f;
+    bool _render_engine::_is_inside_viewport_space_horiz(float x) const noexcept {
+        return x >= 0.0f && x < m_viewport.width;
     }
 
-    bool _render_engine::_is_back_face(const math::vec3f &v0, const math::vec3f &v1, const math::vec3f &v2) noexcept {
+    bool _render_engine::_is_inside_viewport_space_vertic(float y) const noexcept {
+        return y >= 0.0f && y < m_viewport.height;
+    }
+
+    bool _render_engine::_is_inside_clipping_space(const math::vec3f &ndc) const noexcept {
+        return math::abs(ndc.x) <= 1.0f && math::abs(ndc.y) <= 1.0f && ndc.z <= -0.25f;
+    }
+
+    bool _render_engine::_is_inside_viewport_space(const math::vec2f &coord) const noexcept {
+        return _is_inside_viewport_space_horiz(coord.x) && _is_inside_viewport_space_vertic(coord.y);
+    }
+
+    bool _render_engine::_is_back_face(const math::vec3f &v0, const math::vec3f &v1, const math::vec3f &v2) const noexcept {
         static const math::vec3f& backward = math::vec3f::BACKWARD();
         
         const math::vec3f n = normalize(cross(v1 - v0, v2 - v0));
@@ -284,7 +305,10 @@ namespace gl {
     }
 
     void _render_engine::viewport(uint32_t width, uint32_t height) noexcept {
-        m_viewport = math::viewport(width, height);
+        m_viewport.matrix = math::viewport(width, height);
+
+        m_viewport.width = width;
+        m_viewport.height = height;
     }
 
     void _render_engine::swap_buffers() noexcept {

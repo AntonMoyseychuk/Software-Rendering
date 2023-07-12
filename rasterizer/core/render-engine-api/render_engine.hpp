@@ -40,8 +40,11 @@ namespace gl {
         bool _test_and_update_depth(const math::vec3f& pixel) noexcept;
 
     private:
-        static bool _is_inside_clipping_space(const math::vec3f& point) noexcept;
-        static bool _is_back_face(const math::vec3f& v0, const math::vec3f& v1, const math::vec3f& v2) noexcept;
+        bool _is_inside_clipping_space(const math::vec3f& ndc) const noexcept;
+        bool _is_inside_viewport_space(const math::vec2f& coord) const noexcept;
+        bool _is_inside_viewport_space_horiz(float x) const noexcept;
+        bool _is_inside_viewport_space_vertic(float y) const noexcept;
+        bool _is_back_face(const math::vec3f& v0, const math::vec3f& v1, const math::vec3f& v2) const noexcept;
         
         /**
          * returns:
@@ -148,7 +151,11 @@ namespace gl {
 
         util::ThreadPool m_thread_pool = { std::thread::hardware_concurrency() };
 
-        math::mat4f m_viewport;
+        struct viewport {
+            math::mat4f matrix;
+            int32_t width = 0;
+            int32_t height = 0;
+        } m_viewport;
 
         win_framewrk::Window* m_window_ptr = nullptr;
         math::color m_clear_color = math::color::BLACK;
