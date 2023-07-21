@@ -35,14 +35,19 @@ namespace gl {
         for (size_t i = 0, j = 0; j < vertex_count; i += vbo.element_size, ++j) {
             m_pipeline_data[j].coord = std::move(shader_ptr->vertex(&vbo.data[i], m_pipeline_data[j].in_out_data));
             
+            m_pipeline_data[j].clipped = !_is_inside_clip_space(m_pipeline_data[j].coord);
             const vec4f ndc = m_pipeline_data[j].coord / m_pipeline_data[j].coord.w;
-            m_pipeline_data[j].clipped = !_is_inside_clipping_space(ndc.xyz);
+            // m_pipeline_data[j].clipped = !_is_inside_ndc_space(ndc.xyz);
 
             m_pipeline_data[j].coord = ndc * m_viewport.matrix;
             m_pipeline_data[j].coord.x = std::floor(m_pipeline_data[j].coord.x);
             m_pipeline_data[j].coord.y = std::floor(m_pipeline_data[j].coord.y);
         }
     #pragma endregion local-to-raster-coords
+
+
+
+
 
         switch (mode) {
         case render_mode::POINTS:
@@ -258,16 +263,16 @@ namespace gl {
         return false;
     }
 
+    bool _render_engine::_is_inside_clip_space(const math::vec4f &coord) const noexcept {
+        return math::between(coord.x, -coord.w, coord.w) && math::between(coord.y, -coord.w, coord.w) && math::between(coord.z, -coord.w, coord.w);
+    }
+
     bool _render_engine::_is_inside_viewport_space_horiz(float x) const noexcept {
         return x >= 0.0f && x < m_viewport.width;
     }
 
     bool _render_engine::_is_inside_viewport_space_vertic(float y) const noexcept {
         return y >= 0.0f && y < m_viewport.height;
-    }
-
-    bool _render_engine::_is_inside_clipping_space(const math::vec3f &ndc) const noexcept {
-        return math::abs(ndc.x) <= 1.0f && math::abs(ndc.y) <= 1.0f && ndc.z <= -0.25f;
     }
 
     bool _render_engine::_is_inside_viewport_space(const math::vec2f &coord) const noexcept {

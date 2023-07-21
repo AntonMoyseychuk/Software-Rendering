@@ -7,11 +7,11 @@
 #include <random>
 
 namespace math {
-    constexpr float to_degrees(float radians) noexcept {
+    inline constexpr float to_degrees(float radians) noexcept {
         return (180.0f * radians) / MATH_PI;
     }
 
-    constexpr float to_radians(float degrees) noexcept {
+    inline constexpr float to_radians(float degrees) noexcept {
         return degrees * (MATH_PI / 180.0f);
     }
 
@@ -21,7 +21,7 @@ namespace math {
     }
 
     template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
-    Type random(Type min, Type max) noexcept {       
+    inline Type random(Type min, Type max) noexcept {       
         static std::random_device _rd;
         static std::mt19937 gen(_rd());
 
@@ -39,12 +39,16 @@ namespace math {
 
     template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
     inline constexpr Type clamp(Type value, Type min, Type max) noexcept {
+        if (min > max) {
+            std::swap(min, max);
+        }
+
         return (value > max) ? max : (value < min) ? min : value;
     }
 
     template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>
     inline constexpr bool between(Type value, Type left, Type right) noexcept {
-        return value >= left && value <= right;
+        return (left <= right) ? (value >= left && value <= right) : (value >= right && value <= left);
     }
 
     template <typename Type, typename = std::enable_if_t<std::is_arithmetic_v<Type>>>

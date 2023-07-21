@@ -40,10 +40,12 @@ namespace gl {
         bool _test_and_update_depth(const math::vec3f& pixel) noexcept;
 
     private:
-        bool _is_inside_clipping_space(const math::vec3f& ndc) const noexcept;
-        bool _is_inside_viewport_space(const math::vec2f& coord) const noexcept;
+        bool _is_inside_clip_space(const math::vec4f& coord) const noexcept;
+
         bool _is_inside_viewport_space_horiz(float x) const noexcept;
         bool _is_inside_viewport_space_vertic(float y) const noexcept;
+        bool _is_inside_viewport_space(const math::vec2f& coord) const noexcept;
+        
         bool _is_back_face(const math::vec3f& v0, const math::vec3f& v1, const math::vec3f& v2) const noexcept;
         
         /**
