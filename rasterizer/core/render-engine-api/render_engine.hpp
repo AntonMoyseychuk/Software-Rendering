@@ -41,12 +41,8 @@ namespace gl {
 
     private:
         bool _is_inside_clip_space(const math::vec4f& coord) const noexcept;
-
-        bool _is_inside_viewport_space_horiz(float x) const noexcept;
-        bool _is_inside_viewport_space_vertic(float y) const noexcept;
-        bool _is_inside_viewport_space(const math::vec2f& coord) const noexcept;
         
-        bool _is_back_face(const math::vec3f& v0, const math::vec3f& v1, const math::vec3f& v2) const noexcept;
+        bool _is_front_face(const math::vec3f& v0, const math::vec3f& v1, const math::vec3f& v2) const noexcept;
         
         /**
          * returns:
@@ -59,6 +55,7 @@ namespace gl {
     private:
         struct pipeline_metadata {
             bool clipped = false;
+            bool is_front = false;
             pipeline_pack_type in_out_data;
             math::vec4f coord;
         };

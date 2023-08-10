@@ -56,11 +56,11 @@ namespace math {
     }
 
     mat4f look_at_rh(const vec3f &eye, const vec3f &look_at, const vec3f &up) noexcept {
-        const auto forward = normalize(eye - look_at);
-        const auto right = normalize(cross(normalize(up), forward));
-        const auto new_up = cross(forward, right);
+        const auto forward = normalize(look_at - eye);
+        const auto right = normalize(cross(normalize(up), -forward));
+        const auto new_up = cross(-forward, right);
 
-        return mat4f(vec4f(right, 0.0f), vec4f(new_up, 0.0f), vec4f(forward, 0.0f), vec4f(-eye, 1.0f));
+        return mat4f(vec4f(right, 0.0f), vec4f(new_up, 0.0f), vec4f(-forward, 0.0f), vec4f(-eye, 1.0f));
     }
 
     mat4f perspective(float fovy_radians, float aspect, float near, float far) noexcept {
@@ -72,7 +72,7 @@ namespace math {
 		mat4f result;
         result[0][0] = 1.0f / (aspect * tan_half_fovy);
 		result[1][1] = 1.0f / (tan_half_fovy);
-		result[2][2] = (far + near) / (far - near);
+		result[2][2] = -(far + near) / (far - near);
 		result[2][3] = -1.0f;
 		result[3][2] = -2.0f * far * near / (far - near);
 		result[3][3] = 0.0f;

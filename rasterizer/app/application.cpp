@@ -58,7 +58,7 @@ namespace rasterization {
         m_light_position = 10.0f * vec3f::FORWARD() + 7.0f * vec3f::RIGHT();
 
         m_view_matrix = look_at_rh(m_camera_position, vec3f::ZERO(), vec3f::UP());
-        m_proj_matrix = perspective(math::to_radians(90.0f), float(width) / height, 1.0f, 100.0f);
+        m_proj_matrix = perspective(math::to_radians(90.0f), float(width) / height, 0.1f, 100.0f);
 
         m_simple_shader = core.create_shader(std::make_shared<SimpleShader>());
         core.bind_shader(m_simple_shader);

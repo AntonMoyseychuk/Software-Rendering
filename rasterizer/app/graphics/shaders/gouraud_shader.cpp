@@ -15,7 +15,7 @@ namespace rasterization {
 
         out(vec4f(v->position, 1.0f) * model_matrix, "frag_position", _pd);
         out(v->texcoord, "texcoord", _pd);
-        out(transpose(inverse(model_matrix)), "transpose_inverse_model", _pd);
+        out(transpose(inverse(model_matrix)), "normal_matrix", _pd);
 
         return vec4f(v->position, 1.0f) * model_matrix * get_uniform<mat4f>("view") * get_uniform<mat4f>("projection");
     }
@@ -26,7 +26,7 @@ namespace rasterization {
         const vec3f& frag_position = in<vec4f>("frag_position", _pd).xyz;
         const vec2f& texcoord = in<vec2f>("texcoord", _pd);
         
-        const vec3f normal = ((2.0f * texture(sampler_2D(1), texcoord) - vec4f(1.0f)) * in<mat4f>("transpose_inverse_model", _pd)).xyz;
+        const vec3f normal = ((2.0f * texture(sampler_2D(1), texcoord) - vec4f(1.0f)) * in<mat4f>("normal_matrix", _pd)).xyz;
 
         const color polygon_color = texture(sampler_2D(0), texcoord);
         const color ambient = 0.1f * polygon_color;
